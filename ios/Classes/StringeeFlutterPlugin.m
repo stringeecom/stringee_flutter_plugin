@@ -62,10 +62,7 @@ static NSString *STEDidHandleOnAnotherDevice    = @"didHandleOnAnotherDevice";
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if ([@"getPlatformVersion" isEqualToString:call.method]) {
-        result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-    }
-    else if ([call.method isEqualToString:@"connect"]) {
+    if ([call.method isEqualToString:@"connect"]) {
         [self connect:call.arguments result:result];
     }
     else if ([call.method isEqualToString:@"disconnect"]) {
