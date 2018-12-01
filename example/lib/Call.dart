@@ -265,8 +265,8 @@ class _CallState extends State<Call> {
     if (_stringeeCall != null) {
       _stringeeCall.destroy();
       _stringeeCall = null;
+      Navigator.pop(context);
     }
-    Navigator.pop(context);
   }
 }
 

@@ -192,7 +192,7 @@ class StringeeCall {
   }
 
   Future<Map<dynamic, dynamic>> getCallStats() async {
-    return await StringeeClient.methodChannel.invokeMethod('getCallStats');
+    return await StringeeClient.methodChannel.invokeMethod('getCallStats', this._id);
   }
 
   Future<Map<dynamic, dynamic>> mute(bool mute) async {
