@@ -32,3 +32,7 @@ android {
         disable 'InvalidPackage'
     }
 }
+
+dependencies {
+    compile 'com.stringee.sdk.android:stringee-android-sdk:1.3.7'
+}

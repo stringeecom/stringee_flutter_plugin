@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
 
+import 'package:flutter/material.dart';
+import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 StringeeCall _stringeeCall;
@@ -10,14 +12,19 @@ class Call extends StatefulWidget {
   bool showIncomingUi = false;
   StringeeCall incomingCall;
 
-  Call({Key key, @required this.fromUserId, @required this.toUserId, @required this.showIncomingUi, this.incomingCall}) : super(key: key);
+  Call(
+      {Key key,
+      @required this.fromUserId,
+      @required this.toUserId,
+      @required this.showIncomingUi,
+      this.incomingCall})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return _CallState();
   }
-
 }
 
 class _CallState extends State<Call> {
@@ -32,10 +39,9 @@ class _CallState extends State<Call> {
 
   @override
   Widget build(BuildContext context) {
-
     Widget NameCalling = new Container(
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.only(top:120.0),
+      padding: EdgeInsets.only(top: 120.0),
       child: new Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +61,7 @@ class _CallState extends State<Call> {
               '${status}',
               style: new TextStyle(
                 color: Colors.white,
-                fontSize:   20.0,
+                fontSize: 20.0,
               ),
             ),
           )
@@ -64,67 +70,74 @@ class _CallState extends State<Call> {
     );
 
     Widget BottomContainer = new Container(
-      padding: EdgeInsets.only(bottom:30.0),
+      padding: EdgeInsets.only(bottom: 30.0),
       alignment: Alignment.bottomCenter,
       child: new Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: widget.showIncomingUi ? <Widget>[new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              new GestureDetector(
-                onTap: _rejectCallTapped,
-                child: Image.asset(
-                  'images/end.png',
-                  height: 75.0,
-                  width: 75.0,
-                ),
-              ),
-              new GestureDetector(
-                onTap: _acceptCallTapped,
-                child: Image.asset(
-                  'images/answer.png',
-                  height: 75.0,
-                  width: 75.0,
-                ),
-              ),
-            ],
-          )] : <Widget>[
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                new ButtonSpeaker(isSpeaker: false),
-                new ButtonMicro(isMute: false),
-              ],
-            ),
-            new Container(
-              padding: EdgeInsets.only(top:20.0,bottom:20.0),
-              child: new GestureDetector(
-                onTap: _endCallTapped,
-                child: Image.asset(
-                  'images/end.png',
-                  height: 75.0,
-                  width: 75.0,
-                ),
-              ),
-            )
-          ]
-      ),
+          children: widget.showIncomingUi
+              ? <Widget>[
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      new GestureDetector(
+                        onTap: _rejectCallTapped,
+                        child: Image.asset(
+                          'images/end.png',
+                          height: 75.0,
+                          width: 75.0,
+                        ),
+                      ),
+                      new GestureDetector(
+                        onTap: _acceptCallTapped,
+                        child: Image.asset(
+                          'images/answer.png',
+                          height: 75.0,
+                          width: 75.0,
+                        ),
+                      ),
+                    ],
+                  )
+                ]
+              : <Widget>[
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      new ButtonSpeaker(isSpeaker: false),
+                      new ButtonMicro(isMute: false),
+                    ],
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    child: new GestureDetector(
+                      onTap: _endCallTapped,
+                      child: Image.asset(
+                        'images/end.png',
+                        height: 75.0,
+                        width: 75.0,
+                      ),
+                    ),
+                  )
+                ]),
     );
 
     return new Scaffold(
       backgroundColor: Colors.black,
       body: new Stack(
-        children: <Widget>[
-          NameCalling,
-          BottomContainer
-        ],
+        children: <Widget>[NameCalling, BottomContainer],
       ),
     );
-
   }
 
-  void _makeOrInitAnswerCall() {
+  Future _makeOrInitAnswerCall() async {
+    if (Platform.isAndroid) {
+      var status =
+          await Permission.requestSinglePermission(PermissionName.Microphone);
+      if (!(status == PermissionStatus.allow)) {
+        clearDataEndDismiss();
+        return;
+      }
+    }
     // Gán cuộc gọi đến cho biến global
     _stringeeCall = widget.incomingCall;
 
@@ -136,7 +149,7 @@ class _CallState extends State<Call> {
     _stringeeCall.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       StringeeCallEventType eventType = map['eventType'];
-      switch(eventType) {
+      switch (eventType) {
         case StringeeCallEventType.DidChangeSignalingState:
           handleSignalingStateChangeEvent(map['body']);
           break;
@@ -166,15 +179,16 @@ class _CallState extends State<Call> {
         'from': widget.fromUserId,
         'to': widget.toUserId,
         'isVideoCall': false,
-        'customData' : null,
-        'videoResolution' : null
+        'customData': null,
+        'videoResolution': null
       };
 
       _stringeeCall.makeCall(parameters).then((result) {
         bool status = result['status'];
         int code = result['code'];
         String message = result['message'];
-        print('MakeCall CallBack --- $status - $code - $message - ${_stringeeCall.id} - ${_stringeeCall.from} - ${_stringeeCall.to}');
+        print(
+            'MakeCall CallBack --- $status - $code - $message - ${_stringeeCall.id} - ${_stringeeCall.from} - ${_stringeeCall.to}');
         if (!status) {
           Navigator.pop(context);
         }
@@ -185,10 +199,7 @@ class _CallState extends State<Call> {
   void _endCallTapped() {
     _stringeeCall.hangup().then((result) {
       print('_endCallTapped -- ${result['message']}');
-      bool status = result['status'];
-      if (!status) {
-        clearDataEndDismiss();
-      }
+      clearDataEndDismiss();
     });
   }
 
@@ -208,10 +219,7 @@ class _CallState extends State<Call> {
   void _rejectCallTapped() {
     _stringeeCall.reject().then((result) {
       print('_rejectCallTapped -- ${result['message']}');
-      bool status = result['status'];
-      if (!status) {
-        clearDataEndDismiss();
-      }
+      clearDataEndDismiss();
     });
   }
 
@@ -220,7 +228,7 @@ class _CallState extends State<Call> {
     setState(() {
       status = state.toString().split('.')[1];
     });
-    switch(state) {
+    switch (state) {
       case StringeeSignalingState.Calling:
         break;
       case StringeeSignalingState.Ringing:
@@ -243,7 +251,7 @@ class _CallState extends State<Call> {
     setState(() {
       status = state.toString().split('.')[1];
     });
-    switch(state) {
+    switch (state) {
       case StringeeMediaState.Connected:
         break;
       case StringeeMediaState.Disconnected:
@@ -254,44 +262,53 @@ class _CallState extends State<Call> {
   }
 
   void clearDataEndDismiss() {
-    _stringeeCall.destroy();
-    _stringeeCall = null;
+    if (_stringeeCall != null) {
+      _stringeeCall.destroy();
+      _stringeeCall = null;
+    }
     Navigator.pop(context);
   }
-
 }
 
 class ButtonSpeaker extends StatefulWidget {
   final bool isSpeaker;
-  ButtonSpeaker({Key key, @required this.isSpeaker,}) : super(key: key);
+
+  ButtonSpeaker({
+    Key key,
+    @required this.isSpeaker,
+  }) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _ButtonSpeakerState();
 }
 
 class _ButtonSpeakerState extends State<ButtonSpeaker> {
   bool _isSpeaker;
+
   void _toggleSpeaker() {
     _stringeeCall.setSpeakerphoneOn(!_isSpeaker).then((result) {
       bool status = result['status'];
       if (status) {
         setState(() {
-          _isSpeaker=!_isSpeaker;
+          _isSpeaker = !_isSpeaker;
         });
       }
     });
   }
+
   @override
   void initState() {
     super.initState();
-    _isSpeaker=widget.isSpeaker;
+    _isSpeaker = widget.isSpeaker;
   }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return new GestureDetector(
       onTap: _toggleSpeaker,
       child: Image.asset(
-        _isSpeaker? 'images/ic_speaker_off.png' : 'images/ic_speaker_on.png',
+        _isSpeaker ? 'images/ic_speaker_off.png' : 'images/ic_speaker_on.png',
         height: 75.0,
         width: 75.0,
       ),
@@ -301,20 +318,25 @@ class _ButtonSpeakerState extends State<ButtonSpeaker> {
 
 class ButtonMicro extends StatefulWidget {
   final bool isMute;
-  ButtonMicro({Key key, @required this.isMute,}) : super(key: key);
+
+  ButtonMicro({
+    Key key,
+    @required this.isMute,
+  }) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _ButtonMicroState();
 }
 
 class _ButtonMicroState extends State<ButtonMicro> {
-
   bool _isMute;
+
   void _toggleMicro() {
     _stringeeCall.mute(!_isMute).then((result) {
       bool status = result['status'];
       if (status) {
         setState(() {
-          _isMute=!_isMute;
+          _isMute = !_isMute;
         });
       }
     });
@@ -323,7 +345,7 @@ class _ButtonMicroState extends State<ButtonMicro> {
   @override
   void initState() {
     super.initState();
-    _isMute=widget.isMute;
+    _isMute = widget.isMute;
   }
 
   @override
@@ -332,7 +354,7 @@ class _ButtonMicroState extends State<ButtonMicro> {
     return new GestureDetector(
       onTap: _toggleMicro,
       child: Image.asset(
-        _isMute? 'images/ic_mute.png' : 'images/ic_mic.png',
+        _isMute ? 'images/ic_mute.png' : 'images/ic_mic.png',
         height: 75.0,
         width: 75.0,
       ),
