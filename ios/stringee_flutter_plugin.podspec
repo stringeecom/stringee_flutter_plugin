@@ -17,6 +17,7 @@ Stringee plugin for flutter.
 
   s.dependency 'Flutter'
   s.dependency 'Stringee'
+  s.static_framework = true
 
   s.ios.deployment_target = '8.0'
 end
