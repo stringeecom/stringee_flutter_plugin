@@ -1,7 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
-import 'package:permission/permission.dart';
+import 'package:simple_permissions/simple_permissions.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 StringeeCall _stringeeCall;
@@ -131,9 +131,10 @@ class _CallState extends State<Call> {
 
   Future _makeOrInitAnswerCall() async {
     if (Platform.isAndroid) {
-      var status =
-          await Permission.requestSinglePermission(PermissionName.Microphone);
-      if (!(status == PermissionStatus.allow)) {
+      final res =
+          await SimplePermissions.requestPermission(Permission.RecordAudio);
+      print("permission request result is " + res.toString());
+      if (!(res == PermissionStatus.authorized)) {
         clearDataEndDismiss();
         return;
       }
@@ -265,6 +266,8 @@ class _CallState extends State<Call> {
     if (_stringeeCall != null) {
       _stringeeCall.destroy();
       _stringeeCall = null;
+      Navigator.pop(context);
+    } else {
       Navigator.pop(context);
     }
   }
