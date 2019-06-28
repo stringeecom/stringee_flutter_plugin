@@ -7,9 +7,9 @@ import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'Call.dart';
 
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1LTE1NTI1MzcxNDUiLCJpc3MiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1IiwiZXhwIjoxNTU1MTI5MTQ1LCJ1c2VySWQiOiJ1c2VyMSJ9.75ZC-EYO9rgiLlAxrX-4BfNUAKuvJiIxdUDt9csmuP4';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS2pSUmY1R0ltUldZdGVLZ0VDNVJNbzhXQkZnM3pUWTItMTU2MTY5NTA3MiIsImlzcyI6IlNLalJSZjVHSW1SV1l0ZUtnRUM1Uk1vOFdCRmczelRZMiIsImV4cCI6MTU2NDI4NzA3MiwidXNlcklkIjoidXNlcjEifQ.K0pShOQ2KatZH3MVjW1DwWZfz6ewhY6HbYV0PLstSlM';
 var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1LTE1NTI1MzcxNjYiLCJpc3MiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1IiwiZXhwIjoxNTU1MTI5MTY2LCJ1c2VySWQiOiJ1c2VyMiJ9.rVqu7johCpjhk1fxBFxbQhxsrluX05MsOF0wQQLaMRw';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS2pSUmY1R0ltUldZdGVLZ0VDNVJNbzhXQkZnM3pUWTItMTU2MTY5NTA5MiIsImlzcyI6IlNLalJSZjVHSW1SV1l0ZUtnRUM1Uk1vOFdCRmczelRZMiIsImV4cCI6MTU2NDI4NzA5MiwidXNlcklkIjoidXNlcjIifQ.KOms-dPN8EL-N_kft7vRRnemsfELXQLKcrY5rDoCeYk';
 
 var client = StringeeClient();
 String strUserId = "";
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(user2);
+    client.connect(user1);
 
   }
 

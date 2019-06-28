@@ -1,7 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+//import 'package:simple_permissions/simple_permissions.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 StringeeCall _stringeeCall;
@@ -130,15 +130,16 @@ class _CallState extends State<Call> {
   }
 
   Future _makeOrInitAnswerCall() async {
-    if (Platform.isAndroid) {
-      final res =
-          await SimplePermissions.requestPermission(Permission.RecordAudio);
-      print("permission request result is " + res.toString());
-      if (!(res == PermissionStatus.authorized)) {
-        clearDataEndDismiss();
-        return;
-      }
-    }
+//    if (Platform.isAndroid) {
+//      final res =
+//          await SimplePermissions.requestPermission(Permission.RecordAudio);
+//      print("permission request result is " + res.toString());
+//      if (!(res == PermissionStatus.authorized)) {
+//        clearDataEndDismiss();
+//        return;
+//      }
+//    }
+
     // Gán cuộc gọi đến cho biến global
     _stringeeCall = widget.incomingCall;
 
@@ -200,7 +201,10 @@ class _CallState extends State<Call> {
   void _endCallTapped() {
     _stringeeCall.hangup().then((result) {
       print('_endCallTapped -- ${result['message']}');
-      clearDataEndDismiss();
+      bool status = result['status'];
+      if (!status) {
+        clearDataEndDismiss();
+      }
     });
   }
 
