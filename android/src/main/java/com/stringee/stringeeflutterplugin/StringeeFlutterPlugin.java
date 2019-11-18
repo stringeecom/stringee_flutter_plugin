@@ -1,6 +1,8 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
@@ -36,10 +38,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     private static StringeeManager stringeeManager;
     private Result makeCallResult;
     private static EventChannel.EventSink mEventSink;
+    private Handler handler;
 
     public StringeeFlutterPlugin(Registrar registrar) {
         this.registrar = registrar;
         stringeeManager = StringeeManager.getInstance();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     /**
@@ -153,20 +157,30 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             client.registerPushToken(registrationToken, new StatusListener() {
                 @Override
                 public void onSuccess() {
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Map map = new HashMap();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        }
+                    });
                 }
 
                 @Override
-                public void onError(StringeeError error) {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                public void onError(final StringeeError error) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Map map = new HashMap();
+                            map.put("status", false);
+                            map.put("code", error.getCode());
+                            map.put("message", error.getMessage());
+                            result.success(map);
+                        }
+                    });
                 }
             });
         }
@@ -182,20 +196,30 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             client.unregisterPushToken(registrationToken, new StatusListener() {
                 @Override
                 public void onSuccess() {
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Map map = new HashMap();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        }
+                    });
                 }
 
                 @Override
-                public void onError(StringeeError error) {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                public void onError(final StringeeError error) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Map map = new HashMap();
+                            map.put("status", false);
+                            map.put("code", error.getCode());
+                            map.put("message", error.getMessage());
+                            result.success(map);
+                        }
+                    });
                 }
             });
         }
@@ -212,20 +236,30 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             client.sendCustomMessage(toUserId, jsonObject, new StatusListener() {
                 @Override
                 public void onSuccess() {
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Map map = new HashMap();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        }
+                    });
                 }
 
                 @Override
-                public void onError(StringeeError error) {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                public void onError(final StringeeError error) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Map map = new HashMap();
+                            map.put("status", false);
+                            map.put("code", error.getCode());
+                            map.put("message", error.getMessage());
+                            result.success(map);
+                        }
+                    });
                 }
             });
         }
@@ -480,20 +514,30 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         call.sendDTMF(dtmf, new StatusListener() {
             @Override
             public void onSuccess() {
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
+                });
             }
 
             @Override
-            public void onError(StringeeError error) {
-                Map map = new HashMap();
-                map.put("status", false);
-                map.put("code", error.getCode());
-                map.put("message", error.getMessage());
-                result.success(map);
+            public void onError(final StringeeError error) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", error.getCode());
+                        map.put("message", error.getMessage());
+                        result.success(map);
+                    }
+                });
             }
         });
     }
@@ -706,158 +750,218 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     }
 
     @Override
-    public void onConnectionConnected(StringeeClient stringeeClient, boolean b) {
-        Map map = new HashMap();
-        map.put("event", "didConnect");
-        Map bodyMap = new HashMap();
-        bodyMap.put("userId", stringeeClient.getUserId());
-        bodyMap.put("projectId", String.valueOf(String.valueOf(stringeeClient.getProjectId())));
-        bodyMap.put("isReconnecting", b);
-        map.put("body", bodyMap);
-        mEventSink.success(map);
-    }
-
-    @Override
-    public void onConnectionDisconnected(StringeeClient stringeeClient, boolean b) {
-        Map map = new HashMap();
-        map.put("event", "didDisconnect");
-        Map bodyMap = new HashMap();
-        bodyMap.put("userId", stringeeClient.getUserId());
-        bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
-        bodyMap.put("isReconnecting", b);
-        map.put("body", bodyMap);
-        mEventSink.success(map);
-    }
-
-    @Override
-    public void onIncomingCall(StringeeCall stringeeCall) {
-        stringeeManager.getCallsMap().put(stringeeCall.getCallId(), stringeeCall);
-        Map map = new HashMap();
-        map.put("event", "incomingCall");
-        Map callInfoMap = new HashMap();
-        callInfoMap.put("callId", stringeeCall.getCallId());
-        callInfoMap.put("from", stringeeCall.getFrom());
-        callInfoMap.put("to", stringeeCall.getTo());
-        callInfoMap.put("fromAlias", stringeeCall.getFromAlias());
-        callInfoMap.put("toAlias", stringeeCall.getToAlias());
-        int callType = 0;
-        if (!stringeeCall.getFrom().equals(client.getUserId())) {
-            callType = 1;
-        }
-        if (stringeeCall.isAppToPhoneCall()) {
-            callType = 2;
-        } else if (stringeeCall.isPhoneToAppCall()) {
-            callType = 3;
-        }
-        callInfoMap.put("callType", callType);
-        callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
-        callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
-        map.put("body", callInfoMap);
-        mEventSink.success(map);
-    }
-
-    @Override
-    public void onConnectionError(StringeeClient stringeeClient, StringeeError stringeeError) {
-        Map map = new HashMap();
-        map.put("event", "didFailWithError");
-        Map bodyMap = new HashMap();
-        bodyMap.put("userId", stringeeClient.getUserId());
-        bodyMap.put("code", stringeeError.getCode());
-        bodyMap.put("message", stringeeError.getMessage());
-        map.put("body", bodyMap);
-        mEventSink.success(map);
-    }
-
-    @Override
-    public void onRequestNewToken(StringeeClient stringeeClient) {
-        Map map = new HashMap();
-        map.put("event", "requestAccessToken");
-        Map bodyMap = new HashMap();
-        bodyMap.put("userId", stringeeClient.getUserId());
-        map.put("body", bodyMap);
-        mEventSink.success(map);
-    }
-
-    @Override
-    public void onCustomMessage(String s, JSONObject jsonObject) {
-        Map map = new HashMap();
-        map.put("event", "didReceiveCustomMessage");
-        Map bodyMap = new HashMap();
-        bodyMap.put("fromUserId", s);
-        bodyMap.put("message", jsonObject.toString());
-        map.put("body", bodyMap);
-        mEventSink.success(map);
-    }
-
-    @Override
-    public void onSignalingStateChange(StringeeCall stringeeCall, StringeeCall.SignalingState signalingState, String s, int i, String s1) {
-        if (signalingState == StringeeCall.SignalingState.CALLING) {
-            stringeeManager.getCallsMap().put(stringeeCall.getCallId(), stringeeCall);
-            Map map = new HashMap();
-            map.put("status", true);
-            map.put("code", 0);
-            map.put("message", "Success");
-            Map callInfoMap = new HashMap();
-            callInfoMap.put("callId", stringeeCall.getCallId());
-            callInfoMap.put("from", stringeeCall.getFrom());
-            callInfoMap.put("to", stringeeCall.getTo());
-            callInfoMap.put("fromAlias", stringeeCall.getFromAlias());
-            callInfoMap.put("toAlias", stringeeCall.getToAlias());
-            int callType = 0;
-            if (!stringeeCall.getFrom().equals(client.getUserId())) {
-                callType = 1;
+    public void onConnectionConnected(final StringeeClient stringeeClient, final boolean b) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "didConnect");
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                bodyMap.put("projectId", String.valueOf(String.valueOf(stringeeClient.getProjectId())));
+                bodyMap.put("isReconnecting", b);
+                map.put("body", bodyMap);
+                mEventSink.success(map);
             }
-            if (stringeeCall.isAppToPhoneCall()) {
-                callType = 2;
-            } else if (stringeeCall.isPhoneToAppCall()) {
-                callType = 3;
+        });
+    }
+
+    @Override
+    public void onConnectionDisconnected(final StringeeClient stringeeClient, final boolean b) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "didDisconnect");
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
+                bodyMap.put("isReconnecting", b);
+                map.put("body", bodyMap);
+                mEventSink.success(map);
             }
-            callInfoMap.put("callType", callType);
-            callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
-            callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
-            map.put("callInfo", callInfoMap);
-            makeCallResult.success(map);
-        }
-
-        Map map = new HashMap();
-        map.put("event", "didChangeSignalingState");
-        Map bodyMap = new HashMap();
-        bodyMap.put("callId", stringeeCall.getCallId());
-        bodyMap.put("code", signalingState.getValue());
-        map.put("body", bodyMap);
-        mEventSink.success(map);
+        });
     }
 
     @Override
-    public void onError(StringeeCall stringeeCall, int code, String message) {
-        Map map = new HashMap();
-        map.put("status", false);
-        map.put("code", code);
-        map.put("message", message);
-        makeCallResult.success(map);
+    public void onIncomingCall(final StringeeCall stringeeCall) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                stringeeManager.getCallsMap().put(stringeeCall.getCallId(), stringeeCall);
+                Map map = new HashMap();
+                map.put("event", "incomingCall");
+                Map callInfoMap = new HashMap();
+                callInfoMap.put("callId", stringeeCall.getCallId());
+                callInfoMap.put("from", stringeeCall.getFrom());
+                callInfoMap.put("to", stringeeCall.getTo());
+                callInfoMap.put("fromAlias", stringeeCall.getFromAlias());
+                callInfoMap.put("toAlias", stringeeCall.getToAlias());
+                int callType = 0;
+                if (!stringeeCall.getFrom().equals(client.getUserId())) {
+                    callType = 1;
+                }
+                if (stringeeCall.isAppToPhoneCall()) {
+                    callType = 2;
+                } else if (stringeeCall.isPhoneToAppCall()) {
+                    callType = 3;
+                }
+                callInfoMap.put("callType", callType);
+                callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
+                callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
+                map.put("body", callInfoMap);
+                mEventSink.success(map);
+            }
+        });
     }
 
     @Override
-    public void onHandledOnAnotherDevice(StringeeCall stringeeCall, StringeeCall.SignalingState signalingState, String s) {
-        Map map = new HashMap();
-        map.put("event", "didHandleOnAnotherDevice");
-        Map bodyMap = new HashMap();
-        bodyMap.put("callId", stringeeCall.getCallId());
-        bodyMap.put("code", signalingState.getValue());
-        bodyMap.put("description", s);
-        map.put("body", bodyMap);
-        mEventSink.success(map);
+    public void onConnectionError(final StringeeClient stringeeClient, final StringeeError stringeeError) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "didFailWithError");
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                bodyMap.put("code", stringeeError.getCode());
+                bodyMap.put("message", stringeeError.getMessage());
+                map.put("body", bodyMap);
+                mEventSink.success(map);
+            }
+        });
     }
 
     @Override
-    public void onMediaStateChange(StringeeCall stringeeCall, StringeeCall.MediaState mediaState) {
-        Map map = new HashMap();
-        map.put("event", "didChangeMediaState");
-        Map bodyMap = new HashMap();
-        bodyMap.put("callId", stringeeCall.getCallId());
-        bodyMap.put("code", mediaState.getValue());
-        map.put("body", bodyMap);
-        mEventSink.success(map);
+    public void onRequestNewToken(final StringeeClient stringeeClient) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "requestAccessToken");
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                map.put("body", bodyMap);
+                mEventSink.success(map);
+            }
+        });
+    }
+
+    @Override
+    public void onCustomMessage(final String s, final JSONObject jsonObject) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "didReceiveCustomMessage");
+                Map bodyMap = new HashMap();
+                bodyMap.put("fromUserId", s);
+                bodyMap.put("message", jsonObject.toString());
+                map.put("body", bodyMap);
+                mEventSink.success(map);
+            }
+        });
+    }
+
+    @Override
+    public void onTopicMessage(String from, JSONObject msg) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+    }
+
+    @Override
+    public void onSignalingStateChange(final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState, String s, int i, String s1) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (signalingState == StringeeCall.SignalingState.CALLING) {
+                    stringeeManager.getCallsMap().put(stringeeCall.getCallId(), stringeeCall);
+                    Map map = new HashMap();
+                    map.put("status", true);
+                    map.put("code", 0);
+                    map.put("message", "Success");
+                    Map callInfoMap = new HashMap();
+                    callInfoMap.put("callId", stringeeCall.getCallId());
+                    callInfoMap.put("from", stringeeCall.getFrom());
+                    callInfoMap.put("to", stringeeCall.getTo());
+                    callInfoMap.put("fromAlias", stringeeCall.getFromAlias());
+                    callInfoMap.put("toAlias", stringeeCall.getToAlias());
+                    int callType = 0;
+                    if (!stringeeCall.getFrom().equals(client.getUserId())) {
+                        callType = 1;
+                    }
+                    if (stringeeCall.isAppToPhoneCall()) {
+                        callType = 2;
+                    } else if (stringeeCall.isPhoneToAppCall()) {
+                        callType = 3;
+                    }
+                    callInfoMap.put("callType", callType);
+                    callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
+                    callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
+                    map.put("callInfo", callInfoMap);
+                    makeCallResult.success(map);
+                }
+
+                Map map = new HashMap();
+                map.put("event", "didChangeSignalingState");
+                Map bodyMap = new HashMap();
+                bodyMap.put("callId", stringeeCall.getCallId());
+                bodyMap.put("code", signalingState.getValue());
+                map.put("body", bodyMap);
+                mEventSink.success(map);
+            }
+        });
+    }
+
+    @Override
+    public void onError(StringeeCall stringeeCall, final int code, final String message) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("status", false);
+                map.put("code", code);
+                map.put("message", message);
+                makeCallResult.success(map);
+            }
+        });
+    }
+
+    @Override
+    public void onHandledOnAnotherDevice(final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState, final String s) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "didHandleOnAnotherDevice");
+                Map bodyMap = new HashMap();
+                bodyMap.put("callId", stringeeCall.getCallId());
+                bodyMap.put("code", signalingState.getValue());
+                bodyMap.put("description", s);
+                map.put("body", bodyMap);
+                mEventSink.success(map);
+            }
+        });
+    }
+
+    @Override
+    public void onMediaStateChange(final StringeeCall stringeeCall, final StringeeCall.MediaState mediaState) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "didChangeMediaState");
+                Map bodyMap = new HashMap();
+                bodyMap.put("callId", stringeeCall.getCallId());
+                bodyMap.put("code", mediaState.getValue());
+                map.put("body", bodyMap);
+                mEventSink.success(map);
+            }
+        });
     }
 
     @Override
@@ -871,17 +975,22 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     }
 
     @Override
-    public void onCallInfo(StringeeCall stringeeCall, JSONObject jsonObject) {
-        Map map = new HashMap();
-        map.put("event", "didReceiveCallInfo");
-        Map bodyMap = new HashMap();
-        bodyMap.put("callId", stringeeCall.getCallId());
-        try {
-            bodyMap.put("info", convertJsonToMap(jsonObject));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        map.put("body", bodyMap);
-        mEventSink.success(map);
+    public void onCallInfo(final StringeeCall stringeeCall, final JSONObject jsonObject) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("event", "didReceiveCallInfo");
+                Map bodyMap = new HashMap();
+                bodyMap.put("callId", stringeeCall.getCallId());
+                try {
+                    bodyMap.put("info", convertJsonToMap(jsonObject));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                map.put("body", bodyMap);
+                mEventSink.success(map);
+            }
+        });
     }
 }

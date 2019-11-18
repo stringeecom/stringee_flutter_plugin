@@ -1,39 +1,29 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 import 'Call.dart';
 
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS2pSUmY1R0ltUldZdGVLZ0VDNVJNbzhXQkZnM3pUWTItMTU2MTY5NTA3MiIsImlzcyI6IlNLalJSZjVHSW1SV1l0ZUtnRUM1Uk1vOFdCRmczelRZMiIsImV4cCI6MTU2NDI4NzA3MiwidXNlcklkIjoidXNlcjEifQ.K0pShOQ2KatZH3MVjW1DwWZfz6ewhY6HbYV0PLstSlM';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1LTE1NzQwNjk1MTciLCJpc3MiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1IiwiZXhwIjoxNTc2NjYxNTE3LCJ1c2VySWQiOiJ1c2VyMSJ9.ZT4Uynv3kVjfxXWDvDNplHsKiEYgfdKn24ST3ZBm5Fk';
 var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS2pSUmY1R0ltUldZdGVLZ0VDNVJNbzhXQkZnM3pUWTItMTU2MTY5NTA5MiIsImlzcyI6IlNLalJSZjVHSW1SV1l0ZUtnRUM1Uk1vOFdCRmczelRZMiIsImV4cCI6MTU2NDI4NzA5MiwidXNlcklkIjoidXNlcjIifQ.KOms-dPN8EL-N_kft7vRRnemsfELXQLKcrY5rDoCeYk';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1LTE1NzQwNjk1MzQiLCJpc3MiOiJTS0NsejhzQ2tKeDNzdU13SmdCdDJ6bUc2T01JbVRYb2Y1IiwiZXhwIjoxNTc2NjYxNTM0LCJ1c2VySWQiOiJ1c2VyMiJ9.nPE0x3MvVnHgqTJZTHnrDWVFpRpeJTKzMvQxruJTJbY';
 
 var client = StringeeClient();
 String strUserId = "";
 
 void main() {
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    runApp(new MyApp());
-  });
+  runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-        title: "OneToOneCallSample",
-        home: new MyHomePage()
-    );
+    return new MaterialApp(title: "OneToOneCallSample", home: new MyHomePage());
   }
 }
 
 class MyHomePage extends StatefulWidget {
-
-@override
+  @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return _MyHomePageState();
@@ -41,7 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   String myUserId = 'Not connected...';
 
   @override
@@ -53,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       StringeeClientEventType eventType = map['eventType'];
-      switch(eventType) {
+      switch (eventType) {
         case StringeeClientEventType.DidConnect:
           handleDidConnectEvent();
           break;
@@ -76,13 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(user1);
-
+    client.connect(user2);
   }
 
   @override
   Widget build(BuildContext context) {
-
     Widget topText = new Container(
       padding: EdgeInsets.only(left: 10.0, top: 10.0),
       child: new Text(
@@ -99,7 +86,6 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text("OneToOneCallSample"),
         backgroundColor: Colors.indigo[600],
       ),
-
       body: new Stack(
         children: <Widget>[
           topText,
@@ -108,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
 
   //region Handle Client Event
   void handleDidConnectEvent() {
@@ -126,14 +111,19 @@ class _MyHomePageState extends State<MyHomePage> {
   void handleIncomingCallEvent(StringeeCall call) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Call(fromUserId: call.from, toUserId: call.to, showIncomingUi: true, incomingCall: call)),
+      MaterialPageRoute(
+          builder: (context) => Call(
+              fromUserId: call.from,
+              toUserId: call.to,
+              showIncomingUi: true,
+              incomingCall: call)),
     );
   }
 
-  //endregion
+//endregion
 }
 
-class MyForm extends StatefulWidget{
+class MyForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -141,9 +131,7 @@ class MyForm extends StatefulWidget{
   }
 }
 
-
 class _MyFormState extends State<MyForm> {
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -153,7 +141,6 @@ class _MyFormState extends State<MyForm> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-
           new Container(
             padding: EdgeInsets.all(20.0),
             child: new TextField(
@@ -167,7 +154,6 @@ class _MyFormState extends State<MyForm> {
               ),
             ),
           ),
-
           new Container(
             child: new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -179,11 +165,8 @@ class _MyFormState extends State<MyForm> {
                     onPressed: _voiceCallTapped,
                     child: Text('CALL'),
                   ),
-                ]
-            ),
-
+                ]),
           ),
-
         ],
       ),
     );
@@ -200,13 +183,11 @@ class _MyFormState extends State<MyForm> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Call(fromUserId: client.userId, toUserId: strUserId, showIncomingUi: false)),
+      MaterialPageRoute(
+          builder: (context) => Call(
+              fromUserId: client.userId,
+              toUserId: strUserId,
+              showIncomingUi: false)),
     );
   }
-
 }
-
-
-
-
-
