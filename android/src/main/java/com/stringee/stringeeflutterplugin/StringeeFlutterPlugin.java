@@ -903,7 +903,10 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
                     callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
                     map.put("callInfo", callInfoMap);
-                    makeCallResult.success(map);
+                    if (makeCallResult != null) {
+                        makeCallResult.success(map);
+                        makeCallResult = null;
+                    }
                 }
 
                 Map map = new HashMap();
@@ -926,7 +929,10 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 map.put("status", false);
                 map.put("code", code);
                 map.put("message", message);
-                makeCallResult.success(map);
+                if (makeCallResult != null) {
+                    makeCallResult.success(map);
+                    makeCallResult = null;
+                }
             }
         });
     }
