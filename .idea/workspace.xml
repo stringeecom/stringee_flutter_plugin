@@ -7,23 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb5e12ef-f814-4430-bbc6-90d2bee1717b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/stringee_flutter_plugin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/stringee_flutter_plugin.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Podfile" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Podfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/stringee_flutter_plugin.podspec" beforeDir="false" afterPath="$PROJECT_DIR$/ios/stringee_flutter_plugin.podspec" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stringee_flutter_plugin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/stringee_flutter_plugin.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,25 +102,25 @@
     </todo-panel>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1792" height="709" key="GridCell.Tab.0.bottom" timestamp="1602131077806">
+    <state width="1792" height="476" key="GridCell.Tab.0.bottom" timestamp="1602131316337">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="709" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131077806" />
+    <state width="1792" height="476" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316337" />
     <state width="1398" height="225" key="GridCell.Tab.0.bottom/41.23.1399.877@41.23.1399.877" timestamp="1602128168485" />
-    <state width="1792" height="709" key="GridCell.Tab.0.center" timestamp="1602131077805">
+    <state width="1792" height="476" key="GridCell.Tab.0.center" timestamp="1602131316337">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="709" key="GridCell.Tab.0.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131077805" />
+    <state width="1792" height="476" key="GridCell.Tab.0.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316337" />
     <state width="1398" height="225" key="GridCell.Tab.0.center/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state width="1792" height="709" key="GridCell.Tab.0.left" timestamp="1602131077805">
+    <state width="1792" height="476" key="GridCell.Tab.0.left" timestamp="1602131316336">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="709" key="GridCell.Tab.0.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131077805" />
+    <state width="1792" height="476" key="GridCell.Tab.0.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316336" />
     <state width="1398" height="225" key="GridCell.Tab.0.left/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state width="1792" height="709" key="GridCell.Tab.0.right" timestamp="1602131077806">
+    <state width="1792" height="476" key="GridCell.Tab.0.right" timestamp="1602131316337">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="709" key="GridCell.Tab.0.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131077806" />
+    <state width="1792" height="476" key="GridCell.Tab.0.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316337" />
     <state width="1398" height="225" key="GridCell.Tab.0.right/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
     <state x="1719" y="103" key="SettingsEditor" timestamp="1602127004118">
       <screen x="1440" y="23" width="1920" height="1057" />
