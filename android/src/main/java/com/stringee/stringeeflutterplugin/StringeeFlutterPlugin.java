@@ -94,10 +94,8 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 resolution = call.argument("videoResolution");
             }
             makeCall(registrar.context(), from, to, isVideoCall, customData, resolution, result);
-        } else if (call.method.equals("initAnswer")) {
-            initAnswer((String) call.arguments, result);
         } else if (call.method.equals("answer")) {
-            answer((String) call.arguments, result);
+            answer(registrar.context(), (String) call.arguments, result);
         } else if (call.method.equals("hangup")) {
             hangup((String) call.arguments, result);
         } else if (call.method.equals("reject")) {
@@ -295,7 +293,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         }
         stringeeCall.setCallListener(this);
         makeCallResult = result;
-        stringeeCall.makeCall();
 
         audioManager = StringeeAudioManager.create(context);
         audioManager.start(new StringeeAudioManager.AudioManagerEvents() {
@@ -324,8 +321,9 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                         + "selected: " + selectedAudioDevice);
             }
         });
-
         stringeeManager.setAudioManager(audioManager);
+
+        stringeeCall.makeCall();
     }
 
     private JSONObject convertMapToJson(Map map) throws JSONException {
@@ -341,11 +339,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     }
 
     /**
-     * Init an answer
+     * Answer a call
      *
      * @param callId
+     * @param result
      */
-    public void initAnswer(String callId, Result result) {
+    public void answer(Context context, String callId, Result result) {
         if (client == null) {
             Map map = new HashMap();
             map.put("status", false);
@@ -375,47 +374,36 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         }
 
         call.setCallListener(this);
-        Map map = new HashMap();
-        map.put("status", true);
-        map.put("code", 0);
-        map.put("message", "Success");
-        result.success(map);
-    }
+        final boolean isVideoCall = call.isVideoCall();
 
-    /**
-     * Answer a call
-     *
-     * @param callId
-     * @param result
-     */
-    public void answer(String callId, Result result) {
-        if (client == null) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is not initialized or connected.");
-            result.success(map);
-            return;
-        }
-
-        if (callId == null || callId.length() == 0) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "The call id is invalid.");
-            result.success(map);
-            return;
-        }
-
-        StringeeCall call = StringeeManager.getInstance().getCallsMap().get(callId);
-        if (call == null) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -3);
-            map.put("message", "The call is not found.");
-            result.success(map);
-            return;
-        }
+        audioManager = StringeeAudioManager.create(context);
+        audioManager.start(new StringeeAudioManager.AudioManagerEvents() {
+            @Override
+            public void onAudioDeviceChanged(StringeeAudioManager.AudioDevice selectedAudioDevice, Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
+                if (!isVideoCall) {
+                    switch (selectedAudioDevice) {
+                        case WIRED_HEADSET:
+                            audioManager.setSpeakerphoneOn(false);
+                            break;
+                        case BLUETOOTH:
+                            audioManager.setSpeakerphoneOn(false);
+                            break;
+                        case SPEAKER_PHONE:
+                            audioManager.setSpeakerphoneOn(isVideoCall);
+                            break;
+                    }
+                } else {
+                    if (selectedAudioDevice == StringeeAudioManager.AudioDevice.WIRED_HEADSET || selectedAudioDevice == StringeeAudioManager.AudioDevice.BLUETOOTH) {
+                        audioManager.setSpeakerphoneOn(false);
+                    } else {
+                        audioManager.setSpeakerphoneOn(true);
+                    }
+                }
+                Log.d("Stringee", "onAudioManagerDevicesChanged: " + availableAudioDevices + ", "
+                        + "selected: " + selectedAudioDevice);
+            }
+        });
+        stringeeManager.setAudioManager(audioManager);
 
         call.answer();
         Map map = new HashMap();
@@ -460,6 +448,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             return;
         }
 
+        StringeeAudioManager audioManager = StringeeManager.getInstance().getAudioManager();
+        if (audioManager != null) {
+            audioManager.stop();
+            audioManager = null;
+        }
+
         call.hangup();
         Map map = new HashMap();
         map.put("status", true);
@@ -501,6 +495,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             map.put("message", "The call is not found.");
             result.success(map);
             return;
+        }
+
+        StringeeAudioManager audioManager = StringeeManager.getInstance().getAudioManager();
+        if (audioManager != null) {
+            audioManager.stop();
+            audioManager = null;
         }
 
         call.reject();
