@@ -7,8 +7,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb5e12ef-f814-4430-bbc6-90d2bee1717b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Podfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Podfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,27 +28,6 @@
   <component name="DefaultGradleProjectSettings">
     <option name="testRunner" value="GRADLE" />
     <option name="delegatedBuild" value="true" />
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>textcontent</find>
-      <find>eventChannel</find>
-      <find>prin</find>
-      <find>reject</find>
-      <find>connect</find>
-      <find>import 'package:permission/permission.dart';</find>
-      <find>_stringeeCall</find>
-      <find>import 'package:permission/permission.dart'</find>
-      <find>requestSinglePermission</find>
-      <find>makeCall&quot;</find>
-      <find>makeCall</find>
-      <find>onMethodCall</find>
-      <find>makecall</find>
-      <find>permission request result is</find>
-      <find>clearDataEndDismiss()</find>
-      <find>clearDataEndDismiss</find>
-      <find>connect(</find>
-    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -55,7 +44,7 @@
     <property name="dart.analysis.tool.window.force.activate" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RunManager">
@@ -102,33 +91,33 @@
     </todo-panel>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1792" height="476" key="GridCell.Tab.0.bottom" timestamp="1602131316337">
+    <state width="1801" height="291" key="GridCell.Tab.0.bottom" timestamp="1602845042623">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="476" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316337" />
+    <state width="1801" height="291" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602845042623" />
     <state width="1398" height="225" key="GridCell.Tab.0.bottom/41.23.1399.877@41.23.1399.877" timestamp="1602128168485" />
-    <state width="1792" height="476" key="GridCell.Tab.0.center" timestamp="1602131316337">
+    <state width="1801" height="291" key="GridCell.Tab.0.center" timestamp="1602845042622">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="476" key="GridCell.Tab.0.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316337" />
+    <state width="1801" height="291" key="GridCell.Tab.0.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602845042622" />
     <state width="1398" height="225" key="GridCell.Tab.0.center/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state width="1792" height="476" key="GridCell.Tab.0.left" timestamp="1602131316336">
+    <state width="1801" height="291" key="GridCell.Tab.0.left" timestamp="1602845042622">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="476" key="GridCell.Tab.0.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316336" />
+    <state width="1801" height="291" key="GridCell.Tab.0.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602845042622" />
     <state width="1398" height="225" key="GridCell.Tab.0.left/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state width="1792" height="476" key="GridCell.Tab.0.right" timestamp="1602131316337">
+    <state width="1801" height="291" key="GridCell.Tab.0.right" timestamp="1602845042623">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state width="1792" height="476" key="GridCell.Tab.0.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602131316337" />
+    <state width="1801" height="291" key="GridCell.Tab.0.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602845042623" />
     <state width="1398" height="225" key="GridCell.Tab.0.right/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state x="1719" y="103" key="SettingsEditor" timestamp="1602127004118">
+    <state x="1777" y="23" key="SettingsEditor" timestamp="1602830550010">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state x="1719" y="103" key="SettingsEditor/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602127004118" />
-    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog" timestamp="1602126944703">
+    <state x="1777" y="23" key="SettingsEditor/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602830550010" />
+    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog" timestamp="1602812073032">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
-    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602126944703" />
+    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602812073032" />
   </component>
 </project>
