@@ -64,6 +64,10 @@ class StringeeCall {
   }
 
   void initFromInfo(Map<dynamic, dynamic> callInfo) {
+    if (callInfo == null) {
+      return;
+    }
+    
     this._id = callInfo['callId'];
     this._from = callInfo['from'];
     this._to = callInfo['to'];
