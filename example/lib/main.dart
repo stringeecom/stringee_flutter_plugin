@@ -4,10 +4,9 @@ import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'Call.dart';
 
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MDI3NTg2MTIiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjA1MzUwNjEyLCJ1c2VySWQiOiJ1c2VyMSJ9.RTtPrA1XqOWWEtR1Q2eQifFvW0_3BXcs3ENa2oJxctg';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjQwODgiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE2MDg4LCJ1c2VySWQiOiJ1c2VyMSJ9.RkqiRpfvDoMU9rZORzJKHTmtN_w70Tr5rnp5IePOJFE';
 var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MDIxMjc1ODIiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjA0NzE5NTgyLCJ1c2VySWQiOiJ1c2VyMiJ9.vQZFuC4cqL6cbTQvR1x2KzyEIs_JAY7EpTbF4bnEubA';
-
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
 var client = StringeeClient();
 String strUserId = "";
 
@@ -50,10 +49,16 @@ class _MyHomePageState extends State<MyHomePage> {
           handleDiddisconnectEvent();
           break;
         case StringeeClientEventType.DidFailWithError:
+          handleDidFailWithErrorEvent(map['code'], map['message']);
           break;
         case StringeeClientEventType.RequestAccessToken:
+          handleRequestAccessTokenEvent();
           break;
         case StringeeClientEventType.DidReceiveCustomMessage:
+          handleDidReceiveCustomMessageEvent(map['from'], map['message']);
+          break;
+        case StringeeClientEventType.DidReceiveTopicMessage:
+          handleDidReceiveTopicMessageEvent(map['from'], map['message']);
           break;
         case StringeeClientEventType.IncomingCall:
           StringeeCall call = map['body'];
@@ -108,6 +113,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void handleDidFailWithErrorEvent(int code, String message) {
+    print('code: ' + code.toString() + '\nmessage: ' + message);
+  }
+
+  void handleRequestAccessTokenEvent() {
+    print('Request new access token');
+  }
+
+  void handleDidReceiveCustomMessageEvent(
+      String from, Map<dynamic, dynamic> message) {
+    print('from: ' + from + '\nmessage: ' + message.toString());
+  }
+
+  void handleDidReceiveTopicMessageEvent(
+      String from, Map<dynamic, dynamic> message) {
+    print('from: ' + from + '\nmessage: ' + message.toString());
+  }
+
   void handleIncomingCallEvent(StringeeCall call) {
     Navigator.push(
       context,
@@ -115,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context) => Call(
               fromUserId: call.from,
               toUserId: call.to,
+              isVideoCall: call.isVideocall,
               showIncomingUi: true,
               incomingCall: call)),
     );
@@ -187,6 +211,7 @@ class _MyFormState extends State<MyForm> {
           builder: (context) => Call(
               fromUserId: client.userId,
               toUserId: strUserId,
+              isVideoCall: true,
               showIncomingUi: false)),
     );
   }

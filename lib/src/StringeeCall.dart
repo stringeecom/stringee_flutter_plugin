@@ -1,17 +1,15 @@
 import 'dart:async';
-
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
-
 import 'StringeeClient.dart';
 
 enum StringeeCallEventType {
   DidChangeSignalingState,
   DidChangeMediaState,
-  DidReceiveDtmfDigit,
   DidReceiveCallInfo,
   DidHandleOnAnotherDevice,
-  // DidReceiveLocalStream,
-  // DidReceiveRemoteStream
+  DidReceiveLocalStream,
+  DidReceiveRemoteStream,
+  DidChangeAudioDevice
 }
 
 enum StringeeCallType {
@@ -20,6 +18,8 @@ enum StringeeCallType {
   AppToPhone,
   PhoneToApp
 }
+
+enum AudioDevice { SPEAKER_PHONE, WIRED_HEADSET, EARPIECE, BLUETOOTH, NONE }
 
 enum StringeeSignalingState { Calling, Ringing, Answered, Busy, Ended }
 
@@ -33,6 +33,7 @@ class StringeeCall {
   String _toAlias;
   StringeeCallType _callType;
   String _customDataFromYourServer;
+  bool _isVideocall = false;
   StreamController<dynamic> _eventStreamController = StreamController();
   StreamSubscription<dynamic> _subscriber;
 
@@ -45,6 +46,8 @@ class StringeeCall {
   String get fromAlias => _fromAlias;
 
   String get toAlias => _toAlias;
+
+  bool get isVideocall => _isVideocall;
 
   StringeeCallType get callType => _callType;
 
@@ -67,21 +70,23 @@ class StringeeCall {
     if (callInfo == null) {
       return;
     }
-    
+
     this._id = callInfo['callId'];
     this._from = callInfo['from'];
     this._to = callInfo['to'];
     this._fromAlias = callInfo['fromAlias'];
     this._toAlias = callInfo['toAlias'];
+    this._isVideocall = callInfo['isVideoCall'];
     this._customDataFromYourServer = callInfo['customDataFromYourServer'];
     this._callType = StringeeCallType.values[callInfo['callType']];
   }
 
   void _listener(dynamic event) {
     assert(event != null);
-
     final Map<dynamic, dynamic> map = event;
-
+    // if (map.containsKey('eventCode')) {
+    //   StringeeEvent _callEvent = StringeeEvent.values[map['eventCode']];
+    //   if (_callEvent == StringeeEvent.StringeeCallEventType) {
     switch (map['event']) {
       case 'didChangeSignalingState':
         handleSignalingStateChange(map['body']);
@@ -89,21 +94,21 @@ class StringeeCall {
       case 'didChangeMediaState':
         handleMediaStateChange(map['body']);
         break;
-      case 'didReceiveDtmfDigit':
-        handleDtmfDidReceive(map['body']);
-        break;
       case 'didReceiveCallInfo':
         handleCallInfoDidReceive(map['body']);
         break;
       case 'didHandleOnAnotherDevice':
         handleAnotherDeviceHadHandle(map['body']);
         break;
-      // case 'didReceiveLocalStream':
-      //   handleReceiveLocalStream(map['body']);
-      //   break;
-      // case 'didReceiveRemoteStream':
-      //   handleReceiveRemoteStream(map['body']);
-      //   break;
+      case 'didReceiveLocalStream':
+        handleReceiveLocalStream(map['body']);
+        break;
+      case 'didReceiveRemoteStream':
+        handleReceiveRemoteStream(map['body']);
+        break;
+      case 'didChangeAudioDevice':
+        handleChangeAudioDevice(map['body']);
+        break;
       default:
         break;
     }
@@ -132,27 +137,18 @@ class StringeeCall {
     });
   }
 
-  void handleDtmfDidReceive(Map<dynamic, dynamic> map) {
-    String callId = map['callId'];
-    if (callId != this._id) return;
-
-    String dtmf = map['dtmf'];
-    _eventStreamController.add(
-        {"eventType": StringeeCallEventType.DidReceiveDtmfDigit, "body": dtmf});
-  }
-
   void handleCallInfoDidReceive(Map<dynamic, dynamic> map) {
     String callId = map['callId'];
     if (callId != this._id) return;
 
-    Map<dynamic, dynamic> data = map['data'];
+    Map<dynamic, dynamic> data = map['info'];
     _eventStreamController.add(
         {"eventType": StringeeCallEventType.DidReceiveCallInfo, "body": data});
   }
 
   void handleAnotherDeviceHadHandle(Map<dynamic, dynamic> map) {
     String callId = map['callId'];
-    if (callId != this._id) return;
+    // if (callId != this._id) return;
 
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
@@ -163,25 +159,43 @@ class StringeeCall {
     });
   }
 
-  // void handleReceiveLocalStream(Map<dynamic, dynamic> map) {
-  //   String callId = map['callId'];
-  //   if (callId != this._id) return;
-  //
-  //   _eventStreamController.add({
-  //     "eventType": StringeeCallEventType.DidReceiveLocalStream,
-  //     "body": map['stream']
-  //   });
-  // }
-  //
-  // void handleReceiveRemoteStream(Map<dynamic, dynamic> map) {
-  //   String callId = map['callId'];
-  //   if (callId != this._id) return;
-  //
-  //   _eventStreamController.add({
-  //     "eventType": StringeeCallEventType.DidReceiveRemoteStream,
-  //     "body": map['stream']
-  //   });
-  // }
+  void handleReceiveLocalStream(Map<dynamic, dynamic> map) {
+    String callId = map['callId'];
+    // if (callId != this._id) return;
+
+    _eventStreamController.add({
+      "eventType": StringeeCallEventType.DidReceiveLocalStream,
+      "body": map['callId']
+    });
+  }
+
+  void handleReceiveRemoteStream(Map<dynamic, dynamic> map) {
+    String callId = map['callId'];
+    // if (callId != this._id) return;
+
+    _eventStreamController.add({
+      "eventType": StringeeCallEventType.DidReceiveRemoteStream,
+      "body": map['callId']
+    });
+  }
+
+  void handleChangeAudioDevice(Map<dynamic, dynamic> map) {
+    // String callId = map['callId'];
+    // if (callId != this._id) return;
+    AudioDevice selectedAudioDevice = AudioDevice.values[map['code']];
+    List<dynamic> codeList = List();
+    codeList.addAll(map['codeList']);
+    List<AudioDevice> availableAudioDevices = List();
+    for (int i = 0; i < codeList.length; i++) {
+      AudioDevice audioDevice = AudioDevice.values[codeList[i]];
+      availableAudioDevices.add(audioDevice);
+    }
+    _eventStreamController.add({
+      "eventType": StringeeCallEventType.DidChangeAudioDevice,
+      "selectedAudioDevice": selectedAudioDevice,
+      "availableAudioDevices": availableAudioDevices
+    });
+  }
 
   //region Actions
   Future<Map<dynamic, dynamic>> makeCall(
@@ -189,6 +203,8 @@ class StringeeCall {
     Map<dynamic, dynamic> results =
         await StringeeClient.methodChannel.invokeMethod('makeCall', parameters);
     Map<dynamic, dynamic> callInfo = results['callInfo'];
+
+    print('callInfo' + callInfo.toString());
 
     this.initFromInfo(callInfo);
 
@@ -266,5 +282,4 @@ class StringeeCall {
   }
 
 //endregion
-
 }

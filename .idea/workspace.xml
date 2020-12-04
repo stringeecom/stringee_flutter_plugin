@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
@@ -7,18 +25,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb5e12ef-f814-4430-bbc6-90d2bee1717b" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeCallManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeClientManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeVideoView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeVideoViewFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/Utils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/StringeeVideoView.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/src/test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_for_Android.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_for_Android.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeFlutterPlugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeFlutterPlugin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/Utils/StringeeAudioManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeAudioManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/Utils/StringeeBluetoothManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/stringee/stringeeflutterplugin/StringeeBluetoothManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/java/com/stringee/stringeeflutterpluginexample/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/java/com/stringee/stringeeflutterpluginexample/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/Call.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/Call.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/StringeeCall.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/StringeeCall.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/StringeeClient.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/StringeeClient.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/stringee_flutter_plugin.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/stringee_flutter_plugin.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stringee_flutter_plugin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/stringee_flutter_plugin.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +68,15 @@
     <option name="testRunner" value="GRADLE" />
     <option name="delegatedBuild" value="true" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[f511cad8]" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Dart File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -36,16 +84,26 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="dart.analysis.tool.window.force.activate" value="false" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../flutter/bin/cache/artifacts/engine/android-arm/flutter.jar!/" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="nele.options" />
     <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="src" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="&lt;template&gt;" type="JUnit" default="true" selected="false">
@@ -90,34 +148,131 @@
       <is-autoscroll-to-source value="true" />
     </todo-panel>
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/example/ios/.symlinks/plugins/stringee_flutter_plugin" />
+    </ignored-roots>
+  </component>
   <component name="WindowStateProjectService">
-    <state width="1801" height="537" key="GridCell.Tab.0.bottom" timestamp="1602846364289">
-      <screen x="1440" y="23" width="1920" height="1057" />
+    <state x="2733" y="373" key="#Customize_Threads_View" timestamp="1606806380346">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
+    <state x="2733" y="373" key="#Customize_Threads_View/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606806380346" />
+    <state x="2684" y="235" key="#com.intellij.ide.util.MemberChooser" timestamp="1607072384140">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2684" y="235" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607072384140" />
+    <state x="3010" y="366" key="#xdebugger.evaluate" timestamp="1606991695872">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="3010" y="366" key="#xdebugger.evaluate/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606991695872" />
+    <state x="2673" y="265" key="AndroidProcessChooserDialog" timestamp="1606729806719">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2673" y="265" key="AndroidProcessChooserDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606729806719" />
+    <state x="2012" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1606816004929">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2012" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606816004929" />
+    <state x="2965" y="187" key="FileChooserDialogImpl" timestamp="1606720332868">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2965" y="187" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606720332868" />
+    <state width="1875" height="290" key="GridCell.Tab.-1.bottom" timestamp="1606895245525">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1875" height="290" key="GridCell.Tab.-1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895245525" />
+    <state width="1875" height="290" key="GridCell.Tab.-1.center" timestamp="1606895245525">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1875" height="290" key="GridCell.Tab.-1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895245525" />
+    <state width="1875" height="290" key="GridCell.Tab.-1.left" timestamp="1606895245525">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1875" height="290" key="GridCell.Tab.-1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895245525" />
+    <state width="1875" height="290" key="GridCell.Tab.-1.right" timestamp="1606895245525">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1875" height="290" key="GridCell.Tab.-1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895245525" />
+    <state width="1858" height="319" key="GridCell.Tab.0.bottom" timestamp="1607079083762">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1858" height="319" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607079083762" />
     <state width="1801" height="537" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602846364289" />
     <state width="1398" height="225" key="GridCell.Tab.0.bottom/41.23.1399.877@41.23.1399.877" timestamp="1602128168485" />
-    <state width="1801" height="537" key="GridCell.Tab.0.center" timestamp="1602846364289">
-      <screen x="1440" y="23" width="1920" height="1057" />
+    <state width="1858" height="319" key="GridCell.Tab.0.center" timestamp="1607079083761">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
+    <state width="1858" height="319" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607079083761" />
     <state width="1801" height="537" key="GridCell.Tab.0.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602846364289" />
     <state width="1398" height="225" key="GridCell.Tab.0.center/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state width="1801" height="537" key="GridCell.Tab.0.left" timestamp="1602846364288">
-      <screen x="1440" y="23" width="1920" height="1057" />
+    <state width="1858" height="319" key="GridCell.Tab.0.left" timestamp="1607079083761">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
+    <state width="1858" height="319" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607079083761" />
     <state width="1801" height="537" key="GridCell.Tab.0.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602846364288" />
     <state width="1398" height="225" key="GridCell.Tab.0.left/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state width="1801" height="537" key="GridCell.Tab.0.right" timestamp="1602846364289">
-      <screen x="1440" y="23" width="1920" height="1057" />
+    <state width="1858" height="319" key="GridCell.Tab.0.right" timestamp="1607079083761">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
+    <state width="1858" height="319" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607079083761" />
     <state width="1801" height="537" key="GridCell.Tab.0.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602846364289" />
     <state width="1398" height="225" key="GridCell.Tab.0.right/41.23.1399.877@41.23.1399.877" timestamp="1602128168484" />
-    <state x="1777" y="23" key="SettingsEditor" timestamp="1602830550010">
-      <screen x="1440" y="23" width="1920" height="1057" />
+    <state width="1875" height="290" key="GridCell.Tab.1.bottom" timestamp="1606895241718">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
+    <state width="1875" height="290" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895241718" />
+    <state width="1875" height="290" key="GridCell.Tab.1.center" timestamp="1606895241718">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1875" height="290" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895241718" />
+    <state width="1875" height="290" key="GridCell.Tab.1.left" timestamp="1606895241718">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1875" height="290" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895241718" />
+    <state width="1875" height="290" key="GridCell.Tab.1.right" timestamp="1606895241718">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1875" height="290" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895241718" />
+    <state x="2376" y="182" key="SettingsEditor" timestamp="1607071123190">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2376" y="182" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1607071123190" />
     <state x="1777" y="23" key="SettingsEditor/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602830550010" />
     <state x="1985" y="349" key="com.intellij.ide.util.TipDialog" timestamp="1602812073032">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state x="1985" y="349" key="com.intellij.ide.util.TipDialog/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1602812073032" />
+    <state x="2536" y="240" key="run.anything.popup" timestamp="1606985633366">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2536" y="240" key="run.anything.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606985633366" />
+    <state x="2671" y="378" key="scopes" timestamp="1606274303525">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2671" y="378" key="scopes/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606274303525" />
+    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1606381088102">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606381088102" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint suspend="THREAD" type="dart-exception" />
+      </default-breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

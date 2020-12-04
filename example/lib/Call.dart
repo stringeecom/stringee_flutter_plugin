@@ -1,23 +1,27 @@
 import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 StringeeCall _stringeeCall;
 
 class Call extends StatefulWidget {
+  StringeeCall incomingCall;
   final String toUserId;
   final String fromUserId;
+  String callId;
   bool showIncomingUi = false;
-  StringeeCall incomingCall;
+  bool hasLocalStream = false;
+  bool hasRemoteStream = false;
+  bool isVideoCall = false;
 
   Call(
       {Key key,
-      @required this.fromUserId,
-      @required this.toUserId,
-      @required this.showIncomingUi,
-      this.incomingCall})
+        @required this.fromUserId,
+        @required this.toUserId,
+        @required this.showIncomingUi,
+        @required this.isVideoCall,
+        this.incomingCall})
       : super(key: key);
 
   @override
@@ -77,68 +81,90 @@ class _CallState extends State<Call> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: widget.showIncomingUi
               ? <Widget>[
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      new GestureDetector(
-                        onTap: _rejectCallTapped,
-                        child: Image.asset(
-                          'images/end.png',
-                          height: 75.0,
-                          width: 75.0,
-                        ),
-                      ),
-                      new GestureDetector(
-                        onTap: _acceptCallTapped,
-                        child: Image.asset(
-                          'images/answer.png',
-                          height: 75.0,
-                          width: 75.0,
-                        ),
-                      ),
-                    ],
-                  )
-                ]
-              : <Widget>[
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      new ButtonSpeaker(isSpeaker: false),
-                      new ButtonMicro(isMute: false),
-                    ],
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                new GestureDetector(
+                  onTap: _rejectCallTapped,
+                  child: Image.asset(
+                    'images/end.png',
+                    height: 75.0,
+                    width: 75.0,
                   ),
-                  new Container(
-                    padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                    child: new GestureDetector(
-                      onTap: _endCallTapped,
-                      child: Image.asset(
-                        'images/end.png',
-                        height: 75.0,
-                        width: 75.0,
-                      ),
-                    ),
-                  )
-                ]),
+                ),
+                new GestureDetector(
+                  onTap: _acceptCallTapped,
+                  child: Image.asset(
+                    'images/answer.png',
+                    height: 75.0,
+                    width: 75.0,
+                  ),
+                ),
+              ],
+            )
+          ]
+              : <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                new ButtonSpeaker(isSpeaker: false),
+                new ButtonMicro(isMute: false),
+              ],
+            ),
+            new Container(
+              padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+              child: new GestureDetector(
+                onTap: _endCallTapped,
+                child: Image.asset(
+                  'images/end.png',
+                  height: 75.0,
+                  width: 75.0,
+                ),
+              ),
+            )
+          ]),
     );
+
+    Widget localView = (widget.hasLocalStream)
+        ? new StringeeVideoView(
+      color: Colors.white,
+      alignment: Alignment.topRight,
+      callId: widget.callId,
+      isLocal: true,
+      isOverlay: true,
+      isMirror: true,
+      margin: EdgeInsets.only(right: 20.0, top: 20.0),
+      height: 200.0,
+      width: 150.0,
+    )
+        : Placeholder();
+
+    Widget remoteView = (widget.hasRemoteStream)
+        ? new StringeeVideoView(
+      color: Colors.blue,
+      callId: widget.callId,
+      isLocal: false,
+      isOverlay: false,
+      isMirror: false,
+    )
+        : Placeholder();
 
     return new Scaffold(
       backgroundColor: Colors.black,
       body: new Stack(
-        children: <Widget>[NameCalling, BottomContainer],
+        children: <Widget>[remoteView, localView, NameCalling, BottomContainer],
       ),
     );
   }
 
   Future _makeOrInitAnswerCall() async {
-//    if (Platform.isAndroid) {
-//      final res =
-//          await SimplePermissions.requestPermission(Permission.RecordAudio);
-//      print("permission request result is " + res.toString());
-//      if (!(res == PermissionStatus.authorized)) {
-//        clearDataEndDismiss();
-//        return;
-//      }
-//    }
+    if (Platform.isAndroid) {
+      await [Permission.microphone, Permission.camera].request();
+      if (!(await Permission.camera.isGranted &&
+          await Permission.microphone.isGranted)) {
+        clearDataEndDismiss();
+      }
+    }
 
     // Gán cuộc gọi đến cho biến global
     _stringeeCall = widget.incomingCall;
@@ -158,11 +184,22 @@ class _CallState extends State<Call> {
         case StringeeCallEventType.DidChangeMediaState:
           handleMediaStateChangeEvent(map['body']);
           break;
-        case StringeeCallEventType.DidReceiveDtmfDigit:
-          break;
         case StringeeCallEventType.DidReceiveCallInfo:
+          handleReceiveCallInfoEvent(map['body']);
           break;
         case StringeeCallEventType.DidHandleOnAnotherDevice:
+          handleHandleOnAnotherDeviceEvent(map['body']);
+          break;
+        case StringeeCallEventType.DidReceiveLocalStream:
+          handleReceiveLocalStreamEvent(map['body']);
+          break;
+        case StringeeCallEventType.DidReceiveRemoteStream:
+          handleReceiveRemoteStreamEvent(map['body']);
+          break;
+        case StringeeCallEventType.DidChangeAudioDevice:
+          if (Platform.isAndroid) {
+            handleChangeAudioDeviceEvent(map['selectedAudioDevice']);
+          }
           break;
         default:
           break;
@@ -180,7 +217,7 @@ class _CallState extends State<Call> {
       final parameters = {
         'from': widget.fromUserId,
         'to': widget.toUserId,
-        'isVideoCall': false,
+        'isVideoCall': widget.isVideoCall,
         'customData': null,
         'videoResolution': null
       };
@@ -202,7 +239,7 @@ class _CallState extends State<Call> {
     _stringeeCall.hangup().then((result) {
       print('_endCallTapped -- ${result['message']}');
       bool status = result['status'];
-      if (!status) {
+      if (status) {
         clearDataEndDismiss();
       }
     });
@@ -264,6 +301,34 @@ class _CallState extends State<Call> {
       default:
         break;
     }
+  }
+
+  void handleReceiveCallInfoEvent(Map<dynamic, dynamic> info) {
+    print('handleReceiveCallInfoEvent - $info');
+  }
+
+  void handleHandleOnAnotherDeviceEvent(StringeeMediaState state) {
+    print('handleHandleOnAnotherDeviceEvent - $state');
+  }
+
+  void handleReceiveLocalStreamEvent(String callId) {
+    print('handleReceiveLocalStreamEvent - $callId');
+    setState(() {
+      widget.hasLocalStream = true;
+      widget.callId = callId;
+    });
+  }
+
+  void handleReceiveRemoteStreamEvent(String callId) {
+    print('handleReceiveRemoteStreamEvent - $callId');
+    setState(() {
+      widget.hasRemoteStream = true;
+      widget.callId = callId;
+    });
+  }
+
+  void handleChangeAudioDeviceEvent(AudioDevice audioDevice) {
+    print('handleChangeAudioDeviceEvent - $audioDevice');
   }
 
   void clearDataEndDismiss() {

@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.Utils;
+package com.stringee.stringeeflutterplugin;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,7 +31,23 @@ public class StringeeAudioManager {
      * AudioDevice is the names of possible audio devices that we currently
      * support.
      */
-    public enum AudioDevice {SPEAKER_PHONE, WIRED_HEADSET, EARPIECE, BLUETOOTH, NONE}
+    public enum AudioDevice {
+        SPEAKER_PHONE(0),
+        WIRED_HEADSET(1),
+        EARPIECE(2),
+        BLUETOOTH(3),
+        NONE(4);
+
+        public final short value;
+
+        AudioDevice(int value) {
+            this.value = (short) value;
+        }
+
+        public short getValue() {
+            return this.value;
+        }
+    }
 
     /**
      * AudioManager state.
@@ -178,7 +194,7 @@ public class StringeeAudioManager {
         Log.d(TAG, "defaultAudioDevice: " + defaultAudioDevice);
     }
 
-    public void start( AudioManagerEvents audioManagerEvents) {
+    public void start(AudioManagerEvents audioManagerEvents) {
         ThreadUtils.checkIsOnMainThread();
         if (amState == AudioManagerState.RUNNING) {
             Log.e(TAG, "AudioManager is already active");

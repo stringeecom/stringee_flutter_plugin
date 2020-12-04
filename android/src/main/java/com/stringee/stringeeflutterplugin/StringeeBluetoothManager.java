@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.Utils;
+package com.stringee.stringeeflutterplugin;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
