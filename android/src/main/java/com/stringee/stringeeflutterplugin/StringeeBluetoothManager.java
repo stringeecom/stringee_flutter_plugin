@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * StringeeBluetoothManager manages functions related to Bluetoth devices
+ * com.stringee.stringeeflutterplugin.StringeeBluetoothManager manages functions related to Bluetoth devices
  */
 public class StringeeBluetoothManager {
     // Timeout interval for starting or stopping audio to a Bluetooth SCO device.
@@ -52,7 +52,7 @@ public class StringeeBluetoothManager {
     }
 
     private final Context context;
-    private final StringeeAudioManager stringeeAudioManager;
+    private final com.stringee.stringeeflutterplugin.StringeeAudioManager stringeeAudioManager;
     @Nullable
     private final AudioManager audioManager;
     private final Handler handler;
@@ -165,11 +165,11 @@ public class StringeeBluetoothManager {
     /**
      * Construction.
      */
-    static StringeeBluetoothManager create(Context context, StringeeAudioManager audioManager) {
+    static StringeeBluetoothManager create(Context context, com.stringee.stringeeflutterplugin.StringeeAudioManager audioManager) {
         return new StringeeBluetoothManager(context, audioManager);
     }
 
-    protected StringeeBluetoothManager(Context context, StringeeAudioManager audioManager) {
+    protected StringeeBluetoothManager(Context context, com.stringee.stringeeflutterplugin.StringeeAudioManager audioManager) {
         ThreadUtils.checkIsOnMainThread();
         this.context = context;
         stringeeAudioManager = audioManager;

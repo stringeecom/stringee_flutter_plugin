@@ -13,22 +13,28 @@ class StringeeVideoView extends StatefulWidget {
   bool isMirror = false;
   final EdgeInsetsGeometry margin;
   final AlignmentGeometry alignment;
+  final EdgeInsetsGeometry padding;
   final double height;
   final double width;
   final Color color;
+  final Widget child;
 
   StringeeVideoView({
     Key key,
-    this.callId,
-    this.isLocal,
-    this.isOverlay,
+    @required this.callId,
+    @required this.isLocal,
+    @required this.isOverlay,
     this.isMirror,
+    this.color,
     this.height,
     this.width,
     this.margin,
     this.alignment,
-    this.color,
-  });
+    this.padding,
+    this.child,
+  })  : assert(margin == null || margin.isNonNegative),
+        assert(padding == null || padding.isNonNegative),
+        super(key: key);
 
   @override
   StringeeVideoViewState createState() => StringeeVideoViewState();
@@ -98,16 +104,32 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> childrenWidget = <Widget>[];
+    childrenWidget.add(createVideoView());
+
     Widget current = Container(
-      color: widget.color,
       height: widget.height,
       width: widget.width,
+      color: widget.color,
       margin: widget.margin,
-      child: createVideoView(),
+      child: Stack(
+        children: childrenWidget,
+      ),
     );
 
-    if (widget.alignment != null)
+    if (widget.child != null) {
+      Widget child = widget.child;
+
+      if (widget.padding != null) {
+        child = Padding(padding: widget.padding, child: child);
+      }
+
+      childrenWidget.add(child);
+    }
+
+    if (widget.alignment != null) {
       current = Align(alignment: widget.alignment, child: current);
+    }
 
     return current;
   }

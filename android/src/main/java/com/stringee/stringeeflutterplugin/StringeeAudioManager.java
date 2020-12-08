@@ -19,10 +19,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * StringeeAudioManager manages all audio
+ * com.stringee.stringeeflutterplugin.StringeeAudioManager manages all audio
  */
 public class StringeeAudioManager {
-    private static final String TAG = "StringeeAudioManager";
+    private static final String TAG = "com.stringee.stringeeflutterplugin.StringeeAudioManager";
     private static final String SPEAKERPHONE_AUTO = "auto";
     private static final String SPEAKERPHONE_TRUE = "true";
     private static final String SPEAKERPHONE_FALSE = "false";

@@ -20,13 +20,13 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel;
 
 /**
- * StringeeClientManager
+ * com.stringee.stringeeflutterplugin.StringeeClientManager
  */
 public class StringeeClientManager implements StringeeConnectionListener {
     private static StringeeClientManager _clientManager;
     private static Context _context;
     private static StringeeClient _client;
-    private static StringeeManager _stringeeManager;
+    private static com.stringee.stringeeflutterplugin.StringeeManager _stringeeManager;
     private static Handler _handler;
     private static final String TAG = "Stringee";
 
@@ -37,7 +37,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
      *
      * @return
      */
-    public static synchronized StringeeClientManager getInstance(Context context, StringeeManager stringeeManager, Handler handler) {
+    public static synchronized StringeeClientManager getInstance(Context context, com.stringee.stringeeflutterplugin.StringeeManager stringeeManager, Handler handler) {
         if (_clientManager == null) {
             _clientManager = new StringeeClientManager();
             _context = context;
@@ -203,7 +203,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
                 bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
                 bodyMap.put("isReconnecting", b);
                 map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin._eventSink.success(map);
             }
         });
     }
@@ -221,7 +221,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
                 bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
                 bodyMap.put("isReconnecting", b);
                 map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin._eventSink.success(map);
             }
         });
     }
@@ -255,7 +255,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
                 callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
                 callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
                 map.put("body", callInfoMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin._eventSink.success(map);
             }
         });
     }
@@ -278,7 +278,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
                 bodyMap.put("code", stringeeError.getCode());
                 bodyMap.put("message", stringeeError.getMessage());
                 map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin._eventSink.success(map);
             }
         });
     }
@@ -294,7 +294,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
                 Map bodyMap = new HashMap();
                 bodyMap.put("userId", stringeeClient.getUserId());
                 map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin._eventSink.success(map);
             }
         });
     }
@@ -315,7 +315,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
                     e.printStackTrace();
                 }
                 map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin._eventSink.success(map);
             }
         });
     }
@@ -336,7 +336,7 @@ public class StringeeClientManager implements StringeeConnectionListener {
                     e.printStackTrace();
                 }
                 map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin._eventSink.success(map);
             }
         });
     }

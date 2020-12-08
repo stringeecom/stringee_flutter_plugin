@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
-import com.stringee.call.StringeeCall.SignalingState;
 import com.stringee.call.StringeeCall.MediaState;
 import com.stringee.common.StringeeConstant;
 import com.stringee.exception.StringeeError;
@@ -73,9 +72,11 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
         }
         if (videoResolution != null) {
             if (videoResolution.equalsIgnoreCase("NORMAL")) {
-                _call.setQuality(StringeeConstant.QUALITY_NORMAL);
+                _call.setQuality(com.stringee.common.StringeeConstant.QUALITY_NORMAL);
             } else if (videoResolution.equalsIgnoreCase("HD")) {
-                _call.setQuality(StringeeConstant.QUALITY_HD);
+                _call.setQuality(com.stringee.common.StringeeConstant.QUALITY_HD);
+            } else if (videoResolution.equalsIgnoreCase("FULLHD")) {
+                _call.setQuality(com.stringee.common.StringeeConstant.QUALITY_FULLHD);
             }
         }
         _call.setCallListener(this);
@@ -271,6 +272,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
         _call.hangup();
         _mediaState = null;
         hasRemoteStream = false;
+        remoteStreamShowed = false;
 
         Map map = new HashMap();
         map.put("status", true);
@@ -659,7 +661,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             @Override
             public void run() {
                 _mediaState = mediaState;
-                Log.d(TAG, "==========MediaStateChange==========\n" + "mediaState: " + mediaState);
+                Log.d(TAG, "==========MediaStateChange==========\n" + "mediaState: " + mediaState + remoteStreamShowed + hasRemoteStream);
                 Map map = new HashMap();
                 map.put("event", "didChangeMediaState");
                 Map bodyMap = new HashMap();
@@ -702,7 +704,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
         _handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "==========ReceiveRemoteStream==========");
+                Log.d(TAG, "==========ReceiveRemoteStream========== " + remoteStreamShowed + hasRemoteStream);
                 if (_mediaState == com.stringee.call.StringeeCall.MediaState.CONNECTED && !remoteStreamShowed) {
                     remoteStreamShowed = true;
                     Map map1 = new HashMap();

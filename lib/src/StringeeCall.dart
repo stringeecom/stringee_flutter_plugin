@@ -19,11 +19,32 @@ enum StringeeCallType {
   PhoneToApp
 }
 
-enum AudioDevice { SPEAKER_PHONE, WIRED_HEADSET, EARPIECE, BLUETOOTH, NONE }
+enum AudioDevice {
+  SPEAKER_PHONE,
+  WIRED_HEADSET,
+  EARPIECE,
+  BLUETOOTH,
+  NONE,
+}
 
-enum StringeeSignalingState { Calling, Ringing, Answered, Busy, Ended }
+enum StringeeSignalingState {
+  Calling,
+  Ringing,
+  Answered,
+  Busy,
+  Ended,
+}
 
-enum StringeeMediaState { Connected, Disconnected }
+enum StringeeMediaState {
+  Connected,
+  Disconnected,
+}
+
+enum VideoQuality {
+  NORMAL,
+  HD,
+  FULLHD,
+}
 
 class StringeeCall {
   String _id;
@@ -200,8 +221,23 @@ class StringeeCall {
   //region Actions
   Future<Map<dynamic, dynamic>> makeCall(
       Map<dynamic, dynamic> parameters) async {
+    final params = parameters;
+    switch (parameters['videoResolution']) {
+      case VideoQuality.NORMAL:
+        params['videoResolution'] = "NORMAL";
+        break;
+      case VideoQuality.HD:
+        params['videoResolution'] = "HD";
+        break;
+      case VideoQuality.FULLHD:
+        params['videoResolution'] = "FULLHD";
+        break;
+      default:
+        params['videoResolution'] = null;
+        break;
+    }
     Map<dynamic, dynamic> results =
-        await StringeeClient.methodChannel.invokeMethod('makeCall', parameters);
+        await StringeeClient.methodChannel.invokeMethod('makeCall', params);
     Map<dynamic, dynamic> callInfo = results['callInfo'];
 
     print('callInfo' + callInfo.toString());

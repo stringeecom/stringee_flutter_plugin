@@ -9,7 +9,7 @@ import java.util.Map;
 public class StringeeManager {
     private static StringeeManager stringeeManager;
     private StringeeClient mClient;
-    private StringeeAudioManager audioManager;
+    private com.stringee.stringeeflutterplugin.StringeeAudioManager audioManager;
     private Map<String, StringeeCall> callsMap = new HashMap<>();
 
     public static synchronized StringeeManager getInstance() {
@@ -32,11 +32,11 @@ public class StringeeManager {
         return callsMap;
     }
 
-    public StringeeAudioManager getAudioManager() {
+    public com.stringee.stringeeflutterplugin.StringeeAudioManager getAudioManager() {
         return audioManager;
     }
 
-    public void setAudioManager(StringeeAudioManager audioManager) {
+    public void setAudioManager(com.stringee.stringeeflutterplugin.StringeeAudioManager audioManager) {
         this.audioManager = audioManager;
     }
 }

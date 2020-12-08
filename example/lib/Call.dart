@@ -17,11 +17,11 @@ class Call extends StatefulWidget {
 
   Call(
       {Key key,
-        @required this.fromUserId,
-        @required this.toUserId,
-        @required this.showIncomingUi,
-        @required this.isVideoCall,
-        this.incomingCall})
+      @required this.fromUserId,
+      @required this.toUserId,
+      @required this.showIncomingUi,
+      @required this.isVideoCall,
+      this.incomingCall})
       : super(key: key);
 
   @override
@@ -81,72 +81,72 @@ class _CallState extends State<Call> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: widget.showIncomingUi
               ? <Widget>[
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                new GestureDetector(
-                  onTap: _rejectCallTapped,
-                  child: Image.asset(
-                    'images/end.png',
-                    height: 75.0,
-                    width: 75.0,
-                  ),
-                ),
-                new GestureDetector(
-                  onTap: _acceptCallTapped,
-                  child: Image.asset(
-                    'images/answer.png',
-                    height: 75.0,
-                    width: 75.0,
-                  ),
-                ),
-              ],
-            )
-          ]
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      new GestureDetector(
+                        onTap: _rejectCallTapped,
+                        child: Image.asset(
+                          'images/end.png',
+                          height: 75.0,
+                          width: 75.0,
+                        ),
+                      ),
+                      new GestureDetector(
+                        onTap: _acceptCallTapped,
+                        child: Image.asset(
+                          'images/answer.png',
+                          height: 75.0,
+                          width: 75.0,
+                        ),
+                      ),
+                    ],
+                  )
+                ]
               : <Widget>[
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                new ButtonSpeaker(isSpeaker: false),
-                new ButtonMicro(isMute: false),
-              ],
-            ),
-            new Container(
-              padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-              child: new GestureDetector(
-                onTap: _endCallTapped,
-                child: Image.asset(
-                  'images/end.png',
-                  height: 75.0,
-                  width: 75.0,
-                ),
-              ),
-            )
-          ]),
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      new ButtonSpeaker(isSpeaker: false),
+                      new ButtonMicro(isMute: false),
+                    ],
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    child: new GestureDetector(
+                      onTap: _endCallTapped,
+                      child: Image.asset(
+                        'images/end.png',
+                        height: 75.0,
+                        width: 75.0,
+                      ),
+                    ),
+                  )
+                ]),
     );
 
     Widget localView = (widget.hasLocalStream)
         ? new StringeeVideoView(
-      color: Colors.white,
-      alignment: Alignment.topRight,
-      callId: widget.callId,
-      isLocal: true,
-      isOverlay: true,
-      isMirror: true,
-      margin: EdgeInsets.only(right: 20.0, top: 20.0),
-      height: 200.0,
-      width: 150.0,
-    )
+            color: Colors.white,
+            alignment: Alignment.topRight,
+            callId: widget.callId,
+            isLocal: true,
+            isOverlay: true,
+            isMirror: true,
+            margin: EdgeInsets.only(top: 100.0, right: 25.0),
+            height: 200.0,
+            width: 150.0,
+          )
         : Placeholder();
 
     Widget remoteView = (widget.hasRemoteStream)
         ? new StringeeVideoView(
-      color: Colors.blue,
-      callId: widget.callId,
-      isLocal: false,
-      isOverlay: false,
-      isMirror: false,
-    )
+            color: Colors.blue,
+            callId: widget.callId,
+            isLocal: false,
+            isOverlay: false,
+            isMirror: false,
+          )
         : Placeholder();
 
     return new Scaffold(
@@ -219,7 +219,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': null
+        'videoResolution': null,
       };
 
       _stringeeCall.makeCall(parameters).then((result) {

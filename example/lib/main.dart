@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(user1);
+    client.connect(user2);
   }
 
   @override
@@ -92,10 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.indigo[600],
       ),
       body: new Stack(
-        children: <Widget>[
-          topText,
-          new MyForm(),
-        ],
+        children: <Widget>[topText, new MyForm()],
       ),
     );
   }
