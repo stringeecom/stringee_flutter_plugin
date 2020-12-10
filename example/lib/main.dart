@@ -40,37 +40,42 @@ class _MyHomePageState extends State<MyHomePage> {
     // Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      StringeeClientEventType eventType = map['eventType'];
-      switch (eventType) {
-        case StringeeClientEventType.DidConnect:
-          handleDidConnectEvent();
-          break;
-        case StringeeClientEventType.DidDisconnect:
-          handleDiddisconnectEvent();
-          break;
-        case StringeeClientEventType.DidFailWithError:
-          handleDidFailWithErrorEvent(map['code'], map['message']);
-          break;
-        case StringeeClientEventType.RequestAccessToken:
-          handleRequestAccessTokenEvent();
-          break;
-        case StringeeClientEventType.DidReceiveCustomMessage:
-          handleDidReceiveCustomMessageEvent(map['from'], map['message']);
-          break;
-        case StringeeClientEventType.DidReceiveTopicMessage:
-          handleDidReceiveTopicMessageEvent(map['from'], map['message']);
-          break;
-        case StringeeClientEventType.IncomingCall:
-          StringeeCall call = map['body'];
-          handleIncomingCallEvent(call);
-          break;
-        default:
-          break;
+      if (map['typeEvent'] == StringeeClientEvents) {
+        switch (map['eventType']) {
+          case StringeeClientEvents.DidConnect:
+            handleDidConnectEvent();
+            break;
+          case StringeeClientEvents.DidDisconnect:
+            handleDiddisconnectEvent();
+            break;
+          case StringeeClientEvents.DidFailWithError:
+            handleDidFailWithErrorEvent(map['code'], map['message']);
+            break;
+          case StringeeClientEvents.RequestAccessToken:
+            handleRequestAccessTokenEvent();
+            break;
+          case StringeeClientEvents.DidReceiveCustomMessage:
+            handleDidReceiveCustomMessageEvent(map['from'], map['message']);
+            break;
+          case StringeeClientEvents.DidReceiveTopicMessage:
+            handleDidReceiveTopicMessageEvent(map['from'], map['message']);
+            break;
+          case StringeeClientEvents.IncomingCall:
+            StringeeCall call = map['body'];
+            handleIncomingCallEvent(call);
+            break;
+          case StringeeClientEvents.IncomingCall2:
+            StringeeCall2 call = map['body'];
+            handleIncomingCall2Event(call);
+            break;
+          default:
+            break;
+        }
       }
     });
 
     // Connect
-    client.connect(user2);
+    client.connect(user1);
   }
 
   @override
@@ -136,8 +141,23 @@ class _MyHomePageState extends State<MyHomePage> {
               fromUserId: call.from,
               toUserId: call.to,
               isVideoCall: call.isVideocall,
+              callType: StringeeType.StringeeCall,
               showIncomingUi: true,
               incomingCall: call)),
+    );
+  }
+
+  void handleIncomingCall2Event(StringeeCall2 call) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Call(
+              fromUserId: call.from,
+              toUserId: call.to,
+              isVideoCall: call.isVideocall,
+              callType: StringeeType.StringeeCall2,
+              showIncomingUi: true,
+              incomingCall2: call)),
     );
   }
 
@@ -177,16 +197,57 @@ class _MyFormState extends State<MyForm> {
           ),
           new Container(
             child: new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new RaisedButton(
-                    color: Colors.grey[300],
-                    textColor: Colors.black,
-                    padding: EdgeInsets.only(left: 40.0, right: 40.0),
-                    onPressed: _voiceCallTapped,
-                    child: Text('CALL'),
-                  ),
-                ]),
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    new RaisedButton(
+                      color: Colors.grey[300],
+                      textColor: Colors.black,
+                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                      onPressed: () {
+                        _CallTapped(false, StringeeType.StringeeCall);
+                      },
+                      child: Text('CALL'),
+                    ),
+                    new RaisedButton(
+                      color: Colors.grey[300],
+                      textColor: Colors.black,
+                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                      onPressed: () {
+                        _CallTapped(true, StringeeType.StringeeCall);
+                      },
+                      child: Text('VIDEOCALL'),
+                    ),
+                  ],
+                ),
+                new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    new RaisedButton(
+                      color: Colors.grey[300],
+                      textColor: Colors.black,
+                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                      onPressed: () {
+                        _CallTapped(false, StringeeType.StringeeCall2);
+                      },
+                      child: Text('CALL2'),
+                    ),
+                    new RaisedButton(
+                      color: Colors.grey[300],
+                      textColor: Colors.black,
+                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                      onPressed: () {
+                        _CallTapped(true, StringeeType.StringeeCall2);
+                      },
+                      child: Text('VIDEOCALL2'),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),
@@ -199,7 +260,7 @@ class _MyFormState extends State<MyForm> {
     });
   }
 
-  void _voiceCallTapped() {
+  void _CallTapped(bool isVideoCall, StringeeType callType) {
     if (strUserId.isEmpty || !client.hasConnected) return;
 
     Navigator.push(
@@ -208,7 +269,8 @@ class _MyFormState extends State<MyForm> {
           builder: (context) => Call(
               fromUserId: client.userId,
               toUserId: strUserId,
-              isVideoCall: true,
+              isVideoCall: isVideoCall,
+              callType: callType,
               showIncomingUi: false)),
     );
   }

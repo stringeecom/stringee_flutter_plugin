@@ -1,16 +1,8 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'StringeeCall.dart';
-
-enum StringeeClientEventType {
-  DidConnect,
-  DidDisconnect,
-  DidFailWithError,
-  RequestAccessToken,
-  DidReceiveCustomMessage,
-  DidReceiveTopicMessage,
-  IncomingCall
-}
+import 'StringeeCall2.dart';
+import 'StringeeConstants.dart';
 
 class StringeeClient {
   static final StringeeClient _instance = StringeeClient._internal();
@@ -71,45 +63,36 @@ class StringeeClient {
   void _listener(dynamic event) {
     assert(event != null);
     final Map<dynamic, dynamic> map = event;
-    // if (map.containsKey('eventCode')) {
-    //   StringeeEvent _stringeeEvent = StringeeEvent.values[map['eventCode']];
-    //   switch (_stringeeEvent) {
-    //     case StringeeEvent.StringeeClientEventType:
-    switch (map['event']) {
-      case 'didConnect':
-        _handleDidConnectEvent(map['body']);
-        break;
-      case 'didDisconnect':
-        _handleDidDisconnectEvent(map['body']);
-        break;
-      case 'didFailWithError':
-        _handleDidFailWithErrorEvent(map['body']);
-        break;
-      case 'requestAccessToken':
-        _handleRequestAccessTokenEvent(map['body']);
-        break;
-      case 'didReceiveCustomMessage':
-        _handleDidReceiveCustomMessageEvent(map['body']);
-        break;
-      case 'incomingCall':
-        _handleIncomingCallEvent(map['body']);
-        break;
-      case 'didReceiveTopicMessage':
-        _handleDidReceiveTopicMessageEvent(map['body']);
-        break;
-      default:
-        _eventStreamController.add(event);
-        break;
+    if (map['typeEvent'] == StringeeType.StringeeClient.index) {
+      switch (map['event']) {
+        case 'didConnect':
+          _handleDidConnectEvent(map['body']);
+          break;
+        case 'didDisconnect':
+          _handleDidDisconnectEvent(map['body']);
+          break;
+        case 'didFailWithError':
+          _handleDidFailWithErrorEvent(map['body']);
+          break;
+        case 'requestAccessToken':
+          _handleRequestAccessTokenEvent(map['body']);
+          break;
+        case 'didReceiveCustomMessage':
+          _handleDidReceiveCustomMessageEvent(map['body']);
+          break;
+        case 'incomingCall':
+          _handleIncomingCallEvent(map['body']);
+          break;
+        case 'incomingCall2':
+          _handleIncomingCall2Event(map['body']);
+          break;
+        case 'didReceiveTopicMessage':
+          _handleDidReceiveTopicMessageEvent(map['body']);
+          break;
+      }
+    } else {
+      eventStreamController.add(event);
     }
-    //     break;
-    //   case StringeeEvent.StringeeCallEventType:
-    //     _eventStreamController.add(event);
-    //     break;
-    //   case StringeeEvent.StringeeCall2EventType:
-    //     _eventStreamController.add(event);
-    //     break;
-    // }
-    // }
   }
 
   void _handleDidConnectEvent(Map<dynamic, dynamic> map) {
@@ -117,8 +100,11 @@ class StringeeClient {
     _projectId = map['projectId'];
     _hasConnected = true;
     _isReconnecting = map['isReconnecting'];
-    _eventStreamController
-        .add({"eventType": StringeeClientEventType.DidConnect, "body": null});
+    _eventStreamController.add({
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.DidConnect,
+      "body": null
+    });
   }
 
   void _handleDidDisconnectEvent(Map<dynamic, dynamic> map) {
@@ -126,14 +112,18 @@ class StringeeClient {
     _projectId = map['projectId'];
     _hasConnected = false;
     _isReconnecting = map['isReconnecting'];
-    _eventStreamController.add(
-        {"eventType": StringeeClientEventType.DidDisconnect, "body": null});
+    _eventStreamController.add({
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.DidDisconnect,
+      "body": null
+    });
   }
 
   void _handleDidFailWithErrorEvent(Map<dynamic, dynamic> map) {
     _userId = map['userId'];
     _eventStreamController.add({
-      "eventType": StringeeClientEventType.DidFailWithError,
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.DidFailWithError,
       "message": map['message'],
       "code": map['code']
     });
@@ -142,7 +132,8 @@ class StringeeClient {
   void _handleRequestAccessTokenEvent(Map<dynamic, dynamic> map) {
     _userId = map['userId'];
     _eventStreamController.add({
-      "eventType": StringeeClientEventType.RequestAccessToken,
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.RequestAccessToken,
       "body": null
     });
   }
@@ -153,7 +144,8 @@ class StringeeClient {
       "message": map['infor']
     };
     _eventStreamController.add({
-      "eventType": StringeeClientEventType.DidReceiveCustomMessage,
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.DidReceiveCustomMessage,
       "body": body
     });
   }
@@ -164,14 +156,27 @@ class StringeeClient {
       "message": map['infor']
     };
     _eventStreamController.add({
-      "eventType": StringeeClientEventType.DidReceiveTopicMessage,
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.DidReceiveTopicMessage,
       "body": body
     });
   }
 
   void _handleIncomingCallEvent(Map<dynamic, dynamic> map) {
     StringeeCall call = StringeeCall.fromCallInfo(map);
-    _eventStreamController
-        .add({"eventType": StringeeClientEventType.IncomingCall, "body": call});
+    _eventStreamController.add({
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.IncomingCall,
+      "body": call
+    });
+  }
+
+  void _handleIncomingCall2Event(Map<dynamic, dynamic> map) {
+    StringeeCall2 call = StringeeCall2.fromCallInfo(map);
+    _eventStreamController.add({
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.IncomingCall2,
+      "body": call
+    });
   }
 }

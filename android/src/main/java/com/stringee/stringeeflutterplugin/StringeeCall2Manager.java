@@ -4,15 +4,15 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.stringee.StringeeClient;
-import com.stringee.call.StringeeCall;
-import com.stringee.call.StringeeCall.MediaState;
-import com.stringee.common.StringeeConstant;
-import com.stringee.exception.StringeeError;
-import com.stringee.listener.StatusListener;
+import com.stringee.call.StringeeCall2;
+import com.stringee.call.StringeeCall2.CallStatsListener;
+import com.stringee.call.StringeeCall2.MediaState;
+import com.stringee.call.StringeeCall2.StringeeCallListener;
+import com.stringee.call.StringeeCall2.StringeeCallStats;
+import com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice;
+import com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.stringeeflutterplugin.StringeeManager.StringeeEnventType;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -21,27 +21,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.flutter.plugin.common.MethodChannel;
+import static io.flutter.plugin.common.MethodChannel.*;
 
-import static com.stringee.stringeeflutterplugin.StringeeManager.*;
-
-public class StringeeCallManager implements StringeeCall.StringeeCallListener {
-    private static StringeeCallManager _callManager;
+public class StringeeCall2Manager implements StringeeCallListener {
+    private static StringeeCall2Manager _callManager;
     private static Context _context;
-    private static StringeeCall _call;
-    private static StringeeClient _client;
+    private static StringeeCall2 _call;
+    private static com.stringee.StringeeClient _client;
     private StringeeAudioManager _audioManager;
     private static StringeeManager _stringeeManager;
-    private MethodChannel.Result makeCallResult;
+    private Result makeCallResult;
     private static Handler _handler;
     private static final String TAG = "Stringee";
     private MediaState _mediaState;
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
 
-    public static synchronized StringeeCallManager getInstance(Context context, StringeeManager stringeeManager, Handler handler) {
+    public static synchronized StringeeCall2Manager getInstance(Context context, StringeeManager stringeeManager, Handler handler) {
         if (_callManager == null) {
-            _callManager = new StringeeCallManager();
+            _callManager = new StringeeCall2Manager();
             _context = context;
             _stringeeManager = stringeeManager;
             _handler = handler;
@@ -58,7 +56,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param customData
      * @param videoResolution
      */
-    public void makeCall(String from, String to, final boolean isVideoCall, String customData, String videoResolution, MethodChannel.Result result) {
+    public void makeCall(String from, String to, final boolean isVideoCall, String customData, String videoResolution, Result result) {
         _client = _stringeeManager.getClient();
         if (_client == null) {
             Map map = new HashMap();
@@ -68,44 +66,44 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             result.success(map);
             return;
         }
+
         _mediaState = null;
         hasRemoteStream = false;
         remoteStreamShowed = false;
 
-        _call = new StringeeCall(_client, from, to);
+        _call = new StringeeCall2(_client, from, to);
         _call.setVideoCall(isVideoCall);
         if (customData != null) {
             _call.setCustom(customData);
         }
-        if (videoResolution != null) {
-            if (videoResolution.equalsIgnoreCase("NORMAL")) {
-                _call.setQuality(StringeeConstant.QUALITY_NORMAL);
-            } else if (videoResolution.equalsIgnoreCase("HD")) {
-                _call.setQuality(StringeeConstant.QUALITY_HD);
-            } else if (videoResolution.equalsIgnoreCase("FULLHD")) {
-                _call.setQuality(StringeeConstant.QUALITY_FULLHD);
-            }
-        }
+//        if (videoResolution != null) {
+//            if (videoResolution.equalsIgnoreCase("NORMAL")) {
+//                _call.setQuality(com.stringee.common.StringeeConstant.QUALITY_NORMAL);
+//            } else if (videoResolution.equalsIgnoreCase("HD")) {
+//                _call.setQuality(com.stringee.common.StringeeConstant.QUALITY_HD);
+//            } else if (videoResolution.equalsIgnoreCase("FULLHD")) {
+//                _call.setQuality(com.stringee.common.StringeeConstant.QUALITY_FULLHD);
+//            }
+//        }
         _call.setCallListener(this);
-        _stringeeManager.getCallsMap().put(_call.getCallId(), _call);
+        _stringeeManager.getCall2sMap().put(_call.getCallId(), _call);
         makeCallResult = result;
 
         _audioManager = StringeeAudioManager.create(_context);
-        _audioManager.start(new StringeeAudioManager.AudioManagerEvents() {
+        _audioManager.start(new AudioManagerEvents() {
             @Override
-            public void onAudioDeviceChanged(final StringeeAudioManager.AudioDevice selectedAudioDevice, final Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
+            public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("Stringee", "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
-                        List<StringeeAudioManager.AudioDevice> audioDeviceList = new ArrayList<StringeeAudioManager.AudioDevice>();
+                        List<AudioDevice> audioDeviceList = new ArrayList<AudioDevice>();
                         audioDeviceList.addAll(availableAudioDevices);
                         List<Short> codeList = new ArrayList<Short>();
                         for (int i = 0; i < audioDeviceList.size(); i++) {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                        map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -125,7 +123,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param callId
      * @param result
      */
-    public void initAnswer(String callId, MethodChannel.Result result) {
+    public void initAnswer(String callId, Result result) {
         _client = _stringeeManager.getClient();
         if (_client == null) {
             Map map = new HashMap();
@@ -144,7 +142,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             return;
         }
 
-        _call = _stringeeManager.getCallsMap().get(callId);
+        _call = _stringeeManager.getCall2sMap().get(callId);
         if (_call == null) {
             Map map = new HashMap();
             map.put("status", false);
@@ -153,13 +151,12 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             result.success(map);
             return;
         }
-
         _mediaState = null;
         hasRemoteStream = false;
         remoteStreamShowed = false;
 
         _call.setCallListener(this);
-        _call.ringing(new StatusListener() {
+        _call.ringing(new com.stringee.listener.StatusListener() {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "Send ringing success");
@@ -167,21 +164,21 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
         });
 
         _audioManager = StringeeAudioManager.create(_context);
-        _audioManager.start(new StringeeAudioManager.AudioManagerEvents() {
+        _audioManager.start(new AudioManagerEvents() {
             @Override
-            public void onAudioDeviceChanged(final StringeeAudioManager.AudioDevice selectedAudioDevice, final Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
+            public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d("Stringee", "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
-                        List<StringeeAudioManager.AudioDevice> audioDeviceList = new ArrayList<StringeeAudioManager.AudioDevice>();
+                        List<AudioDevice> audioDeviceList = new ArrayList<AudioDevice>();
                         audioDeviceList.addAll(availableAudioDevices);
                         List<Short> codeList = new ArrayList<Short>();
                         for (int i = 0; i < audioDeviceList.size(); i++) {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                        map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -206,7 +203,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param callId
      * @param result
      */
-    public void answer(String callId, MethodChannel.Result result) {
+    public void answer(String callId, Result result) {
         if (_client == null) {
             Map map = new HashMap();
             map.put("status", false);
@@ -249,7 +246,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param callId
      * @param result
      */
-    public void hangup(String callId, MethodChannel.Result result) {
+    public void hangup(String callId, Result result) {
         if (_client == null) {
             Map map = new HashMap();
             map.put("status", false);
@@ -301,7 +298,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param callId
      * @param result
      */
-    public void reject(String callId, MethodChannel.Result result) {
+    public void reject(String callId, Result result) {
         _client = _stringeeManager.getClient();
         if (_client == null) {
             Map map = new HashMap();
@@ -347,124 +344,124 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
         result.success(map);
     }
 
-    /**
-     * Send a DTMF
-     *
-     * @param callId
-     * @param dtmf
-     * @param result
-     */
-    public void sendDtmf(String callId, String dtmf, final MethodChannel.Result result) {
-        if (_client == null) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is not initialized or connected.");
-            result.success(map);
-            return;
-        }
+//    /**
+//     * Send a DTMF
+//     *
+//     * @param callId
+//     * @param dtmf
+//     * @param result
+//     */
+//    public void sendDtmf(String callId, String dtmf, final io.flutter.plugin.common.MethodChannel.Result result) {
+//        if (_client == null) {
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", false);
+//            map.put("code", -1);
+//            map.put("message", "StringeeClient is not initialized or connected.");
+//            result.success(map);
+//            return;
+//        }
+//
+//        if (callId == null || callId.length() == 0) {
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", false);
+//            map.put("code", -2);
+//            map.put("message", "The call id is invalid.");
+//            result.success(map);
+//            return;
+//        }
+//
+//        if (_call == null) {
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", false);
+//            map.put("code", -3);
+//            map.put("message", "The call is not found.");
+//            result.success(map);
+//            return;
+//        }
+//        _call.sendDTMF(dtmf, new com.stringee.listener.StatusListener() {
+//            @Override
+//            public void onSuccess() {
+//                _handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        java.util.Map map = new java.util.HashMap();
+//                        map.put("status", true);
+//                        map.put("code", 0);
+//                        map.put("message", "Success");
+//                        result.success(map);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(final com.stringee.exception.StringeeError error) {
+//                _handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        java.util.Map map = new java.util.HashMap();
+//                        map.put("status", false);
+//                        map.put("code", error.getCode());
+//                        map.put("message", error.getMessage());
+//                        result.success(map);
+//                    }
+//                });
+//            }
+//        });
+//    }
 
-        if (callId == null || callId.length() == 0) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "The call id is invalid.");
-            result.success(map);
-            return;
-        }
-
-        if (_call == null) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -3);
-            map.put("message", "The call is not found.");
-            result.success(map);
-            return;
-        }
-        _call.sendDTMF(dtmf, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        result.success(map);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final StringeeError error) {
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", error.getCode());
-                        map.put("message", error.getMessage());
-                        result.success(map);
-                    }
-                });
-            }
-        });
-    }
-
-    /**
-     * Send call info
-     *
-     * @param callId
-     * @param callInfo
-     * @param result
-     */
-    public void sendCallInfo(String callId, Map callInfo, MethodChannel.Result result) {
-        if (_client == null) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is not initialized or connected.");
-            result.success(map);
-            return;
-        }
-
-        if (callId == null || callId.length() == 0) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "The call id is invalid.");
-            result.success(map);
-            return;
-        }
-
-        if (_call == null) {
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -3);
-            map.put("message", "The call is not found.");
-            result.success(map);
-            return;
-        }
-
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = Utils.convertMapToJson(callInfo);
-            _call.sendCallInfo(jsonObject);
-            Map map = new HashMap();
-            map.put("status", true);
-            map.put("code", 0);
-            map.put("message", "Success");
-            result.success(map);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -4);
-            map.put("message", "The call info format is invalid.");
-            result.success(map);
-        }
-    }
+//    /**
+//     * Send call info
+//     *
+//     * @param callId
+//     * @param callInfo
+//     * @param result
+//     */
+//    public void sendCallInfo(String callId, java.util.Map callInfo, io.flutter.plugin.common.MethodChannel.Result result) {
+//        if (_client == null) {
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", false);
+//            map.put("code", -1);
+//            map.put("message", "StringeeClient is not initialized or connected.");
+//            result.success(map);
+//            return;
+//        }
+//
+//        if (callId == null || callId.length() == 0) {
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", false);
+//            map.put("code", -2);
+//            map.put("message", "The call id is invalid.");
+//            result.success(map);
+//            return;
+//        }
+//
+//        if (_call == null) {
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", false);
+//            map.put("code", -3);
+//            map.put("message", "The call is not found.");
+//            result.success(map);
+//            return;
+//        }
+//
+//        org.json.JSONObject jsonObject = null;
+//        try {
+//            jsonObject = Utils.convertMapToJson(callInfo);
+//            _call.sendCallInfo(jsonObject);
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", true);
+//            map.put("code", 0);
+//            map.put("message", "Success");
+//            result.success(map);
+//        } catch (org.json.JSONException e) {
+//            e.printStackTrace();
+//            java.util.Map map = new java.util.HashMap();
+//            map.put("status", false);
+//            map.put("code", -4);
+//            map.put("message", "The call info format is invalid.");
+//            result.success(map);
+//        }
+//    }
 
     /**
      * Mute or unmute
@@ -473,7 +470,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param mute
      * @param result
      */
-    public void mute(String callId, boolean mute, MethodChannel.Result result) {
+    public void mute(String callId, boolean mute, Result result) {
         if (callId == null || callId.length() == 0) {
             Map map = new HashMap();
             map.put("status", false);
@@ -506,7 +503,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param isVideoEnable
      * @param result
      */
-    public void enableVideo(String callId, boolean isVideoEnable, MethodChannel.Result result) {
+    public void enableVideo(String callId, boolean isVideoEnable, io.flutter.plugin.common.MethodChannel.Result result) {
         if (callId == null || callId.length() == 0) {
             Map map = new HashMap();
             map.put("status", false);
@@ -539,7 +536,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param on
      * @param result
      */
-    public void setSpeakerphoneOn(String callId, boolean on, MethodChannel.Result result) {
+    public void setSpeakerphoneOn(String callId, boolean on, Result result) {
         if (callId == null || callId.length() == 0) {
             Map map = new HashMap();
             map.put("status", false);
@@ -575,7 +572,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param callId
      * @param result
      */
-    public void getCallStats(String callId, final MethodChannel.Result result) {
+    public void getCallStats(String callId, final Result result) {
         if (_client == null) {
             Map map = new HashMap();
             map.put("status", false);
@@ -603,9 +600,9 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             return;
         }
 
-        _call.getStats(new StringeeCall.CallStatsListener() {
+        _call.getStats(new CallStatsListener() {
             @Override
-            public void onCallStats(StringeeCall.StringeeCallStats stringeeCallStats) {
+            public void onCallStats(StringeeCallStats stringeeCallStats) {
                 Map map = new HashMap();
                 map.put("status", true);
                 map.put("code", 0);
@@ -622,13 +619,13 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onSignalingStateChange(final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState, String s, int i, String s1) {
+    public void onSignalingStateChange(final StringeeCall2 stringeeCall, final StringeeCall2.SignalingState signalingState, String s, int i, String s1) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "==========SignalingStateChange==========\n" + "signalingState: " + signalingState);
-                if (signalingState == StringeeCall.SignalingState.CALLING) {
-                    _stringeeManager.getCallsMap().put(stringeeCall.getCallId(), stringeeCall);
+                Log.d(TAG, "==========SignalingStateChange2==========\n" + "signalingState: " + signalingState);
+                if (signalingState == StringeeCall2.SignalingState.CALLING) {
+                    _stringeeManager.getCall2sMap().put(stringeeCall.getCallId(), stringeeCall);
                     Map map = new HashMap();
                     map.put("status", true);
                     map.put("code", 0);
@@ -644,11 +641,6 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                     if (!stringeeCall.getFrom().equals(_client.getUserId())) {
                         callType = 1;
                     }
-                    if (stringeeCall.isAppToPhoneCall()) {
-                        callType = 2;
-                    } else if (stringeeCall.isPhoneToAppCall()) {
-                        callType = 3;
-                    }
                     callInfoMap.put("callType", callType);
                     callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
                     callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
@@ -660,7 +652,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 }
 
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                 map.put("event", "didChangeSignalingState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -672,11 +664,11 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onError(StringeeCall stringeeCall, final int code, final String message) {
+    public void onError(StringeeCall2 stringeeCall, final int code, final String message) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "==========Error==========\n" + "code: " + code + " -message: " + message);
+                Log.d(TAG, "==========Error2==========\n" + "code: " + code + " -message: " + message);
                 Map map = new HashMap();
                 map.put("status", false);
                 map.put("code", code);
@@ -690,13 +682,13 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onHandledOnAnotherDevice(final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState, final String description) {
+    public void onHandledOnAnotherDevice(final StringeeCall2 stringeeCall, final StringeeCall2.SignalingState signalingState, final String description) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "==========HandledOnAnotherDevice==========\n" + "signalingState: " + signalingState + " -description: " + description);
+                Log.d(TAG, "==========HandledOnAnotherDevice2==========\n" + "signalingState: " + signalingState + " -description: " + description);
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                 map.put("event", "didHandleOnAnotherDevice");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -709,14 +701,14 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onMediaStateChange(final StringeeCall stringeeCall, final MediaState mediaState) {
+    public void onMediaStateChange(final StringeeCall2 stringeeCall, final MediaState mediaState) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
                 _mediaState = mediaState;
-                Log.d(TAG, "==========MediaStateChange==========\n" + "mediaState: " + mediaState + remoteStreamShowed + hasRemoteStream);
+                Log.d(TAG, "==========MediaStateChange2==========\n" + "mediaState: " + mediaState + remoteStreamShowed + hasRemoteStream);
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                 map.put("event", "didChangeMediaState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -727,7 +719,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 if (_mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed && stringeeCall.isVideoCall()) {
                     remoteStreamShowed = true;
                     Map map1 = new HashMap();
-                    map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                    map1.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                     map1.put("event", "didReceiveRemoteStream");
                     Map bodyMap1 = new HashMap();
                     bodyMap1.put("callId", stringeeCall.getCallId());
@@ -739,14 +731,14 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onLocalStream(final StringeeCall stringeeCall) {
+    public void onLocalStream(final StringeeCall2 stringeeCall) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
                 if (stringeeCall.isVideoCall()) {
-                    Log.d(TAG, "==========ReceiveLocalStream==========");
+                    Log.d(TAG, "==========ReceiveLocalStream2==========");
                     Map map = new HashMap();
-                    map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                    map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                     map.put("event", "didReceiveLocalStream");
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
@@ -758,16 +750,16 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onRemoteStream(final StringeeCall stringeeCall) {
+    public void onRemoteStream(final StringeeCall2 stringeeCall) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
                 if (stringeeCall.isVideoCall()) {
-                    Log.d(TAG, "==========ReceiveRemoteStream========== " + remoteStreamShowed + hasRemoteStream);
+                    Log.d(TAG, "==========ReceiveRemoteStream2========== " + remoteStreamShowed + hasRemoteStream);
                     if (_mediaState == MediaState.CONNECTED && !remoteStreamShowed) {
                         remoteStreamShowed = true;
                         Map map = new HashMap();
-                        map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                        map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                         map.put("event", "didReceiveRemoteStream");
                         Map bodyMap = new HashMap();
                         bodyMap.put("callId", stringeeCall.getCallId());
@@ -782,19 +774,19 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onCallInfo(final StringeeCall stringeeCall, final JSONObject jsonObject) {
+    public void onCallInfo(final StringeeCall2 stringeeCall, final JSONObject jsonObject) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "==========ReceiveCallInfo==========\n" + jsonObject.toString());
+                Log.d(TAG, "==========ReceiveCallInfo2==========\n" + jsonObject.toString());
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                 map.put("event", "didReceiveCallInfo");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
                 try {
                     bodyMap.put("info", Utils.convertJsonToMap(jsonObject));
-                } catch (JSONException e) {
+                } catch (org.json.JSONException e) {
                     e.printStackTrace();
                 }
                 map.put("body", bodyMap);
