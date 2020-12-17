@@ -1,5 +1,7 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.widget.FrameLayout;
+
 import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall2;
@@ -12,6 +14,8 @@ public class StringeeManager {
     private StringeeClient mClient;
     private Map<String, StringeeCall> callsMap = new HashMap<>();
     private Map<String, StringeeCall2> call2sMap = new HashMap<>();
+    private Map<String, FrameLayout> localView = new HashMap<>();
+    private Map<String, FrameLayout> remoteView = new HashMap<>();
 
     public enum StringeeEnventType {
         ClientEvent(0),
@@ -51,5 +55,13 @@ public class StringeeManager {
 
     public Map<String, StringeeCall2> getCall2sMap() {
         return call2sMap;
+    }
+
+    public Map<String, android.widget.FrameLayout> getLocalView() {
+        return localView;
+    }
+
+    public Map<String, android.widget.FrameLayout> getRemoteView() {
+        return remoteView;
     }
 }

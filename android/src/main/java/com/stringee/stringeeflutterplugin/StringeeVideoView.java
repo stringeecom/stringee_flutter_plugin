@@ -2,6 +2,7 @@ package com.stringee.stringeeflutterplugin;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -67,6 +68,10 @@ public class StringeeVideoView implements PlatformView {
                 if (call == null && call2 == null) {
                     return;
                 }
+                boolean _isOverlay = isOverlay;
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+                    _isOverlay = true;
+                }
 
                 frameLayout.removeAllViews();
                 frameLayout.setBackgroundColor(Color.BLACK);
@@ -74,25 +79,29 @@ public class StringeeVideoView implements PlatformView {
                     if (call != null) {
                         call.getLocalView().setScalingType(ScalingType.SCALE_ASPECT_FIT);
                         frameLayout.addView(call.getLocalView());
-                        call.renderLocalView(isOverlay);
+                        call.renderLocalView(_isOverlay);
                         call.getLocalView().setMirror(isMirror);
+                        StringeeManager.getInstance().getLocalView().put(call.getCallId(), frameLayout);
                     } else {
                         call2.getLocalView().setScalingType(ScalingType.SCALE_ASPECT_FIT);
                         frameLayout.addView(call2.getLocalView());
-                        call2.renderLocalView(isOverlay);
+                        call2.renderLocalView(_isOverlay);
                         call2.getLocalView().setMirror(isMirror);
+                        StringeeManager.getInstance().getLocalView().put(call2.getCallId(), frameLayout);
                     }
                 } else {
                     if (call != null) {
                         call.getRemoteView().setScalingType(ScalingType.SCALE_ASPECT_FIT);
                         frameLayout.addView(call.getRemoteView());
-                        call.renderRemoteView(isOverlay);
+                        call.renderRemoteView(_isOverlay);
                         call.getRemoteView().setMirror(isMirror);
+                        StringeeManager.getInstance().getRemoteView().put(call.getCallId(), frameLayout);
                     } else {
                         call2.getRemoteView().setScalingType(ScalingType.SCALE_ASPECT_FIT);
                         frameLayout.addView(call2.getRemoteView());
-                        call2.renderRemoteView(isOverlay);
+                        call2.renderRemoteView(_isOverlay);
                         call2.getRemoteView().setMirror(isMirror);
+                        StringeeManager.getInstance().getRemoteView().put(call2.getCallId(), frameLayout);
                     }
                 }
             }

@@ -122,6 +122,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "setSpeakerphoneOn":
                 _callManager.setSpeakerphoneOn((String) call.argument("callId"), (Boolean) call.argument("speaker"), result);
                 break;
+            case "switchCamera":
+                _callManager.switchCamera((String) call.argument("callId"), (boolean) call.argument("isMirror"), result);
+                break;
+            case "resumeVideo":
+                _callManager.resumeVideo((String) call.argument("callId"), result);
+                break;
             case "makeCall2":
                 String from2 = call.argument("from");
                 String to2 = call.argument("to");
@@ -162,6 +168,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "setSpeakerphoneOn2":
                 _call2Manager.setSpeakerphoneOn((String) call.argument("callId"), (Boolean) call.argument("speaker"), result);
+                break;
+            case "switchCamera2":
+                _call2Manager.switchCamera((String) call.argument("callId"), (Boolean) call.argument("isMirror"), result);
+                break;
+            case "resumeVideo2":
+                _call2Manager.resumeVideo((String) call.argument("callId"), result);
                 break;
             default:
                 result.notImplemented();

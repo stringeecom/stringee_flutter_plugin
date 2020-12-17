@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 StringeeCall _stringeeCall;
@@ -17,6 +16,9 @@ class Call extends StatefulWidget {
   bool hasLocalStream = false;
   bool hasRemoteStream = false;
   bool isVideoCall = false;
+  bool isSpeaker = false;
+  bool isResumeVideo = false;
+  bool isMirror = true;
 
   Call({
     Key key,
@@ -43,6 +45,9 @@ class _CallState extends State<Call> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    widget.isSpeaker = widget.isVideoCall;
+
     if (widget.callType == StringeeType.StringeeCall) {
       _makeOrInitAnswerCall();
     } else {
@@ -142,7 +147,7 @@ class _CallState extends State<Call> {
             callId: widget.callId,
             isLocal: true,
             isOverlay: true,
-            isMirror: true,
+            isMirror: widget.isMirror,
             margin: EdgeInsets.only(top: 100.0, right: 25.0),
             height: 200.0,
             width: 150.0,
@@ -162,20 +167,20 @@ class _CallState extends State<Call> {
     return new Scaffold(
       backgroundColor: Colors.black,
       body: new Stack(
-        children: <Widget>[remoteView, localView, NameCalling, BottomContainer],
+        children: <Widget>[
+          remoteView,
+          localView,
+          NameCalling,
+          BottomContainer,
+          ButtonSwitchCamera(
+            isMirror: widget.isMirror,
+          ),
+        ],
       ),
     );
   }
 
   Future _makeOrInitAnswerCall() async {
-    if (Platform.isAndroid) {
-      await [Permission.microphone, Permission.camera].request();
-      if (!(await Permission.camera.isGranted &&
-          await Permission.microphone.isGranted)) {
-        clearDataEndDismiss();
-      }
-    }
-
     // Gán cuộc gọi đến cho biến global
     _stringeeCall = widget.incomingCall;
 
@@ -208,7 +213,8 @@ class _CallState extends State<Call> {
             break;
           case StringeeCallEvents.DidChangeAudioDevice:
             if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(map['selectedAudioDevice']);
+              handleChangeAudioDeviceEvent(
+                  map['selectedAudioDevice'], _stringeeCall, null);
             }
             break;
           default:
@@ -230,7 +236,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': VideoQuality.NORMAL,
+        'videoResolution': VideoQuality.FULLHD,
       };
 
       _stringeeCall.makeCall(parameters).then((result) {
@@ -247,14 +253,6 @@ class _CallState extends State<Call> {
   }
 
   Future _makeOrInitAnswerCall2() async {
-    if (Platform.isAndroid) {
-      await [Permission.microphone, Permission.camera].request();
-      if (!(await Permission.camera.isGranted &&
-          await Permission.microphone.isGranted)) {
-        clearDataEndDismiss();
-      }
-    }
-
     // Gán cuộc gọi đến cho biến global
     _stringeeCall2 = widget.incomingCall2;
 
@@ -287,7 +285,8 @@ class _CallState extends State<Call> {
             break;
           case StringeeCall2Events.DidChangeAudioDevice:
             if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(map['selectedAudioDevice']);
+              handleChangeAudioDeviceEvent(
+                  map['selectedAudioDevice'], null, _stringeeCall2);
             }
             break;
           default:
@@ -309,7 +308,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': VideoQuality.NORMAL,
+        'videoResolution': VideoQuality.FULLHD,
       };
 
       _stringeeCall2.makeCall(parameters).then((result) {
@@ -433,7 +432,7 @@ class _CallState extends State<Call> {
     print('handleReceiveCallInfoEvent - $info');
   }
 
-  void handleHandleOnAnotherDeviceEvent(StringeeMediaState state) {
+  void handleHandleOnAnotherDeviceEvent(StringeeSignalingState state) {
     print('handleHandleOnAnotherDeviceEvent - $state');
   }
 
@@ -453,8 +452,29 @@ class _CallState extends State<Call> {
     });
   }
 
-  void handleChangeAudioDeviceEvent(AudioDevice audioDevice) {
+  void handleChangeAudioDeviceEvent(
+      AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
     print('handleChangeAudioDeviceEvent - $audioDevice');
+    switch (audioDevice) {
+      case AudioDevice.SPEAKER_PHONE:
+        if (call != null) {
+          call.setSpeakerphoneOn(widget.isSpeaker);
+        }
+        if (call2 != null) {
+          call2.setSpeakerphoneOn(widget.isSpeaker);
+        }
+        break;
+      case AudioDevice.BLUETOOTH:
+      case AudioDevice.WIRED_HEADSET:
+        widget.isSpeaker = false;
+        if (call != null) {
+          call.setSpeakerphoneOn(widget.isSpeaker);
+        }
+        if (call2 != null) {
+          call2.setSpeakerphoneOn(widget.isSpeaker);
+        }
+        break;
+    }
   }
 
   void clearDataEndDismiss() {
@@ -469,6 +489,60 @@ class _CallState extends State<Call> {
     } else {
       Navigator.pop(context);
     }
+  }
+}
+
+class ButtonSwitchCamera extends StatefulWidget {
+  bool isMirror;
+
+  ButtonSwitchCamera({
+    Key key,
+    this.isMirror,
+  }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ButtonSwitchCameraState();
+}
+
+class _ButtonSwitchCameraState extends State<ButtonSwitchCamera> {
+  void _toggleSwitchCamera() {
+    if (_stringeeCall != null) {
+      widget.isMirror = !widget.isMirror;
+      _stringeeCall.switchCamera(widget.isMirror).then((result) {
+        bool status = result['status'];
+        if (status) {}
+      });
+    } else {
+      widget.isMirror = !widget.isMirror;
+      _stringeeCall2.switchCamera(widget.isMirror).then((result) {
+        bool status = result['status'];
+        if (status) {}
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return new Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: EdgeInsets.only(left: 50.0, top: 50.0),
+        child: new GestureDetector(
+          onTap: _toggleSwitchCamera,
+          child: Image.asset(
+            'images/switch_camera.png',
+            height: 30.0,
+            width: 30.0,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -603,22 +677,30 @@ class _ButtonVideoState extends State<ButtonVideo> {
 
   void _toggleVideo() {
     if (_stringeeCall != null) {
-      _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
+      // _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
+      //   bool status = result['status'];
+      //   if (status) {
+      //     setState(() {
+      //       _isVideoEnable = !_isVideoEnable;
+      //     });
+      //   }
+      // });
+      _stringeeCall.resumeVideo().then((result) {
         bool status = result['status'];
-        if (status) {
-          setState(() {
-            _isVideoEnable = !_isVideoEnable;
-          });
-        }
+        if (status) {}
       });
     } else {
-      _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
+      // _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
+      //   bool status = result['status'];
+      //   if (status) {
+      //     setState(() {
+      //       _isVideoEnable = !_isVideoEnable;
+      //     });
+      //   }
+      // });
+      _stringeeCall2.resumeVideo().then((result) {
         bool status = result['status'];
-        if (status) {
-          setState(() {
-            _isVideoEnable = !_isVideoEnable;
-          });
-        }
+        if (status) {}
       });
     }
   }

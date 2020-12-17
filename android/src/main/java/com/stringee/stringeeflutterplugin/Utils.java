@@ -1,5 +1,10 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.widget.FrameLayout;
+
+import com.stringee.call.StringeeCall;
+import com.stringee.call.StringeeCall2;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

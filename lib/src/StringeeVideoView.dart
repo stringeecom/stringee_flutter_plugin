@@ -11,6 +11,7 @@ class StringeeVideoView extends StatefulWidget {
   bool isLocal = true;
   bool isOverlay = false;
   bool isMirror = false;
+  bool isResumeVideo = false;
   final EdgeInsetsGeometry margin;
   final AlignmentGeometry alignment;
   final EdgeInsetsGeometry padding;
@@ -25,6 +26,7 @@ class StringeeVideoView extends StatefulWidget {
     @required this.isLocal,
     @required this.isOverlay,
     this.isMirror,
+    this.isResumeVideo,
     this.color,
     this.height,
     this.width,
@@ -57,6 +59,7 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
       'isOverlay': widget.isOverlay,
     };
     if (Platform.isAndroid) {
+      creationParams['isResumeVideo'] = widget.isResumeVideo;
       creationParams['isMirror'] = widget.isMirror;
     }
   }

@@ -3,6 +3,7 @@ package com.stringee.stringeeflutterplugin;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.FrameLayout;
 
 import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
@@ -23,8 +24,6 @@ import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel;
 
-import static com.stringee.stringeeflutterplugin.StringeeManager.*;
-
 public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     private static StringeeCallManager _callManager;
     private static Context _context;
@@ -38,6 +37,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     private MediaState _mediaState;
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
+    private boolean isResumeVideo = false;
 
     public static synchronized StringeeCallManager getInstance(Context context, StringeeManager stringeeManager, Handler handler) {
         if (_callManager == null) {
@@ -570,6 +570,85 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     }
 
     /**
+     * Switch Camera
+     *
+     * @param callId
+     * @param isMirror
+     * @param result
+     */
+    public void switchCamera(String callId, final boolean isMirror, final MethodChannel.Result result) {
+        if (callId == null || callId.length() == 0) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "The call id is invalid.");
+            result.success(map);
+            return;
+        }
+
+        if (_call == null) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -3);
+            map.put("message", "The call is not found.");
+            result.success(map);
+            return;
+        }
+
+        _call.switchCamera(new StatusListener() {
+            @Override
+            public void onSuccess() {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _call.getLocalView().setMirror(isMirror);
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Resume Video
+     *
+     * @param callId
+     * @param result
+     */
+    public void resumeVideo(String callId, MethodChannel.Result result) {
+        if (callId == null || callId.length() == 0) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "The call id is invalid.");
+            result.success(map);
+            return;
+        }
+
+        if (_call == null) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -3);
+            map.put("message", "The call is not found.");
+            result.success(map);
+            return;
+        }
+
+        isResumeVideo = true;
+        _call.resumeVideo();
+
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
+    }
+
+    /**
      * Get call statistic
      *
      * @param callId
@@ -714,7 +793,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             @Override
             public void run() {
                 _mediaState = mediaState;
-                Log.d(TAG, "==========MediaStateChange==========\n" + "mediaState: " + mediaState + remoteStreamShowed + hasRemoteStream);
+                Log.d(TAG, "==========MediaStateChange==========\n" + "mediaState: " + mediaState);
                 Map map = new HashMap();
                 map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
                 map.put("event", "didChangeMediaState");
@@ -727,7 +806,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 if (_mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed && stringeeCall.isVideoCall()) {
                     remoteStreamShowed = true;
                     Map map1 = new HashMap();
-                    map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                    map1.put("typeEvent", StringeeEnventType.CallEvent.getValue());
                     map1.put("event", "didReceiveRemoteStream");
                     Map bodyMap1 = new HashMap();
                     bodyMap1.put("callId", stringeeCall.getCallId());
@@ -751,6 +830,13 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
                     map.put("body", bodyMap);
+                    if (isResumeVideo) {
+                        FrameLayout localView = _stringeeManager.getLocalView().get(stringeeCall.getCallId());
+                        localView.removeAllViews();
+                        localView.addView(stringeeCall.getLocalView());
+                        stringeeCall.renderLocalView(true);
+                        isResumeVideo = false;
+                    }
                     StringeeFlutterPlugin._eventSink.success(map);
                 }
             }
@@ -763,7 +849,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             @Override
             public void run() {
                 if (stringeeCall.isVideoCall()) {
-                    Log.d(TAG, "==========ReceiveRemoteStream========== " + remoteStreamShowed + hasRemoteStream);
+                    Log.d(TAG, "==========ReceiveRemoteStream========== ");
                     if (_mediaState == MediaState.CONNECTED && !remoteStreamShowed) {
                         remoteStreamShowed = true;
                         Map map = new HashMap();

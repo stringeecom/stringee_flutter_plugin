@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import '../stringee_flutter_plugin.dart';
 import 'StringeeClient.dart';
 import 'StringeeConstants.dart';
@@ -278,6 +279,32 @@ class StringeeCall {
     };
     return await StringeeClient.methodChannel
         .invokeMethod('setSpeakerphoneOn', pram);
+  }
+
+  Future<Map<dynamic, dynamic>> switchCamera(bool isMirror) async {
+    final pram = {
+      'callId': this._id,
+      'isMirror': isMirror,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('switchCamera', pram);
+  }
+
+  Future<Map<dynamic, dynamic>> resumeVideo() async {
+    if (Platform.isIOS) {
+      final pram = {
+        'status': false,
+        "code": '-4',
+        "message": "This function work only for Android",
+      };
+      return pram;
+    } else {
+      final pram = {
+        'callId': this._id,
+      };
+      return await StringeeClient.methodChannel
+          .invokeMethod('resumeVideo', pram);
+    }
   }
 
   void destroy() {

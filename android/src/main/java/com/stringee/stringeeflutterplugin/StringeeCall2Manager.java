@@ -3,12 +3,14 @@ package com.stringee.stringeeflutterplugin;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.FrameLayout;
 
 import com.stringee.call.StringeeCall2;
 import com.stringee.call.StringeeCall2.CallStatsListener;
 import com.stringee.call.StringeeCall2.MediaState;
 import com.stringee.call.StringeeCall2.StringeeCallListener;
 import com.stringee.call.StringeeCall2.StringeeCallStats;
+import com.stringee.listener.StatusListener;
 import com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice;
 import com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.stringeeflutterplugin.StringeeManager.StringeeEnventType;
@@ -20,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import io.flutter.plugin.common.MethodChannel;
 
 import static io.flutter.plugin.common.MethodChannel.*;
 
@@ -36,6 +40,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
     private MediaState _mediaState;
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
+    private boolean isResumeVideo = false;
 
     public static synchronized StringeeCall2Manager getInstance(Context context, StringeeManager stringeeManager, Handler handler) {
         if (_callManager == null) {
@@ -156,7 +161,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
         remoteStreamShowed = false;
 
         _call.setCallListener(this);
-        _call.ringing(new com.stringee.listener.StatusListener() {
+        _call.ringing(new StatusListener() {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "Send ringing success");
@@ -503,7 +508,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
      * @param isVideoEnable
      * @param result
      */
-    public void enableVideo(String callId, boolean isVideoEnable, io.flutter.plugin.common.MethodChannel.Result result) {
+    public void enableVideo(String callId, boolean isVideoEnable, MethodChannel.Result result) {
         if (callId == null || callId.length() == 0) {
             Map map = new HashMap();
             map.put("status", false);
@@ -558,6 +563,84 @@ public class StringeeCall2Manager implements StringeeCallListener {
         if (_audioManager != null) {
             _audioManager.setSpeakerphoneOn(on);
         }
+
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
+    }
+
+    /**
+     * Switch Camera
+     *
+     * @param callId
+     * @param result
+     */
+    public void switchCamera(String callId, final boolean isMirror, final MethodChannel.Result result) {
+        if (callId == null || callId.length() == 0) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "The call id is invalid.");
+            result.success(map);
+            return;
+        }
+
+        if (_call == null) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -3);
+            map.put("message", "The call is not found.");
+            result.success(map);
+            return;
+        }
+
+        _call.switchCamera(new StatusListener() {
+            @Override
+            public void onSuccess() {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _call.getLocalView().setMirror(isMirror);
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Resume Video
+     *
+     * @param callId
+     * @param result
+     */
+    public void resumeVideo(String callId, MethodChannel.Result result) {
+        if (callId == null || callId.length() == 0) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "The call id is invalid.");
+            result.success(map);
+            return;
+        }
+
+        if (_call == null) {
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -3);
+            map.put("message", "The call is not found.");
+            result.success(map);
+            return;
+        }
+
+        isResumeVideo = true;
+        _call.resumeVideo();
 
         Map map = new HashMap();
         map.put("status", true);
@@ -706,7 +789,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             @Override
             public void run() {
                 _mediaState = mediaState;
-                Log.d(TAG, "==========MediaStateChange2==========\n" + "mediaState: " + mediaState + remoteStreamShowed + hasRemoteStream);
+                Log.d(TAG, "==========MediaStateChange2==========\n" + "mediaState: " + mediaState);
                 Map map = new HashMap();
                 map.put("typeEvent", StringeeEnventType.Call2Event.getValue());
                 map.put("event", "didChangeMediaState");
@@ -743,6 +826,13 @@ public class StringeeCall2Manager implements StringeeCallListener {
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
                     map.put("body", bodyMap);
+                    if (isResumeVideo) {
+                        FrameLayout localView = _stringeeManager.getLocalView().get(stringeeCall.getCallId());
+                        localView.removeAllViews();
+                        localView.addView(stringeeCall.getLocalView());
+                        stringeeCall.renderLocalView(true);
+                        isResumeVideo = false;
+                    }
                     StringeeFlutterPlugin._eventSink.success(map);
                 }
             }
@@ -755,7 +845,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             @Override
             public void run() {
                 if (stringeeCall.isVideoCall()) {
-                    Log.d(TAG, "==========ReceiveRemoteStream2========== " + remoteStreamShowed + hasRemoteStream);
+                    Log.d(TAG, "==========ReceiveRemoteStream2========== ");
                     if (_mediaState == MediaState.CONNECTED && !remoteStreamShowed) {
                         remoteStreamShowed = true;
                         Map map = new HashMap();
