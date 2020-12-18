@@ -16,6 +16,7 @@ import com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerEvent
 import com.stringee.stringeeflutterplugin.StringeeManager.StringeeEnventType;
 
 import org.json.JSONObject;
+import org.webrtc.RendererCommon.ScalingType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -827,10 +828,18 @@ public class StringeeCall2Manager implements StringeeCallListener {
                     bodyMap.put("callId", stringeeCall.getCallId());
                     map.put("body", bodyMap);
                     if (isResumeVideo) {
-                        FrameLayout localView = _stringeeManager.getLocalView().get(stringeeCall.getCallId());
+                        Map<String, Object> localViewOptions = _stringeeManager.getLocalViewOptions().get(stringeeCall.getCallId());
+                        FrameLayout localView = (FrameLayout) localViewOptions.get("layout");
+                        boolean isMirror = (Boolean) localViewOptions.get("isMirror");
+                        boolean isOverlay = (Boolean) localViewOptions.get("isOverlay");
+                        ScalingType scalingType = (ScalingType) localViewOptions.get("scalingType");
+
                         localView.removeAllViews();
+                        stringeeCall.getLocalView().setScalingType(scalingType);
                         localView.addView(stringeeCall.getLocalView());
-                        stringeeCall.renderLocalView(true);
+                        stringeeCall.renderLocalView(isOverlay);
+                        stringeeCall.getLocalView().setMirror(isMirror);
+
                         isResumeVideo = false;
                     }
                     StringeeFlutterPlugin._eventSink.success(map);

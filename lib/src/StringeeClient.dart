@@ -37,29 +37,35 @@ class StringeeClient {
     eventChannel.receiveBroadcastStream().listen(this._listener);
   }
 
+  /// connect to StringeeClient
   Future<void> connect(String token) async {
     assert(token != null);
     return await methodChannel.invokeMethod('connect', token);
   }
 
+  /// disconnect to StringeeCLient
   Future<void> disconnect() async {
     return await methodChannel.invokeMethod('disconnect');
   }
 
+  ///register push from Stringee
   Future<Map<dynamic, dynamic>> registerPush(
       Map<dynamic, dynamic> parameters) async {
     return await methodChannel.invokeMethod('registerPush', parameters);
   }
 
+  /// unregister push from Stringee
   Future<Map<dynamic, dynamic>> unregisterPush(String deviceToken) async {
     return await methodChannel.invokeMethod('unregisterPush', deviceToken);
   }
 
+  /// send a custom message
   Future<Map<dynamic, dynamic>> sendCustomMessage(
       Map<dynamic, dynamic> parameters) async {
     return await methodChannel.invokeMethod('sendCustomMessage', parameters);
   }
 
+  ///send StringeeClient event
   void _listener(dynamic event) {
     assert(event != null);
     final Map<dynamic, dynamic> map = event;

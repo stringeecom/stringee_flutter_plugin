@@ -5,16 +5,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:stringee_flutter_plugin/src/StringeeConstants.dart';
 
 class StringeeVideoView extends StatefulWidget {
   final String callId;
   bool isLocal = true;
   bool isOverlay = false;
   bool isMirror = false;
-  bool isResumeVideo = false;
   final EdgeInsetsGeometry margin;
   final AlignmentGeometry alignment;
   final EdgeInsetsGeometry padding;
+  final ScalingType scalingType;
   final double height;
   final double width;
   final Color color;
@@ -26,7 +27,6 @@ class StringeeVideoView extends StatefulWidget {
     @required this.isLocal,
     @required this.isOverlay,
     this.isMirror,
-    this.isResumeVideo,
     this.color,
     this.height,
     this.width,
@@ -34,6 +34,7 @@ class StringeeVideoView extends StatefulWidget {
     this.alignment,
     this.padding,
     this.child,
+    this.scalingType,
   })  : assert(margin == null || margin.isNonNegative),
         assert(padding == null || padding.isNonNegative),
         super(key: key);
@@ -53,14 +54,28 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     creationParams = {
       'callId': widget.callId,
       'isLocal': widget.isLocal,
       'isOverlay': widget.isOverlay,
     };
+
+    switch (widget.scalingType) {
+      case ScalingType.SCALE_ASPECT_FILL:
+        creationParams['scalingType'] = "FILL";
+        break;
+      case ScalingType.SCALE_ASPECT_FIT:
+        creationParams['scalingType'] = "FIT";
+        break;
+      default:
+        creationParams['scalingType'] = "BALANCED";
+        break;
+    }
+
     if (Platform.isAndroid) {
-      creationParams['isResumeVideo'] = widget.isResumeVideo;
-      creationParams['isMirror'] = widget.isMirror;
+      creationParams['isMirror'] =
+          widget.isMirror == null ? false : widget.isMirror;
     }
   }
 

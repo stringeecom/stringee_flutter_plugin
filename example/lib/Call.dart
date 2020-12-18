@@ -161,6 +161,7 @@ class _CallState extends State<Call> {
             isLocal: false,
             isOverlay: false,
             isMirror: false,
+            scalingType: ScalingType.SCALE_ASPECT_FIT,
           )
         : Placeholder();
 

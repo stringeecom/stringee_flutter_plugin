@@ -73,9 +73,15 @@ enum StringeeMediaState {
 }
 
 /// Type of Video Quality
-
 enum VideoQuality {
   NORMAL,
   HD,
   FULLHD,
+}
+
+///Type of Scaling type
+enum ScalingType {
+  SCALE_ASPECT_FIT,
+  SCALE_ASPECT_FILL,
+  SCALE_ASPECT_BALANCED,
 }
