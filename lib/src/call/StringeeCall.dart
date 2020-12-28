@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import '../stringee_flutter_plugin.dart';
-import 'StringeeClient.dart';
-import 'StringeeConstants.dart';
+import '../StringeeClient.dart';
+import '../StringeeConstants.dart';
 
 class StringeeCall {
   String _id;

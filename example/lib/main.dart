@@ -4,9 +4,11 @@ import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'Call.dart';
 
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjQwODgiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE2MDg4LCJ1c2VySWQiOiJ1c2VyMSJ9.RkqiRpfvDoMU9rZORzJKHTmtN_w70Tr5rnp5IePOJFE';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDg3MTY0ODAiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjExMzA4NDgwLCJ1c2VySWQiOiJ1c2VyMSJ9.e5U4nCiHrKDpuqi8oWs0LHTtzcH6_2Q0hP1oqMdNeMw';
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
+var token =
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwODg2NjkxMiIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwODk1MzMxMiwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.akfOwo9a2WzhZvLcUGi322LJgJLrn2sRIz4Wls1RG_E';
 var client = StringeeClient();
 String strUserId = "";
 
@@ -55,10 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
             handleRequestAccessTokenEvent();
             break;
           case StringeeClientEvents.DidReceiveCustomMessage:
-            handleDidReceiveCustomMessageEvent(map['from'], map['message']);
+            handleDidReceiveCustomMessageEvent(map['body']['from'], map['body']['message']);
             break;
           case StringeeClientEvents.DidReceiveTopicMessage:
-            handleDidReceiveTopicMessageEvent(map['from'], map['message']);
+            handleDidReceiveTopicMessageEvent(
+                map['body']['from'], map['body']['message']);
             break;
           case StringeeClientEvents.IncomingCall:
             StringeeCall call = map['body'];
@@ -75,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(user1);
+    client.connect(token);
   }
 
   @override
@@ -261,17 +264,35 @@ class _MyFormState extends State<MyForm> {
   }
 
   void _CallTapped(bool isVideoCall, StringeeType callType) {
-    if (strUserId.isEmpty || !client.hasConnected) return;
+    // if (strUserId.isEmpty || !client.hasConnected) return;
+    //
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (context) => Call(
+    //           fromUserId: client.userId,
+    //           toUserId: strUserId,
+    //           isVideoCall: isVideoCall,
+    //           callType: callType,
+    //           showIncomingUi: false)),
+    // );
+    // List<User> users = [];
+    // User user = new User('3', 'a', null);
+    // User user2 = new User('v', 'v', null);
+    // users.add(user);
+    // users.add(user2);
+    //
+    // ConversationOption option = new ConversationOption('a', true, false);
+    // final parameters = {
+    //   'users': users,
+    //   'option': option,
+    // };
+    // client.createConversation(parameters);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => Call(
-              fromUserId: client.userId,
-              toUserId: strUserId,
-              isVideoCall: isVideoCall,
-              callType: callType,
-              showIncomingUi: false)),
-    );
+    final parameters = {
+      'convId': 'conv-vn-1-73JJ5R8BMN-1606409865248',
+    };
+
+    client.getConversationById(parameters);
   }
 }

@@ -458,6 +458,7 @@ class _CallState extends State<Call> {
     print('handleChangeAudioDeviceEvent - $audioDevice');
     switch (audioDevice) {
       case AudioDevice.SPEAKER_PHONE:
+      case AudioDevice.EARPIECE:
         if (call != null) {
           call.setSpeakerphoneOn(widget.isSpeaker);
         }
@@ -474,6 +475,9 @@ class _CallState extends State<Call> {
         if (call2 != null) {
           call2.setSpeakerphoneOn(widget.isSpeaker);
         }
+        break;
+      case AudioDevice.NONE:
+        print('handleChangeAudioDeviceEvent - non audio devices connected');
         break;
     }
   }

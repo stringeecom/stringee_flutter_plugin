@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'StringeeCall.dart';
-import 'StringeeCall2.dart';
+import 'package:stringee_flutter_plugin/src/messaging/Conversation.dart';
+import 'package:stringee_flutter_plugin/src/messaging/Message.dart';
+import 'call/StringeeCall.dart';
+import 'call/StringeeCall2.dart';
 import 'StringeeConstants.dart';
+import 'messaging/User.dart';
 
 class StringeeClient {
   static final StringeeClient _instance = StringeeClient._internal();
@@ -65,6 +69,20 @@ class StringeeClient {
     return await methodChannel.invokeMethod('sendCustomMessage', parameters);
   }
 
+  /// create new conversation
+  Future<Map<dynamic, dynamic>> createConversation(
+      Map<dynamic, dynamic> parameters) async {
+    final params = parameters;
+    params['users'] = jsonEncode(parameters['users']);
+    params['option'] = jsonEncode(parameters['option']);
+    return await methodChannel.invokeMethod('createConversation', params);
+  }
+
+  Future<Map<dynamic, dynamic>> getConversationById(
+      Map<dynamic, dynamic> parameters) async {
+    return await methodChannel.invokeMethod('getConversationById', parameters);
+  }
+
   ///send StringeeClient event
   void _listener(dynamic event) {
     assert(event != null);
@@ -94,6 +112,9 @@ class StringeeClient {
           break;
         case 'didReceiveTopicMessage':
           _handleDidReceiveTopicMessageEvent(map['body']);
+          break;
+        case 'didReceiveChangeEvent':
+          _handleReceiveChangeEvent(map['body']);
           break;
       }
     } else {
@@ -183,6 +204,25 @@ class StringeeClient {
       "typeEvent": StringeeClientEvents,
       "eventType": StringeeClientEvents.IncomingCall2,
       "body": call
+    });
+  }
+
+  void _handleReceiveChangeEvent(Map<dynamic, dynamic> map) {
+    Map<dynamic, dynamic> bodyMap = map;
+    bodyMap['changeType'] = ChangeType.values[bodyMap['changeType']];
+    bodyMap['objectType'] = ObjectType.values[bodyMap['objectType']];
+    switch (bodyMap['objectType']) {
+      case ObjectType.CONVERSATION:
+        bodyMap['objects'] = new Conversation.initFromEvent(bodyMap['objects']);
+        break;
+      case ObjectType.MESSAGE:
+        bodyMap['objects'] = new Message.initFromEvent(bodyMap['objects']);
+        break;
+    }
+    eventStreamController.add({
+      "typeEvent": StringeeClientEvents,
+      "eventType": StringeeClientEvents.DidReceiveChange,
+      "body": bodyMap
     });
   }
 }

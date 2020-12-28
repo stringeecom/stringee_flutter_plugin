@@ -5,8 +5,15 @@ import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONException;
+import com.stringee.messaging.ConversationOptions;
+import com.stringee.messaging.User;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -16,15 +23,14 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-/**
- * StringeeFlutterPlugin
- */
-public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
+public class FlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
 
     private static StringeeManager _stringeeManager;
     private static StringeeClientManager _clientManager;
     private static StringeeCallManager _callManager;
     private static StringeeCall2Manager _call2Manager;
+    private static ConversationManager _conversationManager;
+    private static MessageManager _messageManager;
     public static EventChannel.EventSink _eventSink;
     private static Handler _handler;
     public static MethodChannel channel;
@@ -36,6 +42,8 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         _clientManager = StringeeClientManager.getInstance(binding.getApplicationContext(), _stringeeManager, _handler);
         _callManager = StringeeCallManager.getInstance(binding.getApplicationContext(), _stringeeManager, _handler);
         _call2Manager = StringeeCall2Manager.getInstance(binding.getApplicationContext(), _stringeeManager, _handler);
+        _conversationManager = ConversationManager.getInstance(_stringeeManager, _handler);
+        _messageManager = MessageManager.getInstance(_stringeeManager, _handler);
 
         channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
         channel.setMethodCallHandler(this);
@@ -174,6 +182,24 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "resumeVideo2":
                 _call2Manager.resumeVideo((String) call.argument("callId"), result);
+                break;
+            case "createConversation":
+                try {
+                    List<User> users = new ArrayList<>();
+                    users = Utils.getListUser((String) call.argument("users"));
+                    ConversationOptions option = new ConversationOptions();
+                    JSONObject optionObject = new JSONObject((String) call.argument("option"));
+                    String name = optionObject.optString("name");
+                    if (name != null) option.setName(name);
+                    option.setGroup(optionObject.optBoolean("isGroup", false));
+                    option.setDistinct(optionObject.optBoolean("isDistinct", false));
+                    _clientManager.createConversation(users, option, result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "getConversationById":
+                _clientManager.getConversationById((String) call.argument("convId"), result);
                 break;
             default:
                 result.notImplemented();

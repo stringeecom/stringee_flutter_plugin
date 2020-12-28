@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StringeeManager {
-    private static StringeeManager stringeeManager;
+    private static com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.StringeeManager stringeeManager;
     private StringeeClient mClient;
     private Map<String, StringeeCall> callsMap = new HashMap<>();
     private Map<String, StringeeCall2> call2sMap = new HashMap<>();
@@ -32,9 +32,9 @@ public class StringeeManager {
         }
     }
 
-    public static synchronized StringeeManager getInstance() {
+    public static synchronized com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.StringeeManager getInstance() {
         if (stringeeManager == null) {
-            stringeeManager = new StringeeManager();
+            stringeeManager = new com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.StringeeManager();
         }
 
         return stringeeManager;
