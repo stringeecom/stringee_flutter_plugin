@@ -1,20 +1,23 @@
 package com.stringee.stringeeflutterplugin;
 
-import android.widget.FrameLayout;
-
 import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall2;
+import com.stringee.messaging.Conversation;
+import com.stringee.messaging.Message;
+import com.stringee.messaging.User;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class StringeeManager {
-    private static com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.StringeeManager stringeeManager;
+    private static StringeeManager stringeeManager;
     private StringeeClient mClient;
     private Map<String, StringeeCall> callsMap = new HashMap<>();
     private Map<String, StringeeCall2> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
+    private Map<String, Conversation> conversationMap = new HashMap<>();
+    private Map<String, Message> messageMap = new HashMap<>();
 
     public enum StringeeEnventType {
         ClientEvent(0),
@@ -32,9 +35,9 @@ public class StringeeManager {
         }
     }
 
-    public static synchronized com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.StringeeManager getInstance() {
+    public static synchronized StringeeManager getInstance() {
         if (stringeeManager == null) {
-            stringeeManager = new com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.StringeeManager();
+            stringeeManager = new StringeeManager();
         }
 
         return stringeeManager;
@@ -58,5 +61,13 @@ public class StringeeManager {
 
     public Map<String, Map<String, Object>> getLocalViewOptions() {
         return localViewOption;
+    }
+
+    public Map<String, Conversation> getConversationMap() {
+        return conversationMap;
+    }
+
+    public Map<String, Message> getMessageMap() {
+        return messageMap;
     }
 }
