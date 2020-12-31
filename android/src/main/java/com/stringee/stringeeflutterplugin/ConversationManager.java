@@ -20,7 +20,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ConversationManager {
     private static ConversationManager _conversationManager;
-    private static StringeeClient _client;
     private static StringeeManager _stringeeManager;
     private static Handler _handler;
 
@@ -29,7 +28,6 @@ public class ConversationManager {
             _conversationManager = new ConversationManager();
             _stringeeManager = stringeeManager;
             _handler = handler;
-            _client = stringeeManager.getClient();
         }
         return _conversationManager;
     }
@@ -69,7 +67,7 @@ public class ConversationManager {
             });
             return;
         }
-
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -84,19 +82,37 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.delete(_client, new StatusListener() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess() {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.delete(_client, new StatusListener() {
                     @Override
-                    public void run() {
-                        _stringeeManager.getConversationMap().remove(convId);
-                        Map map = new HashMap();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        result.success(map);
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
             }
@@ -140,6 +156,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -154,31 +171,45 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.addParticipants(_client, participants, new CallbackListener<List<User>>() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(final List<User> users) {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.addParticipants(_client, participants, new CallbackListener<List<User>>() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        for (int i = 0; i < users.size(); i++) {
-                            try {
-                                User user = users.get(i);
-                                bodyMap.putAll(com.stringee.stringeeflutterplugin.Utils.convertJsonToMap(com.stringee.stringeeflutterplugin.Utils.convertUserToMap(user)));
-                            } catch (org.json.JSONException e) {
-                                e.printStackTrace();
+                    public void onSuccess(final List<User> users) {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                JSONArray participantsArray = new JSONArray();
+                                for (int j = 0; j < users.size(); j++) {
+                                    participantsArray.put(Utils.convertUserToJSON(users.get(j)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", participantsArray.toString());
+                                result.success(map);
                             }
-                        }
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("participants", bodyMap);
-                        result.success(map);
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
-
             }
 
             @Override
@@ -220,6 +251,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -234,32 +266,45 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.removeParticipants(_client, participants, new CallbackListener<List<User>>() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(final List<User> users) {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.removeParticipants(_client, participants, new CallbackListener<List<User>>() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        for (int i = 0; i < users.size(); i++) {
-                            try {
-                                User user = users.get(i);
-                                bodyMap.putAll(com.stringee.stringeeflutterplugin.Utils.convertJsonToMap(com.stringee.stringeeflutterplugin.Utils.convertUserToMap(user)));
-                            } catch (org.json.JSONException e) {
-                                e.printStackTrace();
+                    public void onSuccess(final List<User> users) {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                JSONArray participantsArray = new JSONArray();
+                                for (int j = 0; j < users.size(); j++) {
+                                    participantsArray.put(Utils.convertUserToJSON(users.get(j)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", participantsArray.toString());
+                                result.success(map);
                             }
-                        }
+                        });
 
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyMap);
-                        result.success(map);
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
-
             }
 
             @Override
@@ -300,6 +345,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -314,21 +360,37 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.sendMessage(_client, message, new StatusListener() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess() {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.sendMessage(_client, message, new StatusListener() {
                     @Override
-                    public void run() {
-                        if (message.getId() != null) {
-                            _stringeeManager.getMessageMap().put(message.getId(), message);
-                        }
-                        Map map = new HashMap();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        result.success(map);
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
             }
@@ -357,7 +419,7 @@ public class ConversationManager {
      * @param msgIds
      * @param result
      */
-    public void getMessages(String convId, String[] msgIds, final Result result) {
+    public void getMessages(String convId, final String[] msgIds, final Result result) {
         if (convId == null) {
             _handler.post(new Runnable() {
                 @Override
@@ -372,6 +434,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -386,28 +449,42 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.getMessages(_client, msgIds, new CallbackListener<List<Message>>() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(final List<Message> messages) {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.getMessages(_client, msgIds, new CallbackListener<List<Message>>() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        for (int i = 0; i < messages.size(); i++) {
-                            Message message = messages.get(i);
-                            if (message.getId() != null) {
-                                _stringeeManager.getMessageMap().put(message.getId(), message);
+                    public void onSuccess(final List<Message> messages) {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                JSONArray msgArray = new JSONArray();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray.toString());
+                                result.success(map);
                             }
-                            bodyMap.putAll(Utils.convertMessageToMap(_client, message));
-                        }
+                        });
+                    }
 
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyMap);
-                        result.success(map);
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
             }
@@ -451,6 +528,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -465,27 +543,42 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.getLocalMessages(_client, count, new CallbackListener<List<Message>>() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(final List<Message> messages) {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.getLocalMessages(_client, count, new CallbackListener<List<Message>>() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        for (int i = 0; i < messages.size(); i++) {
-                            Message message = messages.get(i);
-                            if (message.getId() != null) {
-                                _stringeeManager.getMessageMap().put(message.getId(), message);
+                    public void onSuccess(final List<Message> messages) {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                JSONArray msgArray = new JSONArray();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray.toString());
+                                result.success(map);
                             }
-                            bodyMap.putAll(Utils.convertMessageToMap(_client, message));
-                        }
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyMap);
-                        result.success(map);
+                        });
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
             }
@@ -529,6 +622,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -543,28 +637,42 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.getLastMessages(_client, count, new CallbackListener<List<Message>>() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(final List<Message> messages) {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.getLastMessages(_client, count, new CallbackListener<List<Message>>() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        for (int i = 0; i < messages.size(); i++) {
-                            Message message = messages.get(i);
-                            if (message.getId() != null) {
-                                _stringeeManager.getMessageMap().put(message.getId(), message);
+                    public void onSuccess(final List<Message> messages) {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                JSONArray msgArray = new JSONArray();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray.toString());
+                                result.success(map);
                             }
-                            bodyMap.putAll(Utils.convertMessageToMap(_client, message));
-                        }
+                        });
+                    }
 
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyMap);
-                        result.success(map);
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
             }
@@ -609,6 +717,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -623,28 +732,42 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.getMessagesAfter(_client, seq, count, new CallbackListener<List<Message>>() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(final List<Message> messages) {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.getMessagesAfter(_client, seq, count, new CallbackListener<List<Message>>() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        for (int i = 0; i < messages.size(); i++) {
-                            Message message = messages.get(i);
-                            if (message.getId() != null) {
-                                _stringeeManager.getMessageMap().put(message.getId(), message);
+                    public void onSuccess(final List<Message> messages) {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                JSONArray msgArray = new JSONArray();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray.toString());
+                                result.success(map);
                             }
-                            bodyMap.putAll(Utils.convertMessageToMap(_client, message));
-                        }
+                        });
+                    }
 
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyMap);
-                        result.success(map);
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
             }
@@ -689,6 +812,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -703,31 +827,45 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.getMessagesBefore(_client, seq, count, new CallbackListener<List<Message>>() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(final List<Message> messages) {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.getMessagesBefore(_client, seq, count, new CallbackListener<List<Message>>() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        for (int i = 0; i < messages.size(); i++) {
-                            Message message = messages.get(i);
-                            if (message.getId() != null) {
-                                _stringeeManager.getMessageMap().put(message.getId(), message);
+                    public void onSuccess(final List<Message> messages) {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                JSONArray msgArray = new JSONArray();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray.toString());
+                                result.success(map);
                             }
-                            bodyMap.putAll(Utils.convertMessageToMap(_client, message));
-                        }
+                        });
 
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyMap);
-                        result.success(map);
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
-
             }
 
             @Override
@@ -755,7 +893,7 @@ public class ConversationManager {
      * @param avatar
      * @param result
      */
-    public void updateConversation(String convId, String name, String avatar, final Result result) {
+    public void updateConversation(String convId, final String name, final String avatar, final Result result) {
         if (convId == null) {
             _handler.post(new Runnable() {
                 @Override
@@ -770,6 +908,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -784,18 +923,37 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        conversation.updateConversation(_client, name, avatar, new StatusListener() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess() {
-                _handler.post(new Runnable() {
+            public void onSuccess(Conversation conversation) {
+                conversation.updateConversation(_client, name, avatar, new StatusListener() {
                     @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        result.success(map);
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
                     }
                 });
             }
@@ -824,7 +982,7 @@ public class ConversationManager {
      * @param userId
      * @param result
      */
-    public void setRole(String convId, String userId, UserRole role, final Result result) {
+    public void setRole(String convId, final String userId, final UserRole role, final Result result) {
         if (convId == null) {
             _handler.post(new Runnable() {
                 @Override
@@ -839,6 +997,7 @@ public class ConversationManager {
             return;
         }
 
+        final StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -853,74 +1012,92 @@ public class ConversationManager {
             return;
         }
 
-        Conversation conversation = _stringeeManager.getConversationMap().get(convId);
-        switch (role) {
-            case Admin:
-                conversation.setAsAdmin(_client, userId, new StatusListener() {
-                    @Override
-                    public void onSuccess() {
-                        _handler.post(new Runnable() {
+        Utils.getConversation(_client, convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                switch (role) {
+                    case Admin:
+                        conversation.setAsAdmin(_client, userId, new StatusListener() {
                             @Override
-                            public void run() {
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                            public void onSuccess() {
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Map map = new HashMap();
+                                        map.put("status", true);
+                                        map.put("code", 0);
+                                        map.put("message", "Success");
+                                        result.success(map);
+                                    }
+                                });
                             }
-                        });
-                    }
 
-                    @Override
-                    public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
-                        _handler.post(new Runnable() {
                             @Override
-                            public void run() {
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                            public void onError(final StringeeError stringeeError) {
+                                super.onError(stringeeError);
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Map map = new HashMap();
+                                        map.put("status", false);
+                                        map.put("code", stringeeError.getCode());
+                                        map.put("message", stringeeError.getMessage());
+                                        result.success(map);
+                                    }
+                                });
                             }
                         });
+                        break;
+                    case Member:
+                        conversation.setAsMember(_client, userId, new StatusListener() {
+                            @Override
+                            public void onSuccess() {
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Map map = new HashMap();
+                                        map.put("status", true);
+                                        map.put("code", 0);
+                                        map.put("message", "Success");
+                                        result.success(map);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(final StringeeError stringeeError) {
+                                super.onError(stringeeError);
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Map map = new HashMap();
+                                        map.put("status", false);
+                                        map.put("code", stringeeError.getCode());
+                                        map.put("message", stringeeError.getMessage());
+                                        result.success(map);
+                                    }
+                                });
+                            }
+                        });
+                        break;
+                }
+            }
+
+            @Override
+            public void onError(final StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
                     }
                 });
-                break;
-            case Member:
-                conversation.setAsMember(_client, userId, new StatusListener() {
-                    @Override
-                    public void onSuccess() {
-                        _handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
-                        _handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
-                            }
-                        });
-                    }
-                });
-                break;
-        }
-
+            }
+        });
     }
 
     /**
@@ -945,6 +1122,7 @@ public class ConversationManager {
             return;
         }
 
+        StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -1006,6 +1184,7 @@ public class ConversationManager {
             return;
         }
 
+        StringeeClient _client = _stringeeManager.getClient();
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -1056,5 +1235,92 @@ public class ConversationManager {
                     }
                 }
         );
+    }
+
+    /**
+     * Mark conversation readed
+     *
+     * @param convId
+     * @param result
+     */
+    public void markAsRead(String convId, final Result result) {
+        if (convId == null) {
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Map map = new HashMap();
+                    map.put("status", false);
+                    map.put("code", -2);
+                    map.put("message", "Conversation id can not be null");
+                    result.success(map);
+                }
+            });
+            return;
+        }
+        final StringeeClient _client = _stringeeManager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Map map = new HashMap();
+                    map.put("status", false);
+                    map.put("code", -1);
+                    map.put("message", "StringeeClient is not initialized or disconnected");
+                    result.success(map);
+                }
+            });
+            return;
+        }
+
+        Utils.getLastMessage(_client, convId, new CallbackListener<Message>() {
+            @Override
+            public void onSuccess(Message message) {
+                message.markAsRead(_client, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
     }
 }

@@ -16,8 +16,6 @@ public class StringeeManager {
     private Map<String, StringeeCall> callsMap = new HashMap<>();
     private Map<String, StringeeCall2> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
-    private Map<String, Conversation> conversationMap = new HashMap<>();
-    private Map<String, Message> messageMap = new HashMap<>();
 
     public enum StringeeEnventType {
         ClientEvent(0),
@@ -61,13 +59,5 @@ public class StringeeManager {
 
     public Map<String, Map<String, Object>> getLocalViewOptions() {
         return localViewOption;
-    }
-
-    public Map<String, Conversation> getConversationMap() {
-        return conversationMap;
-    }
-
-    public Map<String, Message> getMessageMap() {
-        return messageMap;
     }
 }

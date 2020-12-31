@@ -43,7 +43,6 @@ enum MsgType {
   TYPE_CONTACT,
   TYPE_STICKER,
   TYPE_NOTIFICATION,
-  TYPE_TEMP_DATE,
 }
 
 extension MsgTypeValueExtension on MsgType {
@@ -86,9 +85,6 @@ extension MsgTypeValueExtension on MsgType {
       case MsgType.TYPE_NOTIFICATION:
         return 100;
         break;
-      case MsgType.TYPE_TEMP_DATE:
-        return 1000;
-        break;
     }
   }
 }
@@ -118,10 +114,10 @@ extension MsgTypeExtension on int {
       case 7:
         return MsgType.TYPE_CREATE_CONVERSATION;
         break;
-      case 6:
+      case 8:
         return MsgType.TYPE_RENAME_CONVERSATION;
         break;
-      case 7:
+      case 9:
         return MsgType.TYPE_LOCATION;
         break;
       case 10:
@@ -133,8 +129,32 @@ extension MsgTypeExtension on int {
       case 100:
         return MsgType.TYPE_NOTIFICATION;
         break;
-      case 1000:
-        return MsgType.TYPE_TEMP_DATE;
+    }
+  }
+}
+
+enum MsgNotifyType {
+  TYPE_ADD_PARTICIPANTS,
+  TYPE_REMOVE_PARTICIPANTS,
+  TYPE_CHANGE_GROUP_NAME,
+  TYPE_END_CONV,
+}
+
+extension MsgNotifyTypeExtension on int {
+  // ignore: missing_return
+  MsgNotifyType get notifyType {
+    switch (this) {
+      case 1:
+        return MsgNotifyType.TYPE_ADD_PARTICIPANTS;
+        break;
+      case 2:
+        return MsgNotifyType.TYPE_REMOVE_PARTICIPANTS;
+        break;
+      case 3:
+        return MsgNotifyType.TYPE_CHANGE_GROUP_NAME;
+        break;
+      case 4:
+        return MsgNotifyType.TYPE_END_CONV;
         break;
     }
   }

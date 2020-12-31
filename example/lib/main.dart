@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 import 'Call.dart';
@@ -8,7 +9,7 @@ var user1 =
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
 var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwODg2NjkxMiIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwODk1MzMxMiwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.akfOwo9a2WzhZvLcUGi322LJgJLrn2sRIz4Wls1RG_E';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTM4Nzc2OSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwOTQ3NDE2OSwidXNlcklkIjoiQUNUWFY3QlRBUCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiT2t1bXVyYSBSaW4iLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6IiIsImF0dHJpYnV0ZXMiOiJbe1wiYXR0cmlidXRlXCI6XCJvbmxpbmVTdGF0dXNcIixcInRvcGljXCI6XCJcIn0se1wiYXR0cmlidXRlXCI6XCJjYWxsXCIsXCJ0b3BpY1wiOlwiXCJ9XSJ9.BB3o5EOQorpSyx8PvnDhMABMbSxbhapsxHcgALOFaM0';
 var client = StringeeClient();
 String strUserId = "";
 
@@ -35,9 +36,11 @@ class _MyHomePageState extends State<MyHomePage> {
   String myUserId = 'Not connected...';
 
   @override
-  void initState() {
+  Future<void> initState() {
     // TODO: implement initState
     super.initState();
+
+    requestPermissions();
 
     // Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
@@ -57,11 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
             handleRequestAccessTokenEvent();
             break;
           case StringeeClientEvents.DidReceiveCustomMessage:
-            handleDidReceiveCustomMessageEvent(map['body']['from'], map['body']['message']);
+            handleDidReceiveCustomMessageEvent(map['body']);
             break;
           case StringeeClientEvents.DidReceiveTopicMessage:
-            handleDidReceiveTopicMessageEvent(
-                map['body']['from'], map['body']['message']);
+            handleDidReceiveTopicMessageEvent(map['body']);
             break;
           case StringeeClientEvents.IncomingCall:
             StringeeCall call = map['body'];
@@ -71,6 +73,19 @@ class _MyHomePageState extends State<MyHomePage> {
             StringeeCall2 call = map['body'];
             handleIncomingCall2Event(call);
             break;
+          case StringeeClientEvents.DidReceiveChange:
+            StringeeChange stringeeChange = map['body'];
+            print(stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
+            switch (stringeeChange.objectType) {
+              case ObjectType.CONVERSATION:
+                Conversation conversation = stringeeChange.object;
+                print(conversation.id.toString());
+                break;
+              case ObjectType.MESSAGE:
+                Message message = stringeeChange.object;
+                print(message.id.toString() + '\t' + message.type.toString());
+            }
+            break;
           default:
             break;
         }
@@ -78,7 +93,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(token);
+    client.connect(token: token);
+  }
+
+  requestPermissions() async {
+    List<PermissionName> permissionNames = [];
+    permissionNames.add(PermissionName.Camera);
+    permissionNames.add(PermissionName.Contacts);
+    permissionNames.add(PermissionName.Microphone);
+    permissionNames.add(PermissionName.Location);
+    permissionNames.add(PermissionName.Storage);
+    permissionNames.add(PermissionName.State);
+    permissionNames.add(PermissionName.Internet);
+    var permissions = await Permission.requestPermissions(permissionNames);
+    permissions.forEach((permission) {});
   }
 
   @override
@@ -126,14 +154,12 @@ class _MyHomePageState extends State<MyHomePage> {
     print('Request new access token');
   }
 
-  void handleDidReceiveCustomMessageEvent(
-      String from, Map<dynamic, dynamic> message) {
-    print('from: ' + from + '\nmessage: ' + message.toString());
+  void handleDidReceiveCustomMessageEvent(CustomData msg) {
+    print('from: ' + msg.userId + '\nmessage: ' + msg.msg.toString());
   }
 
-  void handleDidReceiveTopicMessageEvent(
-      String from, Map<dynamic, dynamic> message) {
-    print('from: ' + from + '\nmessage: ' + message.toString());
+  void handleDidReceiveTopicMessageEvent(TopicMessage msg) {
+    print('from: ' + msg.userId + '\nmessage: ' + msg.msg.toString());
   }
 
   void handleIncomingCallEvent(StringeeCall call) {
@@ -276,23 +302,69 @@ class _MyFormState extends State<MyForm> {
     //           callType: callType,
     //           showIncomingUi: false)),
     // );
-    // List<User> users = [];
-    // User user = new User('3', 'a', null);
-    // User user2 = new User('v', 'v', null);
-    // users.add(user);
-    // users.add(user2);
+    List<User> users = [];
+    User user = new User(userId: 'a', name: 'a');
+    User user2 = new User(userId: 'v');
+    users.add(user);
+    users.add(user2);
     //
-    // ConversationOption option = new ConversationOption('a', true, false);
+    ConversationOption option = new ConversationOption(isDistinct: false, isGroup: false);
     // final parameters = {
-    //   'users': users,
+    //   'participants': users,
     //   'option': option,
     // };
-    // client.createConversation(parameters);
+    CreateConvParam param = CreateConvParam(participants: users, option: option);
+    client.createConversation(param: param).then((value) => {print(value)});
+    // client.createConversation(param: param).then((value) => {print(value)});
+
+    // final parameters = {
+    //   'convId': 'conv-vn-1-73JJ5R8BMN-1606409934220',
+    //   'userId': 'ACTXV7BTAP',
+    // };
+    //
+    // client.getConversationById('conv-vn-1-73JJ5R8BMN-1606409934220').then((result) {
+    //   Conversation conversation = result['body'];
+    //   print(conversation.id);
+    // });
 
     final parameters = {
-      'convId': 'conv-vn-1-73JJ5R8BMN-1606409865248',
+      // 'participants': users,
+      'convId': 'conv-vn-1-73JJ5R8BMN-1606409965564',
+      'msgIds': [
+        'msg-vn-1-73JJ5R8BMN-1606412374440',
+      ],
+      'msgId': 'msg-vn-1-73JJ5R8BMN-1606412374440',
+      'count': 3,
+      //text
+      'text': 'test',
+      // //photo
+      // 'filePath': '/storage/emulated/0/DCIM/Camera/20201217_192024.jpg',
+      // //video
+      // 'filePath': '/storage/emulated/0/POC/video/VID_20201230_134232_.mp4',
+      // 'duration': 1287,
+      // //audio
+      // 'filePath': '/storage/emulated/0/POC/other/AUD_20201230_134111_.m4a',
+      // 'duration': 2531,
+      // //file
+      // 'filePath': '/storage/emulated/0/Download/1593595410-HĐLĐ-LêThịGiang.pdf',
+      // //contact
+      // 'contact': 'BEGIN:VCARD\nVERSION:2.1\nFN:A Huy\nTEL;CELL:090 998 26 68\nEND:VCARD',
+      // //location
+      // 'latitude': 21.0337827,
+      // 'longitude': 105.7703466,
     };
+    Conversation conv = new Conversation();
+    // conv.delete('conv-vn-1-ON7WXI1BXA-1601060487890').then((result) {
+    //   print(result);
+    // });
 
-    client.getConversationById(parameters);
+    // conv.addParticipants(parameters).then((result) {
+    //   print(result);
+    // });
+
+    // Message message = Message(type: MsgType.TYPE_TEXT, data: parameters);
+    // conv.sendMessage(message).then((result) {
+    //   print(result);
+    // });
   }
 }

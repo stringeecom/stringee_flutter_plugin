@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+//    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
     implementation 'com.stringee.sdk.android:stringee-android-sdk:1.6.5'
     implementation 'androidx.annotation:annotation:1.1.0'
 }

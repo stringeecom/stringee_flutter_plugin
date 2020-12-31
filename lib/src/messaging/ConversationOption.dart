@@ -1,17 +1,19 @@
+import 'package:flutter/cupertino.dart';
+
 class ConversationOption {
   String _name;
   bool _isGroup;
   bool _isDistinct;
 
-  ConversationOption(
-    this._name,
-    this._isGroup,
-    this._isDistinct,
-  );
+  ConversationOption({@required String name, bool isGroup, bool isDistinct}) {
+    this._isGroup = isGroup;
+    this._name = name;
+    this._isDistinct = isDistinct;
+  }
 
   Map<String, dynamic> toJson() {
     return {
-      'name': _name,
+      if (_name != null) 'name': _name,
       'isGroup': _isGroup,
       'isDistinct': _isDistinct,
     };

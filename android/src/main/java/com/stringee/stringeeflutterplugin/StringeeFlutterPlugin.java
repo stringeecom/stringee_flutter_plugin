@@ -6,7 +6,9 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 
 import com.stringee.messaging.ConversationOptions;
+import com.stringee.messaging.Message;
 import com.stringee.messaging.User;
+import com.stringee.stringeeflutterplugin.ConversationManager.UserRole;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,14 +73,15 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 _clientManager.disconnect();
                 break;
             case "registerPush":
-                _clientManager.registerPush((String) call.argument("deviceToken"), result);
+                _clientManager.registerPush((String) call.arguments, result);
                 break;
             case "unregisterPush":
                 _clientManager.unregisterPush((String) call.arguments, result);
                 break;
             case "sendCustomMessage":
                 try {
-                    _clientManager.sendCustomMessage((String) call.argument("toUserId"), Utils.convertMapToJson((Map) call.argument("message")), result);
+                    JSONObject customDataObject = new JSONObject((String) call.arguments);
+                    _clientManager.sendCustomMessage(customDataObject.getString("userId"), customDataObject.getJSONObject("msg"), result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -185,21 +188,134 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "createConversation":
                 try {
-                    List<User> users = new ArrayList<>();
-                    users = Utils.getListUser((String) call.argument("users"));
+                    JSONObject param = new JSONObject((String) call.arguments);
+                    List<User> participants = new ArrayList<>();
+                    participants = Utils.getListUser(param.getString("participants"));
                     ConversationOptions option = new ConversationOptions();
-                    JSONObject optionObject = new JSONObject((String) call.argument("option"));
-                    String name = optionObject.optString("name");
-                    if (name != null) option.setName(name);
-                    option.setGroup(optionObject.optBoolean("isGroup", false));
-                    option.setDistinct(optionObject.optBoolean("isDistinct", false));
-                    _clientManager.createConversation(users, option, result);
+                    JSONObject optionObject = param.getJSONObject("option");
+                    option.setName(optionObject.optString("name", null));
+                    option.setGroup(optionObject.getBoolean("isGroup"));
+                    option.setDistinct(optionObject.getBoolean("isDistinct"));
+                    _clientManager.createConversation(participants, option, result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
             case "getConversationById":
-                _clientManager.getConversationById((String) call.argument("convId"), result);
+                _clientManager.getConversationById((String) call.arguments, result);
+                break;
+            case "getConversationByUserId":
+                _clientManager.getConversationByUserId((String) call.arguments, result);
+                break;
+            case "getConversationFromServer":
+                _clientManager.getConversationFromServer((String) call.arguments, result);
+                break;
+            case "getLocalConversations":
+                _clientManager.getLocalConversations(result);
+                break;
+            case "getLastConversation":
+                _clientManager.getLastConversation((int) call.arguments, result);
+                break;
+            case "getConversationsBefore":
+                _clientManager.getConversationsBefore((long) call.argument("dateTime"), (int) call.argument("count"), result);
+                break;
+            case "getConversationsAfter":
+                _clientManager.getConversationsAfter((long) call.argument("dateTime"), (int) call.argument("count"), result);
+                break;
+            case "clearDb":
+                _clientManager.clearDb(result);
+                break;
+            case "blockUser":
+                _clientManager.blockUser((String) call.arguments, result);
+                break;
+            case "getTotalUnread":
+                _clientManager.getTotalUnread(result);
+                break;
+            case "delete":
+                _conversationManager.deleteConversation((String) call.arguments, result);
+                break;
+            case "addParticipants":
+                try {
+                    List<User> participants = new ArrayList<>();
+                    participants = Utils.getListUser((String) call.argument("participants"));
+                    _conversationManager.addParticipants((String) call.argument("convId"), participants, result);
+                } catch (org.json.JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "removeParticipants":
+                try {
+                    List<User> participants = new ArrayList<>();
+                    participants = Utils.getListUser((String) call.argument("participants"));
+                    _conversationManager.removeParticipants((String) call.argument("convId"), participants, result);
+                } catch (org.json.JSONException e) {
+                    e.printStackTrace();
+                }
+
+                break;
+            case "sendMessage":
+                try {
+                    JSONObject msgObject = new JSONObject((String) call.arguments);
+                    String convId = msgObject.getString("convId");
+                    int msgType = msgObject.getInt("type");
+                    Message message = new com.stringee.messaging.Message(msgType);
+                    message = Utils.getMessageFromJSON(msgObject, message);
+                    _conversationManager.sendMessage(convId, message, result);
+                } catch (org.json.JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "getMessages":
+                String[] msgIds = ((List<String>) call.argument("msgIds")).toArray(new String[0]);
+                _conversationManager.getMessages((String) call.argument("convId"), msgIds, result);
+                break;
+            case "getLocalMessages":
+                _conversationManager.getLocalMessages((String) call.argument("convId"), (int) call.argument("count"), result);
+                break;
+            case "getLastMessages":
+                _conversationManager.getLastMessages((String) call.argument("convId"), (int) call.argument("count"), result);
+                break;
+            case "getMessagesAfter":
+                _conversationManager.getMessagesAfter((String) call.argument("convId"), (int) call.argument("seq"), (int) call.argument("count"), result);
+                break;
+            case "getMessagesBefore":
+                _conversationManager.getMessagesBefore((String) call.argument("convId"), (int) call.argument("seq"), (int) call.argument("count"), result);
+                break;
+            case "updateConversation":
+                _conversationManager.updateConversation((String) call.argument("convId"), (String) call.argument("name"), (String) call.argument("avatar"), result);
+                break;
+            case "setRole":
+                int role = (int) call.argument("role");
+                if (role == UserRole.Admin.getValue()) {
+                    _conversationManager.setRole((String) call.argument("convId"), (String) call.argument("userId"), UserRole.Admin, result);
+                } else if (role == UserRole.Member.getValue()) {
+                    _conversationManager.setRole((String) call.argument("convId"), (String) call.argument("userId"), UserRole.Member, result);
+                }
+                break;
+            case "deleteMessages":
+                try {
+                    JSONArray msgIdArray = new JSONArray(((List<String>) call.argument("msgIds")).toArray(new String[0]));
+                    _conversationManager.deleteMessages((String) call.argument("convId"), msgIdArray, result);
+                } catch (org.json.JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "revokeMessages":
+                try {
+                    JSONArray msgIdArray = new JSONArray(((List<String>) call.argument("msgIds")).toArray(new String[0]));
+                    _conversationManager.revokeMessages((String) call.argument("convId"), msgIdArray, (boolean) call.argument("isDeleted"), result);
+                } catch (org.json.JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "markAsRead":
+                _conversationManager.markAsRead((String) call.arguments, result);
+                break;
+            case "edit":
+                _messageManager.edit((String) call.argument("convId"), (String) call.argument("msgId"), (String) call.argument("content"), result);
+                break;
+            case "pinOrUnPin":
+                _messageManager.pinOrUnPin((String) call.argument("convId"), (String) call.argument("msgId"), (boolean) call.argument("pinOrUnPin"), result);
                 break;
             default:
                 result.notImplemented();

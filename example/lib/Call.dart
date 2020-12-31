@@ -214,8 +214,7 @@ class _CallState extends State<Call> {
             break;
           case StringeeCallEvents.DidChangeAudioDevice:
             if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(
-                  map['selectedAudioDevice'], _stringeeCall, null);
+              handleChangeAudioDeviceEvent(map['selectedAudioDevice'], _stringeeCall, null);
             }
             break;
           default:
@@ -286,8 +285,7 @@ class _CallState extends State<Call> {
             break;
           case StringeeCall2Events.DidChangeAudioDevice:
             if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(
-                  map['selectedAudioDevice'], null, _stringeeCall2);
+              handleChangeAudioDeviceEvent(map['selectedAudioDevice'], null, _stringeeCall2);
             }
             break;
           default:
@@ -453,8 +451,7 @@ class _CallState extends State<Call> {
     });
   }
 
-  void handleChangeAudioDeviceEvent(
-      AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
+  void handleChangeAudioDeviceEvent(AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
     print('handleChangeAudioDeviceEvent - $audioDevice');
     switch (audioDevice) {
       case AudioDevice.SPEAKER_PHONE:

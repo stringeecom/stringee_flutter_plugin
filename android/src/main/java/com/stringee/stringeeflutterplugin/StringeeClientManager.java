@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -287,14 +288,11 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        _stringeeManager.getConversationMap().put(conversation.getId(), conversation);
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        bodyMap = Utils.convertConversationToMap(conversation);
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", Utils.convertConversationToJSON(conversation).toString());
                         result.success(map);
                     }
                 });
@@ -358,14 +356,11 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        _stringeeManager.getConversationMap().put(conversation.getId(), conversation);
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        bodyMap = Utils.convertConversationToMap(conversation);
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", Utils.convertConversationToJSON(conversation).toString());
                         result.success(map);
                     }
                 });
@@ -429,14 +424,11 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        _stringeeManager.getConversationMap().put(conversation.getId(), conversation);
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        bodyMap = Utils.convertConversationToMap(conversation);
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", Utils.convertConversationToJSON(conversation));
                         result.success(map);
                     }
                 });
@@ -500,14 +492,11 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        _stringeeManager.getConversationMap().put(conversation.getId(), conversation);
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
-                        bodyMap = Utils.convertConversationToMap(conversation);
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", Utils.convertConversationToJSON(conversation).toString());
                         result.success(map);
                     }
                 });
@@ -557,16 +546,14 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     @Override
                     public void run() {
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
+                        JSONArray bodyArray = new JSONArray();
                         for (int i = 0; i < conversations.size(); i++) {
-                            _stringeeManager.getConversationMap().put(conversations.get(i).getId(), conversations.get(i));
-                            bodyMap.putAll(Utils.convertConversationToMap(conversations.get(i)));
+                            bodyArray.put(Utils.convertConversationToJSON(conversations.get(i)));
                         }
-
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", bodyArray.toString());
                         result.success(map);
                     }
                 });
@@ -617,16 +604,14 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     @Override
                     public void run() {
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
+                        JSONArray bodyArray = new JSONArray();
                         for (int i = 0; i < conversations.size(); i++) {
-                            _stringeeManager.getConversationMap().put(conversations.get(i).getId(), conversations.get(i));
-                            bodyMap.putAll(Utils.convertConversationToMap(conversations.get(i)));
+                            bodyArray.put(Utils.convertConversationToJSON(conversations.get(i)));
                         }
-
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", bodyArray.toString());
                         result.success(map);
                     }
                 });
@@ -652,11 +637,11 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
     /**
      * Get conversations update before '$updateAt'
      *
-     * @param updateAt
+     * @param dateTime
      * @param count
      * @param result
      */
-    public void getConversationsBefore(long updateAt, int count, final Result result) {
+    public void getConversationsBefore(long dateTime, int count, final Result result) {
         if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
@@ -671,23 +656,21 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
             return;
         }
 
-        _client.getConversationsBefore(updateAt, count, new CallbackListener<List<Conversation>>() {
+        _client.getConversationsBefore(dateTime, count, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
+                        JSONArray bodyArray = new JSONArray();
                         for (int i = 0; i < conversations.size(); i++) {
-                            _stringeeManager.getConversationMap().put(conversations.get(i).getId(), conversations.get(i));
-                            bodyMap.putAll(Utils.convertConversationToMap(conversations.get(i)));
+                            bodyArray.put(Utils.convertConversationToJSON(conversations.get(i)));
                         }
-
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", bodyArray.toString());
                         result.success(map);
                     }
                 });
@@ -739,16 +722,14 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     @Override
                     public void run() {
                         Map map = new HashMap();
-                        Map bodyMap = new HashMap();
+                        JSONArray bodyArray = new JSONArray();
                         for (int i = 0; i < conversations.size(); i++) {
-                            _stringeeManager.getConversationMap().put(conversations.get(i).getId(), conversations.get(i));
-                            bodyMap.putAll(Utils.convertConversationToMap(conversations.get(i)));
+                            bodyArray.put(Utils.convertConversationToJSON(conversations.get(i)));
                         }
-
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", bodyMap);
+                        map.put("body", bodyArray.toString());
                         result.success(map);
                     }
                 });
@@ -1074,12 +1055,8 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 map.put("typeEvent", StringeeEnventType.ClientEvent.getValue());
                 map.put("event", "didReceiveCustomMessage");
                 Map bodyMap = new HashMap();
-                bodyMap.put("fromUserId", from);
-                try {
-                    bodyMap.put("infor", Utils.convertJsonToMap(jsonObject));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                bodyMap.put("from", from);
+                bodyMap.put("msg", jsonObject.toString());
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin._eventSink.success(map);
             }
@@ -1096,12 +1073,8 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 map.put("typeEvent", StringeeEnventType.ClientEvent.getValue());
                 map.put("event", "didReceiveTopicMessage");
                 Map bodyMap = new HashMap();
-                bodyMap.put("fromUserId", from);
-                try {
-                    bodyMap.put("infor", Utils.convertJsonToMap(jsonObject));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                bodyMap.put("from", from);
+                bodyMap.put("msg", jsonObject.toString());
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin._eventSink.success(map);
             }
@@ -1121,15 +1094,15 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 StringeeObject.Type objectType = stringeeChange.getObjectType();
                 bodyMap.put("objectType", objectType.getValue());
                 bodyMap.put("changeType", stringeeChange.getChangeType().getValue());
-                Map objects = new HashMap();
-                Map object = new HashMap();
+                JSONArray objects = new JSONArray();
+                JSONObject object = new JSONObject();
                 if (objectType == StringeeObject.Type.CONVERSATION) {
-                    object = Utils.convertConversationToMap((Conversation) stringeeChange.getObject());
+                    object = Utils.convertConversationToJSON((Conversation) stringeeChange.getObject());
                 } else if (objectType == StringeeObject.Type.MESSAGE) {
-                    object = Utils.convertMessageToMap(_client, (Message) stringeeChange.getObject());
+                    object = Utils.convertMessageToJSON((Message) stringeeChange.getObject());
                 }
-                objects.putAll(object);
-                bodyMap.put("objects", objects);
+                objects.put(object);
+                bodyMap.put("objects", objects.toString());
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin._eventSink.success(map);
             }
