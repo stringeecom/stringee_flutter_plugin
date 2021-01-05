@@ -3,9 +3,6 @@ package com.stringee.stringeeflutterplugin;
 import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall2;
-import com.stringee.messaging.Conversation;
-import com.stringee.messaging.Message;
-import com.stringee.messaging.User;
 
 import java.util.HashMap;
 import java.util.Map;

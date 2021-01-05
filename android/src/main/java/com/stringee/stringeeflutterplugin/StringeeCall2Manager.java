@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.flutter.plugin.common.MethodChannel;
-
-import static io.flutter.plugin.common.MethodChannel.*;
+import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeCall2Manager implements StringeeCallListener {
     private static StringeeCall2Manager _callManager;
@@ -509,7 +507,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
      * @param isVideoEnable
      * @param result
      */
-    public void enableVideo(String callId, boolean isVideoEnable, MethodChannel.Result result) {
+    public void enableVideo(String callId, boolean isVideoEnable, Result result) {
         if (callId == null || callId.length() == 0) {
             Map map = new HashMap();
             map.put("status", false);
@@ -578,7 +576,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
      * @param callId
      * @param result
      */
-    public void switchCamera(String callId, final boolean isMirror, final MethodChannel.Result result) {
+    public void switchCamera(String callId, final boolean isMirror, final Result result) {
         if (callId == null || callId.length() == 0) {
             Map map = new HashMap();
             map.put("status", false);
@@ -621,7 +619,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
      * @param callId
      * @param result
      */
-    public void resumeVideo(String callId, MethodChannel.Result result) {
+    public void resumeVideo(String callId, Result result) {
         if (callId == null || callId.length() == 0) {
             Map map = new HashMap();
             map.put("status", false);

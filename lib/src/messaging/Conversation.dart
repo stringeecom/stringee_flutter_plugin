@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
+import 'package:stringee_flutter_plugin/src/StringeeCommon.dart';
 import 'package:stringee_flutter_plugin/src/messaging/Message.dart';
 import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 
@@ -133,20 +134,15 @@ class Conversation implements StringeeObject {
 
   /// Delete [Conversation] has [Conversation.id] = [convId]
   Future<Map<dynamic, dynamic>> delete(String convId) async {
+    assert(convId != null);
     return await StringeeClient.methodChannel.invokeMethod('delete', convId);
   }
 
-  /// Add [participants] to [Conversation]
-  ///   [parameters] = {
-  ///   [convId] : [Conversation.id],
-  ///   [participants] : [List] of [User],
-  ///   }
-  /// Return [removedParticipants] when success
-  Future<Map<dynamic, dynamic>> addParticipants(Map<dynamic, dynamic> parameters) async {
-    final params = parameters;
-    params['participants'] = json.encode(parameters['participants']);
-
-    Map<dynamic, dynamic> ressult = await StringeeClient.methodChannel.invokeMethod('addParticipants', params);
+  /// Add [Conversation.participants] with [ParticipantParams]
+  Future<Map<dynamic, dynamic>> addParticipants(ParticipantParams params) async {
+    assert(params != null);
+    Map<dynamic, dynamic> ressult =
+        await StringeeClient.methodChannel.invokeMethod('addParticipants', json.encode(params));
     if (ressult['status']) {
       List<User> addedParticipants = [];
       List<dynamic> participantArray = json.decode(ressult['body']);
@@ -159,17 +155,11 @@ class Conversation implements StringeeObject {
     return ressult;
   }
 
-  /// Remove [participants] from [Conversation]
-  ///   [parameters] = {
-  ///   [convId] : [Conversation.id],
-  ///   [participants] : [List] of [User],
-  ///   }
-  /// Return [removedParticipants] when success
-  Future<Map<dynamic, dynamic>> removeParticipants(Map<dynamic, dynamic> parameters) async {
-    final params = parameters;
-    params['participants'] = json.encode(parameters['participants']);
-
-    Map<dynamic, dynamic> ressult = await StringeeClient.methodChannel.invokeMethod('removeParticipants', params);
+  /// Remove [Conversation.participants] with [ParticipantParams]
+  Future<Map<dynamic, dynamic>> removeParticipants(ParticipantParams params) async {
+    assert(params != null);
+    Map<dynamic, dynamic> ressult =
+        await StringeeClient.methodChannel.invokeMethod('removeParticipants', json.encode(params));
     if (ressult['status']) {
       List<User> removedParticipants = [];
       List<dynamic> participantArray = json.decode(ressult['body']);
@@ -184,6 +174,7 @@ class Conversation implements StringeeObject {
 
   /// Send [Message]
   Future<Map<dynamic, dynamic>> sendMessage(Message message) async {
+    assert(message != null);
     return await StringeeClient.methodChannel.invokeMethod('sendMessage', json.encode(message));
   }
 

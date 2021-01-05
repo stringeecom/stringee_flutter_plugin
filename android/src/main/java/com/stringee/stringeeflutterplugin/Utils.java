@@ -1,5 +1,10 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import androidx.annotation.NonNull;
 
 import com.stringee.StringeeClient;
@@ -20,6 +25,25 @@ import java.util.List;
 import java.util.Map;
 
 public class Utils {
+    public static boolean isInternetConnected(Context context) {
+        boolean haveInternetConnection = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] networkInfo = connectivityManager.getAllNetworkInfo();
+        for (NetworkInfo info : networkInfo) {
+            if (info.getTypeName().equalsIgnoreCase("WIFI")) {
+                if (info.isConnected()) {
+                    haveInternetConnection = true;
+                }
+            }
+            if (info.getTypeName().equalsIgnoreCase("MOBILE")) {
+                if (info.isConnected()) {
+                    haveInternetConnection = true;
+                }
+            }
+        }
+        return haveInternetConnection;
+    }
+
     public static Map convertJsonToMap(JSONObject object) throws JSONException {
         Map<String, Object> map = new HashMap<String, Object>();
 

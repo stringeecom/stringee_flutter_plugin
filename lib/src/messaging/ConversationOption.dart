@@ -5,9 +5,11 @@ class ConversationOption {
   bool _isGroup;
   bool _isDistinct;
 
-  ConversationOption({@required String name, bool isGroup, bool isDistinct}) {
-    this._isGroup = isGroup;
+  ConversationOption({@required String name, bool isGroup, bool isDistinct})
+      : assert(isGroup != null),
+        assert(isDistinct != null) {
     this._name = name;
+    this._isGroup = isGroup;
     this._isDistinct = isDistinct;
   }
 
