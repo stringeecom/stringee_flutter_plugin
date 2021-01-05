@@ -364,11 +364,28 @@ class Message implements StringeeObject {
     return params;
   }
 
-  Future<Map<dynamic, dynamic>> edit(Map<dynamic, dynamic> parameters) async {
-    return await StringeeClient.methodChannel.invokeMethod('edit', parameters);
+  /// Edit [Message.typeText]
+  Future<Map<dynamic, dynamic>> edit(String convId, String msgId, String content) async {
+    assert(convId != null || convId.trim().isNotEmpty);
+    assert(msgId != null || msgId.trim().isNotEmpty);
+    assert(content != null || content.trim().isNotEmpty);
+    final params = {
+      'convId': convId,
+      'msgIds': msgId,
+      'content': content,
+    };
+    return await StringeeClient.methodChannel.invokeMethod('edit', params);
   }
 
-  Future<Map<dynamic, dynamic>> pinOrUnPin(Map<dynamic, dynamic> parameters) async {
-    return await StringeeClient.methodChannel.invokeMethod('pinOrUnPin', parameters);
+  /// Pin/Un pin [Message]
+  Future<Map<dynamic, dynamic>> pinOrUnPin(String convId, String msgId, bool pinOrUnPin) async {
+    assert(convId != null || convId.trim().isNotEmpty);
+    assert(msgId != null || msgId.trim().isNotEmpty);
+    final params = {
+      'convId': convId,
+      'msgIds': msgId,
+      'pinOrUnPin': (pinOrUnPin != null) ? pinOrUnPin : false,
+    };
+    return await StringeeClient.methodChannel.invokeMethod('pinOrUnPin', params);
   }
 }

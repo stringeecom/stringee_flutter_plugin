@@ -1,6 +1,5 @@
 export 'src/StringeeClient.dart';
 export 'src/StringeeConstants.dart';
-export 'src/StringeeCommon.dart';
 
 export 'src/call/StringeeCall.dart';
 export 'src/call/StringeeCall2.dart';
