@@ -103,17 +103,17 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 case "makeCall":
                     String from = call.argument("from");
                     String to = call.argument("to");
+                    String resolution = null;
                     boolean isVideoCall = false;
                     if (call.hasArgument("isVideoCall")) {
                         isVideoCall = call.argument("isVideoCall");
+                        if (call.hasArgument("videoResolution")) {
+                            resolution = call.argument("videoResolution");
+                        }
                     }
                     String customData = null;
                     if (call.hasArgument("customData")) {
                         customData = call.argument("customData");
-                    }
-                    String resolution = null;
-                    if (call.hasArgument("videoResolution")) {
-                        resolution = call.argument("videoResolution");
                     }
                     _callManager.makeCall(from, to, isVideoCall, customData, resolution, result);
                     break;
@@ -156,17 +156,17 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 case "makeCall2":
                     String from2 = call.argument("from");
                     String to2 = call.argument("to");
+                    String resolution2 = null;
                     boolean isVideoCall2 = false;
                     if (call.hasArgument("isVideoCall")) {
                         isVideoCall2 = call.argument("isVideoCall");
+                        if (call.hasArgument("videoResolution")) {
+                            resolution2 = call.argument("videoResolution");
+                        }
                     }
                     String customData2 = null;
                     if (call.hasArgument("customData")) {
                         customData2 = call.argument("customData");
-                    }
-                    String resolution2 = null;
-                    if (call.hasArgument("videoResolution")) {
-                        resolution2 = call.argument("videoResolution");
                     }
                     _call2Manager.makeCall(from2, to2, isVideoCall2, customData2, resolution2, result);
                     break;

@@ -365,25 +365,23 @@ class Message implements StringeeObject {
   }
 
   /// Edit [Message.typeText]
-  Future<Map<dynamic, dynamic>> edit(String convId, String msgId, String content) async {
+  Future<Map<dynamic, dynamic>> edit(String convId, String content) async {
     assert(convId != null || convId.trim().isNotEmpty);
-    assert(msgId != null || msgId.trim().isNotEmpty);
     assert(content != null || content.trim().isNotEmpty);
     final params = {
       'convId': convId,
-      'msgIds': msgId,
+      'msgIds': this._id,
       'content': content,
     };
     return await StringeeClient.methodChannel.invokeMethod('edit', params);
   }
 
   /// Pin/Un pin [Message]
-  Future<Map<dynamic, dynamic>> pinOrUnPin(String convId, String msgId, bool pinOrUnPin) async {
+  Future<Map<dynamic, dynamic>> pinOrUnPin(String convId, bool pinOrUnPin) async {
     assert(convId != null || convId.trim().isNotEmpty);
-    assert(msgId != null || msgId.trim().isNotEmpty);
     final params = {
       'convId': convId,
-      'msgIds': msgId,
+      'msgIds': this._id,
       'pinOrUnPin': (pinOrUnPin != null) ? pinOrUnPin : false,
     };
     return await StringeeClient.methodChannel.invokeMethod('pinOrUnPin', params);

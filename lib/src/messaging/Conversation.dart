@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
-import 'package:stringee_flutter_plugin/src/messaging/ConversationOption.dart';
 import 'package:stringee_flutter_plugin/src/messaging/Message.dart';
 import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 
@@ -132,18 +131,16 @@ class Conversation implements StringeeObject {
     this._participants = participants;
   }
 
-  /// Delete [Conversation] has [Conversation.id] = [convId]
-  Future<Map<dynamic, dynamic>> delete(String convId) async {
-    assert(convId != null);
-    return await StringeeClient.methodChannel.invokeMethod('delete', convId);
+  /// Delete [Conversation]
+  Future<Map<dynamic, dynamic>> delete() async {
+    return await StringeeClient.methodChannel.invokeMethod('delete', this._id);
   }
 
-  /// Add [Conversation.participants] with [ParticipantParams]
-  Future<Map<dynamic, dynamic>> addParticipants(String convId, List<User> participants) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  /// Add [List] of [participants] of [Conversation]
+  Future<Map<dynamic, dynamic>> addParticipants(List<User> participants) async {
     assert(participants.length > 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'participants': json.encode(participants),
     };
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel.invokeMethod('addParticipants', params);
@@ -159,12 +156,11 @@ class Conversation implements StringeeObject {
     return result;
   }
 
-  /// Remove [Conversation.participants] with [ParticipantParams]
-  Future<Map<dynamic, dynamic>> removeParticipants(String convId, List<User> participants) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  /// Remove [List] of [participants] of [Conversation]
+  Future<Map<dynamic, dynamic>> removeParticipants(List<User> participants) async {
     assert(participants.length > 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'participants': json.encode(participants),
     };
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel.invokeMethod('removeParticipants', params);
@@ -187,11 +183,10 @@ class Conversation implements StringeeObject {
   }
 
   /// Get [List] of [Message] of [Conversation] by [msgIds]
-  Future<Map<dynamic, dynamic>> getMessages(String convId, List<String> msgIds) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> getMessages(List<String> msgIds) async {
     assert(msgIds.length > 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'msgIds': msgIds,
     };
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel.invokeMethod('getMessages', params);
@@ -208,11 +203,10 @@ class Conversation implements StringeeObject {
   }
 
   /// Get [count] of local [Message] of [Conversation]
-  Future<Map<dynamic, dynamic>> getLocalMessages(String convId, int count) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> getLocalMessages(int count) async {
     assert(count > 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'count': count,
     };
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel.invokeMethod('getLocalMessages', params);
@@ -229,11 +223,10 @@ class Conversation implements StringeeObject {
   }
 
   /// Get [count] of lastest [Message] of [Conversation]
-  Future<Map<dynamic, dynamic>> getLastMessages(String convId, int count) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> getLastMessages(int count) async {
     assert(count > 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'count': count,
     };
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel.invokeMethod('getLocalMessages', params);
@@ -250,12 +243,11 @@ class Conversation implements StringeeObject {
   }
 
   /// Get [count] of [Message] after [Message.sequence] of [Conversation]
-  Future<Map<dynamic, dynamic>> getMessagesAfter(String convId, int count, int sequence) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> getMessagesAfter(int count, int sequence) async {
     assert(count > 0);
     assert(sequence >= 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'count': count,
       'seq': sequence,
     };
@@ -273,12 +265,11 @@ class Conversation implements StringeeObject {
   }
 
   /// Get [count] of [Message] before [Message.sequence] of [Conversation]
-  Future<Map<dynamic, dynamic>> getMessagesBefore(String convId, int count, int sequence) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> getMessagesBefore(int count, int sequence) async {
     assert(count > 0);
     assert(sequence >= 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'count': count,
       'seq': sequence,
     };
@@ -296,23 +287,21 @@ class Conversation implements StringeeObject {
   }
 
   /// Update [Conversation.name]
-  Future<Map<dynamic, dynamic>> updateConversation(String convId, String name) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> updateConversation(String name) async {
     assert(name != null || name.trim().isNotEmpty);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'name': name,
     };
     return await StringeeClient.methodChannel.invokeMethod('updateConversation', params);
   }
 
   /// Change [UserRole]
-  Future<Map<dynamic, dynamic>> setRole(String convId, String userId, UserRole role) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> setRole(String userId, UserRole role) async {
     assert(userId != null || userId.trim().isNotEmpty);
     assert(role != null);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'userId': userId,
       'role': role.index,
     };
@@ -320,22 +309,20 @@ class Conversation implements StringeeObject {
   }
 
   /// Delete [List] of [Message]
-  Future<Map<dynamic, dynamic>> deleteMessages(String convId, List<String> msgIds) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> deleteMessages(List<String> msgIds) async {
     assert(msgIds.length > 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'msgIds': msgIds,
     };
     return await StringeeClient.methodChannel.invokeMethod('deleteMessages', params);
   }
 
   /// Revoke [List] of [Message] include deleted [Message] or not
-  Future<Map<dynamic, dynamic>> revokeMessages(String convId, List<String> msgIds, bool isDeleted) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+  Future<Map<dynamic, dynamic>> revokeMessages(List<String> msgIds, bool isDeleted) async {
     assert(msgIds.length > 0);
     final params = {
-      'convId': convId,
+      'convId': this._id,
       'msgIds': msgIds,
       'isDeleted': (isDeleted != null) ? isDeleted : false,
     };
@@ -343,8 +330,7 @@ class Conversation implements StringeeObject {
   }
 
   /// Mark [Conversation] as readed
-  Future<Map<dynamic, dynamic>> markAsRead(String convId) async {
-    assert(convId != null || convId.trim().isNotEmpty);
-    return await StringeeClient.methodChannel.invokeMethod('markAsRead', convId);
+  Future<Map<dynamic, dynamic>> markAsRead() async {
+    return await StringeeClient.methodChannel.invokeMethod('markAsRead', this._id);
   }
 }
