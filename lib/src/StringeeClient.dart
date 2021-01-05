@@ -116,7 +116,7 @@ class StringeeClient {
     return result;
   }
 
-******  ///get [Conversation] by [Conversation.id]
+  ///get [Conversation] by [Conversation.id]
   Future<Map<dynamic, dynamic>> getConversationById(String convId) async {
     assert(convId != null);
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationById', convId);
