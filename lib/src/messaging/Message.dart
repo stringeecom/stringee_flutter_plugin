@@ -35,46 +35,141 @@ class Message implements StringeeObject {
   bool _isDeleted;
   Map<dynamic, dynamic> _notiContent;
 
-  Message({@required MsgType type, @required Map<dynamic, dynamic> data, Map<dynamic, dynamic> customData}) {
-    this._type = type;
-    this._convId = data['convId'];
+  Message.typeText({
+    @required String convId,
+    @required String text,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(text != null || text.trim().isNotEmpty) {
+    this._type = MsgType.TYPE_TEXT;
+    this._convId = convId.trim();
+    this._text = text.trim();
     if (customData != null) {
       this._customData = customData;
     }
-    switch (this._type) {
-      case MsgType.TYPE_TEXT:
-        this._text = data['text'];
-        break;
-      case MsgType.TYPE_PHOTO:
-        this._filePath = data['filePath'];
-        break;
-      case MsgType.TYPE_VIDEO:
-        this._filePath = data['filePath'];
-        this._duration = data['duration'];
-        break;
-      case MsgType.TYPE_AUDIO:
-        this._filePath = data['filePath'];
-        this._duration = data['duration'];
-        break;
-      case MsgType.TYPE_FILE:
-        this._filePath = data['filePath'];
-        this._fileName = data['fileName'];
-        this._fileLength = data['fileLength'];
-        break;
-      case MsgType.TYPE_LINK:
-        this._text = data['text'];
-        break;
-      case MsgType.TYPE_LOCATION:
-        this._latitude = data['latitude'];
-        this._longitude = data['longitude'];
-        break;
-      case MsgType.TYPE_CONTACT:
-        this._contact = data['contact'];
-        break;
-      case MsgType.TYPE_STICKER:
-        this._stickerCategory = data['stickerCategory'];
-        this._stickerName = data['stickerName'];
-        break;
+  }
+
+  Message.typePhoto({
+    @required String convId,
+    @required String filePath,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(filePath != null || filePath.trim().isNotEmpty) {
+    this._type = MsgType.TYPE_PHOTO;
+    this._convId = convId.trim();
+    this._filePath = filePath.trim();
+    if (customData != null) {
+      this._customData = customData;
+    }
+  }
+
+  Message.typeVideo({
+    @required String convId,
+    @required String filePath,
+    @required int duration,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(filePath != null || filePath.trim().isNotEmpty),
+        assert(duration != null || duration > 0) {
+    this._type = MsgType.TYPE_VIDEO;
+    this._convId = convId.trim();
+    this._filePath = filePath.trim();
+    this._duration = duration;
+    if (customData != null) {
+      this._customData = customData;
+    }
+  }
+
+  Message.typeAudio({
+    @required String convId,
+    @required String filePath,
+    @required int duration,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(filePath != null || filePath.trim().isNotEmpty),
+        assert(duration != null || duration > 0) {
+    this._type = MsgType.TYPE_AUDIO;
+    this._convId = convId.trim();
+    this._filePath = filePath.trim();
+    this._duration = duration;
+    if (customData != null) {
+      this._customData = customData;
+    }
+  }
+
+  Message.typeFile({
+    @required String convId,
+    @required String filePath,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(filePath != null || filePath.trim().isNotEmpty) {
+    this._type = MsgType.TYPE_FILE;
+    this._convId = convId.trim();
+    this._filePath = filePath.trim();
+    if (customData != null) {
+      this._customData = customData;
+    }
+  }
+
+  Message.typeLink({
+    @required String convId,
+    @required String text,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(text != null || text.trim().isNotEmpty) {
+    this._type = MsgType.TYPE_LINK;
+    this._convId = convId.trim();
+    this._text = text.trim();
+    if (customData != null) {
+      this._customData = customData;
+    }
+  }
+
+  Message.typeLocation({
+    @required String convId,
+    @required double latitude,
+    @required double longitude,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(latitude != null || latitude > 0),
+        assert(longitude != null || longitude > 0) {
+    this._type = MsgType.TYPE_LOCATION;
+    this._convId = convId.trim();
+    this._latitude = latitude;
+    this._longitude = longitude;
+    if (customData != null) {
+      this._customData = customData;
+    }
+  }
+
+  Message.typeContact({
+    @required String convId,
+    @required String contact,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(contact != null || contact.trim().isNotEmpty) {
+    this._type = MsgType.TYPE_CONTACT;
+    this._convId = convId.trim();
+    this._contact = contact.trim();
+    if (customData != null) {
+      this._customData = customData;
+    }
+  }
+
+  Message.typeSticker({
+    @required String convId,
+    @required String stickerCategory,
+    @required String stickerName,
+    Map<dynamic, dynamic> customData,
+  })  : assert(convId != null || convId.trim().isNotEmpty),
+        assert(stickerCategory != null || stickerCategory.trim().isNotEmpty),
+        assert(stickerName != null || stickerName.trim().isNotEmpty) {
+    this._type = MsgType.TYPE_CONTACT;
+    this._convId = convId.trim();
+    this._stickerName = stickerName.trim();
+    this._stickerCategory = stickerCategory.trim();
+    if (customData != null) {
+      this._customData = customData;
     }
   }
 

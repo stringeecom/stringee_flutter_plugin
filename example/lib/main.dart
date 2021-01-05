@@ -9,7 +9,7 @@ var user1 =
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
 var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTM4Nzc2OSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwOTQ3NDE2OSwidXNlcklkIjoiQUNUWFY3QlRBUCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiT2t1bXVyYSBSaW4iLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6IiIsImF0dHJpYnV0ZXMiOiJbe1wiYXR0cmlidXRlXCI6XCJvbmxpbmVTdGF0dXNcIixcInRvcGljXCI6XCJcIn0se1wiYXR0cmlidXRlXCI6XCJjYWxsXCIsXCJ0b3BpY1wiOlwiXCJ9XSJ9.BB3o5EOQorpSyx8PvnDhMABMbSxbhapsxHcgALOFaM0';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTc0NjQ4NCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwOTgzMjg4NCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.PhealfCYikNwaW7B4RsmoohVaFMrY-UKBHXpjZyCdr8';
 var client = StringeeClient();
 String strUserId = "";
 
@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(token: token);
+    client.connect(token);
   }
 
   requestPermissions() async {
@@ -154,12 +154,12 @@ class _MyHomePageState extends State<MyHomePage> {
     print('Request new access token');
   }
 
-  void handleDidReceiveCustomMessageEvent(CustomData msg) {
-    print('from: ' + msg.userId + '\nmessage: ' + msg.msg.toString());
+  void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
+    print('from: ' + map['from'] + '\nmessage: ' + map['msg']);
   }
 
-  void handleDidReceiveTopicMessageEvent(TopicMessage msg) {
-    print('from: ' + msg.userId + '\nmessage: ' + msg.msg.toString());
+  void handleDidReceiveTopicMessageEvent(Map<dynamic, dynamic> map) {
+    print('from: ' + map['from'] + '\nmessage: ' + map['msg']);
   }
 
   void handleIncomingCallEvent(StringeeCall call) {
@@ -290,32 +290,31 @@ class _MyFormState extends State<MyForm> {
   }
 
   void _CallTapped(bool isVideoCall, StringeeType callType) {
-    // if (strUserId.isEmpty || !client.hasConnected) return;
-    //
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) => Call(
-    //           fromUserId: client.userId,
-    //           toUserId: strUserId,
-    //           isVideoCall: isVideoCall,
-    //           callType: callType,
-    //           showIncomingUi: false)),
-    // );
-    List<User> users = [];
-    User user = new User(userId: 'a', name: 'a');
-    User user2 = new User(userId: 'v');
-    users.add(user);
-    users.add(user2);
-    //
-    ConversationOption option = new ConversationOption(isDistinct: false, isGroup: false);
+    if (strUserId.isEmpty || !client.hasConnected) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Call(
+              fromUserId: client.userId,
+              toUserId: strUserId,
+              isVideoCall: isVideoCall,
+              callType: callType,
+              showIncomingUi: false)),
+    );
+    // client.getLocalConversations();
+    // List<User> users = [];
+    // User user = new User(userId: 'a', name: 'a');
+    // User user2 = new User(userId: 'v');
+    // users.add(user);
+    // users.add(user2);
+    // //
+    // ConversationOption option = new ConversationOption(isDistinct: false, isGroup: false);
     // final parameters = {
     //   'participants': users,
     //   'option': option,
     // };
-    CreateConvParam param = CreateConvParam(participants: users, option: option);
-    client.createConversation(param: param).then((value) => {print(value)});
-    // client.createConversation(param: param).then((value) => {print(value)});
+    // client.createConversation(option, users).then((value) => {print(value)});
 
     // final parameters = {
     //   'convId': 'conv-vn-1-73JJ5R8BMN-1606409934220',
@@ -327,38 +326,38 @@ class _MyFormState extends State<MyForm> {
     //   print(conversation.id);
     // });
 
-    final parameters = {
-      // 'participants': users,
-      'convId': 'conv-vn-1-73JJ5R8BMN-1606409965564',
-      'msgIds': [
-        'msg-vn-1-73JJ5R8BMN-1606412374440',
-      ],
-      'msgId': 'msg-vn-1-73JJ5R8BMN-1606412374440',
-      'count': 3,
-      //text
-      'text': 'test',
-      // //photo
-      // 'filePath': '/storage/emulated/0/DCIM/Camera/20201217_192024.jpg',
-      // //video
-      // 'filePath': '/storage/emulated/0/POC/video/VID_20201230_134232_.mp4',
-      // 'duration': 1287,
-      // //audio
-      // 'filePath': '/storage/emulated/0/POC/other/AUD_20201230_134111_.m4a',
-      // 'duration': 2531,
-      // //file
-      // 'filePath': '/storage/emulated/0/Download/1593595410-HĐLĐ-LêThịGiang.pdf',
-      // //contact
-      // 'contact': 'BEGIN:VCARD\nVERSION:2.1\nFN:A Huy\nTEL;CELL:090 998 26 68\nEND:VCARD',
-      // //location
-      // 'latitude': 21.0337827,
-      // 'longitude': 105.7703466,
-    };
-    Conversation conv = new Conversation();
+    // final parameters = {
+    //   // 'participants': users,
+    //   'convId': 'conv-vn-1-73JJ5R8BMN-1606409965564',
+    //   'msgIds': [
+    //     'msg-vn-1-73JJ5R8BMN-1606412374440',
+    //   ],
+    //   'msgId': 'msg-vn-1-73JJ5R8BMN-1606412374440',
+    //   'count': 3,
+    //   //text
+    //   'text': 'test',
+    // //photo
+    // 'filePath': '/storage/emulated/0/DCIM/Camera/20201217_192024.jpg',
+    // //video
+    // 'filePath': '/storage/emulated/0/POC/video/VID_20201230_134232_.mp4',
+    // 'duration': 1287,
+    // //audio
+    // 'filePath': '/storage/emulated/0/POC/other/AUD_20201230_134111_.m4a',
+    // 'duration': 2531,
+    // //file
+    // 'filePath': '/storage/emulated/0/Download/1593595410-HĐLĐ-LêThịGiang.pdf',
+    // //contact
+    // 'contact': 'BEGIN:VCARD\nVERSION:2.1\nFN:A Huy\nTEL;CELL:090 998 26 68\nEND:VCARD',
+    // //location
+    // 'latitude': 21.0337827,
+    // 'longitude': 105.7703466,
+    // };
+    // Conversation conv = new Conversation();
     // conv.delete('conv-vn-1-ON7WXI1BXA-1601060487890').then((result) {
     //   print(result);
     // });
-
-    // conv.addParticipants(parameters).then((result) {
+    // StringeeParams params = ParticipantParams(convId: 'conv-vn-1-73JJ5R8BMN-1606409965564', participants: users);
+    // conv.addParticipants(params).then((result) {
     //   print(result);
     // });
 

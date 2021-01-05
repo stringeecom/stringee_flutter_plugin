@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:stringee_flutter_plugin/src/StringeeParameter.dart';
+import 'package:stringee_flutter_plugin/src/StringeeCommon.dart';
 import 'package:stringee_flutter_plugin/src/messaging/Conversation.dart';
+import 'package:stringee_flutter_plugin/src/messaging/ConversationOption.dart';
 import 'package:stringee_flutter_plugin/src/messaging/Message.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeChange.dart';
+import 'package:stringee_flutter_plugin/src/messaging/User.dart';
 import 'call/StringeeCall.dart';
 import 'call/StringeeCall2.dart';
 import 'StringeeConstants.dart';
@@ -79,128 +80,156 @@ class StringeeClient {
     }
   }
 
-  ///connect to StringeeClient by [token]
-  Future<void> connect({@required String token}) async {
-    assert(token != null);
-    return await methodChannel.invokeMethod('connect', token);
+  /// Connect to [StringeeClient] by [token]
+  Future<Map<dynamic, dynamic>> connect(String token) async {
+    assert(token != null || token.trim().isNotEmpty);
+    return await methodChannel.invokeMethod('connect', token.trim());
   }
 
-  ///disconnect from StringeeCLient
-  Future<void> disconnect() async {
+  /// Disconnect from [StringeeCLient]
+  Future<Map<dynamic, dynamic>> disconnect() async {
     return await methodChannel.invokeMethod('disconnect');
   }
 
-  ///register push from Stringee by [deviceToken[
-  Future<Map<dynamic, dynamic>> registerPush({@required String deviceToken}) async {
-    assert(deviceToken != null);
-    return await methodChannel.invokeMethod('registerPush', deviceToken);
+  /// Register push from Stringee by [deviceToken[
+  Future<Map<dynamic, dynamic>> registerPush(String deviceToken) async {
+    assert(deviceToken != null || deviceToken.trim().isNotEmpty);
+    return await methodChannel.invokeMethod('registerPush', deviceToken.trim());
   }
 
-  ///unregister push from Stringee by [deviceToken[
-  Future<Map<dynamic, dynamic>> unregisterPush({@required String deviceToken}) async {
-    assert(deviceToken != null);
-    return await methodChannel.invokeMethod('unregisterPush', deviceToken);
+  /// Unregister push from Stringee by [deviceToken[
+  Future<Map<dynamic, dynamic>> unregisterPush(String deviceToken) async {
+    assert(deviceToken != null || deviceToken.trim().isNotEmpty);
+    return await methodChannel.invokeMethod('unregisterPush', deviceToken.trim());
   }
 
-  ///send a [CustomData]
-  Future<Map<dynamic, dynamic>> sendCustomMessage({@required CustomData customData}) async {
+  /// Send a [customData] to [userId]
+  Future<Map<dynamic, dynamic>> sendCustomMessage(String userId, Map<dynamic, dynamic> customData) async {
+    assert(userId != null || userId.trim().isNotEmpty);
     assert(customData != null);
-    return await methodChannel.invokeMethod('sendCustomMessage', json.encode(customData));
+    final params = {
+      'from': userId,
+      'msg': json.encode(customData),
+    };
+    return await methodChannel.invokeMethod('sendCustomMessage', params);
   }
 
-  ///create new [Conversation] with [CreateConvParam]
-  Future<Map<dynamic, dynamic>> createConversation({@required CreateConvParam param}) async {
-    assert(param != null);
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('createConversation', json.encode(param));
+  /// Create new [Conversation] with [options] and [participants]
+  Future<Map<dynamic, dynamic>> createConversation(ConversationOption options, List<User> participants) async {
+    assert(participants != null || participants.length > 0);
+    assert(options != null);
+    final params = {
+      'participants': json.encode(participants),
+      'option': json.encode(options),
+    };
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('createConversation', params);
     if (result['status']) result['body'] = Conversation.fromJson(json.decode(result['body']));
     return result;
   }
 
-******  ///get [Conversation] by [Conversation.id]
+  /// Get [Conversation] with [Conversation.id] = [convId]
   Future<Map<dynamic, dynamic>> getConversationById(String convId) async {
-    assert(convId != null);
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationById', convId);
+    assert(convId != null || convId.trim().isNotEmpty);
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationById', convId.trim());
     if (result['status']) result['body'] = Conversation.fromJson(result['body']);
     return result;
   }
 
-  ///get conversation by participant id
+  /// Get [Conversation] by [userId] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationByUserId(String userId) async {
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationByUserId', userId);
-    result['body'] = Conversation.fromJson(result['body']);
+    assert(userId != null || userId.trim().isNotEmpty);
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationByUserId', userId.trim());
+    if (result['status']) result['body'] = Conversation.fromJson(result['body']);
     return result;
   }
 
-  ///get conversation from server
+  /// Get [Conversation] with [Conversation.id] = [convId] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationFromServer(String convId) async {
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationFromServer', convId);
-    result['body'] = Conversation.fromJson(result['body']);
+    assert(convId != null || convId.trim().isNotEmpty);
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationFromServer', convId.trim());
+    if (result['status']) result['body'] = Conversation.fromJson(result['body']);
     return result;
   }
 
-  ///get local conversation
+  /// Get local [Conversation]
   Future<Map<dynamic, dynamic>> getLocalConversations() async {
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLocalConversations');
-    List<dynamic> list = result['body'];
-    List<Conversation> conversations = [];
-    for (int i = 0; i < list.length; i++) {
-      conversations.add(Conversation.fromJson(list[i]));
+    if (result['status']) {
+      List<dynamic> list = result['body'];
+      List<Conversation> conversations = [];
+      for (int i = 0; i < list.length; i++) {
+        conversations.add(Conversation.fromJson(list[i]));
+      }
+      result['body'] = conversations;
     }
-    result['body'] = conversations;
     return result;
   }
 
-  ///get (count) last conversation
+  /// Get [count] of lastest [Conversation] from Stringee server
   Future<Map<dynamic, dynamic>> getLastConversation(int count) async {
+    assert(count > 0);
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLastConversation', count);
-    List<dynamic> list = result['body'];
-    List<Conversation> conversations = [];
-    for (int i = 0; i < list.length; i++) {
-      conversations.add(Conversation.fromJson(list[i]));
+    if (result['status']) {
+      List<dynamic> list = result['body'];
+      List<Conversation> conversations = [];
+      for (int i = 0; i < list.length; i++) {
+        conversations.add(Conversation.fromJson(list[i]));
+      }
+      result['body'] = conversations;
     }
-    result['body'] = conversations;
     return result;
   }
 
-  ///get (count) conversations before (dateTime)
-  ///@param (int) count
-  ///@param (int) dateTime
-  Future<Map<dynamic, dynamic>> getConversationsBefore(Map<dynamic, dynamic> parameters) async {
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationsBefore', parameters);
-    List<dynamic> list = result['body'];
-    List<Conversation> conversations = [];
-    for (int i = 0; i < list.length; i++) {
-      conversations.add(Conversation.fromJson(list[i]));
+  /// Get [count] of [Conversation] before [milliseconds] from Stringee server
+  Future<Map<dynamic, dynamic>> getConversationsBefore(int count, int milliseconds) async {
+    assert(count > 0 && milliseconds > 0);
+    final param = {
+      'count': count,
+      'milliseconds': milliseconds,
+    };
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationsBefore', param);
+    if (result['status']) {
+      List<dynamic> list = result['body'];
+      List<Conversation> conversations = [];
+      for (int i = 0; i < list.length; i++) {
+        conversations.add(Conversation.fromJson(list[i]));
+      }
+      result['body'] = conversations;
     }
-    result['body'] = conversations;
     return result;
   }
 
-  ///get (count) conversations before (dateTime)
-  ///@param (int) count
-  ///@param (int) dateTime
-  Future<Map<dynamic, dynamic>> getConversationsAfter(Map<dynamic, dynamic> parameters) async {
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationsAfter', parameters);
-    List<dynamic> list = result['body'];
-    List<Conversation> conversations = [];
-    for (int i = 0; i < list.length; i++) {
-      conversations.add(Conversation.fromJson(list[i]));
+  /// Get [count] of [Conversation] after [milliseconds] from Stringee server
+  Future<Map<dynamic, dynamic>> getConversationsAfter(int count, int milliseconds) async {
+    assert(count > 0 && milliseconds > 0);
+    final param = {
+      'count': count,
+      'milliseconds': milliseconds,
+    };
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationsAfter', param);
+    if (result['status']) {
+      List<dynamic> list = result['body'];
+      List<Conversation> conversations = [];
+      for (int i = 0; i < list.length; i++) {
+        conversations.add(Conversation.fromJson(list[i]));
+      }
+      result['body'] = conversations;
     }
-    result['body'] = conversations;
     return result;
   }
 
-  ///clear local database
+  /// Clear local database
   Future<Map<dynamic, dynamic>> clearDb() async {
     return await methodChannel.invokeMethod('clearDb');
   }
 
-  ///block user with userId
+  /// Block [User] with [User.userId] = [userId]
   Future<Map<dynamic, dynamic>> blockUser(String userId) async {
-    return await methodChannel.invokeMethod('blockUser', userId);
+    assert(userId != null || userId.trim().isNotEmpty);
+    return await methodChannel.invokeMethod('blockUser', userId.trim());
   }
 
-  ///get count of unread conversation
+  /// Get count of unread [Conversation]
   Future<Map<dynamic, dynamic>> getTotalUnread() async {
     return await methodChannel.invokeMethod('getTotalUnread');
   }
@@ -240,21 +269,13 @@ class StringeeClient {
   }
 
   void _handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
-    CustomData customData = CustomData(userId: map['from'], msg: json.decode(map['msg']));
-    _eventStreamController.add({
-      "typeEvent": StringeeClientEvents,
-      "eventType": StringeeClientEvents.DidReceiveCustomMessage,
-      "body": customData
-    });
+    _eventStreamController.add(
+        {"typeEvent": StringeeClientEvents, "eventType": StringeeClientEvents.DidReceiveCustomMessage, "body": map});
   }
 
   void _handleDidReceiveTopicMessageEvent(Map<dynamic, dynamic> map) {
-    TopicMessage topicMsg = TopicMessage(userId: map['from'], msg: json.decode(map['msg']));
-    _eventStreamController.add({
-      "typeEvent": StringeeClientEvents,
-      "eventType": StringeeClientEvents.DidReceiveTopicMessage,
-      "body": topicMsg
-    });
+    _eventStreamController.add(
+        {"typeEvent": StringeeClientEvents, "eventType": StringeeClientEvents.DidReceiveTopicMessage, "body": map});
   }
 
   void _handleIncomingCallEvent(Map<dynamic, dynamic> map) {
