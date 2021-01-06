@@ -42,3 +42,17 @@ enum StringeeType {
   StringeeCall,
   StringeeCall2,
 }
+
+/// Error code and message:
+/// -1 : StringeeClient is not initialized or disconnected
+/// -2 : value is invalid
+/// -3 : No conversation found
+/// -4 : StringeeCall/ StringeeCall2 is not initialized
+Future<Map<String, dynamic>> reportInvalidValue(String value) async {
+  Map<String, dynamic> params = {
+    'status': false,
+    'code': -2,
+    'message': value + ' value is invalid',
+  };
+  return params;
+}

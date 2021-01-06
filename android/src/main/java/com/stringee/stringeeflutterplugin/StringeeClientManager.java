@@ -356,7 +356,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     Map map = new HashMap();
                     map.put("status", false);
                     map.put("code", -2);
-                    map.put("message", "Conversation id can not be null");
+                    map.put("message", "convId is invalid");
                     result.success(map);
                 }
             });
@@ -424,7 +424,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     Map map = new HashMap();
                     map.put("status", false);
                     map.put("code", -2);
-                    map.put("message", "User id can not be null");
+                    map.put("message", "userId is invalid");
                     result.success(map);
                 }
             });
@@ -492,7 +492,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     Map map = new HashMap();
                     map.put("status", false);
                     map.put("code", -2);
-                    map.put("message", "Conversation id can not be null");
+                    map.put("message", "convId is invalid");
                     result.success(map);
                 }
             });
@@ -858,7 +858,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     Map map = new HashMap();
                     map.put("status", false);
                     map.put("code", -2);
-                    map.put("message", "User id can not be null");
+                    map.put("message", "userId is invalid");
                     result.success(map);
                 }
             });

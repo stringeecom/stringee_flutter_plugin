@@ -451,7 +451,8 @@ class _CallState extends State<Call> {
     });
   }
 
-  void handleChangeAudioDeviceEvent(AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
+  void handleChangeAudioDeviceEvent(
+      AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
     print('handleChangeAudioDeviceEvent - $audioDevice');
     switch (audioDevice) {
       case AudioDevice.SPEAKER_PHONE:

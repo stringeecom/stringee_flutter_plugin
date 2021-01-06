@@ -101,21 +101,26 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     }
                     break;
                 case "makeCall":
-                    String from = call.argument("from");
-                    String to = call.argument("to");
-                    String resolution = null;
-                    boolean isVideoCall = false;
-                    if (call.hasArgument("isVideoCall")) {
-                        isVideoCall = call.argument("isVideoCall");
-                        if (call.hasArgument("videoResolution")) {
-                            resolution = call.argument("videoResolution");
+                    try {
+                        JSONObject makeCallObject = new JSONObject((String) call.arguments());
+                        String from = makeCallObject.getString("from");
+                        String to = makeCallObject.getString("to");
+                        String resolution = null;
+                        boolean isVideoCall = false;
+                        if (makeCallObject.has("isVideoCall")) {
+                            isVideoCall = makeCallObject.getBoolean("isVideoCall");
+                            if (isVideoCall && makeCallObject.has("videoResolution")) {
+                                resolution = makeCallObject.getString("videoResolution");
+                            }
                         }
+                        String customData = null;
+                        if (makeCallObject.has("customData")) {
+                            customData = (String) makeCallObject.getString("customData");
+                        }
+                        _callManager.makeCall(from, to, isVideoCall, customData, resolution, result);
+                    } catch (org.json.JSONException e) {
+                        e.printStackTrace();
                     }
-                    String customData = null;
-                    if (call.hasArgument("customData")) {
-                        customData = call.argument("customData");
-                    }
-                    _callManager.makeCall(from, to, isVideoCall, customData, resolution, result);
                     break;
                 case "initAnswer":
                     _callManager.initAnswer((String) call.arguments, result);
@@ -154,21 +159,26 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     _callManager.resumeVideo((String) call.argument("callId"), result);
                     break;
                 case "makeCall2":
-                    String from2 = call.argument("from");
-                    String to2 = call.argument("to");
-                    String resolution2 = null;
-                    boolean isVideoCall2 = false;
-                    if (call.hasArgument("isVideoCall")) {
-                        isVideoCall2 = call.argument("isVideoCall");
-                        if (call.hasArgument("videoResolution")) {
-                            resolution2 = call.argument("videoResolution");
+                    try {
+                        JSONObject makeCallObject = new JSONObject((String) call.arguments());
+                        String from = makeCallObject.getString("from");
+                        String to = makeCallObject.getString("to");
+                        String resolution = null;
+                        boolean isVideoCall = false;
+                        if (makeCallObject.has("isVideoCall")) {
+                            isVideoCall = makeCallObject.getBoolean("isVideoCall");
+                            if (isVideoCall && makeCallObject.has("videoResolution")) {
+                                resolution = makeCallObject.getString("videoResolution");
+                            }
                         }
+                        String customData = null;
+                        if (makeCallObject.has("customData")) {
+                            customData = (String) makeCallObject.getString("customData");
+                        }
+                        _call2Manager.makeCall(from, to, isVideoCall, customData, resolution, result);
+                    } catch (org.json.JSONException e) {
+                        e.printStackTrace();
                     }
-                    String customData2 = null;
-                    if (call.hasArgument("customData")) {
-                        customData2 = call.argument("customData");
-                    }
-                    _call2Manager.makeCall(from2, to2, isVideoCall2, customData2, resolution2, result);
                     break;
                 case "initAnswer2":
                     _call2Manager.initAnswer((String) call.arguments, result);

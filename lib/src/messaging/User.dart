@@ -23,9 +23,9 @@ class User {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    params['userId'] = _userId;
-    if (_name != null) params['name'] = _name;
-    if (_avatarUrl != null) params['avatarUrl'] = _avatarUrl;
+    params['userId'] = _userId.trim();
+    if (_name != null) params['name'] = _name.trim();
+    if (_avatarUrl != null) params['avatarUrl'] = _avatarUrl.trim();
     if (_role != null) params['role'] = _role.index;
     return params;
   }

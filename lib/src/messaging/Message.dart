@@ -5,6 +5,7 @@ import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 import 'package:stringee_flutter_plugin/src/messaging/User.dart';
 
 import '../StringeeClient.dart';
+import '../StringeeConstants.dart';
 import 'StringeeChange.dart';
 
 class Message implements StringeeObject {
@@ -332,21 +333,21 @@ class Message implements StringeeObject {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    params['convId'] = _convId;
+    params['convId'] = _convId.trim();
     params['type'] = _type.value;
     if (_customData != null) params['customData'] = _customData;
     switch (this._type) {
       case MsgType.TYPE_TEXT:
       case MsgType.TYPE_LINK:
-        params['text'] = _text;
+        params['text'] = _text.trim();
         break;
       case MsgType.TYPE_PHOTO:
       case MsgType.TYPE_FILE:
-        if (_filePath != null) params['filePath'] = _filePath;
+        if (_filePath != null) params['filePath'] = _filePath.trim();
         break;
       case MsgType.TYPE_VIDEO:
       case MsgType.TYPE_AUDIO:
-        if (_filePath != null) params['filePath'] = _filePath;
+        if (_filePath != null) params['filePath'] = _filePath.trim();
         if (_duration != null) params['duration'] = _duration;
         break;
       case MsgType.TYPE_LOCATION:
@@ -354,11 +355,11 @@ class Message implements StringeeObject {
         if (_longitude != null) params['longitude'] = _longitude;
         break;
       case MsgType.TYPE_CONTACT:
-        if (_contact != null) params['contact'] = _contact;
+        if (_contact != null) params['contact'] = _contact.trim();
         break;
       case MsgType.TYPE_STICKER:
-        if (_stickerCategory != null) params['stickerCategory'] = _stickerCategory;
-        if (_stickerName != null) params['stickerName'] = _stickerName;
+        if (_stickerCategory != null) params['stickerCategory'] = _stickerCategory.trim();
+        if (_stickerName != null) params['stickerName'] = _stickerName.trim();
         break;
     }
     return params;
@@ -369,7 +370,7 @@ class Message implements StringeeObject {
     assert(convId != null || convId.trim().isNotEmpty);
     assert(content != null || content.trim().isNotEmpty);
     final params = {
-      'convId': convId,
+      'convId': convId.trim(),
       'msgIds': this._id,
       'content': content,
     };
@@ -378,11 +379,12 @@ class Message implements StringeeObject {
 
   /// Pin/Un pin [Message]
   Future<Map<dynamic, dynamic>> pinOrUnPin(String convId, bool pinOrUnPin) async {
-    assert(convId != null || convId.trim().isNotEmpty);
+    if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
+    if (pinOrUnPin == null) return await reportInvalidValue('pinOrUnPin');
     final params = {
-      'convId': convId,
+      'convId': convId.trim(),
       'msgIds': this._id,
-      'pinOrUnPin': (pinOrUnPin != null) ? pinOrUnPin : false,
+      'pinOrUnPin': pinOrUnPin,
     };
     return await StringeeClient.methodChannel.invokeMethod('pinOrUnPin', params);
   }

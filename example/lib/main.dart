@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
@@ -9,7 +10,7 @@ var user1 =
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
 var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTgzMzcxMCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwOTkyMDExMCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.PKXOnoToCYIInwptJAaNEiBnE_WaD5ZYCu9XSq3ZLy4';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTkyNzYzMCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMDAxNDAzMCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.ftwvW5-tPNNTdlooN0dhiLmR2hXQzBh3Z0oo-_Y7tAk';
 var client = StringeeClient();
 String strUserId = "";
 
@@ -75,7 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
             break;
           case StringeeClientEvents.DidReceiveChange:
             StringeeChange stringeeChange = map['body'];
-            print(stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
+            print(
+                stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
             switch (stringeeChange.objectType) {
               case ObjectType.CONVERSATION:
                 Conversation conversation = stringeeChange.object;
@@ -93,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(token);
+    client.connect(token).then((value) => print(value));
   }
 
   requestPermissions() async {
@@ -225,56 +227,73 @@ class _MyFormState extends State<MyForm> {
             ),
           ),
           new Container(
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(false, StringeeType.StringeeCall);
-                      },
-                      child: Text('CALL'),
+                    new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(false, StringeeType.StringeeCall);
+                          },
+                          child: Text('CALL'),
+                        ),
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(true, StringeeType.StringeeCall);
+                          },
+                          child: Text('VIDEOCALL'),
+                        ),
+                      ],
                     ),
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(true, StringeeType.StringeeCall);
-                      },
-                      child: Text('VIDEOCALL'),
+                    new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(false, StringeeType.StringeeCall2);
+                          },
+                          child: Text('CALL2'),
+                        ),
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(true, StringeeType.StringeeCall2);
+                          },
+                          child: Text('VIDEOCALL2'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(false, StringeeType.StringeeCall2);
-                      },
-                      child: Text('CALL2'),
-                    ),
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(true, StringeeType.StringeeCall2);
-                      },
-                      child: Text('VIDEOCALL2'),
-                    ),
-                  ],
-                )
+                new Container(
+                  margin: EdgeInsets.only(top: 20.0),
+                  child: new RaisedButton(
+                    color: Colors.grey[300],
+                    textColor: Colors.black,
+                    padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Chat()));
+                    },
+                    child: Text('CHAT'),
+                  ),
+                ),
               ],
             ),
           ),

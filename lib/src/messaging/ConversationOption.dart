@@ -5,7 +5,7 @@ class ConversationOption {
   bool _isGroup;
   bool _isDistinct;
 
-  ConversationOption({@required String name, bool isGroup, bool isDistinct})
+  ConversationOption({String name, @required bool isGroup, @required bool isDistinct})
       : assert(isGroup != null),
         assert(isDistinct != null) {
     this._name = name;
@@ -15,7 +15,7 @@ class ConversationOption {
 
   Map<String, dynamic> toJson() {
     return {
-      if (_name != null) 'name': _name,
+      if (_name != null) 'name': _name.trim(),
       'isGroup': _isGroup,
       'isDistinct': _isDistinct,
     };
