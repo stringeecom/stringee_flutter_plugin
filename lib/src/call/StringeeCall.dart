@@ -176,20 +176,37 @@ class StringeeCall {
         !parameters.containsKey('to') ||
         (parameters['to'] as String).trim().isEmpty)
       return await reportInvalidValue('MakeCallParams');
-    MakeCallParams makeCallParams = MakeCallParams(
-        from: (parameters['from'] as String).trim(),
-        to: (parameters['to'] as String).trim(),
-        isVideoCall: parameters.containsKey('isVideoCall') ? parameters['isVideoCall'] : false,
-        customData: parameters.containsKey('customData') ? parameters['customData'] : null,
-        videoQuality: parameters.containsKey('videoQuality') ? parameters['videoQuality'] : null);
-    return await makeCallFromParams(makeCallParams);
-  }
 
-  /// Make a new coll with [MakeCallParams]
-  Future<Map<dynamic, dynamic>> makeCallFromParams(MakeCallParams params) async {
-    if (params == null) return await reportInvalidValue('MakeCallParams');
+    var params = {};
+
+    params['from'] = (parameters['from'] as String).trim();
+    params['to'] = (parameters['to'] as String).trim();
+    if (parameters.containsKey('customData')) if (parameters['customData'] != null)
+      params['customData'] = (parameters['customData'] as String).trim();
+    if (parameters.containsKey('isVideoCall')) {
+      params['isVideoCall'] =
+          (parameters['isVideoCall'] != null) ? parameters['isVideoCall'] : false;
+      if (params['isVideoCall']) {
+        if (parameters['videoQuality'] != null) {
+          switch (parameters['videoQuality']) {
+            case VideoQuality.NORMAL:
+              params['videoQuality'] = "NORMAL";
+              break;
+            case VideoQuality.HD:
+              params['videoQuality'] = "HD";
+              break;
+            case VideoQuality.FULLHD:
+              params['videoQuality'] = "FULLHD";
+              break;
+          }
+        } else {
+          params['videoQuality'] = "NORMAL";
+        }
+      }
+    }
+
     Map<dynamic, dynamic> results =
-        await StringeeClient.methodChannel.invokeMethod('makeCall', json.encode(params));
+        await StringeeClient.methodChannel.invokeMethod('makeCall', params);
     Map<dynamic, dynamic> callInfo = results['callInfo'];
     this.initCallInfo(callInfo);
 
@@ -199,6 +216,19 @@ class StringeeCall {
       'message': results['message']
     };
     return resultDatas;
+  }
+
+  /// Make a new coll with [MakeCallParams]
+  Future<Map<dynamic, dynamic>> makeCallFromParams(MakeCallParams params) async {
+    if (params == null) return await reportInvalidValue('MakeCallParams');
+    Map<dynamic, dynamic> parameters = {
+      'from': params.from.trim(),
+      'to': params.to.trim(),
+      if (params.customData != null) 'customData': params.customData,
+      'isVideoCall': params.isVideoCall,
+      if (params.isVideoCall) 'videoQuality': params.videoQuality,
+    };
+    return await makeCall(parameters);
   }
 
   /// Init an answer from incoming call
