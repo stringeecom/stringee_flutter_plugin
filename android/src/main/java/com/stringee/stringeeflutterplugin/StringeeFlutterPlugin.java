@@ -95,26 +95,25 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     break;
                 case "sendCustomMessage":
                     try {
-                        JSONObject customDataObject = new JSONObject((String) call.arguments);
-                        _clientManager.sendCustomMessage(customDataObject.getString("userId"), customDataObject.getJSONObject("msg"), result);
-                    } catch (JSONException e) {
+                        _clientManager.sendCustomMessage((String) call.argument("userId"), new JSONObject((String) call.argument("msg")), result);
+                    } catch (org.json.JSONException e) {
                         e.printStackTrace();
                     }
                     break;
                 case "makeCall":
-                    String from = call.argument("from");
-                    String to = call.argument("to");
+                    String from = (String) call.argument("from");
+                    String to = (String) call.argument("to");
+                    String resolution = null;
                     boolean isVideoCall = false;
                     if (call.hasArgument("isVideoCall")) {
-                        isVideoCall = call.argument("isVideoCall");
+                        isVideoCall = (boolean) call.argument("isVideoCall");
+                        if (call.hasArgument("videoQuality")) {
+                            resolution = (String) call.argument("videoQuality");
+                        }
                     }
                     String customData = null;
                     if (call.hasArgument("customData")) {
-                        customData = call.argument("customData");
-                    }
-                    String resolution = null;
-                    if (call.hasArgument("videoResolution")) {
-                        resolution = call.argument("videoResolution");
+                        customData = (String) call.argument("customData");
                     }
                     _callManager.makeCall(from, to, isVideoCall, customData, resolution, result);
                     break;
@@ -155,19 +154,19 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     _callManager.resumeVideo((String) call.argument("callId"), result);
                     break;
                 case "makeCall2":
-                    String from2 = call.argument("from");
-                    String to2 = call.argument("to");
+                    String from2 = (String) call.argument("from");
+                    String to2 = (String) call.argument("to");
+                    String resolution2 = null;
                     boolean isVideoCall2 = false;
                     if (call.hasArgument("isVideoCall")) {
-                        isVideoCall2 = call.argument("isVideoCall");
+                        isVideoCall2 = (boolean) call.argument("isVideoCall");
+                        if (call.hasArgument("videoQuality")) {
+                            resolution2 = (String) call.argument("videoQuality");
+                        }
                     }
                     String customData2 = null;
                     if (call.hasArgument("customData")) {
-                        customData2 = call.argument("customData");
-                    }
-                    String resolution2 = null;
-                    if (call.hasArgument("videoResolution")) {
-                        resolution2 = call.argument("videoResolution");
+                        customData2 = (String) call.argument("customData");
                     }
                     _call2Manager.makeCall(from2, to2, isVideoCall2, customData2, resolution2, result);
                     break;
@@ -203,7 +202,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     break;
                 case "createConversation":
                     try {
-//                        JSONObject param = new JSONObject((String) call.arguments);
                         List<User> participants = new ArrayList<>();
                         participants = Utils.getListUser((String) call.argument("participants"));
                         ConversationOptions option = new ConversationOptions();
@@ -251,24 +249,21 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     break;
                 case "addParticipants":
                     try {
-                        JSONObject param = new JSONObject((String) call.arguments);
                         List<User> participants = new ArrayList<>();
-                        participants = Utils.getListUser(param.getString("participants"));
-                        _conversationManager.addParticipants(param.getString("convId"), participants, result);
+                        participants = Utils.getListUser((String) call.argument("participants"));
+                        _conversationManager.addParticipants((String) call.argument("convId"), participants, result);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     break;
                 case "removeParticipants":
                     try {
-                        JSONObject param = new JSONObject((String) call.arguments);
                         List<User> participants = new ArrayList<>();
                         participants = Utils.getListUser((String) call.argument("participants"));
-                        _conversationManager.removeParticipants(param.getString("convId"), participants, result);
+                        _conversationManager.removeParticipants((String) call.argument("convId"), participants, result);
                     } catch (org.json.JSONException e) {
                         e.printStackTrace();
                     }
-
                     break;
                 case "sendMessage":
                     try {

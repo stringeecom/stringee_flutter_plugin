@@ -13,6 +13,7 @@ import com.stringee.messaging.Conversation;
 import com.stringee.messaging.Message;
 import com.stringee.messaging.User;
 import com.stringee.messaging.listeners.CallbackListener;
+import com.stringee.stringeeflutterplugin.ConversationManager.UserRole;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,6 +96,14 @@ public class Utils {
             User user = new User(object.optString("userId", null));
             user.setName(object.optString("name", null));
             user.setAvatarUrl(object.optString("avatarUrl", null));
+            if (object.has("role")) {
+                short role = (short) object.getInt("role");
+                if (role == UserRole.Admin.getValue()) {
+                    user.setRole("admin");
+                } else if (role == UserRole.Admin.getValue()) {
+                    user.setRole("member");
+                }
+            }
             list.add(user);
         }
         return list;
@@ -269,6 +278,7 @@ public class Utils {
             userObject.put("userId", user.getUserId());
             userObject.put("name", user.getName());
             userObject.put("avatarUrl", user.getAvatarUrl());
+            userObject.put("role", user.getRole());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -315,8 +325,9 @@ public class Utils {
                 userObject = participantsArray.getJSONObject(i);
 
                 User user = new User(userObject.getString("user"));
-                user.setName(userObject.getString("displayName"));
-                user.setAvatarUrl(userObject.getString("avatarUrl"));
+                user.setName(userObject.optString("displayName", null));
+                user.setAvatarUrl(userObject.optString("avatarUrl", null));
+                user.setRole(userObject.optString("role", null));
 
                 resultArray.put(convertUserToJSON(user));
             }

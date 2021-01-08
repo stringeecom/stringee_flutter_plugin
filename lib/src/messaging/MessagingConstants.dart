@@ -11,6 +11,11 @@ enum ChangeType {
   DELETE,
 }
 
+enum UserRole {
+  ADMIN,
+  MEMBER,
+}
+
 ///Conversation state
 enum ConvState {
   STATE_DEFAULT,

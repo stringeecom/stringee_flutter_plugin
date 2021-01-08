@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'dart:io' show Platform;
+import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
@@ -10,8 +11,7 @@ var user1 =
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MDk4MTU4ODEiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEyNDA3ODgxLCJ1c2VySWQiOiJ1c2VyMiJ9.SShfFGylwOGwUo9VlZfhy3icRGyArhOqyO1S94bRQmQ';
 var token =
-    '.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTc0NjQ4NCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwOTgzMjg4NCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.PhealfCYikNwaW7B4RsmoohVaFMrY-UKBHXpjZyCdr8';
-
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTkyNzYzMCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMDAxNDAzMCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.ftwvW5-tPNNTdlooN0dhiLmR2hXQzBh3Z0oo-_Y7tAk';
 var client = StringeeClient();
 String strUserId = "";
 
@@ -49,50 +49,51 @@ class _MyHomePageState extends State<MyHomePage> {
     // Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      switch (map['eventType']) {
-        case StringeeClientEvents.DidConnect:
-          handleDidConnectEvent();
-          break;
-        case StringeeClientEvents.DidDisconnect:
-          handleDiddisconnectEvent();
-          break;
-        case StringeeClientEvents.DidFailWithError:
-          handleDidFailWithErrorEvent(map['code'], map['message']);
-          break;
-        case StringeeClientEvents.RequestAccessToken:
-          handleRequestAccessTokenEvent();
-          break;
-        case StringeeClientEvents.DidReceiveCustomMessage:
-          handleDidReceiveCustomMessageEvent(map['body']);
-          break;
-        case StringeeClientEvents.DidReceiveTopicMessage:
-          handleDidReceiveTopicMessageEvent(map['body']);
-          break;
-        case StringeeClientEvents.IncomingCall:
-          StringeeCall call = map['body'];
-          handleIncomingCallEvent(call);
-          break;
-        case StringeeClientEvents.IncomingCall2:
-          StringeeCall2 call = map['body'];
-          handleIncomingCall2Event(call);
-          break;
-        case StringeeClientEvents.DidReceiveChange:
-          StringeeChange stringeeChange = map['body'];
-          print(stringeeChange.objectType.toString() +
-              '\t' +
-              stringeeChange.changeType.toString());
-          switch (stringeeChange.objectType) {
-            case ObjectType.CONVERSATION:
-              Conversation conversation = stringeeChange.object;
-              print(conversation.id.toString());
-              break;
-            case ObjectType.MESSAGE:
-              Message message = stringeeChange.object;
-              print(message.id.toString() + '\t' + message.type.toString());
-          }
-          break;
-        default:
-          break;
+      if (map['typeEvent'] == StringeeClientEvents) {
+        switch (map['eventType']) {
+          case StringeeClientEvents.DidConnect:
+            handleDidConnectEvent();
+            break;
+          case StringeeClientEvents.DidDisconnect:
+            handleDiddisconnectEvent();
+            break;
+          case StringeeClientEvents.DidFailWithError:
+            handleDidFailWithErrorEvent(map['code'], map['message']);
+            break;
+          case StringeeClientEvents.RequestAccessToken:
+            handleRequestAccessTokenEvent();
+            break;
+          case StringeeClientEvents.DidReceiveCustomMessage:
+            handleDidReceiveCustomMessageEvent(map['body']);
+            break;
+          case StringeeClientEvents.DidReceiveTopicMessage:
+            handleDidReceiveTopicMessageEvent(map['body']);
+            break;
+          case StringeeClientEvents.IncomingCall:
+            StringeeCall call = map['body'];
+            handleIncomingCallEvent(call);
+            break;
+          case StringeeClientEvents.IncomingCall2:
+            StringeeCall2 call = map['body'];
+            handleIncomingCall2Event(call);
+            break;
+          case StringeeClientEvents.DidReceiveChange:
+            StringeeChange stringeeChange = map['body'];
+            print(
+                stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
+            switch (stringeeChange.objectType) {
+              case ObjectType.CONVERSATION:
+                Conversation conversation = stringeeChange.object;
+                print(conversation.id.toString());
+                break;
+              case ObjectType.MESSAGE:
+                Message message = stringeeChange.object;
+                print(message.id.toString() + '\t' + message.type.toString());
+            }
+            break;
+          default:
+            break;
+        }
       }
     });
 
@@ -173,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context) => Call(
               fromUserId: call.from,
               toUserId: call.to,
-              isVideoCall: call.isVideocall,
+              isVideoCall: call.isVideoCall,
               callType: StringeeType.StringeeCall,
               showIncomingUi: true,
               incomingCall: call)),
@@ -187,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context) => Call(
               fromUserId: call.from,
               toUserId: call.to,
-              isVideoCall: call.isVideocall,
+              isVideoCall: call.isVideoCall,
               callType: StringeeType.StringeeCall2,
               showIncomingUi: true,
               incomingCall2: call)),
@@ -229,56 +230,73 @@ class _MyFormState extends State<MyForm> {
             ),
           ),
           new Container(
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(false, StringeeType.StringeeCall);
-                      },
-                      child: Text('CALL'),
+                    new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(false, StringeeType.StringeeCall);
+                          },
+                          child: Text('CALL'),
+                        ),
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(true, StringeeType.StringeeCall);
+                          },
+                          child: Text('VIDEOCALL'),
+                        ),
+                      ],
                     ),
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(true, StringeeType.StringeeCall);
-                      },
-                      child: Text('VIDEOCALL'),
+                    new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(false, StringeeType.StringeeCall2);
+                          },
+                          child: Text('CALL2'),
+                        ),
+                        new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          onPressed: () {
+                            _CallTapped(true, StringeeType.StringeeCall2);
+                          },
+                          child: Text('VIDEOCALL2'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(false, StringeeType.StringeeCall2);
-                      },
-                      child: Text('CALL2'),
-                    ),
-                    new RaisedButton(
-                      color: Colors.grey[300],
-                      textColor: Colors.black,
-                      padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                      onPressed: () {
-                        _CallTapped(true, StringeeType.StringeeCall2);
-                      },
-                      child: Text('VIDEOCALL2'),
-                    ),
-                  ],
-                )
+                new Container(
+                  margin: EdgeInsets.only(top: 20.0),
+                  child: new RaisedButton(
+                    color: Colors.grey[300],
+                    textColor: Colors.black,
+                    padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Chat()));
+                    },
+                    child: Text('CHAT'),
+                  ),
+                ),
               ],
             ),
           ),
@@ -306,68 +324,5 @@ class _MyFormState extends State<MyForm> {
               callType: callType,
               showIncomingUi: false)),
     );
-    // client.getLocalConversations();
-    // List<User> users = [];
-    // User user = new User(userId: 'a', name: 'a');
-    // User user2 = new User(userId: 'v');
-    // users.add(user);
-    // users.add(user2);
-    // //
-    // ConversationOption option = new ConversationOption(isDistinct: false, isGroup: false);
-    // final parameters = {
-    //   'participants': users,
-    //   'option': option,
-    // };
-    // client.createConversation(option, users).then((value) => {print(value)});
-
-    // final parameters = {
-    //   'convId': 'conv-vn-1-73JJ5R8BMN-1606409934220',
-    //   'userId': 'ACTXV7BTAP',
-    // };
-    //
-    // client.getConversationById('conv-vn-1-73JJ5R8BMN-1606409934220').then((result) {
-    //   Conversation conversation = result['body'];
-    //   print(conversation.id);
-    // });
-
-    // final parameters = {
-    //   // 'participants': users,
-    //   'convId': 'conv-vn-1-73JJ5R8BMN-1606409965564',
-    //   'msgIds': [
-    //     'msg-vn-1-73JJ5R8BMN-1606412374440',
-    //   ],
-    //   'msgId': 'msg-vn-1-73JJ5R8BMN-1606412374440',
-    //   'count': 3,
-    //   //text
-    //   'text': 'test',
-    // //photo
-    // 'filePath': '/storage/emulated/0/DCIM/Camera/20201217_192024.jpg',
-    // //video
-    // 'filePath': '/storage/emulated/0/POC/video/VID_20201230_134232_.mp4',
-    // 'duration': 1287,
-    // //audio
-    // 'filePath': '/storage/emulated/0/POC/other/AUD_20201230_134111_.m4a',
-    // 'duration': 2531,
-    // //file
-    // 'filePath': '/storage/emulated/0/Download/1593595410-HĐLĐ-LêThịGiang.pdf',
-    // //contact
-    // 'contact': 'BEGIN:VCARD\nVERSION:2.1\nFN:A Huy\nTEL;CELL:090 998 26 68\nEND:VCARD',
-    // //location
-    // 'latitude': 21.0337827,
-    // 'longitude': 105.7703466,
-    // };
-    // Conversation conv = new Conversation();
-    // conv.delete('conv-vn-1-ON7WXI1BXA-1601060487890').then((result) {
-    //   print(result);
-    // });
-    // StringeeParams params = ParticipantParams(convId: 'conv-vn-1-73JJ5R8BMN-1606409965564', participants: users);
-    // conv.addParticipants(params).then((result) {
-    //   print(result);
-    // });
-
-    // Message message = Message(type: MsgType.TYPE_TEXT, data: parameters);
-    // conv.sendMessage(message).then((result) {
-    //   print(result);
-    // });
   }
 }

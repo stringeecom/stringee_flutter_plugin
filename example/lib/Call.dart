@@ -65,6 +65,7 @@ class _CallState extends State<Call> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           new Container(
+            alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 15.0),
             child: new Text(
               "${widget.toUserId}",
@@ -75,6 +76,7 @@ class _CallState extends State<Call> {
             ),
           ),
           new Container(
+            alignment: Alignment.center,
             child: new Text(
               '${status}',
               style: new TextStyle(
@@ -451,7 +453,8 @@ class _CallState extends State<Call> {
     });
   }
 
-  void handleChangeAudioDeviceEvent(AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
+  void handleChangeAudioDeviceEvent(
+      AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
     print('handleChangeAudioDeviceEvent - $audioDevice');
     switch (audioDevice) {
       case AudioDevice.SPEAKER_PHONE:
