@@ -1,15 +1,17 @@
 #import "StringeeFlutterPlugin.h"
+#import "StringeeVideoViewFactory.h"
 
 // Channel
 static NSString *STEMethodChannelName = @"com.stringee.flutter.methodchannel";
 static NSString *STEEventChannelName = @"com.stringee.flutter.eventchannel";
 
 // Common
-static NSString *STEEvent               = @"event";
+static NSString *STEEvent              = @"event";
+static NSString *STEEventType          = @"nativeEventType";
 static NSString *STEBody               = @"body";
-static NSString *STEStatus               = @"status";
+static NSString *STEStatus             = @"status";
 static NSString *STECode               = @"code";
-static NSString *STEMessage               = @"message";
+static NSString *STEMessage            = @"message";
 
 // Client
 static NSString *STEDidConnect               = @"didConnect";
@@ -59,6 +61,9 @@ static NSString *STEDidHandleOnAnotherDevice    = @"didHandleOnAnotherDevice";
     // Event channel
     FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:STEEventChannelName binaryMessenger:[registrar messenger]];
     [eventChannel setStreamHandler:instance];
+
+    StringeeVideoViewFactory* factory = [[StringeeVideoViewFactory alloc] initWithMessenger:registrar.messenger];
+    [registrar registerViewFactory:factory withId:@"stringeeVideoView"];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -587,51 +592,51 @@ static NSString *STEDidHandleOnAnotherDevice    = @"didHandleOnAnotherDevice";
 #pragma mark - Client Delegate
 
 - (void)didConnect:(StringeeClient *)stringeeClient isReconnecting:(BOOL)isReconnecting {
-    _eventSink(@{STEEvent : STEDidConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
 }
 
 - (void)didDisConnect:(StringeeClient *)stringeeClient isReconnecting:(BOOL)isReconnecting {
-    _eventSink(@{STEEvent : STEDidDisConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidDisConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
 }
 
 - (void)didFailWithError:(StringeeClient *)stringeeClient code:(int)code message:(NSString *)message {
-    _eventSink(@{STEEvent : STEDidFailWithError, STEBody : @{ @"userId" : stringeeClient.userId, @"code" : @(code), @"message" : message }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidFailWithError, STEBody : @{ @"userId" : stringeeClient.userId, @"code" : @(code), @"message" : message }});
 }
 
 - (void)requestAccessToken:(StringeeClient *)stringeeClient {
     isConnecting = NO;
-    _eventSink(@{STEEvent : STERequestAccessToken, STEBody : @{ @"userId" : stringeeClient.userId }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STERequestAccessToken, STEBody : @{ @"userId" : stringeeClient.userId }});
 }
 
 - (void)didReceiveCustomMessage:(StringeeClient *)stringeeClient message:(NSDictionary *)message fromUserId:(NSString *)userId {
-    _eventSink(@{STEEvent : STEDidReceiveCustomMessage, STEBody : @{ @"fromUserId" : userId, @"message" : message }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveCustomMessage, STEBody : @{ @"fromUserId" : userId, @"message" : message }});
 }
 
 - (void)incomingCallWithStringeeClient:(StringeeClient *)stringeeClient stringeeCall:(StringeeCall *)stringeeCall {
     stringeeCall.delegate = self;
     [_calls setObject:stringeeCall forKey:stringeeCall.callId];
-    _eventSink(@{STEEvent : STEIncomingCall, STEBody : [self StringeeCall:stringeeCall] });
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall, STEBody : [self StringeeCall:stringeeCall] });
 }
 
 #pragma mark - Call Delegate
 
 - (void)didChangeMediaState:(StringeeCall *)stringeeCall mediaState:(MediaState)mediaState {
-    _eventSink(@{STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(mediaState) }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(mediaState) }});
 }
 
 - (void)didChangeSignalingState:(StringeeCall *)stringeeCall signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState) }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState) }});
     if (signalingState == SignalingStateBusy || signalingState == SignalingStateEnded) {
         [_calls removeObjectForKey:stringeeCall.callId];
     }
 }
 
 - (void)didReceiveLocalStream:(StringeeCall *)stringeeCall {
-    
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall.callId }});
 }
 
 - (void)didReceiveRemoteStream:(StringeeCall *)stringeeCall {
-    
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall.callId }});
 }
 
 - (void)didReceiveDtmfDigit:(StringeeCall *)stringeeCall callDTMF:(CallDTMF)callDTMF {
@@ -643,15 +648,15 @@ static NSString *STEDidHandleOnAnotherDevice    = @"didHandleOnAnotherDevice";
     } else if (callDTMF == 11) {
         digit = @"#";
     }
-    _eventSink(@{STEEvent : STEDidReceiveDtmfDigit, STEBody : @{ @"callId" : stringeeCall.callId, @"dtmf" : digit }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveDtmfDigit, STEBody : @{ @"callId" : stringeeCall.callId, @"dtmf" : digit }});
 }
 
 - (void)didReceiveCallInfo:(StringeeCall *)stringeeCall info:(NSDictionary *)info {
-    _eventSink(@{STEEvent : STEDidReceiveCallInfo, STEBody : @{ @"callId" : stringeeCall.callId, @"data" : info }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveCallInfo, STEBody : @{ @"callId" : stringeeCall.callId, @"data" : info }});
 }
 
 - (void)didHandleOnAnotherDevice:(StringeeCall *)stringeeCall signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState), @"description" : reason }});
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState), @"description" : reason }});
 }
 
 #pragma mark - Utils

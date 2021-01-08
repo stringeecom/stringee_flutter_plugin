@@ -41,5 +41,4 @@ enum VideoQuality {
 enum ScalingType {
   SCALE_ASPECT_FIT,
   SCALE_ASPECT_FILL,
-  SCALE_ASPECT_BALANCED,
 }

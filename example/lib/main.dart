@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import 'dart:io' show Platform;
 
 import 'Call.dart';
 
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDg3MTY0ODAiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjExMzA4NDgwLCJ1c2VySWQiOiJ1c2VyMSJ9.e5U4nCiHrKDpuqi8oWs0LHTtzcH6_2Q0hP1oqMdNeMw';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MDk4MTU4NzIiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEyNDA3ODcyLCJ1c2VySWQiOiJ1c2VyMSJ9.tWTjUeddMSknhEojQRMh4ULrh64HastJKRdpLC4c3xQ';
 var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MDk4MTU4ODEiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEyNDA3ODgxLCJ1c2VySWQiOiJ1c2VyMiJ9.SShfFGylwOGwUo9VlZfhy3icRGyArhOqyO1S94bRQmQ';
 var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTc0NjQ4NCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwOTgzMjg4NCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.PhealfCYikNwaW7B4RsmoohVaFMrY-UKBHXpjZyCdr8';
+    '.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTc0NjQ4NCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwOTgzMjg4NCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.PhealfCYikNwaW7B4RsmoohVaFMrY-UKBHXpjZyCdr8';
+
 var client = StringeeClient();
 String strUserId = "";
 
@@ -40,60 +42,62 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement initState
     super.initState();
 
-    requestPermissions();
+    if (Platform.isAndroid) {
+      requestPermissions();
+    }
 
     // Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      if (map['typeEvent'] == StringeeClientEvents) {
-        switch (map['eventType']) {
-          case StringeeClientEvents.DidConnect:
-            handleDidConnectEvent();
-            break;
-          case StringeeClientEvents.DidDisconnect:
-            handleDiddisconnectEvent();
-            break;
-          case StringeeClientEvents.DidFailWithError:
-            handleDidFailWithErrorEvent(map['code'], map['message']);
-            break;
-          case StringeeClientEvents.RequestAccessToken:
-            handleRequestAccessTokenEvent();
-            break;
-          case StringeeClientEvents.DidReceiveCustomMessage:
-            handleDidReceiveCustomMessageEvent(map['body']);
-            break;
-          case StringeeClientEvents.DidReceiveTopicMessage:
-            handleDidReceiveTopicMessageEvent(map['body']);
-            break;
-          case StringeeClientEvents.IncomingCall:
-            StringeeCall call = map['body'];
-            handleIncomingCallEvent(call);
-            break;
-          case StringeeClientEvents.IncomingCall2:
-            StringeeCall2 call = map['body'];
-            handleIncomingCall2Event(call);
-            break;
-          case StringeeClientEvents.DidReceiveChange:
-            StringeeChange stringeeChange = map['body'];
-            print(stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
-            switch (stringeeChange.objectType) {
-              case ObjectType.CONVERSATION:
-                Conversation conversation = stringeeChange.object;
-                print(conversation.id.toString());
-                break;
-              case ObjectType.MESSAGE:
-                Message message = stringeeChange.object;
-                print(message.id.toString() + '\t' + message.type.toString());
-            }
-            break;
-          default:
-            break;
-        }
+      switch (map['eventType']) {
+        case StringeeClientEvents.DidConnect:
+          handleDidConnectEvent();
+          break;
+        case StringeeClientEvents.DidDisconnect:
+          handleDiddisconnectEvent();
+          break;
+        case StringeeClientEvents.DidFailWithError:
+          handleDidFailWithErrorEvent(map['code'], map['message']);
+          break;
+        case StringeeClientEvents.RequestAccessToken:
+          handleRequestAccessTokenEvent();
+          break;
+        case StringeeClientEvents.DidReceiveCustomMessage:
+          handleDidReceiveCustomMessageEvent(map['body']);
+          break;
+        case StringeeClientEvents.DidReceiveTopicMessage:
+          handleDidReceiveTopicMessageEvent(map['body']);
+          break;
+        case StringeeClientEvents.IncomingCall:
+          StringeeCall call = map['body'];
+          handleIncomingCallEvent(call);
+          break;
+        case StringeeClientEvents.IncomingCall2:
+          StringeeCall2 call = map['body'];
+          handleIncomingCall2Event(call);
+          break;
+        case StringeeClientEvents.DidReceiveChange:
+          StringeeChange stringeeChange = map['body'];
+          print(stringeeChange.objectType.toString() +
+              '\t' +
+              stringeeChange.changeType.toString());
+          switch (stringeeChange.objectType) {
+            case ObjectType.CONVERSATION:
+              Conversation conversation = stringeeChange.object;
+              print(conversation.id.toString());
+              break;
+            case ObjectType.MESSAGE:
+              Message message = stringeeChange.object;
+              print(message.id.toString() + '\t' + message.type.toString());
+          }
+          break;
+        default:
+          break;
       }
     });
 
     // Connect
-    client.connect(token);
+    client.connect(user1);
   }
 
   requestPermissions() async {
@@ -142,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void handleDiddisconnectEvent() {
     setState(() {
-      myUserId = 'Not connected...';
+      myUserId = 'Not connected';
     });
   }
 
