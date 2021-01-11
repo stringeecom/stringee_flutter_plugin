@@ -58,7 +58,7 @@ public class StringeeBluetoothManager {
     private final Handler handler;
 
     int scoConnectionAttempts;
-    private State bluetoothState;
+    private com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State bluetoothState;
     private final BluetoothProfile.ServiceListener bluetoothServiceListener;
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
@@ -88,7 +88,7 @@ public class StringeeBluetoothManager {
         // Once we have the profile proxy object, we can use it to monitor the state of the
         // connection and perform other operations that are relevant to the headset profile.
         public void onServiceConnected(int profile, BluetoothProfile proxy) {
-            if (profile != BluetoothProfile.HEADSET || bluetoothState == State.UNINITIALIZED) {
+            if (profile != BluetoothProfile.HEADSET || bluetoothState == com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED) {
                 return;
             }
             // Android only supports one connected Bluetooth Headset at a time.
@@ -99,13 +99,13 @@ public class StringeeBluetoothManager {
         @Override
         /** Notifies the client when the proxy object has been disconnected from the service. */
         public void onServiceDisconnected(int profile) {
-            if (profile != BluetoothProfile.HEADSET || bluetoothState == State.UNINITIALIZED) {
+            if (profile != BluetoothProfile.HEADSET || bluetoothState == com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED) {
                 return;
             }
             stopScoAudio();
             bluetoothHeadset = null;
             bluetoothDevice = null;
-            bluetoothState = State.HEADSET_UNAVAILABLE;
+            bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.HEADSET_UNAVAILABLE;
             updateAudioDeviceState();
         }
     }
@@ -115,7 +115,7 @@ public class StringeeBluetoothManager {
     private class BluetoothHeadsetBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (bluetoothState == State.UNINITIALIZED) {
+            if (bluetoothState == com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED) {
                 return;
             }
             final String action = intent.getAction();
@@ -145,8 +145,8 @@ public class StringeeBluetoothManager {
                         BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_AUDIO_DISCONNECTED);
                 if (state == BluetoothHeadset.STATE_AUDIO_CONNECTED) {
                     cancelTimer();
-                    if (bluetoothState == State.SCO_CONNECTING) {
-                        bluetoothState = State.SCO_CONNECTED;
+                    if (bluetoothState == com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_CONNECTING) {
+                        bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_CONNECTED;
                         scoConnectionAttempts = 0;
                         updateAudioDeviceState();
                     } else {
@@ -165,8 +165,8 @@ public class StringeeBluetoothManager {
     /**
      * Construction.
      */
-    static StringeeBluetoothManager create(Context context, com.stringee.stringeeflutterplugin.StringeeAudioManager audioManager) {
-        return new StringeeBluetoothManager(context, audioManager);
+    static com.stringee.stringeeflutterplugin.StringeeBluetoothManager create(Context context, com.stringee.stringeeflutterplugin.StringeeAudioManager audioManager) {
+        return new com.stringee.stringeeflutterplugin.StringeeBluetoothManager(context, audioManager);
     }
 
     protected StringeeBluetoothManager(Context context, com.stringee.stringeeflutterplugin.StringeeAudioManager audioManager) {
@@ -174,16 +174,16 @@ public class StringeeBluetoothManager {
         this.context = context;
         stringeeAudioManager = audioManager;
         this.audioManager = getAudioManager(context);
-        bluetoothState = State.UNINITIALIZED;
-        bluetoothServiceListener = new BluetoothServiceListener();
-        bluetoothHeadsetReceiver = new BluetoothHeadsetBroadcastReceiver();
+        bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED;
+        bluetoothServiceListener = new com.stringee.stringeeflutterplugin.StringeeBluetoothManager.BluetoothServiceListener();
+        bluetoothHeadsetReceiver = new com.stringee.stringeeflutterplugin.StringeeBluetoothManager.BluetoothHeadsetBroadcastReceiver();
         handler = new Handler(Looper.getMainLooper());
     }
 
     /**
      * Returns the internal state.
      */
-    public State getState() {
+    public com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State getState() {
         ThreadUtils.checkIsOnMainThread();
         return bluetoothState;
     }
@@ -206,7 +206,7 @@ public class StringeeBluetoothManager {
         if (!hasPermission(context, android.Manifest.permission.BLUETOOTH)) {
             return;
         }
-        if (bluetoothState != State.UNINITIALIZED) {
+        if (bluetoothState != com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED) {
             return;
         }
         bluetoothHeadset = null;
@@ -235,7 +235,7 @@ public class StringeeBluetoothManager {
         // Register receiver for change in audio connection state of the Headset profile.
         bluetoothHeadsetFilter.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
         registerReceiver(bluetoothHeadsetReceiver, bluetoothHeadsetFilter);
-        bluetoothState = State.HEADSET_UNAVAILABLE;
+        bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.HEADSET_UNAVAILABLE;
     }
 
     /**
@@ -249,7 +249,7 @@ public class StringeeBluetoothManager {
         // Stop BT SCO connection with remote device if needed.
         stopScoAudio();
         // Close down remaining BT resources.
-        if (bluetoothState == State.UNINITIALIZED) {
+        if (bluetoothState == com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED) {
             return;
         }
         unregisterReceiver(bluetoothHeadsetReceiver);
@@ -260,7 +260,7 @@ public class StringeeBluetoothManager {
         }
         bluetoothAdapter = null;
         bluetoothDevice = null;
-        bluetoothState = State.UNINITIALIZED;
+        bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED;
     }
 
     public boolean startScoAudio() {
@@ -268,10 +268,10 @@ public class StringeeBluetoothManager {
         if (scoConnectionAttempts >= MAX_SCO_CONNECTION_ATTEMPTS) {
             return false;
         }
-        if (bluetoothState != State.HEADSET_AVAILABLE) {
+        if (bluetoothState != com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.HEADSET_AVAILABLE) {
             return false;
         }
-        bluetoothState = State.SCO_CONNECTING;
+        bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_CONNECTING;
         audioManager.startBluetoothSco();
         audioManager.setBluetoothScoOn(true);
         scoConnectionAttempts++;
@@ -284,13 +284,13 @@ public class StringeeBluetoothManager {
      */
     public void stopScoAudio() {
         ThreadUtils.checkIsOnMainThread();
-        if (bluetoothState != State.SCO_CONNECTING && bluetoothState != State.SCO_CONNECTED) {
+        if (bluetoothState != com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_CONNECTING && bluetoothState != com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_CONNECTED) {
             return;
         }
         cancelTimer();
         audioManager.stopBluetoothSco();
         audioManager.setBluetoothScoOn(false);
-        bluetoothState = State.SCO_DISCONNECTING;
+        bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_DISCONNECTING;
     }
 
     /**
@@ -301,17 +301,17 @@ public class StringeeBluetoothManager {
      * device if available.
      */
     public void updateDevice() {
-        if (bluetoothState == State.UNINITIALIZED || bluetoothHeadset == null) {
+        if (bluetoothState == com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED || bluetoothHeadset == null) {
             return;
         }
         List<BluetoothDevice> devices = bluetoothHeadset.getConnectedDevices();
         if (devices.isEmpty()) {
             bluetoothDevice = null;
-            bluetoothState = State.HEADSET_UNAVAILABLE;
+            bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.HEADSET_UNAVAILABLE;
         } else {
             // Always use first device in list. Android only supports one device.
             bluetoothDevice = devices.get(0);
-            bluetoothState = State.HEADSET_AVAILABLE;
+            bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.HEADSET_AVAILABLE;
         }
     }
 
@@ -384,10 +384,10 @@ public class StringeeBluetoothManager {
      */
     private void bluetoothTimeout() {
         ThreadUtils.checkIsOnMainThread();
-        if (bluetoothState == State.UNINITIALIZED || bluetoothHeadset == null) {
+        if (bluetoothState == com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.UNINITIALIZED || bluetoothHeadset == null) {
             return;
         }
-        if (bluetoothState != State.SCO_CONNECTING) {
+        if (bluetoothState != com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_CONNECTING) {
             return;
         }
         // Bluetooth SCO should be connecting; check the latest result.
@@ -402,7 +402,7 @@ public class StringeeBluetoothManager {
         }
         if (scoConnected) {
             // We thought BT had timed out, but it's actually on; updating state.
-            bluetoothState = State.SCO_CONNECTED;
+            bluetoothState = com.stringee.stringeeflutterplugin.StringeeBluetoothManager.State.SCO_CONNECTED;
             scoConnectionAttempts = 0;
         } else {
             // Give up and "cancel" our request by calling stopBluetoothSco().

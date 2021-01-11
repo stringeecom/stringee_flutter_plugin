@@ -271,7 +271,35 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                         String convId = msgObject.getString("convId");
                         int msgType = msgObject.getInt("type");
                         Message message = new com.stringee.messaging.Message(msgType);
-                        message = Utils.getMessageFromJSON(msgObject, message);
+                        switch (message.getType()) {
+                            case Message.TYPE_TEXT:
+                            case Message.TYPE_LINK:
+                                message = new Message(msgObject.getString("text"));
+                                break;
+                            case Message.TYPE_PHOTO:
+                            case Message.TYPE_FILE:
+                                message.setFilePath(msgObject.optString("filePath", null));
+                                break;
+                            case Message.TYPE_VIDEO:
+                            case Message.TYPE_AUDIO:
+                                message.setFilePath(msgObject.getString("filePath"));
+                                message.setDuration(msgObject.getInt("duration"));
+                                break;
+                            case Message.TYPE_LOCATION:
+                                message.setLatitude(msgObject.getDouble("latitude"));
+                                message.setLongitude(msgObject.getDouble("longitude"));
+                                break;
+                            case Message.TYPE_CONTACT:
+                                message.setContact(msgObject.getString("contact"));
+                                break;
+                            case Message.TYPE_STICKER:
+                                message.setStickerCategory(msgObject.getString("stickerCategory"));
+                                message.setStickerName(msgObject.getString("stickerName"));
+                                break;
+                        }
+                        if (msgObject.has("customData")){
+                            message.setCustomData(msgObject.getJSONObject("customData"));
+                        }
                         _conversationManager.sendMessage(convId, message, result);
                     } catch (org.json.JSONException e) {
                         e.printStackTrace();

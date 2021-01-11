@@ -1,6 +1,5 @@
 package com.stringee.stringeeflutterplugin;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -148,40 +147,6 @@ public class Utils {
             e.printStackTrace();
         }
         return conversationObject;
-    }
-
-    public static Message getMessageFromJSON(@NonNull JSONObject object, @NonNull Message message) {
-        try {
-            switch (message.getType()) {
-                case Message.TYPE_TEXT:
-                case Message.TYPE_LINK:
-                    message = new Message(object.getString("text"));
-                    break;
-                case Message.TYPE_PHOTO:
-                case Message.TYPE_FILE:
-                    message.setFilePath(object.optString("filePath", null));
-                    break;
-                case Message.TYPE_VIDEO:
-                case Message.TYPE_AUDIO:
-                    message.setFilePath(object.getString("filePath"));
-                    message.setDuration(object.getInt("duration"));
-                    break;
-                case Message.TYPE_LOCATION:
-                    message.setLatitude(object.getDouble("latitude"));
-                    message.setLongitude(object.getDouble("longitude"));
-                    break;
-                case Message.TYPE_CONTACT:
-                    message.setContact(object.getString("contact"));
-                    break;
-                case Message.TYPE_STICKER:
-                    message.setStickerCategory(object.getString("stickerCategory"));
-                    message.setStickerName(object.getString("stickerName"));
-                    break;
-            }
-        } catch (org.json.JSONException e) {
-            e.printStackTrace();
-        }
-        return message;
     }
 
     public static JSONObject convertMessageToJSON(@NonNull Message message) {

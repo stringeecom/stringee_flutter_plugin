@@ -980,6 +980,7 @@ public class ConversationManager {
      *
      * @param convId
      * @param userId
+     * @param role
      * @param result
      */
     public void setRole(String convId, final String userId, final UserRole role, final Result result) {

@@ -310,7 +310,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': VideoQuality.FULLHD,
+        'videoQuality': VideoQuality.FULLHD,
       };
 
       _stringeeCall2.makeCall(parameters).then((result) {
@@ -333,7 +333,9 @@ class _CallState extends State<Call> {
           print('_endCallTapped -- ${result['message']}');
           bool status = result['status'];
           if (status) {
-            clearDataEndDismiss();
+            if (Platform.isAndroid) {
+              clearDataEndDismiss();
+            }
           }
         });
         break;
@@ -342,7 +344,9 @@ class _CallState extends State<Call> {
           print('_endCallTapped -- ${result['message']}');
           bool status = result['status'];
           if (status) {
-            clearDataEndDismiss();
+            if (Platform.isAndroid) {
+              clearDataEndDismiss();
+            }
           }
         });
         break;
@@ -380,13 +384,17 @@ class _CallState extends State<Call> {
       case StringeeType.StringeeCall:
         _stringeeCall.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
-          clearDataEndDismiss();
+          if (Platform.isAndroid) {
+            clearDataEndDismiss();
+          }
         });
         break;
       case StringeeType.StringeeCall2:
         _stringeeCall2.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
-          clearDataEndDismiss();
+          if (Platform.isAndroid) {
+            clearDataEndDismiss();
+          }
         });
         break;
     }
@@ -683,30 +691,22 @@ class _ButtonVideoState extends State<ButtonVideo> {
 
   void _toggleVideo() {
     if (_stringeeCall != null) {
-      // _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
-      //   bool status = result['status'];
-      //   if (status) {
-      //     setState(() {
-      //       _isVideoEnable = !_isVideoEnable;
-      //     });
-      //   }
-      // });
-      _stringeeCall.resumeVideo().then((result) {
+      _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
         bool status = result['status'];
-        if (status) {}
+        if (status) {
+          setState(() {
+            _isVideoEnable = !_isVideoEnable;
+          });
+        }
       });
     } else {
-      // _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
-      //   bool status = result['status'];
-      //   if (status) {
-      //     setState(() {
-      //       _isVideoEnable = !_isVideoEnable;
-      //     });
-      //   }
-      // });
-      _stringeeCall2.resumeVideo().then((result) {
+      _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
         bool status = result['status'];
-        if (status) {}
+        if (status) {
+          setState(() {
+            _isVideoEnable = !_isVideoEnable;
+          });
+        }
       });
     }
   }

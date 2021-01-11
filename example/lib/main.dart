@@ -1,17 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
-import 'dart:io' show Platform;
 import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MDk4MTU4NzIiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEyNDA3ODcyLCJ1c2VySWQiOiJ1c2VyMSJ9.tWTjUeddMSknhEojQRMh4ULrh64HastJKRdpLC4c3xQ';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDg3MTY0ODAiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjExMzA4NDgwLCJ1c2VySWQiOiJ1c2VyMSJ9.e5U4nCiHrKDpuqi8oWs0LHTtzcH6_2Q0hP1oqMdNeMw';
 var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MDk4MTU4ODEiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEyNDA3ODgxLCJ1c2VySWQiOiJ1c2VyMiJ9.SShfFGylwOGwUo9VlZfhy3icRGyArhOqyO1S94bRQmQ';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
 var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwOTkyNzYzMCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMDAxNDAzMCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.ftwvW5-tPNNTdlooN0dhiLmR2hXQzBh3Z0oo-_Y7tAk';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYxMDMzOTM3MyIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMDQyNTc3MywidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.5KcPKokaYXErg1BygQ7YIxhPNXuGJA5OCtQjhbyyfjc';
 var client = StringeeClient();
 String strUserId = "";
 
@@ -42,9 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement initState
     super.initState();
 
-    if (Platform.isAndroid) {
-      requestPermissions();
-    }
+    if (Platform.isAndroid) requestPermissions();
 
     // Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
@@ -98,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // Connect
-    client.connect(user1);
+    client.connect(token);
   }
 
   requestPermissions() async {
@@ -240,59 +239,81 @@ class _MyFormState extends State<MyForm> {
                     new Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
-                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                          onPressed: () {
-                            _CallTapped(false, StringeeType.StringeeCall);
-                          },
-                          child: Text('CALL'),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              _CallTapped(false, StringeeType.StringeeCall);
+                            },
+                            child: Text('CALL'),
+                          ),
                         ),
-                        new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
-                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                          onPressed: () {
-                            _CallTapped(true, StringeeType.StringeeCall);
-                          },
-                          child: Text('VIDEOCALL'),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              _CallTapped(true, StringeeType.StringeeCall);
+                            },
+                            child: Text('VIDEOCALL'),
+                          ),
                         ),
                       ],
                     ),
                     new Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
-                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                          onPressed: () {
-                            _CallTapped(false, StringeeType.StringeeCall2);
-                          },
-                          child: Text('CALL2'),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            onPressed: () {
+                              _CallTapped(false, StringeeType.StringeeCall2);
+                            },
+                            child: Text('CALL2'),
+                          ),
                         ),
-                        new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
-                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                          onPressed: () {
-                            _CallTapped(true, StringeeType.StringeeCall2);
-                          },
-                          child: Text('VIDEOCALL2'),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            onPressed: () {
+                              _CallTapped(true, StringeeType.StringeeCall2);
+                            },
+                            child: Text('VIDEOCALL2'),
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
                 new Container(
+                  height: 40.0,
+                  width: 175.0,
                   margin: EdgeInsets.only(top: 20.0),
                   child: new RaisedButton(
                     color: Colors.grey[300],
                     textColor: Colors.black,
-                    padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Chat()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Chat(
+                                    client: client,
+                                  )));
                     },
                     child: Text('CHAT'),
                   ),
