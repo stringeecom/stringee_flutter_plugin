@@ -309,7 +309,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': VideoQuality.FULLHD,
+        'videoQuality': VideoQuality.FULLHD,
       };
 
       _stringeeCall2.makeCall(parameters).then((result) {
@@ -690,30 +690,22 @@ class _ButtonVideoState extends State<ButtonVideo> {
 
   void _toggleVideo() {
     if (_stringeeCall != null) {
-      // _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
-      //   bool status = result['status'];
-      //   if (status) {
-      //     setState(() {
-      //       _isVideoEnable = !_isVideoEnable;
-      //     });
-      //   }
-      // });
-      _stringeeCall.resumeVideo().then((result) {
+      _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
         bool status = result['status'];
-        if (status) {}
+        if (status) {
+          setState(() {
+            _isVideoEnable = !_isVideoEnable;
+          });
+        }
       });
     } else {
-      // _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
-      //   bool status = result['status'];
-      //   if (status) {
-      //     setState(() {
-      //       _isVideoEnable = !_isVideoEnable;
-      //     });
-      //   }
-      // });
-      _stringeeCall2.resumeVideo().then((result) {
+      _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
         bool status = result['status'];
-        if (status) {}
+        if (status) {
+          setState(() {
+            _isVideoEnable = !_isVideoEnable;
+          });
+        }
       });
     }
   }
