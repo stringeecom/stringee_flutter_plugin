@@ -331,6 +331,117 @@ class Message implements StringeeObject {
     this._text = text;
   }
 
+  Message.lstMsg(String msgId, String convId, String clientId, MsgType msgType, String senderId,
+      int sequence, MsgState msgState, int createdAt, Map<dynamic, dynamic> msgInfor) {
+    if (msgId == null ||
+        msgType == null ||
+        senderId == null ||
+        sequence == null ||
+        msgState == null ||
+        createdAt == null ||
+        msgInfor == null) {
+      return;
+    }
+    this._id = msgId;
+    this._convId = convId;
+    this._senderId = senderId;
+    this._createdAt = createdAt;
+    this._updateAt = createdAt;
+    this._sequence = sequence;
+    this._isDeleted = false;
+    if (msgInfor.containsKey('metadata')) this._customData = msgInfor['metadata'];
+    this._clientId = clientId;
+    this._state = msgState;
+    this._stateType = (senderId == clientId) ? MsgStateType.TYPE_SEND : MsgStateType.TYPE_RECEIVE;
+    this._type = msgType;
+    String text = '';
+    switch (this._type) {
+      case MsgType.TYPE_TEXT:
+      case MsgType.TYPE_LINK:
+        text = msgInfor['text'];
+        break;
+      case MsgType.TYPE_CREATE_CONVERSATION:
+      case MsgType.TYPE_RENAME_CONVERSATION:
+        this._senderId = msgInfor['creator'];
+        break;
+      case MsgType.TYPE_PHOTO:
+        Map<dynamic, dynamic> photoMap = msgInfor['photo'];
+        this._filePath = photoMap['filePath'];
+        this._fileUrl = photoMap['fileUrl'];
+        this._thumbnail = photoMap['thumbnail'];
+        this._ratio = photoMap['ratio'];
+        break;
+      case MsgType.TYPE_VIDEO:
+        Map<dynamic, dynamic> videoMap = msgInfor['video'];
+        this._filePath = videoMap['filePath'];
+        this._fileUrl = videoMap['fileUrl'];
+        this._thumbnail = videoMap['thumbnail'];
+        this._ratio = videoMap['ratio'];
+        this._duration = videoMap['duration'];
+        break;
+      case MsgType.TYPE_AUDIO:
+        Map<dynamic, dynamic> audioMap = msgInfor['audio'];
+        this._filePath = audioMap['filePath'];
+        this._fileUrl = audioMap['fileUrl'];
+        this._duration = audioMap['duration'];
+        break;
+      case MsgType.TYPE_FILE:
+        Map<dynamic, dynamic> fileMap = msgInfor['file'];
+        this._filePath = fileMap['filePath'];
+        this._fileUrl = fileMap['fileUrl'];
+        this._fileName = fileMap['fileName'];
+        this._fileLength = fileMap['fileLength'];
+        break;
+      case MsgType.TYPE_LOCATION:
+        Map<dynamic, dynamic> locationMap = msgInfor['location'];
+        this._latitude = locationMap['lat'];
+        this._longitude = locationMap['lon'];
+        break;
+      case MsgType.TYPE_CONTACT:
+        Map<dynamic, dynamic> contactMap = msgInfor['contact'];
+        this._contact = contactMap['vcard'];
+        break;
+      case MsgType.TYPE_STICKER:
+        Map<dynamic, dynamic> stickerMap = msgInfor['sticker'];
+        this._stickerName = stickerMap['name'];
+        this._stickerCategory = stickerMap['category'];
+        break;
+      case MsgType.TYPE_NOTIFICATION:
+        this._notiContent = new Map<dynamic, dynamic>();
+        MsgNotifyType notifyType = (msgInfor['type'] as int).notifyType;
+        this._notiContent['type'] = notifyType;
+        switch (notifyType) {
+          case MsgNotifyType.TYPE_ADD_PARTICIPANTS:
+            User user = new User.fromJsonNotify(msgInfor['addedInfo']);
+            this._notiContent['addedby'] = user;
+            List<User> participants = [];
+            List<dynamic> participantArray = msgInfor['participants'];
+            for (int i = 0; i < participantArray.length; i++) {
+              User user = User.fromJsonNotify(participantArray[i]);
+              participants.add(user);
+            }
+            this._notiContent[participants] = participants;
+            break;
+          case MsgNotifyType.TYPE_REMOVE_PARTICIPANTS:
+            User user = new User.fromJsonNotify(msgInfor['removedInfo']);
+            this._notiContent['removedBy'] = user;
+            List<User> participants = [];
+            List<dynamic> participantArray = msgInfor['participants'];
+            for (int i = 0; i < participantArray.length; i++) {
+              User user = User.fromJsonNotify(participantArray[i]);
+              participants.add(user);
+            }
+            this._notiContent[participants] = participants;
+            break;
+          case MsgNotifyType.TYPE_CHANGE_GROUP_NAME:
+          case MsgNotifyType.TYPE_END_CONV:
+            break;
+        }
+        break;
+    }
+    this._text = text;
+  }
+
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
     params['convId'] = _convId.trim();
@@ -371,7 +482,7 @@ class Message implements StringeeObject {
     assert(content != null || content.trim().isNotEmpty);
     final params = {
       'convId': convId.trim(),
-      'msgIds': this._id,
+      'msgId': this._id,
       'content': content,
     };
     return await StringeeClient.methodChannel.invokeMethod('edit', params);
@@ -383,7 +494,7 @@ class Message implements StringeeObject {
     if (pinOrUnPin == null) return await reportInvalidValue('pinOrUnPin');
     final params = {
       'convId': convId.trim(),
-      'msgIds': this._id,
+      'msgId': this._id,
       'pinOrUnPin': pinOrUnPin,
     };
     return await StringeeClient.methodChannel.invokeMethod('pinOrUnPin', params);

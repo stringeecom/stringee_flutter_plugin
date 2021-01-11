@@ -8,24 +8,6 @@ import '../StringeeConstants.dart';
 import 'StringeeChange.dart';
 import 'User.dart';
 
-class LastMsg {
-  int _messageType;
-  String _text;
-  String _content;
-
-  int get messageType => _messageType;
-
-  String get text => _text;
-
-  String get content => _content;
-
-  LastMsg(Map<dynamic, dynamic> lastMsgInfor) {
-    this._messageType = lastMsgInfor['messageType'];
-    this._text = lastMsgInfor['text'];
-    this._content = lastMsgInfor['content'];
-  }
-}
-
 class Conversation implements StringeeObject {
   String _id;
   String _localId;
@@ -40,13 +22,7 @@ class Conversation implements StringeeObject {
   int _totalUnread;
   String _text;
   ConvState _state;
-  String _lastMsgSender;
-  MsgType _lastMsgType;
-  String _lastMsgId;
-  int _lastMsgSeqReceived;
-  int _lastTimeNewMsg;
-  MsgState _lastMsgState;
-  LastMsg _lastMsg;
+  Message _lastMsg;
   String _pinnedMsgId;
   List<User> _participants;
 
@@ -78,19 +54,7 @@ class Conversation implements StringeeObject {
 
   ConvState get state => _state;
 
-  String get lastMsgSender => _lastMsgSender;
-
-  MsgType get lastMsgType => _lastMsgType;
-
-  String get lastMsgId => _lastMsgId;
-
-  int get lastMsgSeqReceived => _lastMsgSeqReceived;
-
-  int get lastTimeNewMsg => _lastTimeNewMsg;
-
-  MsgState get lastMsgState => _lastMsgState;
-
-  LastMsg get lastMsg => _lastMsg;
+  Message get lastMsg => _lastMsg;
 
   String get pinnedMsgId => _pinnedMsgId;
 
@@ -114,13 +78,16 @@ class Conversation implements StringeeObject {
     this._totalUnread = convInfor['totalUnread'];
     this._text = convInfor['text'];
     this._state = ConvState.values[convInfor['state']];
-    this._lastMsgSender = convInfor['lastMsgSender'];
-    this._lastMsgType = (convInfor['lastMsgType'] as int).msgType;
-    this._lastMsgId = convInfor['lastMsgId'];
-    this._lastMsgSeqReceived = convInfor['lastMsgSeqReceived'];
-    this._lastTimeNewMsg = convInfor['lastTimeNewMsg'];
-    this._lastMsgState = MsgState.values[convInfor['lastMsgState']];
-    this._lastMsg = new LastMsg(convInfor['lastMsg']);
+    this._lastMsg = new Message.lstMsg(
+        convInfor['lastMsgId'],
+        this._id,
+        this._clientId,
+        (convInfor['lastMsgType'] as int).msgType,
+        convInfor['lastMsgSender'],
+        convInfor['lastMsgSeqReceived'],
+        MsgState.values[convInfor['lastMsgState']],
+        convInfor['lastTimeNewMsg'],
+        convInfor['lastMsg']);
     this._pinnedMsgId = convInfor['pinnedMsgId'];
 
     List<User> participants = [];
@@ -237,7 +204,7 @@ class Conversation implements StringeeObject {
       'count': count,
     };
     Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('getLocalMessages', params);
+        await StringeeClient.methodChannel.invokeMethod('getLastMessages', params);
     if (result['status']) {
       List<Message> messages = [];
       List<dynamic> msgArray = json.decode(result['body']);
@@ -260,7 +227,7 @@ class Conversation implements StringeeObject {
       'seq': sequence,
     };
     Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('getLocalMessages', params);
+        await StringeeClient.methodChannel.invokeMethod('getMessagesAfter', params);
     if (result['status']) {
       List<Message> messages = [];
       List<dynamic> msgArray = json.decode(result['body']);
@@ -283,7 +250,7 @@ class Conversation implements StringeeObject {
       'seq': sequence,
     };
     Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('getLocalMessages', params);
+        await StringeeClient.methodChannel.invokeMethod('getMessagesBefore', params);
     if (result['status']) {
       List<Message> messages = [];
       List<dynamic> msgArray = json.decode(result['body']);

@@ -106,7 +106,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                        map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -182,7 +182,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                        map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -740,7 +740,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 }
 
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                 map.put("event", "didChangeSignalingState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -776,7 +776,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             public void run() {
                 Log.d(TAG, "==========HandledOnAnotherDevice==========\n" + "signalingState: " + signalingState + " -description: " + description);
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                 map.put("event", "didHandleOnAnotherDevice");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -796,7 +796,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 _mediaState = mediaState;
                 Log.d(TAG, "==========MediaStateChange==========\n" + "mediaState: " + mediaState);
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                 map.put("event", "didChangeMediaState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -807,7 +807,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 if (_mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed && stringeeCall.isVideoCall()) {
                     remoteStreamShowed = true;
                     Map map1 = new HashMap();
-                    map1.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                    map1.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                     map1.put("event", "didReceiveRemoteStream");
                     Map bodyMap1 = new HashMap();
                     bodyMap1.put("callId", stringeeCall.getCallId());
@@ -826,7 +826,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 if (stringeeCall.isVideoCall()) {
                     Log.d(TAG, "==========ReceiveLocalStream==========");
                     Map map = new HashMap();
-                    map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                    map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                     map.put("event", "didReceiveLocalStream");
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
@@ -862,7 +862,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                     if (_mediaState == MediaState.CONNECTED && !remoteStreamShowed) {
                         remoteStreamShowed = true;
                         Map map = new HashMap();
-                        map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                        map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                         map.put("event", "didReceiveRemoteStream");
                         Map bodyMap = new HashMap();
                         bodyMap.put("callId", stringeeCall.getCallId());
@@ -883,7 +883,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             public void run() {
                 Log.d(TAG, "==========ReceiveCallInfo==========\n" + jsonObject.toString());
                 Map map = new HashMap();
-                map.put("typeEvent", StringeeEnventType.CallEvent.getValue());
+                map.put("nativeEventType", StringeeEnventType.CallEvent.getValue());
                 map.put("event", "didReceiveCallInfo");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());

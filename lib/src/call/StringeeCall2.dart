@@ -61,7 +61,7 @@ class StringeeCall2 {
   void _listener(dynamic event) {
     assert(event != null);
     final Map<dynamic, dynamic> map = event;
-    if (map['typeEvent'] == StringeeType.StringeeCall2.index) {
+    if (map['nativeEventType'] == StringeeType.StringeeCall2.index) {
       switch (map['event']) {
         case 'didChangeSignalingState':
           handleSignalingStateChange(map['body']);

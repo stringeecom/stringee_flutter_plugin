@@ -332,7 +332,9 @@ class _CallState extends State<Call> {
           print('_endCallTapped -- ${result['message']}');
           bool status = result['status'];
           if (status) {
-            clearDataEndDismiss();
+            if (Platform.isAndroid) {
+              clearDataEndDismiss();
+            }
           }
         });
         break;
@@ -341,7 +343,9 @@ class _CallState extends State<Call> {
           print('_endCallTapped -- ${result['message']}');
           bool status = result['status'];
           if (status) {
-            clearDataEndDismiss();
+            if (Platform.isAndroid) {
+              clearDataEndDismiss();
+            }
           }
         });
         break;
@@ -379,13 +383,17 @@ class _CallState extends State<Call> {
       case StringeeType.StringeeCall:
         _stringeeCall.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
-          clearDataEndDismiss();
+          if (Platform.isAndroid) {
+            clearDataEndDismiss();
+          }
         });
         break;
       case StringeeType.StringeeCall2:
         _stringeeCall2.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
-          clearDataEndDismiss();
+          if (Platform.isAndroid) {
+            clearDataEndDismiss();
+          }
         });
         break;
     }

@@ -64,7 +64,7 @@ public class StringeeAudioManager {
     public interface AudioManagerEvents {
         // Callback fired once audio device is changed or list of available audio devices changed.
         void onAudioDeviceChanged(
-                AudioDevice selectedAudioDevice, Set<AudioDevice> availableAudioDevices);
+                com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice selectedAudioDevice, Set<com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice> availableAudioDevices);
     }
 
     private final Context context;
@@ -73,7 +73,7 @@ public class StringeeAudioManager {
 
     @Nullable
     private AudioManagerEvents audioManagerEvents;
-    private AudioManagerState amState;
+    private com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerState amState;
     private int savedAudioMode = AudioManager.MODE_INVALID;
     private boolean savedIsSpeakerPhoneOn;
     private boolean savedIsMicrophoneMute;
@@ -81,19 +81,19 @@ public class StringeeAudioManager {
 
     // Default audio device; speaker phone for video calls or earpiece for audio
     // only calls.
-    private AudioDevice defaultAudioDevice;
+    private com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice defaultAudioDevice;
 
     // Contains the currently selected audio device.
     // This device is changed automatically using a certain scheme where e.g.
     // a wired headset "wins" over speaker phone. It is also possible for a
     // user to explicitly select a device (and overrid any predefined scheme).
     // See |userSelectedAudioDevice| for details.
-    private AudioDevice selectedAudioDevice;
+    private com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice selectedAudioDevice;
 
     // Contains the user-selected audio device which overrides the predefined
     // selection scheme.
     // explicit selection based on choice by userSelectedAudioDevice.
-    private AudioDevice userSelectedAudioDevice;
+    private com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice userSelectedAudioDevice;
 
     // Contains speakerphone setting: auto, true or false
     @Nullable
@@ -111,7 +111,7 @@ public class StringeeAudioManager {
 
     // Contains a list of available audio devices. A Set collection is used to
     // avoid duplicate elements.
-    private Set<AudioDevice> audioDevices = new HashSet<>();
+    private Set<com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice> audioDevices = new HashSet<>();
 
     // Broadcast receiver for wired headset intent broadcasts.
     private BroadcastReceiver wiredHeadsetReceiver;
@@ -165,8 +165,8 @@ public class StringeeAudioManager {
     /**
      * Construction.
      */
-    public static StringeeAudioManager create(Context context) {
-        return new StringeeAudioManager(context);
+    public static com.stringee.stringeeflutterplugin.StringeeAudioManager create(Context context) {
+        return new com.stringee.stringeeflutterplugin.StringeeAudioManager(context);
     }
 
     private StringeeAudioManager(Context context) {
@@ -174,13 +174,13 @@ public class StringeeAudioManager {
         this.context = context;
         audioManager = ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE));
         bluetoothManager = StringeeBluetoothManager.create(context, this);
-        wiredHeadsetReceiver = new WiredHeadsetReceiver();
-        amState = AudioManagerState.UNINITIALIZED;
+        wiredHeadsetReceiver = new com.stringee.stringeeflutterplugin.StringeeAudioManager.WiredHeadsetReceiver();
+        amState = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerState.UNINITIALIZED;
 
         if (useSpeakerphone.equals(SPEAKERPHONE_FALSE)) {
-            defaultAudioDevice = AudioDevice.EARPIECE;
+            defaultAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.EARPIECE;
         } else {
-            defaultAudioDevice = AudioDevice.SPEAKER_PHONE;
+            defaultAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.SPEAKER_PHONE;
         }
 
         // Create and initialize the proximity sensor.
@@ -194,16 +194,16 @@ public class StringeeAudioManager {
         Log.d(TAG, "defaultAudioDevice: " + defaultAudioDevice);
     }
 
-    public void start(AudioManagerEvents audioManagerEvents) {
+    public void start(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerEvents audioManagerEvents) {
         ThreadUtils.checkIsOnMainThread();
-        if (amState == AudioManagerState.RUNNING) {
+        if (amState == com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerState.RUNNING) {
             Log.e(TAG, "AudioManager is already active");
             return;
         }
 
         Log.d(TAG, "AudioManager starts...");
         this.audioManagerEvents = audioManagerEvents;
-        amState = AudioManagerState.RUNNING;
+        amState = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerState.RUNNING;
 
         // Store current audio state so we can restore it when stop() is called.
         savedAudioMode = audioManager.getMode();
@@ -264,8 +264,8 @@ public class StringeeAudioManager {
         setMicrophoneMute(false);
 
         // Set initial device states.
-        userSelectedAudioDevice = AudioDevice.NONE;
-        selectedAudioDevice = AudioDevice.NONE;
+        userSelectedAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.NONE;
+        selectedAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.NONE;
         audioDevices.clear();
 
         // Initialize and start Bluetooth if a BT device is available or initiate
@@ -291,11 +291,11 @@ public class StringeeAudioManager {
     public void stop() {
         Log.d(TAG, "stop");
         ThreadUtils.checkIsOnMainThread();
-        if (amState != AudioManagerState.RUNNING) {
+        if (amState != com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerState.RUNNING) {
             Log.e(TAG, "Trying to stop AudioManager in incorrect state: " + amState);
             return;
         }
-        amState = AudioManagerState.UNINITIALIZED;
+        amState = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerState.UNINITIALIZED;
 
         unregisterReceiver(wiredHeadsetReceiver);
 
@@ -323,7 +323,7 @@ public class StringeeAudioManager {
     /**
      * Changes selection of the currently active audio device.
      */
-    private void setAudioDeviceInternal(AudioDevice device) {
+    private void setAudioDeviceInternal(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice device) {
         Log.d(TAG, "setAudioDeviceInternal(device=" + device + ")");
         switch (device) {
             case SPEAKER_PHONE:
@@ -348,7 +348,7 @@ public class StringeeAudioManager {
     /**
      * Changes default audio device.
      */
-    public void setDefaultAudioDevice(AudioDevice defaultDevice) {
+    public void setDefaultAudioDevice(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice defaultDevice) {
         ThreadUtils.checkIsOnMainThread();
         switch (defaultDevice) {
             case SPEAKER_PHONE:
@@ -358,7 +358,7 @@ public class StringeeAudioManager {
                 if (hasEarpiece()) {
                     defaultAudioDevice = defaultDevice;
                 } else {
-                    defaultAudioDevice = AudioDevice.SPEAKER_PHONE;
+                    defaultAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.SPEAKER_PHONE;
                 }
                 break;
             default:
@@ -372,7 +372,7 @@ public class StringeeAudioManager {
     /**
      * Changes selection of the currently active audio device.
      */
-    public void selectAudioDevice(AudioDevice device) {
+    public void selectAudioDevice(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice device) {
         ThreadUtils.checkIsOnMainThread();
         if (!audioDevices.contains(device)) {
             Log.e(TAG, "Can not select " + device + " from available " + audioDevices);
@@ -384,7 +384,7 @@ public class StringeeAudioManager {
     /**
      * Returns current set of available/selectable audio devices.
      */
-    public Set<AudioDevice> getAudioDevices() {
+    public Set<com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice> getAudioDevices() {
         ThreadUtils.checkIsOnMainThread();
         return Collections.unmodifiableSet(new HashSet<>(audioDevices));
     }
@@ -392,7 +392,7 @@ public class StringeeAudioManager {
     /**
      * Returns the currently selected audio device.
      */
-    public AudioDevice getSelectedAudioDevice() {
+    public com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice getSelectedAudioDevice() {
         ThreadUtils.checkIsOnMainThread();
         return selectedAudioDevice;
     }
@@ -489,23 +489,23 @@ public class StringeeAudioManager {
         }
 
         // Update the set of available audio devices.
-        Set<AudioDevice> newAudioDevices = new HashSet<>();
+        Set<com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice> newAudioDevices = new HashSet<>();
 
         if (bluetoothManager.getState() == StringeeBluetoothManager.State.SCO_CONNECTED
                 || bluetoothManager.getState() == StringeeBluetoothManager.State.SCO_CONNECTING
                 || bluetoothManager.getState() == StringeeBluetoothManager.State.HEADSET_AVAILABLE) {
-            newAudioDevices.add(AudioDevice.BLUETOOTH);
+            newAudioDevices.add(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.BLUETOOTH);
         }
 
         if (hasWiredHeadset) {
             // If a wired headset is connected, then it is the only possible option.
-            newAudioDevices.add(AudioDevice.WIRED_HEADSET);
+            newAudioDevices.add(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.WIRED_HEADSET);
         } else {
             // No wired headset, hence the audio-device list can contain speaker
             // phone (on a tablet), or speaker phone and earpiece (on mobile phone).
-            newAudioDevices.add(AudioDevice.SPEAKER_PHONE);
+            newAudioDevices.add(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.SPEAKER_PHONE);
             if (hasEarpiece()) {
-                newAudioDevices.add(AudioDevice.EARPIECE);
+                newAudioDevices.add(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.EARPIECE);
             }
         }
         // Store state which is set to true if the device list has changed.
@@ -514,35 +514,35 @@ public class StringeeAudioManager {
         audioDevices = newAudioDevices;
         // Correct user selected audio devices if needed.
         if (bluetoothManager.getState() == StringeeBluetoothManager.State.HEADSET_UNAVAILABLE
-                && userSelectedAudioDevice == AudioDevice.BLUETOOTH) {
+                && userSelectedAudioDevice == com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.BLUETOOTH) {
             // If BT is not available, it can't be the user selection.
-            userSelectedAudioDevice = AudioDevice.NONE;
+            userSelectedAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.NONE;
         }
-        if (hasWiredHeadset && userSelectedAudioDevice == AudioDevice.SPEAKER_PHONE) {
+        if (hasWiredHeadset && userSelectedAudioDevice == com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.SPEAKER_PHONE) {
             // If user selected speaker phone, but then plugged wired headset then make
             // wired headset as user selected device.
-            userSelectedAudioDevice = AudioDevice.WIRED_HEADSET;
+            userSelectedAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.WIRED_HEADSET;
         }
-        if (!hasWiredHeadset && userSelectedAudioDevice == AudioDevice.WIRED_HEADSET) {
+        if (!hasWiredHeadset && userSelectedAudioDevice == com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.WIRED_HEADSET) {
             // If user selected wired headset, but then unplugged wired headset then make
             // speaker phone as user selected device.
-            userSelectedAudioDevice = AudioDevice.SPEAKER_PHONE;
+            userSelectedAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.SPEAKER_PHONE;
         }
 
         // Need to start Bluetooth if it is available and user either selected it explicitly or
         // user did not select any output device.
         boolean needBluetoothAudioStart =
                 bluetoothManager.getState() == StringeeBluetoothManager.State.HEADSET_AVAILABLE
-                        && (userSelectedAudioDevice == AudioDevice.NONE
-                        || userSelectedAudioDevice == AudioDevice.BLUETOOTH);
+                        && (userSelectedAudioDevice == com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.NONE
+                        || userSelectedAudioDevice == com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.BLUETOOTH);
 
         // Need to stop Bluetooth audio if user selected different device and
         // Bluetooth SCO connection is established or in the process.
         boolean needBluetoothAudioStop =
                 (bluetoothManager.getState() == StringeeBluetoothManager.State.SCO_CONNECTED
                         || bluetoothManager.getState() == StringeeBluetoothManager.State.SCO_CONNECTING)
-                        && (userSelectedAudioDevice != AudioDevice.NONE
-                        && userSelectedAudioDevice != AudioDevice.BLUETOOTH);
+                        && (userSelectedAudioDevice != com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.NONE
+                        && userSelectedAudioDevice != com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.BLUETOOTH);
 
         if (bluetoothManager.getState() == StringeeBluetoothManager.State.HEADSET_AVAILABLE
                 || bluetoothManager.getState() == StringeeBluetoothManager.State.SCO_CONNECTING
@@ -562,23 +562,23 @@ public class StringeeAudioManager {
             // Attempt to start Bluetooth SCO audio (takes a few second to start).
             if (!bluetoothManager.startScoAudio()) {
                 // Remove BLUETOOTH from list of available devices since SCO failed.
-                audioDevices.remove(AudioDevice.BLUETOOTH);
+                audioDevices.remove(com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.BLUETOOTH);
                 audioDeviceSetUpdated = true;
             }
         }
 
         // Update selected audio device.
-        final AudioDevice newAudioDevice;
+        final com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice newAudioDevice;
 
         if (bluetoothManager.getState() == StringeeBluetoothManager.State.SCO_CONNECTED) {
             // If a Bluetooth is connected, then it should be used as output audio
             // device. Note that it is not sufficient that a headset is available;
             // an active SCO channel must also be up and running.
-            newAudioDevice = AudioDevice.BLUETOOTH;
+            newAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.BLUETOOTH;
         } else if (hasWiredHeadset) {
             // If a wired headset is connected, but Bluetooth is not, then wired headset is used as
             // audio device.
-            newAudioDevice = AudioDevice.WIRED_HEADSET;
+            newAudioDevice = com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice.WIRED_HEADSET;
         } else {
             // No wired headset and no Bluetooth, hence the audio-device list can contain speaker
             // phone (on a tablet), or speaker phone and earpiece (on mobile phone).

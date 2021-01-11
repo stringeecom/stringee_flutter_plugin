@@ -1,24 +1,28 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
-import 'package:stringee_flutter_plugin_example/ConversationInfor.dart';
 
 StringeeClient _client;
+Conversation _conversation;
 
-class Chat extends StatefulWidget {
-  Chat({@required StringeeClient client}) {
+class ConversationInfor extends StatefulWidget {
+  ConversationInfor({@required StringeeClient client, @required Conversation conversation}) {
     _client = client;
+    _conversation = conversation;
   }
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return ChatState();
+    return ConversationInforState();
   }
 }
 
-class ChatState extends State<Chat> {
+class ConversationInforState extends State<ConversationInfor> {
   List<String> _log;
-  List<Conversation> _conversations;
+  List<Message> _messages;
+  List<User> users;
+  Message msg;
 
   @override
   void initState() {
@@ -26,17 +30,37 @@ class ChatState extends State<Chat> {
     super.initState();
 
     _log = new List();
-    _conversations = new List();
+    _messages = new List();
+
+    _conversation.getLastMessages(1).then((value) {
+      setState(() {
+        _log.add('Get last messages: msg:' + value['message']);
+        if (value['status']) {
+          _messages.clear();
+          _messages.addAll(value['body']);
+        }
+      });
+    });
+
+    users = new List();
+    User user1 = User(userId: 'ACTXV7BTAP', name: 'Okumura Rin');
+    User user2 = User(userId: 'ACX3H6EJHW', name: 'Kỳ ANh');
+    users.add(user1);
+    users.add(user2);
+
+    msg = Message.typeText(convId: _conversation.id, text: 'test', customData: {'custom': 'abc'});
 
     _client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       if (map['typeEvent'] == StringeeClientEvents &&
           map['eventType'] == StringeeClientEvents.DidReceiveChange) {
         StringeeChange stringeeChange = map['body'];
-        if (stringeeChange.objectType == ObjectType.CONVERSATION) {
-          Conversation conversation = stringeeChange.object;
+        if (stringeeChange.objectType == ObjectType.MESSAGE) {
+          Message message = stringeeChange.object;
           setState(() {
-            _log.add(conversation.id + ' ' + stringeeChange.changeType.toString());
+            _log.add((message.id != null)
+                ? message.id
+                : 'null' + ' ' + stringeeChange.changeType.toString());
           });
         }
       }
@@ -48,7 +72,7 @@ class ChatState extends State<Chat> {
     // TODO: implement build
     return new Scaffold(
       appBar: AppBar(
-        title: Text("Chat"),
+        title: Text("Conversation infor"),
         backgroundColor: Colors.indigo[600],
       ),
       body: Column(
@@ -72,7 +96,7 @@ class ChatState extends State<Chat> {
                 width: 2,
               ),
             ),
-            height: 150.0,
+            height: 100.0,
             child: ListView.builder(
               itemCount: _log.length,
               shrinkWrap: true,
@@ -94,7 +118,7 @@ class ChatState extends State<Chat> {
             alignment: Alignment.topLeft,
             margin: EdgeInsets.only(left: 5.0),
             child: Text(
-              'Conversation',
+              'Message',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 20.0,
@@ -109,9 +133,9 @@ class ChatState extends State<Chat> {
                 width: 2,
               ),
             ),
-            height: 150.0,
+            height: 100.0,
             child: ListView.builder(
-              itemCount: _conversations.length,
+              itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return Container(
                   padding: EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
@@ -119,22 +143,19 @@ class ChatState extends State<Chat> {
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ConversationInfor(
-                                        client: _client,
-                                        conversation: _conversations[index],
-                                      )));
+                          showMsgDialog(_messages[index]);
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'convId: ' + _conversations[index].id,
+                              'msgId: ' + _messages[index].id,
                             ),
                             Text(
-                              'name: ' + _conversations[index].name,
+                              'msgType: ' + _messages[index].type.toString(),
+                            ),
+                            Text(
+                              'text: ' + _messages[index].text,
                             ),
                           ],
                         )),
@@ -167,27 +188,14 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          List<User> participants = new List();
-                          User user1 = User(userId: 'ACTXV7BTAP', name: 'Okumura Rin');
-                          User user2 = User(userId: 'ACX3H6EJHW', name: 'Kỳ ANh');
-                          participants.add(user1);
-                          participants.add(user2);
-
-                          ConversationOption options =
-                              ConversationOption(name: 'Test', isGroup: true, isDistinct: false);
-
-                          _client.createConversation(options, participants).then((value) {
+                          _conversation.delete().then((value) {
                             setState(() {
-                              _log.add('Create conversation: msg:' + value['message']);
-                              if (value['status']) {
-                                _conversations.clear();
-                                _conversations.add(value['body']);
-                              }
+                              _log.add('Delete conversation: msg:' + value['message']);
                             });
                           });
                         },
                         child: Text(
-                          'Create Conversation',
+                          'Delete Conversation',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -199,20 +207,14 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client
-                              .getConversationById('conv-vn-1-73JJ5R8BMN-1606410119987')
-                              .then((value) {
+                          _conversation.addParticipants(users).then((value) {
                             setState(() {
-                              _log.add('Get conversation by Id: msg:' + value['message']);
-                              if (value['status']) {
-                                _conversations.clear();
-                                _conversations.add(value['body']);
-                              }
+                              _log.add('Add participants: msg:' + value['message']);
                             });
                           });
                         },
                         child: Text(
-                          'Get Conversation by Id',
+                          'Add participants',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -230,18 +232,14 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.getConversationByUserId('ACTXV7BTAP').then((value) {
+                          _conversation.removeParticipants(users).then((value) {
                             setState(() {
-                              _log.add('Get Conversation by UserId: msg:' + value['message']);
-                              if (value['status']) {
-                                _conversations.clear();
-                                _conversations.add(value['body']);
-                              }
+                              _log.add('Remove participants: msg:' + value['message']);
                             });
                           });
                         },
                         child: Text(
-                          'Get Conversation by UserId',
+                          'Remove participants',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -253,20 +251,14 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client
-                              .getConversationFromServer('conv-vn-1-73JJ5R8BMN-1606410119987')
-                              .then((value) {
+                          _conversation.sendMessage(msg).then((value) {
                             setState(() {
-                              _log.add('Get Conversation from Server: msg:' + value['message']);
-                              if (value['status']) {
-                                _conversations.clear();
-                                _conversations.add(value['body']);
-                              }
+                              _log.add('Send message: msg:' + value['message']);
                             });
                           });
                         },
                         child: Text(
-                          'Get Conversation from Server',
+                          'Send message',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -284,18 +276,19 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.getLocalConversations().then((value) {
+                          _conversation
+                              .getMessages(['msg-vn-1-XMB962YNTU-1610321885455']).then((value) {
                             setState(() {
-                              _log.add('Get local Conversation: msg:' + value['message']);
+                              _log.add('Get messages: msg:' + value['message']);
                               if (value['status']) {
-                                _conversations.clear();
-                                _conversations.addAll(value['body']);
+                                _messages.clear();
+                                _messages.addAll(value['body']);
                               }
                             });
                           });
                         },
                         child: Text(
-                          'Get local Conversation',
+                          'Get messages',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -307,18 +300,18 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.getLastConversation(3).then((value) {
+                          _conversation.getLocalMessages(3).then((value) {
                             setState(() {
-                              _log.add('Get last Conversation: msg:' + value['message']);
+                              _log.add('Get local Messages: msg:' + value['message']);
                               if (value['status']) {
-                                _conversations.clear();
-                                _conversations.addAll(value['body']);
+                                _messages.clear();
+                                _messages.addAll(value['body']);
                               }
                             });
                           });
                         },
                         child: Text(
-                          'Get last Conversation',
+                          'Get local Messages',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -336,18 +329,18 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.getConversationsBefore(3, 1609952400000).then((value) {
+                          _conversation.getLastMessages(3).then((value) {
                             setState(() {
-                              _log.add('Get Conversation before: msg:' + value['message']);
+                              _log.add('Get last Messages: msg:' + value['message']);
                               if (value['status']) {
-                                _conversations.clear();
-                                _conversations.addAll(value['body']);
+                                _messages.clear();
+                                _messages.addAll(value['body']);
                               }
                             });
                           });
                         },
                         child: Text(
-                          'Get Conversation before',
+                          'Get last Messages',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -359,18 +352,18 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.getConversationsAfter(3, 1609952400000).then((value) {
+                          _conversation.getMessagesAfter(3, 3).then((value) {
                             setState(() {
-                              _log.add('Get Conversation after: msg:' + value['message']);
+                              _log.add('Get Messages after: msg:' + value['message']);
                               if (value['status']) {
-                                _conversations.clear();
-                                _conversations.addAll(value['body']);
+                                _messages.clear();
+                                _messages.addAll(value['body']);
                               }
                             });
                           });
                         },
                         child: Text(
-                          'Get Conversation after',
+                          'Get Messages after',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -388,14 +381,18 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.clearDb().then((value) {
+                          _conversation.getMessagesBefore(2, 3).then((value) {
                             setState(() {
-                              _log.add('Clear database: msg:' + value['message']);
+                              _log.add('Get Messages before: msg:' + value['message']);
+                              if (value['status']) {
+                                _messages.clear();
+                                _messages.addAll(value['body']);
+                              }
                             });
                           });
                         },
                         child: Text(
-                          'Clear database',
+                          'Get Messages before',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -407,14 +404,14 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.blockUser('assss').then((value) {
+                          _conversation.updateConversation('new Name').then((value) {
                             setState(() {
-                              _log.add('Block user: msg:' + value['message']);
+                              _log.add('Update Conversation: msg:' + value['message']);
                             });
                           });
                         },
                         child: Text(
-                          'Block user',
+                          'Update Conversation',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -432,18 +429,83 @@ class ChatState extends State<Chat> {
                         color: Colors.grey[300],
                         textColor: Colors.black,
                         onPressed: () {
-                          _client.getTotalUnread().then((value) {
+                          _conversation.setRole('ACTXV7BTAP', UserRole.ADMIN).then((value) {
                             setState(() {
-                              _log.add('Get total unread:' + value['message']);
+                              _log.add('Set role: msg:' + value['message']);
                             });
                           });
                         },
                         child: Text(
-                          'Get total unread',
+                          'Set role',
                           textAlign: TextAlign.center,
                         ),
                       ),
                     ),
+                    new Container(
+                      height: 40.0,
+                      width: 175.0,
+                      child: new RaisedButton(
+                        color: Colors.grey[300],
+                        textColor: Colors.black,
+                        onPressed: () {
+                          _conversation
+                              .deleteMessages(['msg-vn-1-XMB962YNTU-1610321888379']).then((value) {
+                            setState(() {
+                              _log.add('Delete messages: msg:' + value['message']);
+                            });
+                          });
+                        },
+                        child: Text(
+                          'Delete messages',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    new Container(
+                      height: 40.0,
+                      width: 175.0,
+                      child: new RaisedButton(
+                        color: Colors.grey[300],
+                        textColor: Colors.black,
+                        onPressed: () {
+                          _conversation.revokeMessages(
+                              ['msg-vn-1-XMB962YNTU-1610321888379'], true).then((value) {
+                            setState(() {
+                              _log.add('Revoke messages: msg:' + value['message']);
+                            });
+                          });
+                        },
+                        child: Text(
+                          'Revoke messages',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    new Container(
+                      height: 40.0,
+                      width: 175.0,
+                      child: new RaisedButton(
+                        color: Colors.grey[300],
+                        textColor: Colors.black,
+                        onPressed: () {
+                          _conversation.markAsRead().then((value) {
+                            setState(() {
+                              _log.add('Mark conversation as read: msg:' + value['message']);
+                            });
+                          });
+                        },
+                        child: Text(
+                          'Mark conversation as read',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ],
@@ -451,6 +513,51 @@ class ChatState extends State<Chat> {
           )
         ],
       ),
+    );
+  }
+
+  void showMsgDialog(Message message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Message'),
+        content: Text('msgId: ' + message.id),
+        actions: [
+          new FlatButton(
+            color: Colors.grey[300],
+            textColor: Colors.black,
+            onPressed: () {
+              message.edit('conv-vn-1-XMB962YNTU-1610321823628', 'okok').then((value) {
+                setState(() {
+                  _log.add('Edit messages: msg:' + value['message']);
+                  Navigator.of(context, rootNavigator: true).pop();
+                });
+              });
+            },
+            child: Text(
+              'Edit messages',
+              textAlign: TextAlign.center,
+            ),
+          ),
+          new FlatButton(
+            color: Colors.grey[300],
+            textColor: Colors.black,
+            onPressed: () {
+              message.pinOrUnPin('conv-vn-1-XMB962YNTU-1610321823628', true).then((value) {
+                setState(() {
+                  _log.add('Pin/UnPin messages: msg:' + value['message']);
+                  Navigator.of(context, rootNavigator: true).pop();
+                });
+              });
+            },
+            child: Text(
+              'Pin/UnPin messages',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: true,
     );
   }
 }
