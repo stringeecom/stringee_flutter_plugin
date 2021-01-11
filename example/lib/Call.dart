@@ -153,6 +153,7 @@ class _CallState extends State<Call> {
             margin: EdgeInsets.only(top: 100.0, right: 25.0),
             height: 200.0,
             width: 150.0,
+            scalingType: ScalingType.SCALE_ASPECT_FILL,
           )
         : Placeholder();
 
@@ -163,7 +164,7 @@ class _CallState extends State<Call> {
             isLocal: false,
             isOverlay: false,
             isMirror: false,
-            scalingType: ScalingType.SCALE_ASPECT_FIT,
+            scalingType: ScalingType.SCALE_ASPECT_FILL,
           )
         : Placeholder();
 
@@ -238,7 +239,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': VideoQuality.FULLHD,
+        'videoQuality': VideoQuality.FULLHD,
       };
 
       _stringeeCall.makeCall(parameters).then((result) {

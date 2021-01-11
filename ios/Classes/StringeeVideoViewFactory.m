@@ -23,4 +23,8 @@
                                           binaryMessenger:_messenger];
 }
 
+- (NSObject<FlutterMessageCodec> *)createArgsCodec {
+    return [FlutterStandardMessageCodec sharedInstance];
+}
+
 @end

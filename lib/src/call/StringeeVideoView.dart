@@ -58,6 +58,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
       'callId': widget.callId,
       'isLocal': widget.isLocal,
       'isOverlay': widget.isOverlay,
+      'width': widget.width,
+      'height': widget.height
     };
 
     switch (widget.scalingType) {
@@ -78,7 +80,7 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     }
   }
 
-  Widget createVideoView() {
+  Widget createVideoView(BuildContext context) {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return PlatformViewLink(
@@ -106,6 +108,15 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
         );
         break;
       case TargetPlatform.iOS:
+        // Co loi FlutterPlatformView chua duoc fix => dung tam cach nay
+        if (widget.width == null) {
+          creationParams['width'] = MediaQuery.of(context).size.width;
+        }
+
+        if (widget.height == null) {
+          creationParams['height'] = MediaQuery.of(context).size.height;
+        }
+
         return UiKitView(
           viewType: viewType,
           layoutDirection: TextDirection.ltr,
@@ -122,7 +133,7 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
   @override
   Widget build(BuildContext context) {
     List<Widget> childrenWidget = <Widget>[];
-    childrenWidget.add(createVideoView());
+    childrenWidget.add(createVideoView(context));
 
     Widget current = Container(
       height: widget.height,
