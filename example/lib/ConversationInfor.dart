@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 StringeeClient _client;
-Conversation _conversation;
+StringeeConversation _conversation;
 
 class ConversationInfor extends StatefulWidget {
-  ConversationInfor({@required StringeeClient client, @required Conversation conversation}) {
+  ConversationInfor({@required StringeeClient client, @required StringeeConversation conversation}) {
     _client = client;
     _conversation = conversation;
   }
@@ -20,9 +20,9 @@ class ConversationInfor extends StatefulWidget {
 
 class ConversationInforState extends State<ConversationInfor> {
   List<String> _log;
-  List<Message> _messages;
+  List<StringeeMessage> _messages;
   List<User> users;
-  Message msg;
+  StringeeMessage msg;
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class ConversationInforState extends State<ConversationInfor> {
     users.add(user1);
     users.add(user2);
 
-    msg = Message.typeText(convId: _conversation.id, text: 'test', customData: {'custom': 'abc'});
+    msg = StringeeMessage.typeText(convId: _conversation.id, text: 'test', customData: {'custom': 'abc'});
 
     _client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
@@ -56,7 +56,7 @@ class ConversationInforState extends State<ConversationInfor> {
           map['eventType'] == StringeeClientEvents.DidReceiveChange) {
         StringeeChange stringeeChange = map['body'];
         if (stringeeChange.objectType == ObjectType.MESSAGE) {
-          Message message = stringeeChange.object;
+          StringeeMessage message = stringeeChange.object;
           setState(() {
             _log.add((message.id != null)
                 ? message.id
@@ -516,7 +516,7 @@ class ConversationInforState extends State<ConversationInfor> {
     );
   }
 
-  void showMsgDialog(Message message) {
+  void showMsgDialog(StringeeMessage message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

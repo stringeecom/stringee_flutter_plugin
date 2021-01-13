@@ -8,7 +8,7 @@ import '../StringeeClient.dart';
 import '../StringeeConstants.dart';
 import 'StringeeChange.dart';
 
-class Message implements StringeeObject {
+class StringeeMessage implements StringeeObject {
   String _id;
   String _convId;
   String _senderId;
@@ -36,7 +36,7 @@ class Message implements StringeeObject {
   bool _isDeleted;
   Map<dynamic, dynamic> _notiContent;
 
-  Message.typeText({
+  StringeeMessage.typeText({
     @required String convId,
     @required String text,
     Map<dynamic, dynamic> customData,
@@ -50,7 +50,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typePhoto({
+  StringeeMessage.typePhoto({
     @required String convId,
     @required String filePath,
     Map<dynamic, dynamic> customData,
@@ -64,7 +64,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeVideo({
+  StringeeMessage.typeVideo({
     @required String convId,
     @required String filePath,
     @required int duration,
@@ -81,7 +81,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeAudio({
+  StringeeMessage.typeAudio({
     @required String convId,
     @required String filePath,
     @required int duration,
@@ -98,7 +98,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeFile({
+  StringeeMessage.typeFile({
     @required String convId,
     @required String filePath,
     Map<dynamic, dynamic> customData,
@@ -112,7 +112,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeLink({
+  StringeeMessage.typeLink({
     @required String convId,
     @required String text,
     Map<dynamic, dynamic> customData,
@@ -126,7 +126,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeLocation({
+  StringeeMessage.typeLocation({
     @required String convId,
     @required double latitude,
     @required double longitude,
@@ -143,7 +143,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeContact({
+  StringeeMessage.typeContact({
     @required String convId,
     @required String contact,
     Map<dynamic, dynamic> customData,
@@ -157,7 +157,7 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeSticker({
+  StringeeMessage.typeSticker({
     @required String convId,
     @required String stickerCategory,
     @required String stickerName,
@@ -226,7 +226,7 @@ class Message implements StringeeObject {
 
   String get id => _id;
 
-  Message.fromJson(Map<dynamic, dynamic> msgInfor) {
+  StringeeMessage.fromJson(Map<dynamic, dynamic> msgInfor) {
     if (msgInfor == null) {
       return;
     }
@@ -331,7 +331,7 @@ class Message implements StringeeObject {
     this._text = text;
   }
 
-  Message.lstMsg(String msgId, String convId, String clientId, MsgType msgType, String senderId,
+  StringeeMessage.lstMsg(String msgId, String convId, String clientId, MsgType msgType, String senderId,
       int sequence, MsgState msgState, int createdAt, Map<dynamic, dynamic> msgInfor) {
     if (msgId == null ||
         msgType == null ||
@@ -476,7 +476,7 @@ class Message implements StringeeObject {
     return params;
   }
 
-  /// Edit [Message.typeText]
+  /// Edit [StringeeMessage.typeText]
   Future<Map<dynamic, dynamic>> edit(String convId, String content) async {
     assert(convId != null || convId.trim().isNotEmpty);
     assert(content != null || content.trim().isNotEmpty);
@@ -488,7 +488,7 @@ class Message implements StringeeObject {
     return await StringeeClient.methodChannel.invokeMethod('edit', params);
   }
 
-  /// Pin/Un pin [Message]
+  /// Pin/Un pin [StringeeMessage]
   Future<Map<dynamic, dynamic>> pinOrUnPin(String convId, bool pinOrUnPin) async {
     if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
     if (pinOrUnPin == null) return await reportInvalidValue('pinOrUnPin');

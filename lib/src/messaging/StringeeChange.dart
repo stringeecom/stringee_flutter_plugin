@@ -22,9 +22,9 @@ class StringeeChange {
   ChangeType get changeType => _type;
 
   ObjectType getType(StringeeObject object) {
-    if (object is Conversation) {
+    if (object is StringeeConversation) {
       return ObjectType.CONVERSATION;
-    } else if (object is Message) {
+    } else if (object is StringeeMessage) {
       return ObjectType.MESSAGE;
     } else {
       throw new ArgumentError("Invalid object type: " + object.toString());

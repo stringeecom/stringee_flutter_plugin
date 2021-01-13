@@ -18,7 +18,7 @@ class Chat extends StatefulWidget {
 
 class ChatState extends State<Chat> {
   List<String> _log;
-  List<Conversation> _conversations;
+  List<StringeeConversation> _conversations;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class ChatState extends State<Chat> {
           map['eventType'] == StringeeClientEvents.DidReceiveChange) {
         StringeeChange stringeeChange = map['body'];
         if (stringeeChange.objectType == ObjectType.CONVERSATION) {
-          Conversation conversation = stringeeChange.object;
+          StringeeConversation conversation = stringeeChange.object;
           setState(() {
             _log.add(conversation.id + ' ' + stringeeChange.changeType.toString());
           });
