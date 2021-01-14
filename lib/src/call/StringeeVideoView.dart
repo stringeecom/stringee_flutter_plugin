@@ -20,10 +20,10 @@ class StringeeVideoView extends StatefulWidget {
   final Color color;
   final Widget child;
 
-  StringeeVideoView({
+  StringeeVideoView(
+    this.callId,
+    this.isLocal, {
     Key key,
-    @required this.callId,
-    @required this.isLocal,
     this.isOverlay,
     this.isMirror,
     this.color,

@@ -144,10 +144,10 @@ class _CallState extends State<Call> {
 
     Widget localView = (widget.hasLocalStream)
         ? new StringeeVideoView(
+            widget.callId,
+            true,
             color: Colors.white,
             alignment: Alignment.topRight,
-            callId: widget.callId,
-            isLocal: true,
             isOverlay: true,
             isMirror: widget.isMirror,
             margin: EdgeInsets.only(top: 100.0, right: 25.0),
@@ -159,9 +159,9 @@ class _CallState extends State<Call> {
 
     Widget remoteView = (widget.hasRemoteStream)
         ? new StringeeVideoView(
+            widget.callId,
+            false,
             color: Colors.blue,
-            callId: widget.callId,
-            isLocal: false,
             isOverlay: false,
             isMirror: false,
             scalingType: ScalingType.SCALE_ASPECT_FILL,

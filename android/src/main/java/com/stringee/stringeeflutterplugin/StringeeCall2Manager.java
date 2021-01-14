@@ -151,7 +151,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -230,7 +230,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -273,7 +273,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -326,7 +326,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -378,7 +378,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
 //            java.util.Map map = new java.util.HashMap();
 //            map.put("status", false);
 //            map.put("code", -4);
-//            map.put("message", "StringeeCall2 is not initialized");
+//            map.put("message", "StringeeCall2 is not found");
 //            result.success(map);
 //            return;
 //        }
@@ -443,7 +443,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
 //            java.util.Map map = new java.util.HashMap();
 //            map.put("status", false);
 //            map.put("code", -4);
-//            map.put("message", "StringeeCall2 is not initialized");
+//            map.put("message", "StringeeCall2 is not found");
 //            result.success(map);
 //            return;
 //        }
@@ -462,7 +462,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
 //            java.util.Map map = new java.util.HashMap();
 //            map.put("status", false);
 //            map.put("code", -4);
-//            map.put("message", "StringeeCall2 is not initialized");
+//            map.put("message", "StringeeCall2 is not found");
 //            result.success(map);
 //        }
 //    }
@@ -488,7 +488,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -521,7 +521,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -554,7 +554,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -590,7 +590,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -633,7 +633,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }
@@ -677,7 +677,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall2 is not initialized");
+            map.put("message", "StringeeCall2 is not found");
             result.success(map);
             return;
         }

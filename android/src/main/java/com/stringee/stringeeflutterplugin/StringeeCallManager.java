@@ -150,7 +150,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -230,7 +230,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -273,7 +273,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -326,7 +326,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -378,7 +378,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -443,7 +443,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -462,7 +462,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
         }
     }
@@ -488,7 +488,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -521,7 +521,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -554,7 +554,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -591,7 +591,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -634,7 +634,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }
@@ -678,7 +678,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -4);
-            map.put("message", "StringeeCall is not initialized");
+            map.put("message", "StringeeCall is not found");
             result.success(map);
             return;
         }

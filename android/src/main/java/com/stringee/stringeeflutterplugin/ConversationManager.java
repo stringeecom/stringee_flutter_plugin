@@ -150,6 +150,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -2);
                     map.put("message", "convId is invalid");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -165,6 +166,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -1);
                     map.put("message", "StringeeClient is not initialized or disconnected");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -205,6 +207,7 @@ public class ConversationManager {
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -222,6 +225,7 @@ public class ConversationManager {
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
+                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -245,6 +249,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -2);
                     map.put("message", "convId is invalid");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -260,6 +265,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -1);
                     map.put("message", "StringeeClient is not initialized or disconnected");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -284,6 +290,7 @@ public class ConversationManager {
                                 map.put("code", 0);
                                 map.put("message", "Success");
                                 map.put("body", participantsArray.toString());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -300,6 +307,7 @@ public class ConversationManager {
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -317,6 +325,7 @@ public class ConversationManager {
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
+                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -428,6 +437,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -2);
                     map.put("message", "convId is invalid");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -443,6 +453,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -1);
                     map.put("message", "StringeeClient is not initialized or disconnected");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -482,6 +493,7 @@ public class ConversationManager {
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -499,6 +511,7 @@ public class ConversationManager {
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
+                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -522,6 +535,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -2);
                     map.put("message", "convId is invalid");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -537,6 +551,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -1);
                     map.put("message", "StringeeClient is not initialized or disconnected");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -576,6 +591,7 @@ public class ConversationManager {
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -593,6 +609,7 @@ public class ConversationManager {
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
+                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -616,6 +633,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -2);
                     map.put("message", "convId is invalid");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -631,6 +649,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -1);
                     map.put("message", "StringeeClient is not initialized or disconnected");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -670,6 +689,7 @@ public class ConversationManager {
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -687,6 +707,7 @@ public class ConversationManager {
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
+                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -711,6 +732,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -2);
                     map.put("message", "convId is invalid");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -726,6 +748,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -1);
                     map.put("message", "StringeeClient is not initialized or disconnected");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -765,6 +788,7 @@ public class ConversationManager {
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -782,6 +806,7 @@ public class ConversationManager {
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
+                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -806,6 +831,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -2);
                     map.put("message", "convId is invalid");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -821,6 +847,7 @@ public class ConversationManager {
                     map.put("status", false);
                     map.put("code", -1);
                     map.put("message", "StringeeClient is not initialized or disconnected");
+                    map.put("body", null);
                     result.success(map);
                 }
             });
@@ -861,6 +888,7 @@ public class ConversationManager {
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
+                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -878,6 +906,7 @@ public class ConversationManager {
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
+                        map.put("body", null);
                         result.success(map);
                     }
                 });
