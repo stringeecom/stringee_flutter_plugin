@@ -2,7 +2,9 @@
 #import "StringeeVideoViewFactory.h"
 #import "StringeeManager.h"
 #import "StringeeCallManager.h"
-
+#import "StringeeCall2Manager.h"
+#import "StringeeConversationManager.h"
+#import "StringeeHelper.h"
 
 @implementation StringeeFlutterPlugin {
     FlutterEventSink _eventSink;
@@ -10,6 +12,8 @@
     BOOL isConnecting;
     
     StringeeCallManager *_callManager;
+    StringeeCall2Manager *_call2Manager;
+    StringeeConversationManager *_convManager;
 }
 
 #pragma mark - Init
@@ -25,6 +29,8 @@
         }
         
         _callManager = [[StringeeCallManager alloc] initWithClient:_client];
+        _call2Manager = [[StringeeCall2Manager alloc] initWithClient:_client];
+        _convManager = [[StringeeConversationManager alloc] initWithClient:_client];
     }
     return self;
 }
@@ -48,6 +54,7 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    // Client
     if ([call.method isEqualToString:@"connect"]) {
         [self connect:call.arguments result:result];
     }
@@ -63,6 +70,8 @@
     else if ([call.method isEqualToString:@"sendCustomMessage"]) {
         [self sendCustomMessage:call.arguments result:result];
     }
+    
+    // Call
     else if ([call.method isEqualToString:@"makeCall"]) {
         [_callManager makeCall:call.arguments result:result];
     }
@@ -99,6 +108,41 @@
     else if ([call.method isEqualToString:@"enableVideo"]) {
         [_callManager enableVideo:call.arguments result:result];
     }
+    
+    // Call2
+    else if ([call.method isEqualToString:@"makeCall2"]) {
+        [_call2Manager makeCall:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"initAnswer2"]) {
+        [_call2Manager initAnswer:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"answer2"]) {
+        [_call2Manager answer:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"hangup2"]) {
+        [_call2Manager hangup:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"reject2"]) {
+        [_call2Manager reject:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"mute2"]) {
+        [_call2Manager mute:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"setSpeakerphoneOn2"]) {
+        [_call2Manager setSpeakerphoneOn:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"switchCamera2"]) {
+        [_call2Manager switchCamera:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"enableVideo2"]) {
+        [_call2Manager enableVideo:call.arguments result:result];
+    }
+    
+    // Chat
+    else if ([call.method isEqualToString:@"createConversation"]) {
+        [_convManager createConversation:call.arguments result:result];
+    }
+    
     else {
         result(FlutterMethodNotImplemented);
     }
@@ -107,12 +151,16 @@
 - (FlutterError *)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)events {
     _eventSink = events;
     [_callManager setEventSink:_eventSink];
+    [_call2Manager setEventSink:_eventSink];
+    [_convManager setEventSink:_eventSink];
     return nil;
 }
 
 - (FlutterError *)onCancelWithArguments:(id)arguments {
     _eventSink = nil;
     [_callManager setEventSink:_eventSink];
+    [_call2Manager setEventSink:_eventSink];
+    [_convManager setEventSink:_eventSink];
     return nil;
 }
 
@@ -596,7 +644,13 @@
 - (void)incomingCallWithStringeeClient:(StringeeClient *)stringeeClient stringeeCall:(StringeeCall *)stringeeCall {
     stringeeCall.delegate = _callManager;
     [[StringeeManager instance].calls setObject:stringeeCall forKey:stringeeCall.callId];
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall, STEBody : [_callManager StringeeCall:stringeeCall] });
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall, STEBody : [StringeeHelper StringeeCall:stringeeCall] });
+}
+
+- (void)incomingCallWithStringeeClient:(StringeeClient *)stringeeClient stringeeCall2:(StringeeCall2 *)stringeeCall2 {
+    stringeeCall2.delegate = _call2Manager;
+    [[StringeeManager instance].call2s setObject:stringeeCall2 forKey:stringeeCall2.callId];
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall2, STEBody : [StringeeHelper StringeeCall2:stringeeCall2] });
 }
 
 #pragma mark - Call Delegate

@@ -8,6 +8,7 @@
 #import "StringeeCallManager.h"
 #import "StringeeFlutterPlugin.h"
 #import "StringeeManager.h"
+#import "StringeeHelper.h"
 
 @implementation StringeeCallManager {
     StringeeClient *_client;
@@ -70,7 +71,7 @@
             [[StringeeManager instance].calls setObject:outgoingCall forKey:outgoingCall.callId];
         }
         
-        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, @"callInfo" : [self StringeeCall:outgoingCall]});
+        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, @"callInfo" : [StringeeHelper StringeeCall:outgoingCall]});
     }];
 }
 
@@ -348,7 +349,8 @@
         return;
     }
     
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = [data objectForKey:@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
@@ -374,7 +376,7 @@
     
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = [data objectForKey:@"callId"];
-    BOOL enableVideo = [[data objectForKey:@"enabled"] boolValue];
+    BOOL enableVideo = [[data objectForKey:@"enableVideo"] boolValue];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
@@ -433,46 +435,5 @@
     _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState), @"description" : reason }});
 }
 
-#pragma mark - Utils
-
-- (id)StringeeCall:(StringeeCall *)call {
-    if (!call) {
-        return [NSNull null];
-    }
-    
-    id callId = call.callId ? call.callId :[NSNull null];
-    id from = call.from ? call.from : [NSNull null];
-    id to = call.to ? call.to : [NSNull null];
-    id fromAlias = call.fromAlias ? call.fromAlias : [NSNull null];
-    id toAlias = call.toAlias ? call.toAlias : [NSNull null];
-    id customDataFromYourServer = call.customDataFromYourServer ? call.customDataFromYourServer : [NSNull null];
-    
-    int calltype = 0;
-    if (call.callType == CallTypeCallIn) {
-        // Phone-to-app
-        calltype = 3;
-    } else if (call.callType == CallTypeCallOut) {
-        // App-to-phone
-        calltype = 2;
-    } else if (call.callType == CallTypeInternalIncomingCall) {
-        // App-to-app-incoming-call
-        calltype = 1;
-    } else {
-        // App-to-app-outgoing-call
-        calltype = 0;
-    }
-    
-    NSMutableDictionary *data = [NSMutableDictionary new];
-    [data setObject:callId forKey:@"callId"];
-    [data setObject:from forKey:@"from"];
-    [data setObject:to forKey:@"to"];
-    [data setObject:fromAlias forKey:@"fromAlias"];
-    [data setObject:toAlias forKey:@"toAlias"];
-    [data setObject:@(calltype) forKey:@"callType"];
-    [data setObject:@(call.isVideoCall) forKey:@"isVideoCall"];
-    [data setObject:customDataFromYourServer forKey:@"customDataFromYourServer"];
-    
-    return data;
-}
 
 @end

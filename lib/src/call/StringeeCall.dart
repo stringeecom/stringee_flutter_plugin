@@ -96,7 +96,6 @@ class StringeeCall {
 
     StringeeSignalingState signalingState = StringeeSignalingState.values[map['code']];
     _eventStreamController.add({
-      "typeEvent": StringeeCallEvents,
       "eventType": StringeeCallEvents.DidChangeSignalingState,
       "body": signalingState
     });
@@ -108,7 +107,6 @@ class StringeeCall {
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
     _eventStreamController.add({
-      "typeEvent": StringeeCallEvents,
       "eventType": StringeeCallEvents.DidChangeMediaState,
       "body": mediaState
     });
@@ -120,7 +118,6 @@ class StringeeCall {
 
     Map<dynamic, dynamic> data = map['info'];
     _eventStreamController.add({
-      "typeEvent": StringeeCallEvents,
       "eventType": StringeeCallEvents.DidReceiveCallInfo,
       "body": data
     });
@@ -129,7 +126,6 @@ class StringeeCall {
   void handleAnotherDeviceHadHandle(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState = StringeeSignalingState.values[map['code']];
     _eventStreamController.add({
-      "typeEvent": StringeeCallEvents,
       "eventType": StringeeCallEvents.DidHandleOnAnotherDevice,
       "body": signalingState
     });
@@ -137,7 +133,6 @@ class StringeeCall {
 
   void handleReceiveLocalStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
-      "typeEvent": StringeeCallEvents,
       "eventType": StringeeCallEvents.DidReceiveLocalStream,
       "body": map['callId']
     });
@@ -145,7 +140,6 @@ class StringeeCall {
 
   void handleReceiveRemoteStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
-      "typeEvent": StringeeCallEvents,
       "eventType": StringeeCallEvents.DidReceiveRemoteStream,
       "body": map['callId']
     });
@@ -161,7 +155,6 @@ class StringeeCall {
       availableAudioDevices.add(audioDevice);
     }
     _eventStreamController.add({
-      "typeEvent": StringeeCallEvents,
       "eventType": StringeeCallEvents.DidChangeAudioDevice,
       "selectedAudioDevice": selectedAudioDevice,
       "availableAudioDevices": availableAudioDevices

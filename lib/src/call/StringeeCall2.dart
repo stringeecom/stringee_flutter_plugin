@@ -96,7 +96,6 @@ class StringeeCall2 {
 
     StringeeSignalingState signalingState = StringeeSignalingState.values[map['code']];
     _eventStreamController.add({
-      "typeEvent": StringeeCall2Events,
       "eventType": StringeeCall2Events.DidChangeSignalingState,
       "body": signalingState
     });
@@ -108,7 +107,6 @@ class StringeeCall2 {
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
     _eventStreamController.add({
-      "typeEvent": StringeeCall2Events,
       "eventType": StringeeCall2Events.DidChangeMediaState,
       "body": mediaState
     });
@@ -120,7 +118,6 @@ class StringeeCall2 {
 
     Map<dynamic, dynamic> data = map['info'];
     _eventStreamController.add({
-      "typeEvent": StringeeCall2Events,
       "eventType": StringeeCall2Events.DidReceiveCallInfo,
       "body": data
     });
@@ -129,7 +126,6 @@ class StringeeCall2 {
   void handleAnotherDeviceHadHandle(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState = StringeeSignalingState.values[map['code']];
     _eventStreamController.add({
-      "typeEvent": StringeeCall2Events,
       "eventType": StringeeCall2Events.DidHandleOnAnotherDevice,
       "body": signalingState
     });
@@ -137,7 +133,6 @@ class StringeeCall2 {
 
   void handleReceiveLocalStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
-      "typeEvent": StringeeCall2Events,
       "eventType": StringeeCall2Events.DidReceiveLocalStream,
       "body": map['callId']
     });
@@ -145,7 +140,6 @@ class StringeeCall2 {
 
   void handleReceiveRemoteStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
-      "typeEvent": StringeeCall2Events,
       "eventType": StringeeCall2Events.DidReceiveRemoteStream,
       "body": map['callId']
     });
@@ -161,7 +155,6 @@ class StringeeCall2 {
       availableAudioDevices.add(audioDevice);
     }
     _eventStreamController.add({
-      "typeEvent": StringeeCall2Events,
       "eventType": StringeeCall2Events.DidChangeAudioDevice,
       "selectedAudioDevice": selectedAudioDevice,
       "availableAudioDevices": availableAudioDevices

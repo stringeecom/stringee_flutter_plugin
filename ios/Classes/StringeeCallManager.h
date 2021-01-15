@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setEventSink:(FlutterEventSink)eventSink;
 
-- (id)StringeeCall:(StringeeCall *)call;
-
 - (void)makeCall:(id)arguments result:(FlutterResult)result;
 
 - (void)initAnswer:(id)arguments result:(FlutterResult)result;

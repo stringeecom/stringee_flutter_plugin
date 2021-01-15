@@ -195,34 +195,33 @@ class _CallState extends State<Call> {
     // Listen events
     _stringeeCall.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      if (map['typeEvent'] == StringeeCallEvents) {
-        switch (map['eventType']) {
-          case StringeeCallEvents.DidChangeSignalingState:
-            handleSignalingStateChangeEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidChangeMediaState:
-            handleMediaStateChangeEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidReceiveCallInfo:
-            handleReceiveCallInfoEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidHandleOnAnotherDevice:
-            handleHandleOnAnotherDeviceEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidReceiveLocalStream:
-            handleReceiveLocalStreamEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidReceiveRemoteStream:
-            handleReceiveRemoteStreamEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidChangeAudioDevice:
-            if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(map['selectedAudioDevice'], _stringeeCall, null);
-            }
-            break;
-          default:
-            break;
-        }
+      switch (map['eventType']) {
+        case StringeeCallEvents.DidChangeSignalingState:
+          handleSignalingStateChangeEvent(map['body']);
+          break;
+        case StringeeCallEvents.DidChangeMediaState:
+          handleMediaStateChangeEvent(map['body']);
+          break;
+        case StringeeCallEvents.DidReceiveCallInfo:
+          handleReceiveCallInfoEvent(map['body']);
+          break;
+        case StringeeCallEvents.DidHandleOnAnotherDevice:
+          handleHandleOnAnotherDeviceEvent(map['body']);
+          break;
+        case StringeeCallEvents.DidReceiveLocalStream:
+          handleReceiveLocalStreamEvent(map['body']);
+          break;
+        case StringeeCallEvents.DidReceiveRemoteStream:
+          handleReceiveRemoteStreamEvent(map['body']);
+          break;
+        case StringeeCallEvents.DidChangeAudioDevice:
+          if (Platform.isAndroid) {
+            handleChangeAudioDeviceEvent(
+                map['selectedAudioDevice'], _stringeeCall, null);
+          }
+          break;
+        default:
+          break;
       }
     });
 
@@ -266,34 +265,33 @@ class _CallState extends State<Call> {
     // Listen events
     _stringeeCall2.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      if (map['typeEvent'] == StringeeCall2Events) {
-        switch (map['eventType']) {
-          case StringeeCall2Events.DidChangeSignalingState:
-            handleSignalingStateChangeEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidChangeMediaState:
-            handleMediaStateChangeEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidReceiveCallInfo:
-            handleReceiveCallInfoEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidHandleOnAnotherDevice:
-            handleHandleOnAnotherDeviceEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidReceiveLocalStream:
-            handleReceiveLocalStreamEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidReceiveRemoteStream:
-            handleReceiveRemoteStreamEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidChangeAudioDevice:
-            if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(map['selectedAudioDevice'], null, _stringeeCall2);
-            }
-            break;
-          default:
-            break;
-        }
+      switch (map['eventType']) {
+        case StringeeCall2Events.DidChangeSignalingState:
+          handleSignalingStateChangeEvent(map['body']);
+          break;
+        case StringeeCall2Events.DidChangeMediaState:
+          handleMediaStateChangeEvent(map['body']);
+          break;
+        case StringeeCall2Events.DidReceiveCallInfo:
+          handleReceiveCallInfoEvent(map['body']);
+          break;
+        case StringeeCall2Events.DidHandleOnAnotherDevice:
+          handleHandleOnAnotherDeviceEvent(map['body']);
+          break;
+        case StringeeCall2Events.DidReceiveLocalStream:
+          handleReceiveLocalStreamEvent(map['body']);
+          break;
+        case StringeeCall2Events.DidReceiveRemoteStream:
+          handleReceiveRemoteStreamEvent(map['body']);
+          break;
+        case StringeeCall2Events.DidChangeAudioDevice:
+          if (Platform.isAndroid) {
+            handleChangeAudioDeviceEvent(
+                map['selectedAudioDevice'], null, _stringeeCall2);
+          }
+          break;
+        default:
+          break;
       }
     });
 

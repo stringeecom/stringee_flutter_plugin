@@ -33,6 +33,10 @@
         
         StringeeCall *call = [[StringeeManager instance].calls objectForKey:callId];
         if (call == nil) {
+            call = [[StringeeManager instance].call2s objectForKey:callId];
+        }
+        
+        if (call == nil) {
             return self;
         }
         
