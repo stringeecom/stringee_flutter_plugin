@@ -74,7 +74,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 public void run() {
                     Map map = new HashMap();
                     map.put("status", false);
-                    map.put("code", -5);
+                    map.put("code", -4);
                     map.put("message", "No internet connection");
                     result.success(map);
                 }

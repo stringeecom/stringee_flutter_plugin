@@ -116,7 +116,7 @@ class StringeeClient {
     return await methodChannel.invokeMethod('sendCustomMessage', params);
   }
 
-  /// Create new [Conversation] with [options] and [participants]
+  /// Create new [StringeeConversation] with [options] and [participants]
   Future<Map<dynamic, dynamic>> createConversation(
       ConversationOption options, List<User> participants) async {
     if (participants == null || participants.length == 0)
@@ -127,67 +127,67 @@ class StringeeClient {
       'option': json.encode(options),
     };
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('createConversation', params);
-    if (result['status']) result['body'] = Conversation.fromJson(json.decode(result['body']));
+    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
     return result;
   }
 
-  /// Get [Conversation] with [Conversation.id] = [convId]
+  /// Get [StringeeConversation] with [StringeeConversation.id] = [convId]
   Future<Map<dynamic, dynamic>> getConversationById(String convId) async {
     if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationById', convId.trim());
-    if (result['status']) result['body'] = Conversation.fromJson(json.decode(result['body']));
+    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
     return result;
   }
 
-  /// Get [Conversation] by [userId] from Stringee server
+  /// Get [StringeeConversation] by [userId] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationByUserId(String userId) async {
     if (userId == null || userId.trim().isEmpty) return await reportInvalidValue('convId');
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationByUserId', userId.trim());
-    if (result['status']) result['body'] = Conversation.fromJson(json.decode(result['body']));
+    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
     return result;
   }
 
-  /// Get [Conversation] with [Conversation.id] = [convId] from Stringee server
+  /// Get [StringeeConversation] with [StringeeConversation.id] = [convId] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationFromServer(String convId) async {
     if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationFromServer', convId.trim());
-    if (result['status']) result['body'] = Conversation.fromJson(json.decode(result['body']));
+    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
     return result;
   }
 
-  /// Get local [Conversation]
+  /// Get local [StringeeConversation]
   Future<Map<dynamic, dynamic>> getLocalConversations() async {
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLocalConversations');
     if (result['status']) {
       List<dynamic> list = json.decode(result['body']);
-      List<Conversation> conversations = [];
+      List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(Conversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i]));
       }
       result['body'] = conversations;
     }
     return result;
   }
 
-  /// Get [count] of lastest [Conversation] from Stringee server
+  /// Get [count] of lastest [StringeeConversation] from Stringee server
   Future<Map<dynamic, dynamic>> getLastConversation(int count) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLastConversation', count);
     if (result['status']) {
       List<dynamic> list = json.decode(result['body']);
-      List<Conversation> conversations = [];
+      List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(Conversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i]));
       }
       result['body'] = conversations;
     }
     return result;
   }
 
-  /// Get [count] of [Conversation] before [milliseconds] from Stringee server
+  /// Get [count] of [StringeeConversation] before [milliseconds] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationsBefore(int count, int milliseconds) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
     if (milliseconds == null || milliseconds <= 0) return await reportInvalidValue('milliseconds');
@@ -199,16 +199,16 @@ class StringeeClient {
         await methodChannel.invokeMethod('getConversationsBefore', param);
     if (result['status']) {
       List<dynamic> list = json.decode(result['body']);
-      List<Conversation> conversations = [];
+      List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(Conversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i]));
       }
       result['body'] = conversations;
     }
     return result;
   }
 
-  /// Get [count] of [Conversation] after [milliseconds] from Stringee server
+  /// Get [count] of [StringeeConversation] after [milliseconds] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationsAfter(int count, int milliseconds) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
     if (milliseconds == null || milliseconds <= 0) return await reportInvalidValue('milliseconds');
@@ -219,9 +219,9 @@ class StringeeClient {
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationsAfter', param);
     if (result['status']) {
       List<dynamic> list = json.decode(result['body']);
-      List<Conversation> conversations = [];
+      List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(Conversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i]));
       }
       result['body'] = conversations;
     }
@@ -239,7 +239,7 @@ class StringeeClient {
     return await methodChannel.invokeMethod('blockUser', userId.trim());
   }
 
-  /// Get count of unread [Conversation]
+  /// Get count of unread [StringeeConversation]
   Future<Map<dynamic, dynamic>> getTotalUnread() async {
     return await methodChannel.invokeMethod('getTotalUnread');
   }
@@ -325,10 +325,10 @@ class StringeeClient {
     map['objectType'] = ObjectType.values[map['objectType']];
     switch (map['objectType']) {
       case ObjectType.CONVERSATION:
-        map['objects'] = new Conversation.fromJson((json.decode(map['objects']))[0]);
+        map['objects'] = new StringeeConversation.fromJson((json.decode(map['objects']))[0]);
         break;
       case ObjectType.MESSAGE:
-        map['objects'] = new Message.fromJson((json.decode(map['objects']))[0]);
+        map['objects'] = new StringeeMessage.fromJson((json.decode(map['objects']))[0]);
         break;
     }
     StringeeChange stringeeChange = new StringeeChange(map['changeType'], map['objects']);

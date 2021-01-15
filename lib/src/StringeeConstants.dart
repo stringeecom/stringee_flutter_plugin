@@ -43,11 +43,10 @@ enum StringeeType {
   StringeeCall2,
 }
 
-/// Error code and message:
+/// Error code and message in flutter:
 /// -1 : StringeeClient is not initialized or disconnected
 /// -2 : value is invalid
-/// -3 : No conversation found
-/// -4 : StringeeCall/ StringeeCall2 is not initialized
+/// -3 : Object is not found
 Future<Map<String, dynamic>> reportInvalidValue(String value) async {
   Map<String, dynamic> params = {
     'status': false,

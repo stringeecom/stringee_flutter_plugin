@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/Chat.dart';
@@ -12,11 +16,74 @@ var user1 =
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTA1MjIwNjUiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEzMTE0MDY1LCJ1c2VySWQiOiJ1c2VyMiJ9.b-wOVZXzGGu7jDk19Rh9uJqesT3BwKOHSNTkad1Ys4k';
 var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYxMDMzOTM3MyIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMDQyNTc3MywidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.5KcPKokaYXErg1BygQ7YIxhPNXuGJA5OCtQjhbyyfjc';
-var client = StringeeClient();
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYxMDQzODk3MCIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMDUyNTM3MCwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.3WSr6FoNNiVOoKNQirdenaRSJ8pItmNP2oV5_lzmRSg';
+
+StringeeClient _client = StringeeClient();
+StringeeCall _call;
+StringeeCall2 _call2;
+
+FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+bool _showIncomingCall = false;
+
 String strUserId = "";
 
-void main() {
+Future<void> _backgroundMessageHandler(RemoteMessage remoteMessage) async {
+  print("Handling a background message: ${remoteMessage.data}");
+
+  Map<dynamic, dynamic> _notiData = remoteMessage.data;
+  Map<dynamic, dynamic> _data = json.decode(_notiData['data']);
+
+  const AndroidInitializationSettings androidSettings =
+      AndroidInitializationSettings('@drawable/ic_noti');
+  final IOSInitializationSettings iOSSettings = IOSInitializationSettings();
+  final MacOSInitializationSettings macOSSettings = MacOSInitializationSettings();
+  final InitializationSettings initializationSettings =
+      InitializationSettings(android: androidSettings, iOS: iOSSettings, macOS: macOSSettings);
+  await _localNotifications
+      .initialize(
+    initializationSettings,
+    onSelectNotification: null,
+  )
+      .then((value) async {
+    if (value) {
+      if (_data['callStatus'] == 'started') {
+        /// Create channel for notification
+        const AndroidNotificationDetails androidPlatformChannelSpecifics =
+            AndroidNotificationDetails(
+          'your channel id',
+          'your channel name',
+          'your channel description',
+          importance: Importance.max,
+          priority: Priority.high,
+          fullScreenIntent: true,
+
+          /// Set true for show App in lockScreen
+        );
+        const NotificationDetails platformChannelSpecifics =
+            NotificationDetails(android: androidPlatformChannelSpecifics);
+
+        /// Show notification
+        await _localNotifications.show(
+          0,
+          'Incoming Call',
+          'from ' + _data['from']['alias'],
+          platformChannelSpecifics,
+        );
+      } else if (_data['callStatus'] == 'ended') {
+        _localNotifications.cancel(0);
+      }
+    }
+  });
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid)
+    Firebase.initializeApp().whenComplete(() {
+      print("completed");
+      FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
+    });
+
   runApp(new MyApp());
 }
 
@@ -35,18 +102,44 @@ class MyHomePage extends StatefulWidget {
   }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   String myUserId = 'Not connected...';
+  bool isAppInBackground = false;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _localNotifications.cancel(0);
+      isAppInBackground = false;
+    } else if (state == AppLifecycleState.inactive) {
+      isAppInBackground = true;
+    }
+
+    if (state == AppLifecycleState.resumed && _client != null) {
+      if (_client.hasConnected && _showIncomingCall && Platform.isAndroid) {
+        showCallScreen(_call, _call2);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Future<void> initState() {
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
-    if (Platform.isAndroid) requestPermissions();
+    if (Platform.isAndroid) {
+      requestPermissions();
+    }
 
-    // Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
-    client.eventStreamController.stream.listen((event) {
+    /// Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
+    _client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       if (map['typeEvent'] == StringeeClientEvents) {
         switch (map['eventType']) {
@@ -82,11 +175,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
             switch (stringeeChange.objectType) {
               case ObjectType.CONVERSATION:
-                Conversation conversation = stringeeChange.object;
+                StringeeConversation conversation = stringeeChange.object;
                 print(conversation.id.toString());
                 break;
               case ObjectType.MESSAGE:
-                Message message = stringeeChange.object;
+                StringeeMessage message = stringeeChange.object;
                 print(message.id.toString() + '\t' + message.type.toString());
             }
             break;
@@ -96,8 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
 
-    // Connect
-    client.connect(user1);
+    /// Connect
+    _client.connect(user1);
   }
 
   requestPermissions() async {
@@ -139,8 +232,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //region Handle Client Event
   void handleDidConnectEvent() {
+    if (Platform.isAndroid) {
+      FirebaseMessaging.instance.getToken().then((token) {
+        _client.registerPush(token).then((value) => print('Register push ' + value['message']));
+      });
+    }
+
     setState(() {
-      myUserId = client.userId;
+      myUserId = _client.userId;
     });
   }
 
@@ -167,33 +266,40 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void handleIncomingCallEvent(StringeeCall call) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => Call(
-              fromUserId: call.from,
-              toUserId: call.to,
-              isVideoCall: call.isVideoCall,
-              callType: StringeeType.StringeeCall,
-              showIncomingUi: true,
-              incomingCall: call)),
-    );
+    if (!isAppInBackground || !Platform.isAndroid) {
+      showCallScreen(call, null);
+    } else {
+      _showIncomingCall = true;
+      _call = call;
+    }
   }
 
   void handleIncomingCall2Event(StringeeCall2 call) {
+    if (!isAppInBackground || !Platform.isAndroid) {
+      showCallScreen(null, call);
+    } else {
+      _showIncomingCall = true;
+      _call2 = call;
+    }
+  }
+
+  void showCallScreen(StringeeCall call, StringeeCall2 call2) {
+    _showIncomingCall = false;
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => Call(
-              fromUserId: call.from,
-              toUserId: call.to,
-              isVideoCall: call.isVideoCall,
-              callType: StringeeType.StringeeCall2,
-              showIncomingUi: true,
-              incomingCall2: call)),
+        builder: (context) => Call(
+          fromUserId: call != null ? call.from : call2.from,
+          toUserId: call != null ? call.to : call2.to,
+          isVideoCall: call != null ? call.isVideoCall : call2.isVideoCall,
+          callType: call != null ? StringeeType.StringeeCall : StringeeType.StringeeCall2,
+          showIncomingUi: true,
+          incomingCall2: call != null ? null : call2,
+          incomingCall: call != null ? call : null,
+        ),
+      ),
     );
   }
-
 //endregion
 }
 
@@ -312,7 +418,7 @@ class _MyFormState extends State<MyForm> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => Chat(
-                                    client: client,
+                                    client: _client,
                                   )));
                     },
                     child: Text('CHAT'),
@@ -333,13 +439,13 @@ class _MyFormState extends State<MyForm> {
   }
 
   void _CallTapped(bool isVideoCall, StringeeType callType) {
-    if (strUserId.isEmpty || !client.hasConnected) return;
+    if (strUserId.isEmpty || !_client.hasConnected) return;
 
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => Call(
-              fromUserId: client.userId,
+              fromUserId: _client.userId,
               toUserId: strUserId,
               isVideoCall: isVideoCall,
               callType: callType,

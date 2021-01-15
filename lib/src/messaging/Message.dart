@@ -8,7 +8,7 @@ import '../StringeeClient.dart';
 import '../StringeeConstants.dart';
 import 'StringeeChange.dart';
 
-class Message implements StringeeObject {
+class StringeeMessage implements StringeeObject {
   String _id;
   String _convId;
   String _senderId;
@@ -36,9 +36,9 @@ class Message implements StringeeObject {
   bool _isDeleted;
   Map<dynamic, dynamic> _notiContent;
 
-  Message.typeText({
-    @required String convId,
-    @required String text,
+  StringeeMessage.typeText(
+    String convId,
+    String text, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(text != null || text.trim().isNotEmpty) {
@@ -50,9 +50,9 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typePhoto({
-    @required String convId,
-    @required String filePath,
+  StringeeMessage.typePhoto(
+    String convId,
+    String filePath, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(filePath != null || filePath.trim().isNotEmpty) {
@@ -64,10 +64,10 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeVideo({
-    @required String convId,
-    @required String filePath,
-    @required int duration,
+  StringeeMessage.typeVideo(
+    String convId,
+    String filePath,
+    int duration, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(filePath != null || filePath.trim().isNotEmpty),
@@ -81,10 +81,10 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeAudio({
-    @required String convId,
-    @required String filePath,
-    @required int duration,
+  StringeeMessage.typeAudio(
+    String convId,
+    String filePath,
+    int duration, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(filePath != null || filePath.trim().isNotEmpty),
@@ -98,9 +98,9 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeFile({
-    @required String convId,
-    @required String filePath,
+  StringeeMessage.typeFile(
+    String convId,
+    String filePath, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(filePath != null || filePath.trim().isNotEmpty) {
@@ -112,9 +112,9 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeLink({
-    @required String convId,
-    @required String text,
+  StringeeMessage.typeLink(
+    String convId,
+    String text, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(text != null || text.trim().isNotEmpty) {
@@ -126,10 +126,10 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeLocation({
-    @required String convId,
-    @required double latitude,
-    @required double longitude,
+  StringeeMessage.typeLocation(
+    String convId,
+    double latitude,
+    double longitude, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(latitude != null || latitude > 0),
@@ -143,9 +143,9 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeContact({
-    @required String convId,
-    @required String contact,
+  StringeeMessage.typeContact(
+    String convId,
+    String contact, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(contact != null || contact.trim().isNotEmpty) {
@@ -157,10 +157,10 @@ class Message implements StringeeObject {
     }
   }
 
-  Message.typeSticker({
-    @required String convId,
-    @required String stickerCategory,
-    @required String stickerName,
+  StringeeMessage.typeSticker(
+    String convId,
+    String stickerCategory,
+    String stickerName, {
     Map<dynamic, dynamic> customData,
   })  : assert(convId != null || convId.trim().isNotEmpty),
         assert(stickerCategory != null || stickerCategory.trim().isNotEmpty),
@@ -226,7 +226,7 @@ class Message implements StringeeObject {
 
   String get id => _id;
 
-  Message.fromJson(Map<dynamic, dynamic> msgInfor) {
+  StringeeMessage.fromJson(Map<dynamic, dynamic> msgInfor) {
     if (msgInfor == null) {
       return;
     }
@@ -331,8 +331,16 @@ class Message implements StringeeObject {
     this._text = text;
   }
 
-  Message.lstMsg(String msgId, String convId, String clientId, MsgType msgType, String senderId,
-      int sequence, MsgState msgState, int createdAt, Map<dynamic, dynamic> msgInfor) {
+  StringeeMessage.lstMsg(
+      String msgId,
+      String convId,
+      String clientId,
+      MsgType msgType,
+      String senderId,
+      int sequence,
+      MsgState msgState,
+      int createdAt,
+      Map<dynamic, dynamic> msgInfor) {
     if (msgId == null ||
         msgType == null ||
         senderId == null ||
@@ -476,7 +484,7 @@ class Message implements StringeeObject {
     return params;
   }
 
-  /// Edit [Message.typeText]
+  /// Edit [StringeeMessage.typeText]
   Future<Map<dynamic, dynamic>> edit(String convId, String content) async {
     assert(convId != null || convId.trim().isNotEmpty);
     assert(content != null || content.trim().isNotEmpty);
@@ -488,7 +496,7 @@ class Message implements StringeeObject {
     return await StringeeClient.methodChannel.invokeMethod('edit', params);
   }
 
-  /// Pin/Un pin [Message]
+  /// Pin/Un pin [StringeeMessage]
   Future<Map<dynamic, dynamic>> pinOrUnPin(String convId, bool pinOrUnPin) async {
     if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
     if (pinOrUnPin == null) return await reportInvalidValue('pinOrUnPin');

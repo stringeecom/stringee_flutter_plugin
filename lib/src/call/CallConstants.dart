@@ -47,9 +47,9 @@ class MakeCallParams {
   Map<dynamic, dynamic> _customData;
   VideoQuality _videoQuality;
 
-  MakeCallParams({
-    @required String from,
-    @required String to,
+  MakeCallParams(
+    String from,
+    String to, {
     bool isVideoCall,
     Map<dynamic, dynamic> customData,
     VideoQuality videoQuality,
