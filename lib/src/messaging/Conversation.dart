@@ -10,18 +10,14 @@ import 'User.dart';
 
 class StringeeConversation implements StringeeObject {
   String _id;
-  String _localId;
   String _name;
-  bool _isDistinct;
   bool _isGroup;
-  bool _isEnded;
-  String _clientId;
   String _creator;
-  int _createAt;
-  int _updateAt;
+  int _createdAt;
+  int _updatedAt;
   int _totalUnread;
   String _text;
-  ConvState _state;
+
   StringeeMessage _lastMsg;
   String _pinnedMsgId;
   List<User> _participants;
@@ -30,29 +26,19 @@ class StringeeConversation implements StringeeObject {
 
   String get id => _id;
 
-  String get localId => _localId;
-
   String get name => _name;
-
-  bool get isDistinct => _isDistinct;
 
   bool get isGroup => _isGroup;
 
-  bool get isEnded => _isEnded;
-
-  String get clientId => _clientId;
-
   String get creator => _creator;
-
-  int get createAt => _createAt;
-
-  int get updateAt => _updateAt;
 
   int get totalUnread => _totalUnread;
 
-  String get text => _text;
+  int get updatedAt => _updatedAt;
 
-  ConvState get state => _state;
+  int get createdAt => _createdAt;
+
+  String get text => _text;
 
   StringeeMessage get lastMsg => _lastMsg;
 
@@ -66,28 +52,22 @@ class StringeeConversation implements StringeeObject {
     }
 
     this._id = convInfor['id'];
-    this._localId = convInfor['localId'];
     this._name = convInfor['name'];
-    this._isDistinct = convInfor['isDistinct'];
     this._isGroup = convInfor['isGroup'];
-    this._isEnded = convInfor['isEnded'];
-    this._clientId = convInfor['clientId'];
     this._creator = convInfor['creator'];
-    this._createAt = convInfor['createAt'];
-    this._updateAt = convInfor['updateAt'];
+    this._createdAt = convInfor['createAt'];
+    this._updatedAt = convInfor['updateAt'];
     this._totalUnread = convInfor['totalUnread'];
     this._text = convInfor['text'];
-    this._state = ConvState.values[convInfor['state']];
     this._lastMsg = new StringeeMessage.lstMsg(
         convInfor['lastMsgId'],
         this._id,
-        this._clientId,
         (convInfor['lastMsgType'] as int).msgType,
         convInfor['lastMsgSender'],
         convInfor['lastMsgSeqReceived'],
         MsgState.values[convInfor['lastMsgState']],
         convInfor['lastTimeNewMsg'],
-        convInfor['lastMsg']);
+        jsonDecode(this._text));
     this._pinnedMsgId = convInfor['pinnedMsgId'];
 
     List<User> participants = [];
@@ -311,4 +291,5 @@ class StringeeConversation implements StringeeObject {
   Future<Map<dynamic, dynamic>> markAsRead() async {
     return await StringeeClient.methodChannel.invokeMethod('markAsRead', this._id);
   }
+
 }

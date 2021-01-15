@@ -9,31 +9,41 @@ import '../StringeeConstants.dart';
 import 'StringeeChange.dart';
 
 class StringeeMessage implements StringeeObject {
+  /// Base
   String _id;
+  String _localId;
   String _convId;
   String _senderId;
   int _createdAt;
-  int _updateAt;
   int _sequence;
   MsgState _state;
-  MsgStateType _stateType;
   MsgType _type;
   String _text;
+
+  /// Photo
   String _thumbnail;
-  double _latitude;
-  double _longitude;
   String _filePath;
   String _fileUrl;
+
+  /// Location
+  double _latitude;
+  double _longitude;
+
+  /// File
   String _fileName;
   int _fileLength;
+
+  /// Audio + Video
   int _duration;
   double _ratio;
+
   String _contact;
-  String _clientId;
+
+  /// Sticker
   String _stickerCategory;
   String _stickerName;
+
   Map<dynamic, dynamic> _customData;
-  bool _isDeleted;
   Map<dynamic, dynamic> _notiContent;
 
   StringeeMessage.typeText(
@@ -174,8 +184,6 @@ class StringeeMessage implements StringeeObject {
     }
   }
 
-  bool get isDeleted => _isDeleted;
-
   Map<dynamic, dynamic> get customData => _customData;
 
   Map<dynamic, dynamic> get notiContent => _notiContent;
@@ -183,8 +191,6 @@ class StringeeMessage implements StringeeObject {
   String get stickerName => _stickerName;
 
   String get stickerCategory => _stickerCategory;
-
-  String get clientId => _clientId;
 
   String get contact => _contact;
 
@@ -210,13 +216,9 @@ class StringeeMessage implements StringeeObject {
 
   MsgType get type => _type;
 
-  MsgStateType get stateType => _stateType;
-
   MsgState get state => _state;
 
   int get sequence => _sequence;
-
-  int get updateAt => _updateAt;
 
   int get createdAt => _createdAt;
 
@@ -226,6 +228,8 @@ class StringeeMessage implements StringeeObject {
 
   String get id => _id;
 
+  String get localId => _localId;
+
   StringeeMessage.fromJson(Map<dynamic, dynamic> msgInfor) {
     if (msgInfor == null) {
       return;
@@ -234,13 +238,9 @@ class StringeeMessage implements StringeeObject {
     this._convId = msgInfor['convId'];
     this._senderId = msgInfor['senderId'];
     this._createdAt = msgInfor['createAt'];
-    this._updateAt = msgInfor['updateAt'];
     this._sequence = msgInfor['sequence'];
-    this._isDeleted = msgInfor['isDeleted'];
-    this._clientId = msgInfor['clientId'];
     this._customData = msgInfor['customData'];
     this._state = MsgState.values[msgInfor['state']];
-    this._stateType = MsgStateType.values[msgInfor['msgType']];
 
     MsgType msgType = (msgInfor['type'] as int).msgType;
     this._type = msgType;
@@ -323,7 +323,10 @@ class StringeeMessage implements StringeeObject {
             this._notiContent[participants] = participants;
             break;
           case MsgNotifyType.TYPE_CHANGE_GROUP_NAME:
+            this._notiContent = notifyMap;
+            break;
           case MsgNotifyType.TYPE_END_CONV:
+            this._notiContent = notifyMap;
             break;
         }
         break;
@@ -334,7 +337,6 @@ class StringeeMessage implements StringeeObject {
   StringeeMessage.lstMsg(
       String msgId,
       String convId,
-      String clientId,
       MsgType msgType,
       String senderId,
       int sequence,
@@ -354,13 +356,9 @@ class StringeeMessage implements StringeeObject {
     this._convId = convId;
     this._senderId = senderId;
     this._createdAt = createdAt;
-    this._updateAt = createdAt;
     this._sequence = sequence;
-    this._isDeleted = false;
     if (msgInfor.containsKey('metadata')) this._customData = msgInfor['metadata'];
-    this._clientId = clientId;
     this._state = msgState;
-    this._stateType = (senderId == clientId) ? MsgStateType.TYPE_SEND : MsgStateType.TYPE_RECEIVE;
     this._type = msgType;
     String text = '';
     switch (this._type) {

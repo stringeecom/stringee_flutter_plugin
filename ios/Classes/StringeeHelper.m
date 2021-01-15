@@ -182,8 +182,8 @@
     return response;
 }
 
-+ (NSDictionary *)StringeeMessage:(StringeeMessage *)message {
-    if (!message) return RCTNullIfNil(nil);
++ (id)StringeeMessage:(StringeeMessage *)message {
+    if (!message) return [NSNull null];
     
     NSString *localId = message.localIdentifier.length ? message.localIdentifier : @"";
     NSString *identifier = message.identifier.length ? message.identifier : @"";
@@ -349,7 +349,7 @@
 
 + (NSArray *)StringeeMessages:(NSArray<StringeeMessage *> *)messages {
     if (!messages) {
-        return RCTNullIfNil(nil);
+        return @[];
     }
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeMessage *message in messages) {

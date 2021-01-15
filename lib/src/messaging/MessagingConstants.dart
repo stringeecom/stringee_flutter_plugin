@@ -16,12 +16,6 @@ enum UserRole {
   MEMBER,
 }
 
-///Conversation state
-enum ConvState {
-  STATE_DEFAULT,
-  STATE_LEFT,
-}
-
 enum MsgState {
   INITIALIZE,
   SENDING,
