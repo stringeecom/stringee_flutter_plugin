@@ -55,8 +55,8 @@ class StringeeConversation implements StringeeObject {
     this._name = convInfor['name'];
     this._isGroup = convInfor['isGroup'];
     this._creator = convInfor['creator'];
-    this._createdAt = convInfor['createAt'];
-    this._updatedAt = convInfor['updateAt'];
+    this._createdAt = convInfor['createdAt'];
+    this._updatedAt = convInfor['updatedAt'];
     this._totalUnread = convInfor['totalUnread'];
     this._text = convInfor['text'];
     this._lastMsg = new StringeeMessage.lstMsg(

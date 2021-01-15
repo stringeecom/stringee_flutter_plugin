@@ -237,7 +237,7 @@ class StringeeMessage implements StringeeObject {
     this._id = msgInfor['id'];
     this._convId = msgInfor['convId'];
     this._senderId = msgInfor['senderId'];
-    this._createdAt = msgInfor['createAt'];
+    this._createdAt = msgInfor['createdAt'];
     this._sequence = msgInfor['sequence'];
     this._customData = msgInfor['customData'];
     this._state = MsgState.values[msgInfor['state']];

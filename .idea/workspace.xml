@@ -27,12 +27,8 @@
     <list default="true" id="bb5e12ef-f814-4430-bbc6-90d2bee1717b" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/messaging/Conversation.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/Conversation.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/messaging/Message.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/Message.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/messaging/MessagingConstants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/MessagingConstants.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
