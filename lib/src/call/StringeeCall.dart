@@ -94,6 +94,7 @@ class StringeeCall {
     String callId = map['callId'];
     if (callId != this._id) return;
 
+
     StringeeSignalingState signalingState = StringeeSignalingState.values[map['code']];
     _eventStreamController.add({
       "eventType": StringeeCallEvents.DidChangeSignalingState,

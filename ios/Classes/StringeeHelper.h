@@ -16,9 +16,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (id)StringeeCall2:(StringeeCall2 *)call;
 
++ (id)Identity:(StringeeIdentity *)identity;
+
++ (id)Identities:(NSArray<StringeeIdentity *> *)identities;
+
 + (StringeeConversationOption *)parseOptionWithData:(NSDictionary *)data;
 
 + (NSSet<StringeeIdentity *> *)parsePartsWithData:(NSArray *)data;
+
++ (id)StringeeIdentity:(StringeeIdentity *)identity;
+
++ (id)Conversation:(StringeeConversation *)conversation;
+
++ (NSArray *)Conversations:(NSArray<StringeeConversation *> *)conversations;
+
++ (id)Message:(StringeeMessage *)message;
+
++ (NSArray *)Messages:(NSArray<StringeeMessage *> *)messages;
 
 @end
 

@@ -256,17 +256,17 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client
-                                  .getConversationFromServer('conv-vn-1-73JJ5R8BMN-1606410119987')
-                                  .then((value) {
-                                setState(() {
-                                  _log.add('Get Conversation from Server: msg:' + value['message']);
-                                  if (value['status']) {
-                                    _conversations.clear();
-                                    _conversations.add(value['body']);
-                                  }
-                                });
-                              });
+                              // _client
+                              //     .getConversationFromServer('conv-vn-1-73JJ5R8BMN-1606410119987')
+                              //     .then((value) {
+                              //   setState(() {
+                              //     _log.add('Get Conversation from Server: msg:' + value['message']);
+                              //     if (value['status']) {
+                              //       _conversations.clear();
+                              //       _conversations.add(value['body']);
+                              //     }
+                              //   });
+                              // });
                             },
                             child: Text(
                               'Get Conversation from Server',
@@ -419,11 +419,11 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client.blockUser('assss').then((value) {
-                                setState(() {
-                                  _log.add('Block user: msg:' + value['message']);
-                                });
-                              });
+                              // _client.blockUser('assss').then((value) {
+                              //   setState(() {
+                              //     _log.add('Block user: msg:' + value['message']);
+                              //   });
+                              // });
                             },
                             child: Text(
                               'Block user',

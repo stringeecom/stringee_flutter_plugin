@@ -108,7 +108,7 @@
     return parts;
 }
 
-+ (id)StringeeIdentity:(StringeeIdentity *)identity {
++ (id)Identity:(StringeeIdentity *)identity {
     if (!identity) return [NSNull null];
     
     NSString *userId = identity.userId.length ? identity.userId : @"";
@@ -124,9 +124,9 @@
              };
 }
 
-+ (id)StringeeIdentities:(NSArray<StringeeIdentity *> *)identities {
++ (id)Identities:(NSArray<StringeeIdentity *> *)identities {
     if (!identities) {
-        return [NSNull null];
+        return @[];
     }
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeIdentity *identity in identities) {
@@ -135,7 +135,7 @@
     return response;
 }
 
-+ (id)StringeeConversation:(StringeeConversation *)conversation {
++ (id)Conversation:(StringeeConversation *)conversation {
     if (!conversation) return [NSNull null];
 
     NSString *identifier = conversation.identifier ? conversation.identifier : @"";
@@ -161,28 +161,29 @@
              @"lastMsgSender" : lastMsgSender,
              @"text": lastMsgContent,
              @"lastMsgType": @(conversation.lastMsg.type),
-             @"unreadCount": @(conversation.unread),
+             @"totalUnread": @(conversation.unread),
              @"lastMsgId": lastMsgId,
              @"creator": creator,
-             @"created" : @(conversation.created),
-             @"lastMsgSeq": @(conversation.lastMsgSeqReceived),
-             @"lastMsgCreatedAt": @(conversation.lastTimeNewMsg),
-             @"lastMsgState": @(lastMsgState)
+             @"createdAt" : @(conversation.created),
+             @"lastMsgSeqReceived": @(conversation.lastMsgSeqReceived),
+             @"lastTimeNewMsg": @(conversation.lastTimeNewMsg),
+             @"lastMsgState": @(lastMsgState),
+             @"pinnedMsgId" : conversation.pinMsgId
              };
 }
 
-+ (NSArray *)StringeeConversations:(NSArray<StringeeConversation *> *)conversations {
++ (NSArray *)Conversations:(NSArray<StringeeConversation *> *)conversations {
     if (!conversations) {
         return @[];
     }
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeConversation *conversation in conversations) {
-        [response addObject:[self StringeeConversation:conversation]];
+        [response addObject:[self Conversation:conversation]];
     }
     return response;
 }
 
-+ (id)StringeeMessage:(StringeeMessage *)message {
++ (id)Message:(StringeeMessage *)message {
     if (!message) return [NSNull null];
     
     NSString *localId = message.localIdentifier.length ? message.localIdentifier : @"";
@@ -326,11 +327,12 @@
     return @{
              @"localId": localId,
              @"id": identifier,
-             @"conversationId": conversationId,
-             @"sender": sender,
+             @"convId": conversationId,
+             @"senderId": sender,
              @"createdAt": @(message.created),
              @"state": @(message.status),
              @"sequence": @(message.seq),
+             @"customData": message.metadata,
              @"type": @(message.type),
              @"content": content,
              @"thumbnailPath": thumbnailPath,
@@ -347,13 +349,13 @@
              };
 }
 
-+ (NSArray *)StringeeMessages:(NSArray<StringeeMessage *> *)messages {
++ (NSArray *)Messages:(NSArray<StringeeMessage *> *)messages {
     if (!messages) {
         return @[];
     }
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeMessage *message in messages) {
-        [response addObject:[self StringeeMessage:message]];
+        [response addObject:[self Message:message]];
     }
     return response;
 }

@@ -4,6 +4,7 @@
 #import "StringeeCallManager.h"
 #import "StringeeCall2Manager.h"
 #import "StringeeConversationManager.h"
+#import "StringeeMessageManager.h"
 #import "StringeeHelper.h"
 
 @implementation StringeeFlutterPlugin {
@@ -14,6 +15,7 @@
     StringeeCallManager *_callManager;
     StringeeCall2Manager *_call2Manager;
     StringeeConversationManager *_convManager;
+    StringeeMessageManager *_msgManager;
 }
 
 #pragma mark - Init
@@ -31,6 +33,7 @@
         _callManager = [[StringeeCallManager alloc] initWithClient:_client];
         _call2Manager = [[StringeeCall2Manager alloc] initWithClient:_client];
         _convManager = [[StringeeConversationManager alloc] initWithClient:_client];
+        _msgManager = [[StringeeMessageManager alloc] initWithClient:_client];
     }
     return self;
 }
@@ -138,10 +141,12 @@
         [_call2Manager enableVideo:call.arguments result:result];
     }
     
-    // Chat
+    // Conversation
     else if ([call.method isEqualToString:@"createConversation"]) {
         [_convManager createConversation:call.arguments result:result];
     }
+    
+    // Message
     
     else {
         result(FlutterMethodNotImplemented);
@@ -153,6 +158,7 @@
     [_callManager setEventSink:_eventSink];
     [_call2Manager setEventSink:_eventSink];
     [_convManager setEventSink:_eventSink];
+    [_msgManager setEventSink:_eventSink];
     return nil;
 }
 
@@ -161,6 +167,7 @@
     [_callManager setEventSink:_eventSink];
     [_call2Manager setEventSink:_eventSink];
     [_convManager setEventSink:_eventSink];
+    [_msgManager setEventSink:_eventSink];
     return nil;
 }
 

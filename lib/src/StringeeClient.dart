@@ -67,9 +67,6 @@ class StringeeClient {
         case 'incomingCall2':
           _handleIncomingCall2Event(map['body']);
           break;
-        case 'didReceiveTopicMessage':
-          _handleDidReceiveTopicMessageEvent(map['body']);
-          break;
         case 'didReceiveChangeEvent':
           _handleReceiveChangeEvent(map['body']);
           break;
@@ -149,15 +146,6 @@ class StringeeClient {
     return result;
   }
 
-  /// Get [StringeeConversation] with [StringeeConversation.id] = [convId] from Stringee server
-  Future<Map<dynamic, dynamic>> getConversationFromServer(String convId) async {
-    if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
-    Map<dynamic, dynamic> result =
-        await methodChannel.invokeMethod('getConversationFromServer', convId.trim());
-    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
-    return result;
-  }
-
   /// Get local [StringeeConversation]
   Future<Map<dynamic, dynamic>> getLocalConversations() async {
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLocalConversations');
@@ -187,13 +175,13 @@ class StringeeClient {
     return result;
   }
 
-  /// Get [count] of [StringeeConversation] before [milliseconds] from Stringee server
-  Future<Map<dynamic, dynamic>> getConversationsBefore(int count, int milliseconds) async {
+  /// Get [count] of [StringeeConversation] before [datetime] from Stringee server
+  Future<Map<dynamic, dynamic>> getConversationsBefore(int count, int datetime) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
-    if (milliseconds == null || milliseconds <= 0) return await reportInvalidValue('milliseconds');
+    if (datetime == null || datetime <= 0) return await reportInvalidValue('datetime');
     final param = {
       'count': count,
-      'milliseconds': milliseconds,
+      'datetime': datetime,
     };
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationsBefore', param);
@@ -209,12 +197,12 @@ class StringeeClient {
   }
 
   /// Get [count] of [StringeeConversation] after [milliseconds] from Stringee server
-  Future<Map<dynamic, dynamic>> getConversationsAfter(int count, int milliseconds) async {
+  Future<Map<dynamic, dynamic>> getConversationsAfter(int count, int datetime) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
-    if (milliseconds == null || milliseconds <= 0) return await reportInvalidValue('milliseconds');
+    if (datetime == null || datetime <= 0) return await reportInvalidValue('datetime');
     final param = {
       'count': count,
-      'milliseconds': milliseconds,
+      'datetime': datetime,
     };
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationsAfter', param);
     if (result['status']) {
@@ -233,13 +221,7 @@ class StringeeClient {
     return await methodChannel.invokeMethod('clearDb');
   }
 
-  /// Block [User] with [User.userId] = [userId]
-  Future<Map<dynamic, dynamic>> blockUser(String userId) async {
-    if (userId == null || userId.trim().isEmpty) return await reportInvalidValue('userId');
-    return await methodChannel.invokeMethod('blockUser', userId.trim());
-  }
-
-  /// Get count of unread [StringeeConversation]
+  /// Get total of unread [StringeeConversation]
   Future<Map<dynamic, dynamic>> getTotalUnread() async {
     return await methodChannel.invokeMethod('getTotalUnread');
   }
@@ -290,14 +272,6 @@ class StringeeClient {
     _eventStreamController.add({
       "typeEvent": StringeeClientEvents,
       "eventType": StringeeClientEvents.DidReceiveCustomMessage,
-      "body": map
-    });
-  }
-
-  void _handleDidReceiveTopicMessageEvent(Map<dynamic, dynamic> map) {
-    _eventStreamController.add({
-      "typeEvent": StringeeClientEvents,
-      "eventType": StringeeClientEvents.DidReceiveTopicMessage,
       "body": map
     });
   }

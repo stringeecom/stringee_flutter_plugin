@@ -49,7 +49,7 @@ class ConversationInforState extends State<ConversationInfor> {
     users.add(user1);
     users.add(user2);
 
-    msg = StringeeMessage.typeText(_conversation.id, 'test', customData: {'custom': 'abc'});
+    msg = StringeeMessage.typeText('test', customData: {'custom': 'abc'});
 
     _client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;

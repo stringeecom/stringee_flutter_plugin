@@ -131,6 +131,7 @@ class StringeeConversation implements StringeeObject {
   /// Send [StringeeMessage]
   Future<Map<dynamic, dynamic>> sendMessage(StringeeMessage message) async {
     if (message == null) return await reportInvalidValue('message');
+    message.convId = this._id;
     return await StringeeClient.methodChannel.invokeMethod('sendMessage', json.encode(message));
   }
 

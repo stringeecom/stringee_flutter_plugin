@@ -172,10 +172,12 @@
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Failed to send. The callId is invalid."});
+        return;
     }
     
     if (!dtmf || [dtmf isKindOfClass:[NSNull class]] || !dtmf.length || ![DTMF containsObject:dtmf]) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Failed to send. The dtmf is invalid."});
+        return;
     }
     
     StringeeCall *call = [[StringeeManager instance].calls objectForKey:callId];

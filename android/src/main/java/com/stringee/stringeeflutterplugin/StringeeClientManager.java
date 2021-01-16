@@ -1139,7 +1139,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 map.put("event", "didReceiveCustomMessage");
                 Map bodyMap = new HashMap();
                 bodyMap.put("from", from);
-                bodyMap.put("msg", jsonObject.toString());
+                bodyMap.put("message", jsonObject.toString());
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin._eventSink.success(map);
             }
@@ -1157,7 +1157,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 map.put("event", "didReceiveTopicMessage");
                 Map bodyMap = new HashMap();
                 bodyMap.put("from", from);
-                bodyMap.put("msg", jsonObject.toString());
+                bodyMap.put("message", jsonObject.toString());
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin._eventSink.success(map);
             }
