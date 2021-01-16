@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:stringee_flutter_plugin/src/messaging/Conversation.dart';
+import 'package:stringee_flutter_plugin/src/messaging/StringeeConversation.dart';
 import 'package:stringee_flutter_plugin/src/messaging/ConversationOption.dart';
-import 'package:stringee_flutter_plugin/src/messaging/Message.dart';
+import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeChange.dart';
-import 'package:stringee_flutter_plugin/src/messaging/User.dart';
+import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
 import 'call/StringeeCall.dart';
 import 'call/StringeeCall2.dart';
 import 'StringeeConstants.dart';
@@ -124,7 +124,8 @@ class StringeeClient {
       'option': json.encode(options),
     };
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('createConversation', params);
-    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
+    if (result['status'])
+      result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
     return result;
   }
 
@@ -133,7 +134,8 @@ class StringeeClient {
     if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationById', convId.trim());
-    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
+    if (result['status'])
+      result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
     return result;
   }
 
@@ -142,7 +144,8 @@ class StringeeClient {
     if (userId == null || userId.trim().isEmpty) return await reportInvalidValue('convId');
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationByUserId', userId.trim());
-    if (result['status']) result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
+    if (result['status'])
+      result['body'] = StringeeConversation.fromJson(json.decode(result['body']));
     return result;
   }
 
@@ -252,10 +255,14 @@ class StringeeClient {
 
   void _handleDidFailWithErrorEvent(Map<dynamic, dynamic> map) {
     _userId = map['userId'];
+    Map<dynamic, dynamic> bodyMap = {
+      'code': map['code'],
+      'message': map['message'],
+    };
     _eventStreamController.add({
+      "typeEvent": StringeeClientEvents,
       "eventType": StringeeClientEvents.DidFailWithError,
-      "message": map['message'],
-      "code": map['code']
+      "body": bodyMap,
     });
   }
 
@@ -306,9 +313,7 @@ class StringeeClient {
         break;
     }
     StringeeChange stringeeChange = new StringeeChange(map['changeType'], map['objects']);
-    eventStreamController.add({
-      "eventType": StringeeClientEvents.DidReceiveChange,
-      "body": stringeeChange
-    });
+    eventStreamController
+        .add({"eventType": StringeeClientEvents.DidReceiveChange, "body": stringeeChange});
   }
 }

@@ -486,77 +486,6 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
     }
 
     /**
-     * Get conversation from server
-     *
-     * @param convId
-     * @param result
-     */
-    public void getConversationFromServer(String convId, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
-        _client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
-            @Override
-            public void onSuccess(final Conversation conversation) {
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", Utils.convertConversationToJSON(conversation).toString());
-                        result.success(map);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final StringeeError error) {
-                super.onError(error);
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", error.getCode());
-                        map.put("message", error.getMessage());
-                        map.put("body", null);
-                        result.success(map);
-                    }
-                });
-            }
-        });
-    }
-
-    /**
      * Get local conversations
      *
      * @param result
@@ -1138,7 +1067,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                 map.put("nativeEventType", StringeeEnventType.ClientEvent.getValue());
                 map.put("event", "didReceiveCustomMessage");
                 Map bodyMap = new HashMap();
-                bodyMap.put("from", from);
+                bodyMap.put("fromUserId", from);
                 bodyMap.put("message", jsonObject.toString());
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin._eventSink.success(map);
@@ -1148,20 +1077,20 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
 
     @Override
     public void onTopicMessage(final String from, final JSONObject jsonObject) {
-        _handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "==========ReceiveTopicMessage==========\n" + jsonObject.toString());
-                Map map = new HashMap();
-                map.put("nativeEventType", StringeeEnventType.ClientEvent.getValue());
-                map.put("event", "didReceiveTopicMessage");
-                Map bodyMap = new HashMap();
-                bodyMap.put("from", from);
-                bodyMap.put("message", jsonObject.toString());
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
-            }
-        });
+//        _handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.d(TAG, "==========ReceiveTopicMessage==========\n" + jsonObject.toString());
+//                Map map = new HashMap();
+//                map.put("nativeEventType", StringeeEnventType.ClientEvent.getValue());
+//                map.put("event", "didReceiveTopicMessage");
+//                Map bodyMap = new HashMap();
+//                bodyMap.put("from", from);
+//                bodyMap.put("message", jsonObject.toString());
+//                map.put("body", bodyMap);
+//                StringeeFlutterPlugin._eventSink.success(map);
+//            }
+//        });
     }
 
     @Override

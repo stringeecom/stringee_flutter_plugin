@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
-import 'package:stringee_flutter_plugin/src/messaging/Message.dart';
+import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 
 import '../StringeeConstants.dart';
 import 'StringeeChange.dart';
-import 'User.dart';
+import 'StringeeUser.dart';
 
 class StringeeConversation implements StringeeObject {
   String _id;
@@ -292,5 +292,4 @@ class StringeeConversation implements StringeeObject {
   Future<Map<dynamic, dynamic>> markAsRead() async {
     return await StringeeClient.methodChannel.invokeMethod('markAsRead', this._id);
   }
-
 }

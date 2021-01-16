@@ -1,7 +1,10 @@
-import 'package:flutter/cupertino.dart';
-
 /// Type of Call
-enum StringeeCallType { AppToAppOutgoing, AppToAppIncoming, AppToPhone, PhoneToApp }
+enum StringeeCallType {
+  AppToAppOutgoing,
+  AppToAppIncoming,
+  AppToPhone,
+  PhoneToApp,
+}
 
 /// Type of Audio Device
 enum AudioDevice {

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
-import 'package:stringee_flutter_plugin/src/messaging/User.dart';
+import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
 
 import '../StringeeClient.dart';
 import '../StringeeConstants.dart';
@@ -307,8 +307,7 @@ class StringeeMessage implements StringeeObject {
             User user = new User.fromJson(notifyMap['addedby']);
             this._notiContent['addedby'] = user;
             List<User> participants = [];
-            List<dynamic> participantArray =
-                json.decode(notifyMap['participants']);
+            List<dynamic> participantArray = json.decode(notifyMap['participants']);
             for (int i = 0; i < participantArray.length; i++) {
               User user = User.fromJson(participantArray[i]);
               participants.add(user);
@@ -319,8 +318,7 @@ class StringeeMessage implements StringeeObject {
             User user = new User.fromJson(notifyMap['removedBy']);
             this._notiContent['removedBy'] = user;
             List<User> participants = [];
-            List<dynamic> participantArray =
-                json.decode(notifyMap['participants']);
+            List<dynamic> participantArray = json.decode(notifyMap['participants']);
             for (int i = 0; i < participantArray.length; i++) {
               User user = User.fromJson(participantArray[i]);
               participants.add(user);
@@ -339,15 +337,8 @@ class StringeeMessage implements StringeeObject {
     this._text = text;
   }
 
-  StringeeMessage.lstMsg(
-      String msgId,
-      String convId,
-      MsgType msgType,
-      String senderId,
-      int sequence,
-      MsgState msgState,
-      int createdAt,
-      Map<dynamic, dynamic> msgInfor) {
+  StringeeMessage.lstMsg(String msgId, String convId, MsgType msgType, String senderId,
+      int sequence, MsgState msgState, int createdAt, Map<dynamic, dynamic> msgInfor) {
     if (msgId == null ||
         msgType == null ||
         senderId == null ||
@@ -362,8 +353,7 @@ class StringeeMessage implements StringeeObject {
     this._senderId = senderId;
     this._createdAt = createdAt;
     this._sequence = sequence;
-    if (msgInfor.containsKey('metadata'))
-      this._customData = msgInfor['metadata'];
+    if (msgInfor.containsKey('metadata')) this._customData = msgInfor['metadata'];
     this._state = msgState;
     this._type = msgType;
     String text = '';
@@ -492,8 +482,7 @@ class StringeeMessage implements StringeeObject {
         if (_vcard != null) params['vcard'] = _vcard.trim();
         break;
       case MsgType.TYPE_STICKER:
-        if (_stickerCategory != null)
-          params['stickerCategory'] = _stickerCategory.trim();
+        if (_stickerCategory != null) params['stickerCategory'] = _stickerCategory.trim();
         if (_stickerName != null) params['stickerName'] = _stickerName.trim();
         break;
     }
@@ -513,17 +502,14 @@ class StringeeMessage implements StringeeObject {
   }
 
   /// Pin/Un pin [StringeeMessage]
-  Future<Map<dynamic, dynamic>> pinOrUnPin(
-      String convId, bool pinOrUnPin) async {
-    if (convId == null || convId.trim().isEmpty)
-      return await reportInvalidValue('convId');
+  Future<Map<dynamic, dynamic>> pinOrUnPin(String convId, bool pinOrUnPin) async {
+    if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
     if (pinOrUnPin == null) return await reportInvalidValue('pinOrUnPin');
     final params = {
       'convId': convId.trim(),
       'msgId': this._id,
       'pinOrUnPin': pinOrUnPin,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('pinOrUnPin', params);
+    return await StringeeClient.methodChannel.invokeMethod('pinOrUnPin', params);
   }
 }

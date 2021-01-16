@@ -1,6 +1,6 @@
 import '../StringeeConstants.dart';
-import 'Conversation.dart';
-import 'Message.dart';
+import 'StringeeConversation.dart';
+import 'StringeeMessage.dart';
 
 class StringeeObject {}
 
