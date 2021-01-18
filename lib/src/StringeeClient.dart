@@ -305,10 +305,10 @@ class StringeeClient {
     map['changeType'] = ChangeType.values[map['changeType']];
     map['objectType'] = ObjectType.values[map['objectType']];
     switch (map['objectType']) {
-      case ObjectType.CONVERSATION:
+      case ObjectType.Conversation:
         map['objects'] = new StringeeConversation.fromJson((json.decode(map['objects']))[0]);
         break;
-      case ObjectType.MESSAGE:
+      case ObjectType.Message:
         map['objects'] = new StringeeMessage.fromJson((json.decode(map['objects']))[0]);
         break;
     }

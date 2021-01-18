@@ -38,10 +38,10 @@ class User {
       String role = json['role'];
       switch (role) {
         case 'member':
-          this._role = UserRole.MEMBER;
+          this._role = UserRole.Member;
           break;
         case 'admin':
-          this._role = UserRole.ADMIN;
+          this._role = UserRole.Admin;
           break;
       }
     }
@@ -55,10 +55,10 @@ class User {
       String role = json['role'];
       switch (role) {
         case 'member':
-          this._role = UserRole.MEMBER;
+          this._role = UserRole.Member;
           break;
         case 'admin':
-          this._role = UserRole.ADMIN;
+          this._role = UserRole.Admin;
           break;
       }
     }

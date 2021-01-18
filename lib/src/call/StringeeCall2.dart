@@ -169,13 +169,13 @@ class StringeeCall2 {
       if (params['isVideoCall']) {
         if (parameters['videoQuality'] != null) {
           switch (parameters['videoQuality']) {
-            case VideoQuality.NORMAL:
+            case VideoQuality.Normal:
               params['videoQuality'] = "NORMAL";
               break;
-            case VideoQuality.HD:
+            case VideoQuality.Hd:
               params['videoQuality'] = "HD";
               break;
-            case VideoQuality.FULLHD:
+            case VideoQuality.FullHd:
               params['videoQuality'] = "FULLHD";
               break;
           }

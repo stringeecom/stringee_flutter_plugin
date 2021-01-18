@@ -8,11 +8,11 @@ enum StringeeCallType {
 
 /// Type of Audio Device
 enum AudioDevice {
-  SPEAKER_PHONE,
-  WIRED_HEADSET,
-  EARPIECE,
-  BLUETOOTH,
-  NONE,
+  SpeakerPhone,
+  WiredHeadset,
+  Earpiece,
+  Bluetooth,
+  None,
 }
 
 /// Type of Signaling State
@@ -32,15 +32,15 @@ enum StringeeMediaState {
 
 /// Type of Video Quality
 enum VideoQuality {
-  NORMAL,
-  HD,
-  FULLHD,
+  Normal,
+  Hd,
+  FullHd,
 }
 
 ///Type of Scaling type
 enum ScalingType {
-  SCALE_ASPECT_FIT,
-  SCALE_ASPECT_FILL,
+  Fit,
+  Fill,
 }
 
 class MakeCallParams {
@@ -63,7 +63,7 @@ class MakeCallParams {
     this._isVideoCall = (isVideoCall != null) ? isVideoCall : false;
     if (customData != null) this._customData = customData;
     if (this._isVideoCall)
-      this._videoQuality = (videoQuality != null) ? videoQuality : VideoQuality.NORMAL;
+      this._videoQuality = (videoQuality != null) ? videoQuality : VideoQuality.Normal;
   }
 
   VideoQuality get videoQuality => _videoQuality;
@@ -84,13 +84,13 @@ class MakeCallParams {
     params['isVideoCall'] = this._isVideoCall;
     if (this._isVideoCall) {
       switch (this._videoQuality) {
-        case VideoQuality.NORMAL:
+        case VideoQuality.Normal:
           params['videoResolution'] = "NORMAL";
           break;
-        case VideoQuality.HD:
+        case VideoQuality.Hd:
           params['videoResolution'] = "HD";
           break;
-        case VideoQuality.FULLHD:
+        case VideoQuality.FullHd:
           params['videoResolution'] = "FULLHD";
           break;
       }

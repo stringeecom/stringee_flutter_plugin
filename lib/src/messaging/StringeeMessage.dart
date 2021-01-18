@@ -50,7 +50,7 @@ class StringeeMessage implements StringeeObject {
     String text, {
     Map<dynamic, dynamic> customData,
   }) : assert(text != null || text.trim().isNotEmpty) {
-    this._type = MsgType.TYPE_TEXT;
+    this._type = MsgType.Text;
     this._text = text.trim();
     if (customData != null) {
       this._customData = customData;
@@ -63,7 +63,7 @@ class StringeeMessage implements StringeeObject {
     double ratio,
     Map<dynamic, dynamic> customData,
   }) : assert(filePath != null || filePath.trim().isNotEmpty) {
-    this._type = MsgType.TYPE_PHOTO;
+    this._type = MsgType.Photo;
     this._filePath = filePath.trim();
     if (thumbnail != null) {
       this._thumbnail = thumbnail.trim();
@@ -84,7 +84,7 @@ class StringeeMessage implements StringeeObject {
     Map<dynamic, dynamic> customData,
   })  : assert(filePath != null || filePath.trim().isNotEmpty),
         assert(duration != null || duration > 0) {
-    this._type = MsgType.TYPE_VIDEO;
+    this._type = MsgType.Video;
     this._filePath = filePath.trim();
     this._duration = duration;
     if (thumbnail != null) {
@@ -104,7 +104,7 @@ class StringeeMessage implements StringeeObject {
     Map<dynamic, dynamic> customData,
   })  : assert(filePath != null || filePath.trim().isNotEmpty),
         assert(duration != null || duration > 0) {
-    this._type = MsgType.TYPE_AUDIO;
+    this._type = MsgType.Audio;
     this._filePath = filePath.trim();
     this._duration = duration;
     if (customData != null) {
@@ -118,7 +118,7 @@ class StringeeMessage implements StringeeObject {
     int fileLength,
     Map<dynamic, dynamic> customData,
   }) : assert(filePath != null || filePath.trim().isNotEmpty) {
-    this._type = MsgType.TYPE_FILE;
+    this._type = MsgType.File;
     this._filePath = filePath.trim();
     if (fileName != null) {
       this._fileName = fileName.trim();
@@ -136,7 +136,7 @@ class StringeeMessage implements StringeeObject {
     String text, {
     Map<dynamic, dynamic> customData,
   }) : assert(text != null || text.trim().isNotEmpty) {
-    this._type = MsgType.TYPE_LINK;
+    this._type = MsgType.Link;
     this._text = text.trim();
     if (customData != null) {
       this._customData = customData;
@@ -149,7 +149,7 @@ class StringeeMessage implements StringeeObject {
     Map<dynamic, dynamic> customData,
   })  : assert(latitude != null || latitude > 0),
         assert(longitude != null || longitude > 0) {
-    this._type = MsgType.TYPE_LOCATION;
+    this._type = MsgType.Location;
     this._latitude = latitude;
     this._longitude = longitude;
     if (customData != null) {
@@ -161,7 +161,7 @@ class StringeeMessage implements StringeeObject {
     String vcard, {
     Map<dynamic, dynamic> customData,
   }) : assert(vcard != null || vcard.trim().isNotEmpty) {
-    this._type = MsgType.TYPE_CONTACT;
+    this._type = MsgType.Contact;
     this._vcard = vcard.trim();
     if (customData != null) {
       this._customData = customData;
@@ -174,7 +174,7 @@ class StringeeMessage implements StringeeObject {
     Map<dynamic, dynamic> customData,
   })  : assert(stickerCategory != null || stickerCategory.trim().isNotEmpty),
         assert(stickerName != null || stickerName.trim().isNotEmpty) {
-    this._type = MsgType.TYPE_CONTACT;
+    this._type = MsgType.Contact;
     this._stickerName = stickerName.trim();
     this._stickerCategory = stickerCategory.trim();
     if (customData != null) {
@@ -249,20 +249,20 @@ class StringeeMessage implements StringeeObject {
     this._type = msgType;
     String text = '';
     switch (this._type) {
-      case MsgType.TYPE_TEXT:
-      case MsgType.TYPE_LINK:
-      case MsgType.TYPE_CREATE_CONVERSATION:
-      case MsgType.TYPE_RENAME_CONVERSATION:
+      case MsgType.Text:
+      case MsgType.Link:
+      case MsgType.CreateConversation:
+      case MsgType.RenameConversation:
         text = msgInfor['content']['text'];
         break;
-      case MsgType.TYPE_PHOTO:
+      case MsgType.Photo:
         Map<dynamic, dynamic> photoMap = msgInfor['content']['photo'];
         this._filePath = photoMap['filePath'];
         this._fileUrl = photoMap['fileUrl'];
         this._thumbnail = photoMap['thumbnail'];
         this._ratio = photoMap['ratio'];
         break;
-      case MsgType.TYPE_VIDEO:
+      case MsgType.Video:
         Map<dynamic, dynamic> videoMap = msgInfor['content']['video'];
         this._filePath = videoMap['filePath'];
         this._fileUrl = videoMap['fileUrl'];
@@ -270,40 +270,40 @@ class StringeeMessage implements StringeeObject {
         this._ratio = videoMap['ratio'];
         this._duration = videoMap['duration'];
         break;
-      case MsgType.TYPE_AUDIO:
+      case MsgType.Audio:
         Map<dynamic, dynamic> audioMap = msgInfor['content']['audio'];
         this._filePath = audioMap['filePath'];
         this._fileUrl = audioMap['fileUrl'];
         this._duration = audioMap['duration'];
         break;
-      case MsgType.TYPE_FILE:
+      case MsgType.File:
         Map<dynamic, dynamic> fileMap = msgInfor['content']['file'];
         this._filePath = fileMap['filePath'];
         this._fileUrl = fileMap['fileUrl'];
         this._fileName = fileMap['fileName'];
         this._fileLength = fileMap['fileLength'];
         break;
-      case MsgType.TYPE_LOCATION:
+      case MsgType.Location:
         Map<dynamic, dynamic> locationMap = msgInfor['content']['location'];
         this._latitude = locationMap['lat'];
         this._longitude = locationMap['lon'];
         break;
-      case MsgType.TYPE_CONTACT:
+      case MsgType.Contact:
         Map<dynamic, dynamic> contactMap = msgInfor['content']['contact'];
         this._vcard = contactMap['vcard'];
         break;
-      case MsgType.TYPE_STICKER:
+      case MsgType.Sticker:
         Map<dynamic, dynamic> stickerMap = msgInfor['content']['sticker'];
         this._stickerName = stickerMap['name'];
         this._stickerCategory = stickerMap['category'];
         break;
-      case MsgType.TYPE_NOTIFICATION:
+      case MsgType.Notification:
         Map<dynamic, dynamic> notifyMap = msgInfor['content'];
         this._notiContent = new Map<dynamic, dynamic>();
         MsgNotifyType notifyType = (notifyMap['type'] as int).notifyType;
         this._notiContent['type'] = notifyType;
         switch (notifyType) {
-          case MsgNotifyType.TYPE_ADD_PARTICIPANTS:
+          case MsgNotifyType.AddParticipants:
             User user = new User.fromJson(notifyMap['addedby']);
             this._notiContent['addedby'] = user;
             List<User> participants = [];
@@ -314,7 +314,7 @@ class StringeeMessage implements StringeeObject {
             }
             this._notiContent[participants] = participants;
             break;
-          case MsgNotifyType.TYPE_REMOVE_PARTICIPANTS:
+          case MsgNotifyType.RemoveParticipants:
             User user = new User.fromJson(notifyMap['removedBy']);
             this._notiContent['removedBy'] = user;
             List<User> participants = [];
@@ -325,10 +325,10 @@ class StringeeMessage implements StringeeObject {
             }
             this._notiContent[participants] = participants;
             break;
-          case MsgNotifyType.TYPE_CHANGE_GROUP_NAME:
+          case MsgNotifyType.ChangeGroupName:
             this._notiContent = notifyMap;
             break;
-          case MsgNotifyType.TYPE_END_CONV:
+          case MsgNotifyType.EndConversation:
             this._notiContent = notifyMap;
             break;
         }
@@ -358,22 +358,22 @@ class StringeeMessage implements StringeeObject {
     this._type = msgType;
     String text = '';
     switch (this._type) {
-      case MsgType.TYPE_TEXT:
-      case MsgType.TYPE_LINK:
+      case MsgType.Text:
+      case MsgType.Link:
         text = msgInfor['text'];
         break;
-      case MsgType.TYPE_CREATE_CONVERSATION:
-      case MsgType.TYPE_RENAME_CONVERSATION:
+      case MsgType.CreateConversation:
+      case MsgType.RenameConversation:
         this._senderId = msgInfor['creator'];
         break;
-      case MsgType.TYPE_PHOTO:
+      case MsgType.Photo:
         Map<dynamic, dynamic> photoMap = msgInfor['photo'];
         this._filePath = photoMap['filePath'];
         this._fileUrl = photoMap['fileUrl'];
         this._thumbnail = photoMap['thumbnail'];
         this._ratio = photoMap['ratio'];
         break;
-      case MsgType.TYPE_VIDEO:
+      case MsgType.Video:
         Map<dynamic, dynamic> videoMap = msgInfor['video'];
         this._filePath = videoMap['filePath'];
         this._fileUrl = videoMap['fileUrl'];
@@ -381,39 +381,39 @@ class StringeeMessage implements StringeeObject {
         this._ratio = videoMap['ratio'];
         this._duration = videoMap['duration'];
         break;
-      case MsgType.TYPE_AUDIO:
+      case MsgType.Audio:
         Map<dynamic, dynamic> audioMap = msgInfor['audio'];
         this._filePath = audioMap['filePath'];
         this._fileUrl = audioMap['fileUrl'];
         this._duration = audioMap['duration'];
         break;
-      case MsgType.TYPE_FILE:
+      case MsgType.File:
         Map<dynamic, dynamic> fileMap = msgInfor['file'];
         this._filePath = fileMap['filePath'];
         this._fileUrl = fileMap['fileUrl'];
         this._fileName = fileMap['fileName'];
         this._fileLength = fileMap['fileLength'];
         break;
-      case MsgType.TYPE_LOCATION:
+      case MsgType.Location:
         Map<dynamic, dynamic> locationMap = msgInfor['location'];
         this._latitude = locationMap['lat'];
         this._longitude = locationMap['lon'];
         break;
-      case MsgType.TYPE_CONTACT:
+      case MsgType.Contact:
         Map<dynamic, dynamic> contactMap = msgInfor['contact'];
         this._vcard = contactMap['vcard'];
         break;
-      case MsgType.TYPE_STICKER:
+      case MsgType.Sticker:
         Map<dynamic, dynamic> stickerMap = msgInfor['sticker'];
         this._stickerName = stickerMap['name'];
         this._stickerCategory = stickerMap['category'];
         break;
-      case MsgType.TYPE_NOTIFICATION:
+      case MsgType.Notification:
         this._notiContent = new Map<dynamic, dynamic>();
         MsgNotifyType notifyType = (msgInfor['type'] as int).notifyType;
         this._notiContent['type'] = notifyType;
         switch (notifyType) {
-          case MsgNotifyType.TYPE_ADD_PARTICIPANTS:
+          case MsgNotifyType.AddParticipants:
             User user = new User.fromJsonNotify(msgInfor['addedInfo']);
             this._notiContent['addedby'] = user;
             List<User> participants = [];
@@ -424,7 +424,7 @@ class StringeeMessage implements StringeeObject {
             }
             this._notiContent[participants] = participants;
             break;
-          case MsgNotifyType.TYPE_REMOVE_PARTICIPANTS:
+          case MsgNotifyType.RemoveParticipants:
             User user = new User.fromJsonNotify(msgInfor['removedInfo']);
             this._notiContent['removedBy'] = user;
             List<User> participants = [];
@@ -435,8 +435,8 @@ class StringeeMessage implements StringeeObject {
             }
             this._notiContent[participants] = participants;
             break;
-          case MsgNotifyType.TYPE_CHANGE_GROUP_NAME:
-          case MsgNotifyType.TYPE_END_CONV:
+          case MsgNotifyType.ChangeGroupName:
+          case MsgNotifyType.EndConversation:
             break;
         }
         break;
@@ -450,38 +450,38 @@ class StringeeMessage implements StringeeObject {
     params['type'] = _type.value;
     if (_customData != null) params['customData'] = _customData;
     switch (this._type) {
-      case MsgType.TYPE_TEXT:
-      case MsgType.TYPE_LINK:
+      case MsgType.Text:
+      case MsgType.Link:
         params['text'] = _text.trim();
         break;
-      case MsgType.TYPE_PHOTO:
+      case MsgType.Photo:
         if (_filePath != null) params['filePath'] = _filePath.trim();
         if (_thumbnail != null) params['thumbnail'] = _thumbnail.trim();
         if (_ratio != null) params['ratio'] = _ratio;
         break;
-      case MsgType.TYPE_FILE:
+      case MsgType.File:
         if (_filePath != null) params['filePath'] = _filePath.trim();
         if (_fileName != null) params['filename'] = _fileName.trim();
         if (_fileLength != null) params['length'] = _fileLength;
         break;
-      case MsgType.TYPE_VIDEO:
+      case MsgType.Video:
         if (_filePath != null) params['filePath'] = _filePath.trim();
         if (_thumbnail != null) params['thumbnail'] = _thumbnail.trim();
         if (_ratio != null) params['ratio'] = _ratio;
         if (_duration != null) params['duration'] = _duration;
         break;
-      case MsgType.TYPE_AUDIO:
+      case MsgType.Audio:
         if (_filePath != null) params['filePath'] = _filePath.trim();
         if (_duration != null) params['duration'] = _duration;
         break;
-      case MsgType.TYPE_LOCATION:
+      case MsgType.Location:
         if (_latitude != null) params['lat'] = _latitude;
         if (_longitude != null) params['lon'] = _longitude;
         break;
-      case MsgType.TYPE_CONTACT:
+      case MsgType.Contact:
         if (_vcard != null) params['vcard'] = _vcard.trim();
         break;
-      case MsgType.TYPE_STICKER:
+      case MsgType.Sticker:
         if (_stickerCategory != null) params['stickerCategory'] = _stickerCategory.trim();
         if (_stickerName != null) params['stickerName'] = _stickerName.trim();
         break;

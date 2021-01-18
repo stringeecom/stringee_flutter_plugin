@@ -33,7 +33,7 @@ class ChatState extends State<Chat> {
       if (map['typeEvent'] == StringeeClientEvents &&
           map['eventType'] == StringeeClientEvents.DidReceiveChange) {
         StringeeChange stringeeChange = map['body'];
-        if (stringeeChange.objectType == ObjectType.CONVERSATION) {
+        if (stringeeChange.objectType == ObjectType.Conversation) {
           StringeeConversation conversation = stringeeChange.object;
           setState(() {
             _log.add(conversation.id + ' ' + stringeeChange.changeType.toString());

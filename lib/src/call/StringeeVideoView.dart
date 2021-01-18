@@ -14,7 +14,7 @@ class StringeeVideoView extends StatefulWidget {
   final EdgeInsetsGeometry margin;
   final AlignmentGeometry alignment;
   final EdgeInsetsGeometry padding;
-  ScalingType scalingType = ScalingType.SCALE_ASPECT_FILL;
+  ScalingType scalingType = ScalingType.Fill;
   final double height;
   final double width;
   final Color color;
@@ -63,10 +63,10 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     };
 
     switch (widget.scalingType) {
-      case ScalingType.SCALE_ASPECT_FILL:
+      case ScalingType.Fill:
         creationParams['scalingType'] = "FILL";
         break;
-      case ScalingType.SCALE_ASPECT_FIT:
+      case ScalingType.Fit:
         creationParams['scalingType'] = "FIT";
         break;
       default:

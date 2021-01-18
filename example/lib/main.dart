@@ -171,11 +171,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             print(
                 stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
             switch (stringeeChange.objectType) {
-              case ObjectType.CONVERSATION:
+              case ObjectType.Conversation:
                 StringeeConversation conversation = stringeeChange.object;
                 print(conversation.id.toString());
                 break;
-              case ObjectType.MESSAGE:
+              case ObjectType.Message:
                 StringeeMessage message = stringeeChange.object;
                 print(message.id.toString() + '\t' + message.type.toString());
             }
