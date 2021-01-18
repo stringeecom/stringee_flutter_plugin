@@ -191,6 +191,34 @@
     }];
 }
 
+- (void)getMessages:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== getMessages: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    NSArray *msgIds = [data objectForKey:@"msgIds"];
+
+    if (convId == nil || convId.length == 0 || msgIds == nil || msgIds.count == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        [conversation getMessageWithIds:msgIds completion:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *msgs) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:msgs]});
+        }];
+    }];
+}
+
 - (void)getLocalMessages:(id)arguments result:(FlutterResult)result {
     if (!_client || !_client.hasConnected) {
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
@@ -257,6 +285,7 @@
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     int count = [[data objectForKey:@"count"] intValue];
+    int seq = [[data objectForKey:@"seq"] intValue];
 
     if (convId == nil || convId.length == 0) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
@@ -269,11 +298,123 @@
             return;
         }
         
-        [conversation getLastMessagesWithCount:count loadDeletedMessage:false loadDeletedMessageContent:false completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
+        [conversation getMessagesAfter:seq withCount:count loadDeletedMessage:false loadDeletedMessageContent:false completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:messages]});
         }];
     }];
 }
 
+- (void)getMessagesBefore:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== getMessagesBefore: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    int count = [[data objectForKey:@"count"] intValue];
+    int seq = [[data objectForKey:@"seq"] intValue];
+
+    if (convId == nil || convId.length == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        [conversation getMessagesBefore:seq withCount:count loadDeletedMessage:false loadDeletedMessageContent:false completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:messages]});
+        }];
+    }];
+}
+
+- (void)deleteMessages:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== deleteMessages: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    NSArray *msgIds = [data objectForKey:@"msgIds"];
+
+    if (convId == nil || convId.length == 0 || msgIds == nil || msgIds.count == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        [conversation deleteMessageWithMessageIds:msgIds withCompletionHandler:^(BOOL status, int code, NSString *message) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
+        }];
+    }];
+}
+
+- (void)revokeMessages:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== deleteMessages: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    NSArray *msgIds = [data objectForKey:@"msgIds"];
+    BOOL isDeleted = [[data objectForKey:@"isDeleted"] boolValue];
+
+    if (convId == nil || convId.length == 0 || msgIds == nil || msgIds.count == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Conversation is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        dispatch_group_t group = dispatch_group_create();
+        __block BOOL returnStatus = true;
+        __block int returnCode = 0;
+        __block NSString *returnMessage = @"Success";
+        
+        for (NSString *msgId in msgIds) {
+            if (msgId.length == 0) {
+                continue;
+            }
+
+            [conversation getMessageWithId:msgId completion:^(BOOL status, int code, NSString *message, StringeeMessage *msg) {
+                if (msg == nil) {
+                    return;
+                }
+                
+                dispatch_group_async(group,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+                    [conversation revokeMessage:msg deleted:isDeleted completion:^(BOOL status, int code, NSString *message) {
+                        if (!status) {
+                            returnStatus = status;
+                            returnMessage = message;
+                            returnCode = code;
+                        }
+                    }];
+                });
+            }];
+        }
+        
+        dispatch_group_notify(group,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+            result(@{STEStatus : @(returnStatus), STECode : @(returnCode), STEMessage: returnMessage, STEBody: [NSNull null]});
+        });
+    }];
+}
 
 @end

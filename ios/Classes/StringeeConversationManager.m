@@ -189,7 +189,7 @@
     }];
 }
 
-- (void)delete:(id)arguments result:(FlutterResult)result {
+- (void)deleteConv:(id)arguments result:(FlutterResult)result {
     if (!_client || !_client.hasConnected) {
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
@@ -272,5 +272,91 @@
     }];
 }
 
+- (void)setRole:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== setRole: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    NSString *userId = [data objectForKey:@"userId"];
+    int intRole = [[data objectForKey:@"role"] intValue];
+    StringeeRole role = intRole == 0 ? StringeeRoleAdmin : StringeeRoleMember;
+
+    if (convId == nil || convId.length == 0 || userId == nil || userId.length == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        StringeeIdentity *part = [[StringeeIdentity alloc] init];
+        part.userId = userId;
+        
+        [conversation setRole:role forPart:part completion:^(BOOL status, int code, NSString *message) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
+        }];
+    }];
+}
+
+- (void)updateConversation:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== updateConversation: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    NSString *name = [data objectForKey:@"name"];
+
+    if (convId == nil || convId.length == 0 || name == nil || name.length == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        [conversation updateWithName:name strAvatarUrl:@"" completionHandler:^(BOOL status, int code, NSString *message) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
+        }];
+    }];
+}
+
+- (void)markAsRead:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== markAsRead: %@", arguments);
+    NSString *convId = (NSString *)arguments;
+
+    if (convId == nil || convId.length == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        [conversation markAllMessagesAsSeenWithCompletionHandler:^(BOOL status, int code, NSString *message) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
+        }];
+    }];
+}
 
 @end

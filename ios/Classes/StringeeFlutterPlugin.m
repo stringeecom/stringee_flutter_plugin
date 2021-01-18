@@ -145,8 +145,74 @@
     else if ([call.method isEqualToString:@"createConversation"]) {
         [_convManager createConversation:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"getConversationById"]) {
+        [_convManager getConversationById:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getConversationByUserId"]) {
+        [_convManager getConversationByUserId:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getLocalConversations"]) {
+        [_convManager getLocalConversations:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getLastConversation"]) {
+        [_convManager getLastConversation:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getConversationsBefore"]) {
+        [_convManager getConversationsBefore:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getConversationsAfter"]) {
+        [_convManager getConversationsAfter:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"clearDb"]) {
+        [_convManager clearDb:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getTotalUnread"]) {
+        [_convManager getTotalUnread:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"delete"]) {
+        [_convManager deleteConv:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"addParticipants"]) {
+        [_convManager addParticipants:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"removeParticipants"]) {
+        [_convManager removeParticipants:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"updateConversation"]) {
+        [_convManager updateConversation:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"setRole"]) {
+        [_convManager setRole:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"markAsRead"]) {
+        [_convManager markAsRead:call.arguments result:result];
+    }
     
     // Message
+    else if ([call.method isEqualToString:@"sendMessage"]) {
+        [_msgManager sendMessage:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getMessages"]) {
+        [_msgManager getMessages:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getLocalMessages"]) {
+        [_msgManager getLocalMessages:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getLastMessages"]) {
+        [_msgManager getLastMessages:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getMessagesAfter"]) {
+        [_msgManager getMessagesAfter:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"getMessagesBefore"]) {
+        [_msgManager getMessagesBefore:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"deleteMessages"]) {
+        [_msgManager deleteMessages:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"revokeMessages"]) {
+        [_msgManager revokeMessages:call.arguments result:result];
+    }
     
     else {
         result(FlutterMethodNotImplemented);

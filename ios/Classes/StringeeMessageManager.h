@@ -19,6 +19,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setEventSink:(FlutterEventSink)eventSink;
 
+- (void)sendMessage:(id)arguments result:(FlutterResult)result;
+
+- (void)getMessages:(id)arguments result:(FlutterResult)result;
+
+- (void)getLocalMessages:(id)arguments result:(FlutterResult)result;
+
+- (void)getLastMessages:(id)arguments result:(FlutterResult)result;
+
+- (void)getMessagesAfter:(id)arguments result:(FlutterResult)result;
+
+- (void)getMessagesBefore:(id)arguments result:(FlutterResult)result;
+
+- (void)deleteMessages:(id)arguments result:(FlutterResult)result;
+
+- (void)revokeMessages:(id)arguments result:(FlutterResult)result;
+
 @end
 
 NS_ASSUME_NONNULL_END
