@@ -153,7 +153,7 @@ class _CallState extends State<Call> {
             margin: EdgeInsets.only(top: 100.0, right: 25.0),
             height: 200.0,
             width: 150.0,
-            scalingType: ScalingType.SCALE_ASPECT_FILL,
+            scalingType: ScalingType.Fill,
           )
         : Placeholder();
 
@@ -164,7 +164,7 @@ class _CallState extends State<Call> {
             color: Colors.blue,
             isOverlay: false,
             isMirror: false,
-            scalingType: ScalingType.SCALE_ASPECT_FILL,
+            scalingType: ScalingType.Fill,
           )
         : Placeholder();
 
@@ -238,7 +238,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoQuality': VideoQuality.FULLHD,
+        'videoQuality': VideoQuality.FullHd,
       };
 
       _stringeeCall.makeCall(parameters).then((result) {
@@ -308,7 +308,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoQuality': VideoQuality.FULLHD,
+        'videoQuality': VideoQuality.FullHd,
       };
 
       _stringeeCall2.makeCall(parameters).then((result) {
@@ -464,8 +464,8 @@ class _CallState extends State<Call> {
       AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
     print('handleChangeAudioDeviceEvent - $audioDevice');
     switch (audioDevice) {
-      case AudioDevice.SPEAKER_PHONE:
-      case AudioDevice.EARPIECE:
+      case AudioDevice.SpeakerPhone:
+      case AudioDevice.Earpiece:
         if (call != null) {
           call.setSpeakerphoneOn(widget.isSpeaker);
         }
@@ -473,8 +473,8 @@ class _CallState extends State<Call> {
           call2.setSpeakerphoneOn(widget.isSpeaker);
         }
         break;
-      case AudioDevice.BLUETOOTH:
-      case AudioDevice.WIRED_HEADSET:
+      case AudioDevice.Bluetooth:
+      case AudioDevice.WiredHeadset:
         widget.isSpeaker = false;
         if (call != null) {
           call.setSpeakerphoneOn(widget.isSpeaker);
@@ -483,7 +483,7 @@ class _CallState extends State<Call> {
           call2.setSpeakerphoneOn(widget.isSpeaker);
         }
         break;
-      case AudioDevice.NONE:
+      case AudioDevice.None:
         print('handleChangeAudioDeviceEvent - non audio devices connected');
         break;
     }

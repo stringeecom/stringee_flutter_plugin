@@ -8,7 +8,6 @@ enum StringeeClientEvents {
   DidFailWithError,
   RequestAccessToken,
   DidReceiveCustomMessage,
-  DidReceiveTopicMessage,
   IncomingCall,
   IncomingCall2,
   DidReceiveChange,

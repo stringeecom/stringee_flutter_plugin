@@ -56,7 +56,7 @@ class ConversationInforState extends State<ConversationInfor> {
       if (map['typeEvent'] == StringeeClientEvents &&
           map['eventType'] == StringeeClientEvents.DidReceiveChange) {
         StringeeChange stringeeChange = map['body'];
-        if (stringeeChange.objectType == ObjectType.MESSAGE) {
+        if (stringeeChange.objectType == ObjectType.Message) {
           StringeeMessage message = stringeeChange.object;
           setState(() {
             _log.add((message.id != null)
@@ -442,7 +442,7 @@ class ConversationInforState extends State<ConversationInfor> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _conversation.setRole('ACTXV7BTAP', UserRole.ADMIN).then((value) {
+                              _conversation.setRole('ACTXV7BTAP', UserRole.Admin).then((value) {
                                 setState(() {
                                   _log.add('Set role: msg:' + value['message']);
                                 });

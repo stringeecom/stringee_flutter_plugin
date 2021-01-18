@@ -150,16 +150,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             handleDiddisconnectEvent();
             break;
           case StringeeClientEvents.DidFailWithError:
-            handleDidFailWithErrorEvent(map['code'], map['message']);
+            handleDidFailWithErrorEvent(map['body']['code'], map['body']['message']);
             break;
           case StringeeClientEvents.RequestAccessToken:
             handleRequestAccessTokenEvent();
             break;
           case StringeeClientEvents.DidReceiveCustomMessage:
             handleDidReceiveCustomMessageEvent(map['body']);
-            break;
-          case StringeeClientEvents.DidReceiveTopicMessage:
-            handleDidReceiveTopicMessageEvent(map['body']);
             break;
           case StringeeClientEvents.IncomingCall:
             StringeeCall call = map['body'];
@@ -174,11 +171,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             print(
                 stringeeChange.objectType.toString() + '\t' + stringeeChange.changeType.toString());
             switch (stringeeChange.objectType) {
-              case ObjectType.CONVERSATION:
+              case ObjectType.Conversation:
                 StringeeConversation conversation = stringeeChange.object;
                 print(conversation.id.toString());
                 break;
-              case ObjectType.MESSAGE:
+              case ObjectType.Message:
                 StringeeMessage message = stringeeChange.object;
                 print(message.id.toString() + '\t' + message.type.toString());
             }
@@ -258,11 +255,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
-    print('from: ' + map['from'] + '\nmessage: ' + map['msg']);
-  }
-
-  void handleDidReceiveTopicMessageEvent(Map<dynamic, dynamic> map) {
-    print('from: ' + map['from'] + '\nmessage: ' + map['msg']);
+    print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message']);
   }
 
   void handleIncomingCallEvent(StringeeCall call) {

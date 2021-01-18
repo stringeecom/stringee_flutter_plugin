@@ -112,18 +112,13 @@ public class Utils {
         JSONObject conversationObject = new JSONObject();
         try {
             conversationObject.put("id", conversation.getId());
-            conversationObject.put("localId", conversation.getLocalId());
             conversationObject.put("name", conversation.getName());
-            conversationObject.put("isDistinct", conversation.isDistinct());
             conversationObject.put("isGroup", conversation.isGroup());
-            conversationObject.put("isEnded", conversation.isEnded());
-            conversationObject.put("clientId", conversation.getClientId());
             conversationObject.put("creator", conversation.getCreator());
-            conversationObject.put("createAt", conversation.getCreateAt());
+            conversationObject.put("createdAt", conversation.getCreateAt());
             conversationObject.put("updatedAt", conversation.getUpdateAt());
             conversationObject.put("totalUnread", conversation.getTotalUnread());
             conversationObject.put("text", conversation.getText());
-            conversationObject.put("state", conversation.getState());
             conversationObject.put("lastMsgSender", conversation.getLastMsgSender());
             conversationObject.put("lastMsgType", conversation.getLastMsgType());
             conversationObject.put("lastMsgId", conversation.getLastMsgId());
@@ -133,7 +128,7 @@ public class Utils {
 
             if (conversation.getLastMsg() != null) {
                 JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
-                conversationObject.put("lastMsg", lastMsgMap);
+                conversationObject.put("text", lastMsgMap);
             }
             conversationObject.put("pinnedMsgId", conversation.getPinnedMsgId());
 
@@ -153,16 +148,13 @@ public class Utils {
         JSONObject msgObject = new JSONObject();
         try {
             msgObject.put("id", message.getId());
+            msgObject.put("localId", message.getLocalId());
             msgObject.put("convId", message.getConversationId());
             msgObject.put("senderId", message.getSenderId());
             msgObject.put("createdAt", message.getCreatedAt());
-            msgObject.put("updateAt", message.getUpdateAt());
             msgObject.put("sequence", message.getSequence());
-            msgObject.put("isDeleted", message.isDeleted());
-            msgObject.put("clientId", message.getClientId());
             msgObject.put("customData", message.getCustomData());
             msgObject.put("state", message.getState().getValue());
-            msgObject.put("msgType", message.getMsgType());
             msgObject.put("type", message.getType());
             JSONObject contentObject = new JSONObject();
             switch (message.getType()) {
@@ -205,6 +197,7 @@ public class Utils {
                 case 7:
                 case 8:
                     contentObject.put("text", "");
+                    break;
                 case 9:
                     JSONObject locationObject = new JSONObject();
                     locationObject.put("lat", message.getLatitude());
@@ -271,8 +264,8 @@ public class Utils {
                     contentObject.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")).toString());
                     break;
                 case 3:
-                    break;
                 case 4:
+                    contentObject.put("content", notifyObject.toString());
                     break;
             }
 

@@ -1,6 +1,6 @@
 import '../StringeeConstants.dart';
-import 'Conversation.dart';
-import 'Message.dart';
+import 'StringeeConversation.dart';
+import 'StringeeMessage.dart';
 
 class StringeeObject {}
 
@@ -23,9 +23,9 @@ class StringeeChange {
 
   ObjectType getType(StringeeObject object) {
     if (object is StringeeConversation) {
-      return ObjectType.CONVERSATION;
+      return ObjectType.Conversation;
     } else if (object is StringeeMessage) {
-      return ObjectType.MESSAGE;
+      return ObjectType.Message;
     } else {
       throw new ArgumentError("Invalid object type: " + object.toString());
     }
