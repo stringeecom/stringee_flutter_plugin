@@ -195,6 +195,7 @@ class _CallState extends State<Call> {
     // Listen events
     _stringeeCall.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
+      print("Call " + map.toString());
       switch (map['eventType']) {
         case StringeeCallEvents.didChangeSignalingState:
           handleSignalingStateChangeEvent(map['body']);

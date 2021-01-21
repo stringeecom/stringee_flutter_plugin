@@ -85,8 +85,6 @@ class StringeeCall2 {
           handleChangeAudioDevice(map['body']);
           break;
       }
-    } else {
-      eventStreamController.add(event);
     }
   }
 

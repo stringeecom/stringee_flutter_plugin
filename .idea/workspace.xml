@@ -27,27 +27,10 @@
     <list default="true" id="bb5e12ef-f814-4430-bbc6-90d2bee1717b" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/Call.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/Call.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/Chat.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/Chat.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/ConversationInfor.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/ConversationInfor.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeConversationManager.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeConversationManager.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeFlutterPlugin.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeFlutterPlugin.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeFlutterPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeFlutterPlugin.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeHelper.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeHelper.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeMessageManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeMessageManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeMessageManager.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeMessageManager.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/StringeeClient.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/StringeeClient.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/StringeeConstants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/StringeeConstants.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/call/StringeeCall.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/call/StringeeCall.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/call/StringeeCall2.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/call/StringeeCall2.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/messaging/ConversationOption.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/StringeeConversationOption.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/messaging/StringeeChange.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/StringeeObjectChange.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/messaging/StringeeConversation.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/StringeeConversation.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/messaging/StringeeMessage.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/StringeeMessage.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/messaging/StringeeUser.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/messaging/StringeeUser.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/stringee_flutter_plugin.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/stringee_flutter_plugin.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,50 +202,54 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state width="1875" height="290" key="GridCell.Tab.-1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1606895245525" />
-    <state width="1844" height="55" key="GridCell.Tab.0.bottom" timestamp="1610711830871">
+    <state width="924" height="245" key="GridCell.Tab.0.bottom" timestamp="1611218416562">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844325767" />
     <state width="1875" height="335" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
-    <state width="1844" height="55" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1610711830871" />
-    <state width="1844" height="55" key="GridCell.Tab.0.center" timestamp="1610711830871">
+    <state width="924" height="245" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416562" />
+    <state width="924" height="245" key="GridCell.Tab.0.center" timestamp="1611218416561">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844325766" />
     <state width="1875" height="335" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
-    <state width="1844" height="55" key="GridCell.Tab.0.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1610711830871" />
-    <state width="1844" height="55" key="GridCell.Tab.0.left" timestamp="1610711830870">
+    <state width="924" height="245" key="GridCell.Tab.0.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416561" />
+    <state width="924" height="245" key="GridCell.Tab.0.left" timestamp="1611218416561">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844325766" />
     <state width="1875" height="335" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
-    <state width="1844" height="55" key="GridCell.Tab.0.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1610711830870" />
-    <state width="1844" height="55" key="GridCell.Tab.0.right" timestamp="1610711830871">
+    <state width="924" height="245" key="GridCell.Tab.0.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416560" />
+    <state width="924" height="245" key="GridCell.Tab.0.right" timestamp="1611218416561">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844325766" />
     <state width="1875" height="335" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
-    <state width="1844" height="55" key="GridCell.Tab.0.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1610711830871" />
-    <state width="1875" height="316" key="GridCell.Tab.1.bottom" timestamp="1609844326566">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="924" height="245" key="GridCell.Tab.0.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416561" />
+    <state width="924" height="245" key="GridCell.Tab.1.bottom" timestamp="1611218416564">
+      <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844326566" />
     <state width="1875" height="335" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
-    <state width="1875" height="316" key="GridCell.Tab.1.center" timestamp="1609844326566">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="924" height="245" key="GridCell.Tab.1.bottom/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416564" />
+    <state width="924" height="245" key="GridCell.Tab.1.center" timestamp="1611218416563">
+      <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844326566" />
     <state width="1875" height="335" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
-    <state width="1875" height="316" key="GridCell.Tab.1.left" timestamp="1609844326566">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="924" height="245" key="GridCell.Tab.1.center/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416563" />
+    <state width="924" height="245" key="GridCell.Tab.1.left" timestamp="1611218416562">
+      <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844326566" />
     <state width="1875" height="335" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
-    <state width="1875" height="316" key="GridCell.Tab.1.right" timestamp="1609844326566">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="924" height="245" key="GridCell.Tab.1.left/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416562" />
+    <state width="924" height="245" key="GridCell.Tab.1.right" timestamp="1611218416563">
+      <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state width="1875" height="316" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609844326566" />
     <state width="1875" height="335" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1609251716047" />
+    <state width="924" height="245" key="GridCell.Tab.1.right/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611218416563" />
     <state x="1777" y="23" key="SettingsEditor" timestamp="1610178600940">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
