@@ -28,6 +28,9 @@
         if (!_client) {
             _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
             _client.incomingCallDelegate = self;
+            
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
         }
         
         _callManager = [[StringeeCallManager alloc] initWithClient:_client];
@@ -36,6 +39,11 @@
         _msgManager = [[StringeeMessageManager alloc] initWithClient:_client];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - Channel
@@ -213,6 +221,12 @@
     else if ([call.method isEqualToString:@"revokeMessages"]) {
         [_msgManager revokeMessages:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"editMsg"]) {
+        [_msgManager editMsg:call.arguments result:result];
+    }
+    else if ([call.method isEqualToString:@"pinOrUnPin"]) {
+        [_msgManager pinOrUnPin:call.arguments result:result];
+    }
     
     else {
         result(FlutterMethodNotImplemented);
@@ -327,6 +341,70 @@
     
     [_client sendCustomMessage:message toUserId:userId completionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
+    }];
+}
+
+#pragma mark - Chat Event
+
+- (void)handleObjectChangeNotification:(NSNotification *)notification {
+    NSArray *objectChanges = [notification.userInfo objectForKey:StringeeClientObjectChangesUserInfoKey];
+    if (!objectChanges.count) {
+        return;
+    }
+
+    NSMutableArray *objects = [[NSMutableArray alloc] init];
+
+    for (StringeeObjectChange *objectChange in objectChanges) {
+        [objects addObject:objectChange.object];
+    }
+
+    StringeeObjectChange *firstObjectChange = [objectChanges firstObject];
+    id firstObject = [objects firstObject];
+
+    int objectType;
+    NSArray *jsObjectDatas;
+    if ([firstObject isKindOfClass:[StringeeConversation class]]) {
+        objectType = 0;
+        jsObjectDatas = [StringeeHelper Conversations:objects];
+    } else if ([firstObject isKindOfClass:[StringeeMessage class]]) {
+        objectType = 1;
+        jsObjectDatas = [StringeeHelper Messages:objects];
+
+        // Xoá đối tượng message đã lưu
+        for (NSDictionary *message in jsObjectDatas) {
+            NSNumber *state = message[@"state"];
+            if (state.intValue == StringeeMessageStatusRead) {
+                NSString *localId = message[@"localId"];
+                if (localId) {
+                    [_msgManager.trackedMessages removeObjectForKey:localId];
+                }
+            }
+        }
+    } else {
+        objectType = 2;
+    }
+
+    id returnObjects = jsObjectDatas ? jsObjectDatas : [NSNull null];
+
+    _eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }});
+}
+
+- (void)handleNewMessageNotification:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    if (!userInfo) return;
+    
+    NSString *convId = [userInfo objectForKey:StringeeClientNewMessageConversationIDKey];
+    if (convId == nil || convId.length == 0) {
+        return;
+    }
+    
+    // Lấy về conversation
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            return;
+        }
+        
+        self->_eventSink(@{STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
     }];
 }
 

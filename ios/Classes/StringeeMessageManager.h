@@ -35,6 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)revokeMessages:(id)arguments result:(FlutterResult)result;
 
+- (void)editMsg:(id)arguments result:(FlutterResult)result;
+
+- (void)pinOrUnPin:(id)arguments result:(FlutterResult)result;
+
 @end
 
 NS_ASSUME_NONNULL_END

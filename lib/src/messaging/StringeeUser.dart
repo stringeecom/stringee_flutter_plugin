@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 
-class User {
+class StringeeUser {
   String _userId;
   String _name;
   String _avatarUrl;
-  UserRole _role;
+  UserRole _role = UserRole.Member;
 
-  User({@required String userId, String name, String avatarUrl}) {
+  StringeeUser({@required String userId, String name, String avatarUrl}) {
     this._userId = userId;
     this._name = name;
     this._avatarUrl = avatarUrl;
@@ -21,6 +21,11 @@ class User {
 
   UserRole get role => _role;
 
+  @override
+  String toString() {
+    return '{userId: ${_userId}, name: ${name}, avatarUrl: ${avatarUrl}, role: ${role} }';
+  }
+
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
     params['userId'] = _userId.trim();
@@ -30,7 +35,7 @@ class User {
     return params;
   }
 
-  User.fromJson(Map<dynamic, dynamic> json) {
+  StringeeUser.fromJson(Map<dynamic, dynamic> json) {
     this._userId = json['userId'];
     this._name = json['name'];
     this._avatarUrl = json['avatarUrl'];
@@ -43,11 +48,14 @@ class User {
         case 'admin':
           this._role = UserRole.Admin;
           break;
+        default:
+          this._role = UserRole.Member;
+          break;
       }
     }
   }
 
-  User.fromJsonNotify(Map<dynamic, dynamic> json) {
+  StringeeUser.fromJsonNotify(Map<dynamic, dynamic> json) {
     this._userId = json['user'];
     this._name = json['displayName'];
     this._avatarUrl = json['avatarUrl'];
@@ -59,6 +67,9 @@ class User {
           break;
         case 'admin':
           this._role = UserRole.Admin;
+          break;
+        default:
+          this._role = UserRole.Member;
           break;
       }
     }

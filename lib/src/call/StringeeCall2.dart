@@ -61,7 +61,7 @@ class StringeeCall2 {
   void _listener(dynamic event) {
     assert(event != null);
     final Map<dynamic, dynamic> map = event;
-    if (map['nativeEventType'] == StringeeType.StringeeCall2.index) {
+    if (map['nativeEventType'] == StringeeObjectEventType.call2.index) {
       switch (map['event']) {
         case 'didChangeSignalingState':
           handleSignalingStateChange(map['body']);
@@ -96,7 +96,7 @@ class StringeeCall2 {
 
     StringeeSignalingState signalingState = StringeeSignalingState.values[map['code']];
     _eventStreamController
-        .add({"eventType": StringeeCall2Events.DidChangeSignalingState, "body": signalingState});
+        .add({"eventType": StringeeCall2Events.didChangeSignalingState, "body": signalingState});
   }
 
   void handleMediaStateChange(Map<dynamic, dynamic> map) {
@@ -105,7 +105,7 @@ class StringeeCall2 {
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
     _eventStreamController
-        .add({"eventType": StringeeCall2Events.DidChangeMediaState, "body": mediaState});
+        .add({"eventType": StringeeCall2Events.didChangeMediaState, "body": mediaState});
   }
 
   void handleCallInfoDidReceive(Map<dynamic, dynamic> map) {
@@ -113,23 +113,23 @@ class StringeeCall2 {
     if (callId != this._id) return;
 
     Map<dynamic, dynamic> data = map['info'];
-    _eventStreamController.add({"eventType": StringeeCall2Events.DidReceiveCallInfo, "body": data});
+    _eventStreamController.add({"eventType": StringeeCall2Events.didReceiveCallInfo, "body": data});
   }
 
   void handleAnotherDeviceHadHandle(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState = StringeeSignalingState.values[map['code']];
     _eventStreamController
-        .add({"eventType": StringeeCall2Events.DidHandleOnAnotherDevice, "body": signalingState});
+        .add({"eventType": StringeeCall2Events.didHandleOnAnotherDevice, "body": signalingState});
   }
 
   void handleReceiveLocalStream(Map<dynamic, dynamic> map) {
     _eventStreamController
-        .add({"eventType": StringeeCall2Events.DidReceiveLocalStream, "body": map['callId']});
+        .add({"eventType": StringeeCall2Events.didReceiveLocalStream, "body": map['callId']});
   }
 
   void handleReceiveRemoteStream(Map<dynamic, dynamic> map) {
     _eventStreamController
-        .add({"eventType": StringeeCall2Events.DidReceiveRemoteStream, "body": map['callId']});
+        .add({"eventType": StringeeCall2Events.didReceiveRemoteStream, "body": map['callId']});
   }
 
   void handleChangeAudioDevice(Map<dynamic, dynamic> map) {
@@ -142,7 +142,7 @@ class StringeeCall2 {
       availableAudioDevices.add(audioDevice);
     }
     _eventStreamController.add({
-      "eventType": StringeeCall2Events.DidChangeAudioDevice,
+      "eventType": StringeeCall2Events.didChangeAudioDevice,
       "selectedAudioDevice": selectedAudioDevice,
       "availableAudioDevices": availableAudioDevices
     });

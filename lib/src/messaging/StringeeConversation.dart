@@ -5,10 +5,10 @@ import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 
 import '../StringeeConstants.dart';
-import 'StringeeChange.dart';
+import 'StringeeObjectChange.dart';
 import 'StringeeUser.dart';
 
-class StringeeConversation implements StringeeObject {
+class StringeeConversation {
   String _id;
   String _name;
   bool _isGroup;
@@ -16,11 +16,11 @@ class StringeeConversation implements StringeeObject {
   int _createdAt;
   int _updatedAt;
   int _totalUnread;
-  String _text;
+  Map<dynamic, dynamic> _text;
 
   StringeeMessage _lastMsg;
   String _pinnedMsgId;
-  List<User> _participants;
+  List<StringeeUser> _participants;
 
   StringeeConversation();
 
@@ -38,13 +38,19 @@ class StringeeConversation implements StringeeObject {
 
   int get createdAt => _createdAt;
 
-  String get text => _text;
+  Map<dynamic, dynamic> get text => _text;
 
   StringeeMessage get lastMsg => _lastMsg;
 
   String get pinnedMsgId => _pinnedMsgId;
 
-  List<User> get participants => _participants;
+  List<StringeeUser> get participants => _participants;
+
+
+  @override
+  String toString() {
+    return '{id: ${_id}, name: ${_name}, isGroup: ${_isGroup}, creator: ${_creator}, createdAt: ${_createdAt}, updatedAt: ${_updatedAt}, totalUnread: ${_totalUnread}, text: ${_text}, lastMsg: ${_lastMsg}, pinnedMsgId: ${_pinnedMsgId}, participants: ${_participants}}';
+  }
 
   StringeeConversation.fromJson(Map<dynamic, dynamic> convInfor) {
     if (convInfor == null) {
@@ -67,13 +73,13 @@ class StringeeConversation implements StringeeObject {
         convInfor['lastMsgSeqReceived'],
         MsgState.values[convInfor['lastMsgState']],
         convInfor['lastTimeNewMsg'],
-        jsonDecode(this._text));
+        this._text);
     this._pinnedMsgId = convInfor['pinnedMsgId'];
 
-    List<User> participants = [];
-    List<dynamic> participantArray = json.decode(convInfor['participants']);
+    List<StringeeUser> participants = [];
+    List<dynamic> participantArray = convInfor['participants'];
     for (int i = 0; i < participantArray.length; i++) {
-      User user = User.fromJson(participantArray[i]);
+      StringeeUser user = StringeeUser.fromJson(participantArray[i]);
       participants.add(user);
     }
     this._participants = participants;
@@ -85,7 +91,7 @@ class StringeeConversation implements StringeeObject {
   }
 
   /// Add [List] of [participants] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> addParticipants(List<User> participants) async {
+  Future<Map<dynamic, dynamic>> addParticipants(List<StringeeUser> participants) async {
     if (participants == null || participants.length == 0)
       return await reportInvalidValue('participants');
     final params = {
@@ -95,10 +101,10 @@ class StringeeConversation implements StringeeObject {
     Map<dynamic, dynamic> result =
         await StringeeClient.methodChannel.invokeMethod('addParticipants', params);
     if (result['status']) {
-      List<User> addedParticipants = [];
-      List<dynamic> participantArray = json.decode(result['body']);
+      List<StringeeUser> addedParticipants = [];
+      List<dynamic> participantArray = result['body'];
       for (int i = 0; i < participantArray.length; i++) {
-        User user = User.fromJson(participantArray[i]);
+        StringeeUser user = StringeeUser.fromJson(participantArray[i]);
         addedParticipants.add(user);
       }
       result['body'] = addedParticipants;
@@ -107,7 +113,7 @@ class StringeeConversation implements StringeeObject {
   }
 
   /// Remove [List] of [participants] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> removeParticipants(List<User> participants) async {
+  Future<Map<dynamic, dynamic>> removeParticipants(List<StringeeUser> participants) async {
     if (participants == null || participants.length == 0)
       return await reportInvalidValue('participants');
     final params = {
@@ -117,10 +123,10 @@ class StringeeConversation implements StringeeObject {
     Map<dynamic, dynamic> result =
         await StringeeClient.methodChannel.invokeMethod('removeParticipants', params);
     if (result['status']) {
-      List<User> removedParticipants = [];
-      List<dynamic> participantArray = json.decode(result['body']);
+      List<StringeeUser> removedParticipants = [];
+      List<dynamic> participantArray = result['body'];
       for (int i = 0; i < participantArray.length; i++) {
-        User user = User.fromJson(participantArray[i]);
+        StringeeUser user = StringeeUser.fromJson(participantArray[i]);
         removedParticipants.add(user);
       }
       result['body'] = removedParticipants;
@@ -146,7 +152,7 @@ class StringeeConversation implements StringeeObject {
         await StringeeClient.methodChannel.invokeMethod('getMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = json.decode(result['body']);
+      List<dynamic> msgArray = result['body'];
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i]);
         messages.add(msg);
@@ -167,7 +173,7 @@ class StringeeConversation implements StringeeObject {
         await StringeeClient.methodChannel.invokeMethod('getLocalMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = json.decode(result['body']);
+      List<dynamic> msgArray = result['body'];
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i]);
         messages.add(msg);
@@ -188,7 +194,7 @@ class StringeeConversation implements StringeeObject {
         await StringeeClient.methodChannel.invokeMethod('getLastMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = json.decode(result['body']);
+      List<dynamic> msgArray = result['body'];
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i]);
         messages.add(msg);
@@ -211,7 +217,7 @@ class StringeeConversation implements StringeeObject {
         await StringeeClient.methodChannel.invokeMethod('getMessagesAfter', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = json.decode(result['body']);
+      List<dynamic> msgArray = result['body'];
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i]);
         messages.add(msg);
@@ -234,7 +240,7 @@ class StringeeConversation implements StringeeObject {
         await StringeeClient.methodChannel.invokeMethod('getMessagesBefore', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = json.decode(result['body']);
+      List<dynamic> msgArray = result['body'];
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i]);
         messages.add(msg);

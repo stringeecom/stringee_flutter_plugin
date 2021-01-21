@@ -15,13 +15,14 @@ static NSString *STECode               = @"code";
 static NSString *STEMessage            = @"message";
 
 // Client
-static NSString *STEDidConnect               = @"didConnect";
-static NSString *STEDidDisConnect            = @"didDisconnect";
-static NSString *STEDidFailWithError         = @"didFailWithError";
-static NSString *STERequestAccessToken       = @"requestAccessToken";
-static NSString *STEIncomingCall               = @"incomingCall";
-static NSString *STEIncomingCall2              = @"incomingCall2";
-static NSString *STEDidReceiveCustomMessage    = @"didReceiveCustomMessage";
+static NSString *STEDidConnect                  = @"didConnect";
+static NSString *STEDidDisConnect               = @"didDisconnect";
+static NSString *STEDidFailWithError            = @"didFailWithError";
+static NSString *STERequestAccessToken          = @"requestAccessToken";
+static NSString *STEIncomingCall                = @"incomingCall";
+static NSString *STEIncomingCall2               = @"incomingCall2";
+static NSString *STEDidReceiveCustomMessage     = @"didReceiveCustomMessage";
+static NSString *STEDidReceiveChangeEvent       = @"didReceiveChangeEvent";
 
 // Call
 static NSString *STEDidChangeSignalingState     = @"didChangeSignalingState";

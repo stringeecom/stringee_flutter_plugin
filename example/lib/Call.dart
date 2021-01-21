@@ -11,7 +11,7 @@ class Call extends StatefulWidget {
   final String toUserId;
   final String fromUserId;
   String callId;
-  StringeeType callType;
+  StringeeObjectEventType callType;
   bool showIncomingUi = false;
   bool hasLocalStream = false;
   bool hasRemoteStream = false;
@@ -48,7 +48,7 @@ class _CallState extends State<Call> {
 
     widget.isSpeaker = widget.isVideoCall;
 
-    if (widget.callType == StringeeType.StringeeCall) {
+    if (widget.callType == StringeeObjectEventType.call) {
       _makeOrInitAnswerCall();
     } else {
       _makeOrInitAnswerCall2();
@@ -196,25 +196,25 @@ class _CallState extends State<Call> {
     _stringeeCall.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       switch (map['eventType']) {
-        case StringeeCallEvents.DidChangeSignalingState:
+        case StringeeCallEvents.didChangeSignalingState:
           handleSignalingStateChangeEvent(map['body']);
           break;
-        case StringeeCallEvents.DidChangeMediaState:
+        case StringeeCallEvents.didChangeMediaState:
           handleMediaStateChangeEvent(map['body']);
           break;
-        case StringeeCallEvents.DidReceiveCallInfo:
+        case StringeeCallEvents.didReceiveCallInfo:
           handleReceiveCallInfoEvent(map['body']);
           break;
-        case StringeeCallEvents.DidHandleOnAnotherDevice:
+        case StringeeCallEvents.didHandleOnAnotherDevice:
           handleHandleOnAnotherDeviceEvent(map['body']);
           break;
-        case StringeeCallEvents.DidReceiveLocalStream:
+        case StringeeCallEvents.didReceiveLocalStream:
           handleReceiveLocalStreamEvent(map['body']);
           break;
-        case StringeeCallEvents.DidReceiveRemoteStream:
+        case StringeeCallEvents.didReceiveRemoteStream:
           handleReceiveRemoteStreamEvent(map['body']);
           break;
-        case StringeeCallEvents.DidChangeAudioDevice:
+        case StringeeCallEvents.didChangeAudioDevice:
           if (Platform.isAndroid) {
             handleChangeAudioDeviceEvent(
                 map['selectedAudioDevice'], _stringeeCall, null);
@@ -266,25 +266,25 @@ class _CallState extends State<Call> {
     _stringeeCall2.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       switch (map['eventType']) {
-        case StringeeCall2Events.DidChangeSignalingState:
+        case StringeeCall2Events.didChangeSignalingState:
           handleSignalingStateChangeEvent(map['body']);
           break;
-        case StringeeCall2Events.DidChangeMediaState:
+        case StringeeCall2Events.didChangeMediaState:
           handleMediaStateChangeEvent(map['body']);
           break;
-        case StringeeCall2Events.DidReceiveCallInfo:
+        case StringeeCall2Events.didReceiveCallInfo:
           handleReceiveCallInfoEvent(map['body']);
           break;
-        case StringeeCall2Events.DidHandleOnAnotherDevice:
+        case StringeeCall2Events.didHandleOnAnotherDevice:
           handleHandleOnAnotherDeviceEvent(map['body']);
           break;
-        case StringeeCall2Events.DidReceiveLocalStream:
+        case StringeeCall2Events.didReceiveLocalStream:
           handleReceiveLocalStreamEvent(map['body']);
           break;
-        case StringeeCall2Events.DidReceiveRemoteStream:
+        case StringeeCall2Events.didReceiveRemoteStream:
           handleReceiveRemoteStreamEvent(map['body']);
           break;
-        case StringeeCall2Events.DidChangeAudioDevice:
+        case StringeeCall2Events.didChangeAudioDevice:
           if (Platform.isAndroid) {
             handleChangeAudioDeviceEvent(
                 map['selectedAudioDevice'], null, _stringeeCall2);
@@ -326,7 +326,7 @@ class _CallState extends State<Call> {
 
   void _endCallTapped() {
     switch (widget.callType) {
-      case StringeeType.StringeeCall:
+      case StringeeObjectEventType.call:
         _stringeeCall.hangup().then((result) {
           print('_endCallTapped -- ${result['message']}');
           bool status = result['status'];
@@ -337,7 +337,7 @@ class _CallState extends State<Call> {
           }
         });
         break;
-      case StringeeType.StringeeCall2:
+      case StringeeObjectEventType.call2:
         _stringeeCall2.hangup().then((result) {
           print('_endCallTapped -- ${result['message']}');
           bool status = result['status'];
@@ -353,7 +353,7 @@ class _CallState extends State<Call> {
 
   void _acceptCallTapped() {
     switch (widget.callType) {
-      case StringeeType.StringeeCall:
+      case StringeeObjectEventType.call:
         _stringeeCall.answer().then((result) {
           print('_acceptCallTapped -- ${result['message']}');
           bool status = result['status'];
@@ -362,7 +362,7 @@ class _CallState extends State<Call> {
           }
         });
         break;
-      case StringeeType.StringeeCall2:
+      case StringeeObjectEventType.call2:
         _stringeeCall2.answer().then((result) {
           print('_acceptCallTapped -- ${result['message']}');
           bool status = result['status'];
@@ -379,7 +379,7 @@ class _CallState extends State<Call> {
 
   void _rejectCallTapped() {
     switch (widget.callType) {
-      case StringeeType.StringeeCall:
+      case StringeeObjectEventType.call:
         _stringeeCall.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
           if (Platform.isAndroid) {
@@ -387,7 +387,7 @@ class _CallState extends State<Call> {
           }
         });
         break;
-      case StringeeType.StringeeCall2:
+      case StringeeObjectEventType.call2:
         _stringeeCall2.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
           if (Platform.isAndroid) {

@@ -89,25 +89,6 @@
     return data;
 }
 
-+ (StringeeConversationOption *)parseOptionWithData:(NSDictionary *)data {
-    StringeeConversationOption *option = [[StringeeConversationOption alloc] init];
-    option.isGroup = [[data objectForKey:@"isGroup"] boolValue];
-    option.distinctByParticipants = [[data objectForKey:@"isDistinct"] boolValue];
-    return option;
-}
-
-+ (NSSet<StringeeIdentity *> *)parsePartsWithData:(NSArray *)data {
-    NSMutableSet *parts = [[NSMutableSet alloc] init];
-    for (NSDictionary *userData in data) {
-        NSString *userId = [userData objectForKey:@"userId"];
-        StringeeIdentity *part = [[StringeeIdentity alloc] init];
-        part.userId = userId;
-        [parts addObject:part];
-    }
-    
-    return parts;
-}
-
 + (id)Identity:(StringeeIdentity *)identity {
     if (!identity) return [NSNull null];
     
@@ -130,7 +111,7 @@
     }
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeIdentity *identity in identities) {
-        [response addObject:[self StringeeIdentity:identity]];
+        [response addObject:[self Identity:identity]];
     }
     return response;
 }
@@ -141,10 +122,11 @@
     NSString *identifier = conversation.identifier ? conversation.identifier : @"";
     NSString *name = conversation.name ? conversation.name : @"";
     NSString *lastMsgId = conversation.lastMsg.identifier ? conversation.lastMsg.identifier : @"";
+    NSString *pinMsgId = conversation.pinMsgId ? conversation.pinMsgId : @"";
 
     NSMutableArray *participants = [[NSMutableArray alloc] init];
     for (StringeeIdentity *identity in conversation.participants) {
-        [participants addObject:[self StringeeIdentity:identity]];
+        [participants addObject:[self Identity:identity]];
     }
     NSString *lastMsgSender = conversation.lastMsg.sender ? conversation.lastMsg.sender : @"";
     NSString *text = conversation.lastMsg.content ? conversation.lastMsg.content : @"";
@@ -168,7 +150,7 @@
              @"lastMsgSeqReceived": @(conversation.lastMsgSeqReceived),
              @"lastTimeNewMsg": @(conversation.lastTimeNewMsg),
              @"lastMsgState": @(lastMsgState),
-             @"pinnedMsgId" : conversation.pinMsgId
+             @"pinnedMsgId" : pinMsgId
              };
 }
 
@@ -190,6 +172,7 @@
     NSString *identifier = message.identifier.length ? message.identifier : @"";
     NSString *conversationId = message.convId.length ? message.convId : @"";
     NSString *sender = message.sender.length ? message.sender : @"";
+    id customData = message.metadata ? message.metadata : [NSNull null];
     
     NSString *thumbnailPath = @"";
     NSString *thumbnailUrl = @"";
@@ -332,7 +315,7 @@
              @"createdAt": @(message.created),
              @"state": @(message.status),
              @"sequence": @(message.seq),
-             @"customData": message.metadata,
+             @"customData": customData,
              @"type": @(message.type),
              @"content": content,
              @"thumbnailPath": thumbnailPath,
@@ -380,12 +363,49 @@
     }
 }
 
++ (id)StringToArray:(NSString *)str {
+    if (!str || !str.length) {
+        return [NSNull null];
+    }
+    
+    NSError *jsonError;
+    NSData *objectData = [str dataUsingEncoding:NSUTF8StringEncoding];
+    NSArray *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                         options:NSJSONReadingMutableContainers
+                                                           error:&jsonError];
+    
+    if (jsonError) {
+        return [NSNull null];
+    } else {
+        return json;
+    }
+}
+
 + (BOOL)isValid:(NSString *)value {
     if (value == nil || ![value isKindOfClass:[NSString class]] || value.length == 0) {
         return false;
     }
     
     return true;
+}
+
++ (StringeeConversationOption *)parseOptionWithData:(NSDictionary *)data {
+    StringeeConversationOption *option = [[StringeeConversationOption alloc] init];
+    option.isGroup = [[data objectForKey:@"isGroup"] boolValue];
+    option.distinctByParticipants = [[data objectForKey:@"isDistinct"] boolValue];
+    return option;
+}
+
++ (NSSet<StringeeIdentity *> *)parsePartsWithData:(NSArray *)data {
+    NSMutableSet *parts = [[NSMutableSet alloc] init];
+    for (NSDictionary *userData in data) {
+        NSString *userId = [userData objectForKey:@"userId"];
+        StringeeIdentity *part = [[StringeeIdentity alloc] init];
+        part.userId = userId;
+        [parts addObject:part];
+    }
+    
+    return parts;
 }
 
 @end

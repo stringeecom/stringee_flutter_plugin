@@ -36,8 +36,8 @@
     
     NSLog(@"==== createConversation: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
-    NSDictionary *optionData = [data objectForKey:@"option"];
-    NSArray *partsData = [data objectForKey:@"participants"];
+    NSDictionary *optionData = [StringeeHelper StringToDictionary:[data objectForKey:@"option"]];
+    NSArray *partsData = [StringeeHelper StringToArray:[data objectForKey:@"participants"]];
     if (optionData == nil || partsData == nil) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Option or Participants is invalid"});
         return;
@@ -223,7 +223,7 @@
     NSLog(@"==== addParticipants: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
-    NSArray *partDatas = [data objectForKey:@"participants"];
+    NSArray *partDatas = [StringeeHelper StringToArray:[data objectForKey:@"participants"]];
     NSSet<StringeeIdentity *> *parts = [StringeeHelper parsePartsWithData:partDatas];
 
     if (convId == nil || convId.length == 0 || parts == nil || parts.count == 0) {
@@ -252,7 +252,7 @@
     NSLog(@"==== removeParticipants: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
-    NSArray *partDatas = [data objectForKey:@"participants"];
+    NSArray *partDatas = [StringeeHelper StringToArray:[data objectForKey:@"participants"]];
     NSSet<StringeeIdentity *> *parts = [StringeeHelper parsePartsWithData:partDatas];
 
     if (convId == nil || convId.length == 0 || parts == nil || parts.count == 0) {

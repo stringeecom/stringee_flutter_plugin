@@ -36,7 +36,7 @@
     }
     
     NSLog(@"==== sendMessage: %@", arguments);
-    NSDictionary *data = (NSDictionary *)arguments;
+    NSDictionary *data = [StringeeHelper StringToDictionary:arguments];
     NSString *convId = [data objectForKey:@"convId"];
     NSDictionary *customData = [data objectForKey:@"customData"];
     int type = [[data objectForKey:@"type"] intValue];
@@ -367,7 +367,7 @@
         return;
     }
     
-    NSLog(@"==== deleteMessages: %@", arguments);
+    NSLog(@"==== revokeMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSArray *msgIds = [data objectForKey:@"msgIds"];
@@ -414,6 +414,78 @@
         dispatch_group_notify(group,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
             result(@{STEStatus : @(returnStatus), STECode : @(returnCode), STEMessage: returnMessage, STEBody: [NSNull null]});
         });
+    }];
+}
+
+- (void)editMsg:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== editMsg: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    NSString *msgId = [data objectForKey:@"msgId"];
+    NSString *content = [data objectForKey:@"content"];
+
+    if (convId == nil || convId.length == 0 || msgId == nil || msgId.length == 0 || content == nil || content.length == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Conversation is not found", STEBody: [NSNull null]});
+            return;
+        }
+        
+        [conversation getMessageWithId:msgId completion:^(BOOL status, int code, NSString *message, StringeeMessage *msg) {
+            if (!msg) {
+                result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Message is not found", STEBody: [NSNull null]});
+                return;
+            }
+
+            [conversation editMessage:msg newContent:content completion:^(BOOL status, int code, NSString *message) {
+                result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
+            }];
+        }];
+    }];
+}
+
+- (void)pinOrUnPin:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSLog(@"==== pinOrUnPin: %@", arguments);
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    NSString *msgId = [data objectForKey:@"msgId"];
+    BOOL pinOrUnPin = [[data objectForKey:@"pinOrUnPin"] boolValue];
+
+    if (convId == nil || convId.length == 0 || msgId == nil || msgId.length == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
+        return;
+    }
+        
+    [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
+        if (!conversation) {
+            result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Conversation is not found", STEBody: [NSNull null]});
+            return;
+        }
+                
+        [conversation getMessageWithId:msgId completion:^(BOOL status, int code, NSString *message, StringeeMessage *msg) {
+            if (!msg) {
+                result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Message is not found", STEBody: [NSNull null]});
+                return;
+            }
+            
+            [conversation pinMessage:msg isPin:pinOrUnPin completion:^(BOOL status, int code, NSString *message) {
+                result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
+            }];
+        }];
     }];
 }
 

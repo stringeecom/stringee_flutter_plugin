@@ -3,43 +3,43 @@ export 'messaging/MessagingConstants.dart';
 
 /// Events for StringeeClient
 enum StringeeClientEvents {
-  DidConnect,
-  DidDisconnect,
-  DidFailWithError,
-  RequestAccessToken,
-  DidReceiveCustomMessage,
-  IncomingCall,
-  IncomingCall2,
-  DidReceiveChange,
+  didConnect,
+  didDisconnect,
+  didFailWithError,
+  requestAccessToken,
+  didReceiveCustomMessage,
+  incomingCall,
+  incomingCall2,
+  didReceiveObjectChange,
 }
 
 /// Events for StringeeCall
 enum StringeeCallEvents {
-  DidChangeSignalingState,
-  DidChangeMediaState,
-  DidReceiveCallInfo,
-  DidHandleOnAnotherDevice,
-  DidReceiveLocalStream,
-  DidReceiveRemoteStream,
-  DidChangeAudioDevice
+  didChangeSignalingState,
+  didChangeMediaState,
+  didReceiveCallInfo,
+  didHandleOnAnotherDevice,
+  didReceiveLocalStream,
+  didReceiveRemoteStream,
+  didChangeAudioDevice
 }
 
 /// Events for StringeeCall2
 enum StringeeCall2Events {
-  DidChangeSignalingState,
-  DidChangeMediaState,
-  DidReceiveCallInfo,
-  DidHandleOnAnotherDevice,
-  DidReceiveLocalStream,
-  DidReceiveRemoteStream,
-  DidChangeAudioDevice
+  didChangeSignalingState,
+  didChangeMediaState,
+  didReceiveCallInfo,
+  didHandleOnAnotherDevice,
+  didReceiveLocalStream,
+  didReceiveRemoteStream,
+  didChangeAudioDevice
 }
 
 /// Type of event
-enum StringeeType {
-  StringeeClient,
-  StringeeCall,
-  StringeeCall2,
+enum StringeeObjectEventType {
+  client,
+  call,
+  call2,
 }
 
 /// Error code and message in flutter:
