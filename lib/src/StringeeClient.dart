@@ -301,13 +301,13 @@ class StringeeClient {
     List<dynamic> objects = new List();
 
     switch (objectType) {
-      case ObjectType.Conversation:
+      case ObjectType.conversation:
         for (int i = 0 ; i < objectDatas.length ; i++) {
           StringeeConversation conv = new StringeeConversation.fromJson(objectDatas[i]);
           objects.add(conv);
         }
         break;
-      case ObjectType.Message:
+      case ObjectType.message:
         for (int i = 0 ; i < objectDatas.length ; i++) {
           StringeeMessage msg = new StringeeMessage.fromJson(objectDatas[i]);
           objects.add(msg);

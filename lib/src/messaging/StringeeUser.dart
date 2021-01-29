@@ -5,7 +5,7 @@ class StringeeUser {
   String _userId;
   String _name;
   String _avatarUrl;
-  UserRole _role = UserRole.Member;
+  UserRole _role = UserRole.member;
 
   StringeeUser({@required String userId, String name, String avatarUrl}) {
     this._userId = userId;
@@ -43,13 +43,13 @@ class StringeeUser {
       String role = json['role'];
       switch (role) {
         case 'member':
-          this._role = UserRole.Member;
+          this._role = UserRole.member;
           break;
         case 'admin':
-          this._role = UserRole.Admin;
+          this._role = UserRole.admin;
           break;
         default:
-          this._role = UserRole.Member;
+          this._role = UserRole.member;
           break;
       }
     }
@@ -63,13 +63,13 @@ class StringeeUser {
       String role = json['role'];
       switch (role) {
         case 'member':
-          this._role = UserRole.Member;
+          this._role = UserRole.member;
           break;
         case 'admin':
-          this._role = UserRole.Admin;
+          this._role = UserRole.admin;
           break;
         default:
-          this._role = UserRole.Member;
+          this._role = UserRole.member;
           break;
       }
     }

@@ -46,6 +46,7 @@ enum StringeeObjectEventType {
 /// -1 : StringeeClient is not initialized or disconnected
 /// -2 : value is invalid
 /// -3 : Object is not found
+/// -4 : This function work only for Android
 Future<Map<String, dynamic>> reportInvalidValue(String value) async {
   Map<String, dynamic> params = {
     'status': false,

@@ -153,7 +153,7 @@ class _CallState extends State<Call> {
             margin: EdgeInsets.only(top: 100.0, right: 25.0),
             height: 200.0,
             width: 150.0,
-            scalingType: ScalingType.Fill,
+            scalingType: ScalingType.fill,
           )
         : Placeholder();
 
@@ -164,7 +164,7 @@ class _CallState extends State<Call> {
             color: Colors.blue,
             isOverlay: false,
             isMirror: false,
-            scalingType: ScalingType.Fill,
+            scalingType: ScalingType.fill,
           )
         : Placeholder();
 
@@ -239,7 +239,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoQuality': VideoQuality.FullHd,
+        'videoQuality': VideoQuality.fullHd,
       };
 
       _stringeeCall.makeCall(parameters).then((result) {
@@ -309,7 +309,7 @@ class _CallState extends State<Call> {
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoQuality': VideoQuality.FullHd,
+        'videoQuality': VideoQuality.fullHd,
       };
 
       _stringeeCall2.makeCall(parameters).then((result) {
@@ -405,16 +405,16 @@ class _CallState extends State<Call> {
       status = state.toString().split('.')[1];
     });
     switch (state) {
-      case StringeeSignalingState.Calling:
+      case StringeeSignalingState.calling:
         break;
-      case StringeeSignalingState.Ringing:
+      case StringeeSignalingState.ringing:
         break;
-      case StringeeSignalingState.Answered:
+      case StringeeSignalingState.answered:
         break;
-      case StringeeSignalingState.Busy:
+      case StringeeSignalingState.busy:
         clearDataEndDismiss();
         break;
-      case StringeeSignalingState.Ended:
+      case StringeeSignalingState.ended:
         clearDataEndDismiss();
         break;
       default:
@@ -428,9 +428,9 @@ class _CallState extends State<Call> {
       status = state.toString().split('.')[1];
     });
     switch (state) {
-      case StringeeMediaState.Connected:
+      case StringeeMediaState.connected:
         break;
-      case StringeeMediaState.Disconnected:
+      case StringeeMediaState.disconnected:
         break;
       default:
         break;
@@ -465,8 +465,8 @@ class _CallState extends State<Call> {
       AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
     print('handleChangeAudioDeviceEvent - $audioDevice');
     switch (audioDevice) {
-      case AudioDevice.SpeakerPhone:
-      case AudioDevice.Earpiece:
+      case AudioDevice.speakerPhone:
+      case AudioDevice.earpiece:
         if (call != null) {
           call.setSpeakerphoneOn(widget.isSpeaker);
         }
@@ -474,8 +474,8 @@ class _CallState extends State<Call> {
           call2.setSpeakerphoneOn(widget.isSpeaker);
         }
         break;
-      case AudioDevice.Bluetooth:
-      case AudioDevice.WiredHeadset:
+      case AudioDevice.bluetooth:
+      case AudioDevice.wiredHeadset:
         widget.isSpeaker = false;
         if (call != null) {
           call.setSpeakerphoneOn(widget.isSpeaker);
@@ -484,7 +484,7 @@ class _CallState extends State<Call> {
           call2.setSpeakerphoneOn(widget.isSpeaker);
         }
         break;
-      case AudioDevice.None:
+      case AudioDevice.none:
         print('handleChangeAudioDeviceEvent - non audio devices connected');
         break;
     }

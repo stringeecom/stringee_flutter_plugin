@@ -14,14 +14,14 @@ public class StringeeManager {
     private Map<String, StringeeCall2> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
 
-    public enum StringeeEnventType {
+    public enum StringeeEventType {
         ClientEvent(0),
         CallEvent(1),
         Call2Event(2);
 
         public final short value;
 
-        StringeeEnventType(int value) {
+        StringeeEventType(int value) {
             this.value = (short) value;
         }
 

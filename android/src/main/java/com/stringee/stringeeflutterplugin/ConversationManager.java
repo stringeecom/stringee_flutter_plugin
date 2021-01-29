@@ -12,6 +12,7 @@ import com.stringee.messaging.listeners.CallbackListener;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,14 +184,14 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
-                                JSONArray participantsArray = new JSONArray();
+                                List participantsArray = new ArrayList();
                                 for (int j = 0; j < users.size(); j++) {
-                                    participantsArray.put(Utils.convertUserToJSON(users.get(j)));
+                                    participantsArray.add(Utils.convertUserToMap(users.get(j)));
                                 }
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
-                                map.put("body", participantsArray.toString());
+                                map.put("body", participantsArray);
                                 result.success(map);
                             }
                         });
@@ -282,14 +283,14 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
-                                JSONArray participantsArray = new JSONArray();
+                                List participantsArray = new ArrayList();
                                 for (int j = 0; j < users.size(); j++) {
-                                    participantsArray.put(Utils.convertUserToJSON(users.get(j)));
+                                    participantsArray.add(Utils.convertUserToMap(users.get(j)));
                                 }
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
-                                map.put("body", participantsArray.toString());
+                                map.put("body", participantsArray);
                                 map.put("body", null);
                                 result.success(map);
                             }
@@ -470,14 +471,14 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
-                                JSONArray msgArray = new JSONArray();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
-                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
-                                map.put("body", msgArray.toString());
+                                map.put("body", msgArray);
                                 result.success(map);
                             }
                         });
@@ -568,14 +569,14 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
-                                JSONArray msgArray = new JSONArray();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
-                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
-                                map.put("body", msgArray.toString());
+                                map.put("body", msgArray);
                                 result.success(map);
                             }
                         });
@@ -666,14 +667,14 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
-                                JSONArray msgArray = new JSONArray();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
-                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
-                                map.put("body", msgArray.toString());
+                                map.put("body", msgArray);
                                 result.success(map);
                             }
                         });
@@ -765,14 +766,14 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
-                                JSONArray msgArray = new JSONArray();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
-                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
-                                map.put("body", msgArray.toString());
+                                map.put("body", msgArray);
                                 result.success(map);
                             }
                         });
@@ -864,14 +865,14 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
-                                JSONArray msgArray = new JSONArray();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
-                                    msgArray.put(Utils.convertMessageToJSON(messages.get(i)));
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
-                                map.put("body", msgArray.toString());
+                                map.put("body", msgArray);
                                 result.success(map);
                             }
                         });

@@ -45,28 +45,27 @@ class ConversationInforState extends State<ConversationInfor> {
     });
 
     users = new List();
-    StringeeUser user1 = StringeeUser(userId: 'ACTXV7BTAP', name: 'Okumura Rin');
-    // StringeeUser user2 = StringeeUser(userId: 'ACX3H6EJHW', name: 'Kỳ ANh');
+    StringeeUser user1 = StringeeUser(userId: 'id1', name: 'user1');
+    StringeeUser user2 = StringeeUser(userId: 'id2', name: 'user2');
     users.add(user1);
-    // users.add(user2);
+    users.add(user2);
 
     msg = StringeeMessage.typeText('test', customData: {'custom': 'abc'});
 
-    // _client.eventStreamController.stream.listen((event) {
-    //   Map<dynamic, dynamic> map = event;
-    //   if (map['typeEvent'] == StringeeClientEvents &&
-    //       map['eventType'] == StringeeClientEvents.didReceiveObjectChange) {
-    //     StringeeObjectChange objectChange = map['body'];
-    //     if (objectChange.objectType == ObjectType.Message) {
-    //       StringeeMessage message = objectChange.objects.first;
-    //       setState(() {
-    //         _log.add((message.id != null)
-    //             ? message.id
-    //             : 'null' + ' ' + objectChange.type.toString());
-    //       });
-    //     }
-    //   }
-    // });
+    _client.eventStreamController.stream.listen((event) {
+      Map<dynamic, dynamic> map = event;
+      if (map['typeEvent'] == StringeeClientEvents &&
+          map['eventType'] == StringeeClientEvents.didReceiveObjectChange) {
+        StringeeObjectChange objectChange = map['body'];
+        if (objectChange.objectType == ObjectType.message) {
+          StringeeMessage message = objectChange.objects.first;
+          setState(() {
+            _log.add(
+                (message.id != null) ? message.id : 'null' + ' ' + objectChange.type.toString());
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -288,9 +287,11 @@ class ConversationInforState extends State<ConversationInfor> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _conversation
-                                  .getMessages(['msg-vn-1-MWE3BG0IJE-1610578358918', 'msg-vn-1-MWE3BG0IJE-1610578360615']).then((value) {
-                                    print(value.toString());
+                              _conversation.getMessages([
+                                'msg-vn-1-MWE3BG0IJE-1610578358918',
+                                'msg-vn-1-MWE3BG0IJE-1610578360615'
+                              ]).then((value) {
+                                print(value.toString());
                                 setState(() {
                                   _log.add('Get messages: msg:' + value['message']);
                                   if (value['status']) {
@@ -333,59 +334,62 @@ class ConversationInforState extends State<ConversationInfor> {
                       ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      new Container(
-                        height: 40.0,
-                        width: 175.0,
-                        child: new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
-                          onPressed: () {
-                            _conversation.getLastMessages(50).then((value) {
-                              print(value.toString());
-                              setState(() {
-                                _log.add('Get last Messages: msg:' + value['message']);
-                                if (value['status']) {
-                                  _messages.clear();
-                                  _messages.addAll(value['body']);
-                                }
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              _conversation.getLastMessages(50).then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Get last Messages: msg:' + value['message']);
+                                  if (value['status']) {
+                                    _messages.clear();
+                                    _messages.addAll(value['body']);
+                                  }
+                                });
                               });
-                            });
-                          },
-                          child: Text(
-                            'Get last Messages',
-                            textAlign: TextAlign.center,
+                            },
+                            child: Text(
+                              'Get last Messages',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
-                      ),
-                      new Container(
-                        height: 40.0,
-                        width: 175.0,
-                        child: new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
-                          onPressed: () {
-                            _conversation.getMessagesAfter(50, 4).then((value) {
-                              print(value.toString());
-                              setState(() {
-                                _log.add('Get Messages after: msg:' + value['message']);
-                                if (value['status']) {
-                                  _messages.clear();
-                                  _messages.addAll(value['body']);
-                                }
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              _conversation.getMessagesAfter(50, 4).then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Get Messages after: msg:' + value['message']);
+                                  if (value['status']) {
+                                    _messages.clear();
+                                    _messages.addAll(value['body']);
+                                  }
+                                });
                               });
-                            });
-                          },
-                          child: Text(
-                            'Get Messages after',
-                            textAlign: TextAlign.center,
+                            },
+                            child: Text(
+                              'Get Messages after',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 20.0),
@@ -454,7 +458,7 @@ class ConversationInforState extends State<ConversationInfor> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _conversation.setRole('ACTXV7BTAP', UserRole.Member).then((value) {
+                              _conversation.setRole('id1', UserRole.member).then((value) {
                                 print(value.toString());
                                 setState(() {
                                   _log.add('Set role: msg:' + value['message']);
@@ -474,9 +478,8 @@ class ConversationInforState extends State<ConversationInfor> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _conversation.deleteMessages(
-                                  ['msg-vn-1-MWE3BG0IJE-1610578358918', 'msg-vn-1-MWE3BG0IJE-1610578358911']).then((value) {
-                                    print(value.toString());
+                              _conversation.deleteMessages(['msgid1', 'msgid2']).then((value) {
+                                print(value.toString());
                                 setState(() {
                                   _log.add('Delete messages: msg:' + value['message']);
                                 });
@@ -504,9 +507,9 @@ class ConversationInforState extends State<ConversationInfor> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _conversation.revokeMessages(
-                                  ['msg-vn-1-MWE3BG0IJE-1610578433002', 'msg-vn-1-MWE3BG0IJE-1610578432965'], true).then((value) {
-                                    print(value.toString());
+                              _conversation
+                                  .revokeMessages(['msgid1', 'msgid2'], true).then((value) {
+                                print(value.toString());
                                 setState(() {
                                   _log.add('Revoke messages: msg:' + value['message']);
                                 });
@@ -562,7 +565,7 @@ class ConversationInforState extends State<ConversationInfor> {
             textColor: Colors.black,
             onPressed: () {
               message.edit('ok ok').then((value) {
-              print(value.toString());
+                print(value.toString());
                 setState(() {
                   _log.add('Edit messages: msg:' + value['message']);
                   Navigator.of(context, rootNavigator: true).pop();
@@ -579,7 +582,7 @@ class ConversationInforState extends State<ConversationInfor> {
             textColor: Colors.black,
             onPressed: () {
               message.pinOrUnPin(false).then((value) {
-              print(value.toString());
+                print(value.toString());
                 setState(() {
                   _log.add('Pin/UnPin messages: msg:' + value['message']);
                   Navigator.of(context, rootNavigator: true).pop();

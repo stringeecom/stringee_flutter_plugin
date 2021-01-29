@@ -1,85 +1,85 @@
 /// Chat object type
 enum ObjectType {
-  Conversation,
-  Message,
+  conversation,
+  message,
 }
 
 /// Chat change type
 enum ChangeType {
-  Insert,
-  Update,
-  Delete,
+  insert,
+  update,
+  delete,
 }
 
 /// Role of user
 enum UserRole {
-  Admin,
-  Member,
+  admin,
+  member,
 }
 
-/// [Message]'s State
+/// [message]'s State
 enum MsgState {
-  Initialize,
-  Sending,
-  Sent,
-  Delivered,
-  Read,
+  initialize,
+  sending,
+  sent,
+  delivered,
+  read,
 }
 
-/// Type of [Message]
+/// Type of [message]
 enum MsgType {
-  Text,
-  Photo,
-  Video,
-  Audio,
-  File,
-  Link,
-  CreateConversation,
-  RenameConversation,
-  Location,
-  Contact,
-  Sticker,
-  Notification,
+  text,
+  photo,
+  video,
+  audio,
+  file,
+  link,
+  createConversation,
+  renameConversation,
+  location,
+  contact,
+  sticker,
+  notification,
 }
 
 extension MsgTypeValueExtension on MsgType {
   // ignore: missing_return
   int get value {
     switch (this) {
-      case MsgType.Text:
+      case MsgType.text:
         return 1;
         break;
-      case MsgType.Photo:
+      case MsgType.photo:
         return 2;
         break;
-      case MsgType.Video:
+      case MsgType.video:
         return 3;
         break;
-      case MsgType.Audio:
+      case MsgType.audio:
         return 4;
         break;
-      case MsgType.File:
+      case MsgType.file:
         return 5;
         break;
-      case MsgType.Link:
+      case MsgType.link:
         return 6;
         break;
-      case MsgType.CreateConversation:
+      case MsgType.createConversation:
         return 7;
         break;
-      case MsgType.RenameConversation:
+      case MsgType.renameConversation:
         return 8;
         break;
-      case MsgType.Location:
+      case MsgType.location:
         return 9;
         break;
-      case MsgType.Contact:
+      case MsgType.contact:
         return 10;
         break;
-      case MsgType.Sticker:
+      case MsgType.sticker:
         return 11;
         break;
-      case MsgType.Notification:
+      case MsgType.notification:
         return 100;
         break;
     }
@@ -91,51 +91,50 @@ extension MsgTypeExtension on int {
   MsgType get msgType {
     switch (this) {
       case 1:
-        return MsgType.Text;
+        return MsgType.text;
         break;
       case 2:
-        return MsgType.Photo;
+        return MsgType.photo;
         break;
       case 3:
-        return MsgType.Video;
+        return MsgType.video;
         break;
       case 4:
-        return MsgType.Audio;
+        return MsgType.audio;
         break;
       case 5:
-        return MsgType.File;
+        return MsgType.file;
         break;
       case 6:
-        return MsgType.Link;
+        return MsgType.link;
         break;
       case 7:
-        return MsgType.CreateConversation;
+        return MsgType.createConversation;
         break;
       case 8:
-        return MsgType.RenameConversation;
+        return MsgType.renameConversation;
         break;
       case 9:
-        return MsgType.Location;
+        return MsgType.location;
         break;
       case 10:
-        return MsgType.Contact;
+        return MsgType.contact;
         break;
       case 11:
-        return MsgType.Sticker;
+        return MsgType.sticker;
         break;
       case 100:
-        return MsgType.Notification;
+        return MsgType.notification;
         break;
     }
   }
 }
 
-/// Type of noti [Message]
+/// Type of noti [message]
 enum MsgNotifyType {
-  AddParticipants,
-  RemoveParticipants,
-  ChangeGroupName,
-  EndConversation,
+  addParticipants,
+  removeParticipants,
+  changeGroupName,
 }
 
 extension MsgNotifyTypeExtension on int {
@@ -143,16 +142,13 @@ extension MsgNotifyTypeExtension on int {
   MsgNotifyType get notifyType {
     switch (this) {
       case 1:
-        return MsgNotifyType.AddParticipants;
+        return MsgNotifyType.addParticipants;
         break;
       case 2:
-        return MsgNotifyType.RemoveParticipants;
+        return MsgNotifyType.removeParticipants;
         break;
       case 3:
-        return MsgNotifyType.ChangeGroupName;
-        break;
-      case 4:
-        return MsgNotifyType.EndConversation;
+        return MsgNotifyType.changeGroupName;
         break;
     }
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,14 +17,13 @@ var user1 =
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTA1MjIwNjUiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEzMTE0MDY1LCJ1c2VySWQiOiJ1c2VyMiJ9.b-wOVZXzGGu7jDk19Rh9uJqesT3BwKOHSNTkad1Ys4k';
 var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTEyMTY2ODYiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEzODA4Njg2LCJ1c2VySWQiOiJBQ1gzSDZFSkhXIn0.GUBsMeDLUrLIUA2Sn76sPkCZj_Xzba5ERaqlpCo38LU';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYxMTgyNzAxNSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMTkxMzQxNSwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.tVMKZyddd_xfRaL5-vuTwGkdKVXu7b_qfFpRaSXlGx8';
 
 StringeeClient _client = StringeeClient();
 StringeeCall _call;
 StringeeCall2 _call2;
 
-FlutterLocalNotificationsPlugin _localNotifications =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 bool _showIncomingCall = false;
 
 String strUserId = "";
@@ -37,10 +37,9 @@ Future<void> _backgroundMessageHandler(RemoteMessage remoteMessage) async {
   const AndroidInitializationSettings androidSettings =
       AndroidInitializationSettings('@drawable/ic_noti');
   final IOSInitializationSettings iOSSettings = IOSInitializationSettings();
-  final MacOSInitializationSettings macOSSettings =
-      MacOSInitializationSettings();
-  final InitializationSettings initializationSettings = InitializationSettings(
-      android: androidSettings, iOS: iOSSettings, macOS: macOSSettings);
+  final MacOSInitializationSettings macOSSettings = MacOSInitializationSettings();
+  final InitializationSettings initializationSettings =
+      InitializationSettings(android: androidSettings, iOS: iOSSettings, macOS: macOSSettings);
   await _localNotifications
       .initialize(
     initializationSettings,
@@ -151,8 +150,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           handleDiddisconnectEvent();
           break;
         case StringeeClientEvents.didFailWithError:
-          handleDidFailWithErrorEvent(
-              map['body']['code'], map['body']['message']);
+          handleDidFailWithErrorEvent(map['body']['code'], map['body']['message']);
           break;
         case StringeeClientEvents.requestAccessToken:
           handleRequestAccessTokenEvent();
@@ -170,9 +168,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           break;
         case StringeeClientEvents.didReceiveObjectChange:
           StringeeObjectChange objectChange = map['body'];
-          print(objectChange.objectType.toString() +
-              '\t' +
-              objectChange.type.toString());
+          print(objectChange.objectType.toString() + '\t' + objectChange.type.toString());
           print(objectChange.objects.toString());
           break;
         default:
@@ -181,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
 
     /// Connect
-    _client.connect(user1);
+    _client.connect(token);
   }
 
   requestPermissions() async {
@@ -225,9 +221,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void handleDidConnectEvent() {
     if (Platform.isAndroid) {
       FirebaseMessaging.instance.getToken().then((token) {
-        _client
-            .registerPush(token)
-            .then((value) => print('Register push ' + value['message']));
+        _client.registerPush(token).then((value) => print('Register push ' + value['message']));
       });
     }
 
@@ -281,9 +275,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           fromUserId: call != null ? call.from : call2.from,
           toUserId: call != null ? call.to : call2.to,
           isVideoCall: call != null ? call.isVideoCall : call2.isVideoCall,
-          callType: call != null
-              ? StringeeObjectEventType.call
-              : StringeeObjectEventType.call2,
+          callType: call != null ? StringeeObjectEventType.call : StringeeObjectEventType.call2,
           showIncomingUi: true,
           incomingCall2: call != null ? null : call2,
           incomingCall: call != null ? call : null,
@@ -414,7 +406,7 @@ class _MyFormState extends State<MyForm> {
                     },
                     child: Text('CHAT'),
                   ),
-                ),
+                )
               ],
             ),
           ),
