@@ -23,7 +23,7 @@ class StringeeUser {
 
   @override
   String toString() {
-    return '{userId: ${_userId}, name: ${name}, avatarUrl: ${avatarUrl}, role: ${role} }';
+    return '{userId: ${_userId}, name: ${name}, avatarUrl: ${avatarUrl}, role: ${role}}';
   }
 
   Map<String, dynamic> toJson() {

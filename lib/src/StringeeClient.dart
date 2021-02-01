@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeConversation.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeConversationOption.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeObjectChange.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
+
+import 'StringeeConstants.dart';
 import 'call/StringeeCall.dart';
 import 'call/StringeeCall2.dart';
-import 'StringeeConstants.dart';
 
 class StringeeClient {
   static final StringeeClient _instance = StringeeClient._internal();
@@ -89,12 +91,16 @@ class StringeeClient {
   }
 
   /// Register push from Stringee by [deviceToken]
-  Future<Map<dynamic, dynamic>> registerPush(String deviceToken, {bool isProduction, bool isVoip}) async {
+  Future<Map<dynamic, dynamic>> registerPush(
+    String deviceToken, {
+    bool isProduction,
+    bool isVoip,
+  }) async {
     if (deviceToken == null || deviceToken.trim().isEmpty)
       return await reportInvalidValue('deviceToken');
     if (Platform.isIOS) {
-      bool paramIsProduction = isProduction != null ? isProduction: false;
-      bool paramsIsVoip = isVoip != null ? isVoip: true;
+      bool paramIsProduction = isProduction != null ? isProduction : false;
+      bool paramsIsVoip = isVoip != null ? isVoip : true;
 
       final params = {
         'deviceToken': deviceToken.trim(),
@@ -137,8 +143,7 @@ class StringeeClient {
       'option': json.encode(options),
     };
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('createConversation', params);
-    if (result['status'])
-      result['body'] = StringeeConversation.fromJson(result['body']);
+    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body']);
     return result;
   }
 
@@ -147,8 +152,7 @@ class StringeeClient {
     if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationById', convId.trim());
-    if (result['status'])
-      result['body'] = StringeeConversation.fromJson(result['body']);
+    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body']);
     return result;
   }
 
@@ -157,8 +161,7 @@ class StringeeClient {
     if (userId == null || userId.trim().isEmpty) return await reportInvalidValue('convId');
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationByUserId', userId.trim());
-    if (result['status'])
-      result['body'] = StringeeConversation.fromJson(result['body']);
+    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body']);
     return result;
   }
 
@@ -212,7 +215,7 @@ class StringeeClient {
     return result;
   }
 
-  /// Get [count] of [StringeeConversation] after [milliseconds] from Stringee server
+  /// Get [count] of [StringeeConversation] after [datetime] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationsAfter(int count, int datetime) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
     if (datetime == null || datetime <= 0) return await reportInvalidValue('datetime');
@@ -247,10 +250,7 @@ class StringeeClient {
     _projectId = map['projectId'];
     _hasConnected = true;
     _isReconnecting = map['isReconnecting'];
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didConnect,
-      "body": null
-    });
+    _eventStreamController.add({"eventType": StringeeClientEvents.didConnect, "body": null});
   }
 
   void _handleDidDisconnectEvent(Map<dynamic, dynamic> map) {
@@ -258,10 +258,7 @@ class StringeeClient {
     _projectId = map['projectId'];
     _hasConnected = false;
     _isReconnecting = map['isReconnecting'];
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didDisconnect,
-      "body": null
-    });
+    _eventStreamController.add({"eventType": StringeeClientEvents.didDisconnect, "body": null});
   }
 
   void _handleDidFailWithErrorEvent(Map<dynamic, dynamic> map) {
@@ -278,33 +275,23 @@ class StringeeClient {
 
   void _handleRequestAccessTokenEvent(Map<dynamic, dynamic> map) {
     _userId = map['userId'];
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.requestAccessToken,
-      "body": null
-    });
+    _eventStreamController
+        .add({"eventType": StringeeClientEvents.requestAccessToken, "body": null});
   }
 
   void _handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didReceiveCustomMessage,
-      "body": map
-    });
+    _eventStreamController
+        .add({"eventType": StringeeClientEvents.didReceiveCustomMessage, "body": map});
   }
 
   void _handleIncomingCallEvent(Map<dynamic, dynamic> map) {
     StringeeCall call = StringeeCall.fromCallInfo(map);
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.incomingCall,
-      "body": call
-    });
+    _eventStreamController.add({"eventType": StringeeClientEvents.incomingCall, "body": call});
   }
 
   void _handleIncomingCall2Event(Map<dynamic, dynamic> map) {
     StringeeCall2 call = StringeeCall2.fromCallInfo(map);
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.incomingCall2,
-      "body": call
-    });
+    _eventStreamController.add({"eventType": StringeeClientEvents.incomingCall2, "body": call});
   }
 
   void _handleReceiveChangeEvent(Map<dynamic, dynamic> map) {
@@ -315,13 +302,13 @@ class StringeeClient {
 
     switch (objectType) {
       case ObjectType.conversation:
-        for (int i = 0 ; i < objectDatas.length ; i++) {
+        for (int i = 0; i < objectDatas.length; i++) {
           StringeeConversation conv = new StringeeConversation.fromJson(objectDatas[i]);
           objects.add(conv);
         }
         break;
       case ObjectType.message:
-        for (int i = 0 ; i < objectDatas.length ; i++) {
+        for (int i = 0; i < objectDatas.length; i++) {
           StringeeMessage msg = new StringeeMessage.fromJson(objectDatas[i]);
           objects.add(msg);
         }

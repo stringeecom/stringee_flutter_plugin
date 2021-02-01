@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
-import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
+import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 
 import '../StringeeConstants.dart';
-import 'StringeeObjectChange.dart';
 import 'StringeeUser.dart';
 
 class StringeeConversation {
@@ -45,7 +44,6 @@ class StringeeConversation {
   String get pinnedMsgId => _pinnedMsgId;
 
   List<StringeeUser> get participants => _participants;
-
 
   @override
   String toString() {

@@ -1,6 +1,4 @@
 import '../StringeeConstants.dart';
-import 'StringeeConversation.dart';
-import 'StringeeMessage.dart';
 
 class StringeeObjectChange {
   ChangeType _type;
@@ -18,6 +16,4 @@ class StringeeObjectChange {
     this._objects = objects;
     this._objectType = objectType;
   }
-
-
 }
