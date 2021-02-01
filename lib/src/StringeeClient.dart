@@ -89,7 +89,7 @@ class StringeeClient {
   }
 
   /// Register push from Stringee by [deviceToken]
-  Future<Map<dynamic, dynamic>> registerPush(String deviceToken, [bool isProduction, bool isVoip]) async {
+  Future<Map<dynamic, dynamic>> registerPush(String deviceToken, {bool isProduction, bool isVoip}) async {
     if (deviceToken == null || deviceToken.trim().isEmpty)
       return await reportInvalidValue('deviceToken');
     if (Platform.isIOS) {
