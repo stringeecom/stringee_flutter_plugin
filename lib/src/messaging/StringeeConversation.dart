@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
-import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 
 import '../StringeeConstants.dart';

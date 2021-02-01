@@ -4,9 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeConversation.dart';
-import 'package:stringee_flutter_plugin/src/messaging/StringeeConversationOption.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
-import 'package:stringee_flutter_plugin/src/messaging/StringeeObjectChange.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
 
 import 'StringeeConstants.dart';

@@ -1,4 +1,3 @@
-import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
 
 import '../StringeeClient.dart';

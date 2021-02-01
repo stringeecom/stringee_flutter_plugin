@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'CallConstants.dart';
+import '../StringeeConstants.dart';
 
 class StringeeVideoView extends StatefulWidget {
   final String callId;

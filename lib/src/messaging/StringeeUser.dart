@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:stringee_flutter_plugin/src/messaging/MessagingConstants.dart';
+import 'package:stringee_flutter_plugin/src/StringeeConstants.dart';
 
 class StringeeUser {
   String _userId;
