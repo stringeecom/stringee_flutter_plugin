@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeConversation.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeConversationOption.dart';
@@ -88,10 +89,22 @@ class StringeeClient {
   }
 
   /// Register push from Stringee by [deviceToken]
-  Future<Map<dynamic, dynamic>> registerPush(String deviceToken) async {
+  Future<Map<dynamic, dynamic>> registerPush(String deviceToken, [bool isProduction, bool isVoip]) async {
     if (deviceToken == null || deviceToken.trim().isEmpty)
       return await reportInvalidValue('deviceToken');
-    return await methodChannel.invokeMethod('registerPush', deviceToken.trim());
+    if (Platform.isIOS) {
+      bool paramIsProduction = isProduction != null ? isProduction: false;
+      bool paramsIsVoip = isVoip != null ? isVoip: true;
+
+      final params = {
+        'deviceToken': deviceToken.trim(),
+        'isProduction': paramIsProduction,
+        'isVoip': paramsIsVoip
+      };
+      return await methodChannel.invokeMethod('registerPush', params);
+    } else {
+      return await methodChannel.invokeMethod('registerPush', deviceToken.trim());
+    }
   }
 
   /// Unregister push from Stringee by [deviceToken[
