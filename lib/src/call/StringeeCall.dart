@@ -6,7 +6,7 @@ import '../StringeeConstants.dart';
 
 class StringeeCall {
   String _id;
-  String _serial;
+  int _serial;
   String _from;
   String _to;
   String _fromAlias;
@@ -19,7 +19,7 @@ class StringeeCall {
 
   String get id => _id;
 
-  String get serial => _serial;
+  int get serial => _serial;
 
   String get from => _from;
 

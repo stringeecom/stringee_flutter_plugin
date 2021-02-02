@@ -27,10 +27,8 @@
     <list default="true" id="bb5e12ef-f814-4430-bbc6-90d2bee1717b" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/call/StringeeCall.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/call/StringeeCall.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/call/StringeeCall2.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/call/StringeeCall2.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/stringee_flutter_plugin.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/stringee_flutter_plugin.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,12 +153,12 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2709" y="374" key="#com.intellij.debugger.actions.ViewTextAction/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609217251419" />
-    <state x="-1131" y="262" width="392" height="730" key="#com.intellij.ide.util.MemberChooser" timestamp="1612233205380">
+    <state x="-1131" y="262" width="392" height="730" key="#com.intellij.ide.util.MemberChooser" timestamp="1612233653842">
       <screen x="-1879" y="23" width="1879" height="1057" />
     </state>
     <state x="2684" y="235" width="392" height="730" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609835876370" />
     <state x="764" y="235" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1608260994937" />
-    <state x="-1131" y="262" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@-1879.23.1879.1057" timestamp="1612233205380" />
+    <state x="-1131" y="262" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@-1879.23.1879.1057" timestamp="1612233653842" />
     <state x="2204" y="262" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611137357158" />
     <state x="2609" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1609815014815">
       <screen x="1920" y="0" width="1920" height="1040" />
