@@ -6,6 +6,7 @@ import '../StringeeConstants.dart';
 
 class StringeeCall2 {
   String _id;
+  String _serial;
   String _from;
   String _to;
   String _fromAlias;
@@ -17,6 +18,8 @@ class StringeeCall2 {
   StreamSubscription<dynamic> _subscriber;
 
   String get id => _id;
+
+  String get serial => _serial;
 
   String get from => _from;
 
@@ -49,6 +52,7 @@ class StringeeCall2 {
     }
 
     this._id = callInfo['callId'];
+    this._serial = callInfo['serial'];
     this._from = callInfo['from'];
     this._to = callInfo['to'];
     this._fromAlias = callInfo['fromAlias'];

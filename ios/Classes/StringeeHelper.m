@@ -38,6 +38,7 @@
     
     NSMutableDictionary *data = [NSMutableDictionary new];
     [data setObject:callId forKey:@"callId"];
+    [data setObject:@(call.serial) forKey:@"serial"];
     [data setObject:from forKey:@"from"];
     [data setObject:to forKey:@"to"];
     [data setObject:fromAlias forKey:@"fromAlias"];
@@ -78,6 +79,7 @@
     
     NSMutableDictionary *data = [NSMutableDictionary new];
     [data setObject:callId forKey:@"callId"];
+    [data setObject:@(call.serial) forKey:@"serial"];
     [data setObject:from forKey:@"from"];
     [data setObject:to forKey:@"to"];
     [data setObject:fromAlias forKey:@"fromAlias"];
