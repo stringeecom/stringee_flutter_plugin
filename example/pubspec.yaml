@@ -17,9 +17,6 @@ dependencies:
     path: ../
 
   permission: ^0.1.7
-  firebase_core: "0.6.0"
-  firebase_messaging: "^8.0.0-dev.12"
-  flutter_local_notifications: ^3.0.3
 
 dev_dependencies:
   flutter_test:

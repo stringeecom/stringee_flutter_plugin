@@ -33,7 +33,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     private static StringeeManager _stringeeManager;
     private MethodChannel.Result makeCallResult;
     private static Handler _handler;
-    private static final String TAG = "Stringee";
+    private static final String TAG = "Stringee sdk";
     private MediaState _mediaState;
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
@@ -97,7 +97,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("Stringee", "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
+                        Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
                         List<StringeeAudioManager.AudioDevice> audioDeviceList = new ArrayList<StringeeAudioManager.AudioDevice>();
                         audioDeviceList.addAll(availableAudioDevices);
                         List<Short> codeList = new ArrayList<Short>();
@@ -173,7 +173,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("Stringee", "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
+                        Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
                         List<StringeeAudioManager.AudioDevice> audioDeviceList = new ArrayList<StringeeAudioManager.AudioDevice>();
                         audioDeviceList.addAll(availableAudioDevices);
                         List<Short> codeList = new ArrayList<Short>();

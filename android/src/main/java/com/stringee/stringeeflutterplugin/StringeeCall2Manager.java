@@ -34,7 +34,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
     private static StringeeManager _stringeeManager;
     private Result makeCallResult;
     private static Handler _handler;
-    private static final String TAG = "Stringee";
+    private static final String TAG = "Stringee sdk";
     private MediaState _mediaState;
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
@@ -173,7 +173,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("Stringee", "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
+                        Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
                         List<AudioDevice> audioDeviceList = new ArrayList<AudioDevice>();
                         audioDeviceList.addAll(availableAudioDevices);
                         List<Short> codeList = new ArrayList<Short>();

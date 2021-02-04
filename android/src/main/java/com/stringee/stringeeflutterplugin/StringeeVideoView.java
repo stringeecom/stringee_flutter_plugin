@@ -24,7 +24,7 @@ import io.flutter.plugin.platform.PlatformView;
 
 public class StringeeVideoView implements PlatformView {
     private FrameLayout frameLayout;
-    private static final String TAG = "Stringee";
+    private static final String TAG = "Stringee sdk";
     private Handler handler = new Handler(Looper.getMainLooper());
 
     StringeeVideoView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams) {

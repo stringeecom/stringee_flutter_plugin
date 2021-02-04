@@ -20,7 +20,6 @@ import com.stringee.messaging.listeners.CallbackListener;
 import com.stringee.messaging.listeners.ChangeEventListenter;
 import com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
     private static StringeeClient _client;
     private static StringeeManager _stringeeManager;
     private static Handler _handler;
-    private static final String TAG = "Stringee";
+    private static final String TAG = "Stringee sdk";
 
     /**
      * @param context

@@ -1,90 +1,20 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
-var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTA1MjIwNTMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEzMTE0MDUzLCJ1c2VySWQiOiJ1c2VyMSJ9.Be1zr2FVDonQHl1ki_3iFNepOciEp44R0ZGdGaxdCGo';
-var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTA1MjIwNjUiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjEzMTE0MDY1LCJ1c2VySWQiOiJ1c2VyMiJ9.b-wOVZXzGGu7jDk19Rh9uJqesT3BwKOHSNTkad1Ys4k';
-var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYxMTgyNzAxNSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYxMTkxMzQxNSwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.tVMKZyddd_xfRaL5-vuTwGkdKVXu7b_qfFpRaSXlGx8';
+var token = 'PUT YOUR TOKEN HERE';
 
 StringeeClient _client = StringeeClient();
-StringeeCall _call;
-StringeeCall2 _call2;
-
-FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
-bool _showIncomingCall = false;
 
 String strUserId = "";
 
-Future<void> _backgroundMessageHandler(RemoteMessage remoteMessage) async {
-  print("Handling a background message: ${remoteMessage.data}");
-
-  Map<dynamic, dynamic> _notiData = remoteMessage.data;
-  Map<dynamic, dynamic> _data = json.decode(_notiData['data']);
-
-  const AndroidInitializationSettings androidSettings =
-      AndroidInitializationSettings('@drawable/ic_noti');
-  final IOSInitializationSettings iOSSettings = IOSInitializationSettings();
-  final MacOSInitializationSettings macOSSettings = MacOSInitializationSettings();
-  final InitializationSettings initializationSettings =
-      InitializationSettings(android: androidSettings, iOS: iOSSettings, macOS: macOSSettings);
-  await _localNotifications
-      .initialize(
-    initializationSettings,
-    onSelectNotification: null,
-  )
-      .then((value) async {
-    if (value) {
-      if (_data['callStatus'] == 'started') {
-        /// Create channel for notification
-        const AndroidNotificationDetails androidPlatformChannelSpecifics =
-            AndroidNotificationDetails(
-          'your channel id',
-          'your channel name',
-          'your channel description',
-          importance: Importance.max,
-          priority: Priority.high,
-          fullScreenIntent: true,
-
-          /// Set true for show App in lockScreen
-        );
-        const NotificationDetails platformChannelSpecifics =
-            NotificationDetails(android: androidPlatformChannelSpecifics);
-
-        /// Show notification
-        await _localNotifications.show(
-          0,
-          'Incoming Call',
-          'from ' + _data['from']['alias'],
-          platformChannelSpecifics,
-        );
-      } else if (_data['callStatus'] == 'ended') {
-        _localNotifications.cancel(0);
-      }
-    }
-  });
-}
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isAndroid)
-    Firebase.initializeApp().whenComplete(() {
-      print("completed");
-      FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
-    });
-
+void main() {
   runApp(new MyApp());
 }
 
@@ -103,37 +33,14 @@ class MyHomePage extends StatefulWidget {
   }
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+class _MyHomePageState extends State<MyHomePage> {
   String myUserId = 'Not connected...';
   bool isAppInBackground = false;
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _localNotifications.cancel(0);
-      isAppInBackground = false;
-    } else if (state == AppLifecycleState.inactive) {
-      isAppInBackground = true;
-    }
-
-    if (state == AppLifecycleState.resumed && _client != null) {
-      if (_client.hasConnected && _showIncomingCall && Platform.isAndroid) {
-        showCallScreen(_call, _call2);
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
 
   @override
   Future<void> initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
 
     if (Platform.isAndroid) {
       requestPermissions();
@@ -219,12 +126,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   //region Handle Client Event
   void handleDidConnectEvent() {
-    if (Platform.isAndroid) {
-      FirebaseMessaging.instance.getToken().then((token) {
-        _client.registerPush(token).then((value) => print('Register push ' + value['message']));
-      });
-    }
-
     setState(() {
       myUserId = _client.userId;
     });
@@ -249,25 +150,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void handleIncomingCallEvent(StringeeCall call) {
-    if (!isAppInBackground || !Platform.isAndroid) {
-      showCallScreen(call, null);
-    } else {
-      _showIncomingCall = true;
-      _call = call;
-    }
+    showCallScreen(call, null);
   }
 
   void handleIncomingCall2Event(StringeeCall2 call) {
-    if (!isAppInBackground || !Platform.isAndroid) {
-      showCallScreen(null, call);
-    } else {
-      _showIncomingCall = true;
-      _call2 = call;
-    }
+    showCallScreen(null, call);
   }
 
   void showCallScreen(StringeeCall call, StringeeCall2 call2) {
-    _showIncomingCall = false;
     Navigator.push(
       context,
       MaterialPageRoute(
