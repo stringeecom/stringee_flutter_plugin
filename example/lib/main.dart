@@ -9,6 +9,8 @@ import 'package:stringee_flutter_plugin_example/Chat.dart';
 import 'Call.dart';
 
 var token = 'PUT YOUR TOKEN HERE';
+var user1 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTY3MjY0OTMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjE5MzE4NDkzLCJ1c2VySWQiOiJ1c2VyMSJ9.8ka6vTat6Oga23QnchMZ6Fjy7DMZOxus7N-eK9M0XS4';
+var user2 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTY3MjY1MTMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjE5MzE4NTEzLCJ1c2VySWQiOiJ1c2VyMiJ9.Lu893H0Rkc0DwPzlsZDbryezGv_pVfWAegzVa_4gccQ';
 
 StringeeClient _client = StringeeClient();
 
@@ -84,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     /// Connect
-    _client.connect(token);
+    _client.connect(user1);
   }
 
   requestPermissions() async {
