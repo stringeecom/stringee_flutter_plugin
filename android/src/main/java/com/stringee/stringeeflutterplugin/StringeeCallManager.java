@@ -24,6 +24,11 @@ import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel;
 
+import static com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioDevice;
+import static com.stringee.stringeeflutterplugin.StringeeAudioManager.AudioManagerEvents;
+import static com.stringee.stringeeflutterplugin.StringeeAudioManager.create;
+import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent;
+
 public class StringeeCallManager implements StringeeCall.StringeeCallListener {
     private static StringeeCallManager _callManager;
     private static Context _context;
@@ -90,22 +95,22 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
         _stringeeManager.getCallsMap().put(_call.getCallId(), _call);
         makeCallResult = result;
 
-        _audioManager = StringeeAudioManager.create(_context);
-        _audioManager.start(new StringeeAudioManager.AudioManagerEvents() {
+        _audioManager = create(_context);
+        _audioManager.start(new AudioManagerEvents() {
             @Override
-            public void onAudioDeviceChanged(final StringeeAudioManager.AudioDevice selectedAudioDevice, final Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
+            public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
-                        List<StringeeAudioManager.AudioDevice> audioDeviceList = new ArrayList<StringeeAudioManager.AudioDevice>();
+                        List<AudioDevice> audioDeviceList = new ArrayList<AudioDevice>();
                         audioDeviceList.addAll(availableAudioDevices);
                         List<Short> codeList = new ArrayList<Short>();
                         for (int i = 0; i < audioDeviceList.size(); i++) {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                        map.put("nativeEventType", CallEvent.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -166,22 +171,22 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             }
         });
 
-        _audioManager = StringeeAudioManager.create(_context);
-        _audioManager.start(new StringeeAudioManager.AudioManagerEvents() {
+        _audioManager = create(_context);
+        _audioManager.start(new AudioManagerEvents() {
             @Override
-            public void onAudioDeviceChanged(final StringeeAudioManager.AudioDevice selectedAudioDevice, final Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
+            public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
-                        List<StringeeAudioManager.AudioDevice> audioDeviceList = new ArrayList<StringeeAudioManager.AudioDevice>();
+                        List<AudioDevice> audioDeviceList = new ArrayList<AudioDevice>();
                         audioDeviceList.addAll(availableAudioDevices);
                         List<Short> codeList = new ArrayList<Short>();
                         for (int i = 0; i < audioDeviceList.size(); i++) {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                        map.put("nativeEventType", CallEvent.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -786,7 +791,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 }
 
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                map.put("nativeEventType", CallEvent.getValue());
                 map.put("event", "didChangeSignalingState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -822,7 +827,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             public void run() {
                 Log.d(TAG, "==========HandledOnAnotherDevice==========\n" + "signalingState: " + signalingState + " -description: " + description);
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                map.put("nativeEventType", CallEvent.getValue());
                 map.put("event", "didHandleOnAnotherDevice");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -842,7 +847,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 _mediaState = mediaState;
                 Log.d(TAG, "==========MediaStateChange==========\n" + "mediaState: " + mediaState);
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                map.put("nativeEventType", CallEvent.getValue());
                 map.put("event", "didChangeMediaState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -853,7 +858,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 if (_mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed && stringeeCall.isVideoCall()) {
                     remoteStreamShowed = true;
                     Map map1 = new HashMap();
-                    map1.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                    map1.put("nativeEventType", CallEvent.getValue());
                     map1.put("event", "didReceiveRemoteStream");
                     Map bodyMap1 = new HashMap();
                     bodyMap1.put("callId", stringeeCall.getCallId());
@@ -872,7 +877,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                 if (stringeeCall.isVideoCall()) {
                     Log.d(TAG, "==========ReceiveLocalStream==========");
                     Map map = new HashMap();
-                    map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                    map.put("nativeEventType", CallEvent.getValue());
                     map.put("event", "didReceiveLocalStream");
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
@@ -908,7 +913,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
                     if (_mediaState == MediaState.CONNECTED && !remoteStreamShowed) {
                         remoteStreamShowed = true;
                         Map map = new HashMap();
-                        map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                        map.put("nativeEventType", CallEvent.getValue());
                         map.put("event", "didReceiveRemoteStream");
                         Map bodyMap = new HashMap();
                         bodyMap.put("callId", stringeeCall.getCallId());
@@ -929,7 +934,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
             public void run() {
                 Log.d(TAG, "==========ReceiveCallInfo==========\n" + jsonObject.toString());
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent.getValue());
+                map.put("nativeEventType", CallEvent.getValue());
                 map.put("event", "didReceiveCallInfo");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());

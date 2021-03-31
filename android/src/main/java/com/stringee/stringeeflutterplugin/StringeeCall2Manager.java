@@ -25,6 +25,8 @@ import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event;
+
 public class StringeeCall2Manager implements StringeeCallListener {
     private static StringeeCall2Manager _callManager;
     private static Context _context;
@@ -106,7 +108,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                        map.put("nativeEventType", Call2Event.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -181,7 +183,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                             codeList.add(audioDeviceList.get(i).getValue());
                         }
                         Map map = new HashMap();
-                        map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                        map.put("nativeEventType", Call2Event.getValue());
                         map.put("event", "didChangeAudioDevice");
                         Map bodyMap = new HashMap();
                         bodyMap.put("code", selectedAudioDevice.getValue());
@@ -780,7 +782,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                 }
 
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                map.put("nativeEventType", Call2Event.getValue());
                 map.put("event", "didChangeSignalingState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -816,7 +818,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             public void run() {
                 Log.d(TAG, "==========HandledOnAnotherDevice2==========\n" + "signalingState: " + signalingState + " -description: " + description);
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                map.put("nativeEventType", Call2Event.getValue());
                 map.put("event", "didHandleOnAnotherDevice");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -836,7 +838,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                 _mediaState = mediaState;
                 Log.d(TAG, "==========MediaStateChange2==========\n" + "mediaState: " + mediaState);
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                map.put("nativeEventType", Call2Event.getValue());
                 map.put("event", "didChangeMediaState");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());
@@ -847,7 +849,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                 if (_mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed && stringeeCall.isVideoCall()) {
                     remoteStreamShowed = true;
                     Map map1 = new HashMap();
-                    map1.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                    map1.put("nativeEventType", Call2Event.getValue());
                     map1.put("event", "didReceiveRemoteStream");
                     Map bodyMap1 = new HashMap();
                     bodyMap1.put("callId", stringeeCall.getCallId());
@@ -866,7 +868,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                 if (stringeeCall.isVideoCall()) {
                     Log.d(TAG, "==========ReceiveLocalStream2==========");
                     Map map = new HashMap();
-                    map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                    map.put("nativeEventType", Call2Event.getValue());
                     map.put("event", "didReceiveLocalStream");
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
@@ -902,7 +904,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
                     if (_mediaState == MediaState.CONNECTED && !remoteStreamShowed) {
                         remoteStreamShowed = true;
                         Map map = new HashMap();
-                        map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                        map.put("nativeEventType", Call2Event.getValue());
                         map.put("event", "didReceiveRemoteStream");
                         Map bodyMap = new HashMap();
                         bodyMap.put("callId", stringeeCall.getCallId());
@@ -923,7 +925,7 @@ public class StringeeCall2Manager implements StringeeCallListener {
             public void run() {
                 Log.d(TAG, "==========ReceiveCallInfo2==========\n" + jsonObject.toString());
                 Map map = new HashMap();
-                map.put("nativeEventType", com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event.getValue());
+                map.put("nativeEventType", Call2Event.getValue());
                 map.put("event", "didReceiveCallInfo");
                 Map bodyMap = new HashMap();
                 bodyMap.put("callId", stringeeCall.getCallId());

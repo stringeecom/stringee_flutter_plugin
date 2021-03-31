@@ -363,6 +363,7 @@ class StringeeServerAddress {
   int _port;
 
   String get host => _host;
+
   int get port => _port;
 
   StringeeServerAddress(String host, int port) {
@@ -372,8 +373,8 @@ class StringeeServerAddress {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    params['host'] = _host.trim();
-    params['port'] = _port;
+    if (_host != null) params['host'] = _host.trim();
+    if (_port != null) params['port'] = _port;
     return params;
   }
 }
