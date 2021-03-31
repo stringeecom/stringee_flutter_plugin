@@ -73,25 +73,27 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         switch (call.method) {
             case "connect":
                 try {
-                    JSONArray array = new JSONArray((String) call.argument("serverAddresses"));
                     List<SocketAddress> socketAddressList = new ArrayList<>();
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject object = (JSONObject) array.get(i);
-                        String host = object.optString("host", null);
-                        int port = object.optInt("port", -1);
-                        if (host != null || host.equalsIgnoreCase("null") || host.equalsIgnoreCase("")) {
-                            Log.d(TAG, "host is invalid");
-                        }
+                    if ((String) call.argument("serverAddresses") != null && !((String) call.argument("serverAddresses")).equalsIgnoreCase("null") && !((String) call.argument("serverAddresses")).equalsIgnoreCase("")) {
+                        JSONArray array = new JSONArray((String) call.argument("serverAddresses"));
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = (JSONObject) array.get(i);
+                            String host = object.optString("host", null);
+                            int port = object.optInt("port", -1);
+                            if (host == null || host.equalsIgnoreCase("null") || host.equalsIgnoreCase("")) {
+                                Log.d(TAG, "host is invalid");
+                            }
 
-                        if (port == -1) {
-                            Log.d(TAG, "port is invalid");
-                        }
+                            if (port == -1) {
+                                Log.d(TAG, "port is invalid");
+                            }
 
-                        if (host != null && host.equalsIgnoreCase("null") && host.equalsIgnoreCase("") && port != -1) {
-                            SocketAddress socketAddress = new SocketAddress(host, port);
-                            socketAddressList.add(socketAddress);
-                        }
+                            if (host != null && !host.equalsIgnoreCase("null") && !host.equalsIgnoreCase("") && port != -1) {
+                                SocketAddress socketAddress = new SocketAddress(host, port);
+                                socketAddressList.add(socketAddress);
+                            }
 
+                        }
                     }
                     _clientManager.connect((String) call.argument("token"), socketAddressList, result);
                 } catch (JSONException e) {
