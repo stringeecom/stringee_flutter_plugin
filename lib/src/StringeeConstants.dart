@@ -357,3 +357,23 @@ class StringeeObjectChange {
     this._objectType = objectType;
   }
 }
+
+class StringeeServerAddress {
+  String _host;
+  int _port;
+
+  String get host => _host;
+  int get port => _port;
+
+  StringeeServerAddress(String host, int port) {
+    this._host = host;
+    this._port = port;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> params = new Map();
+    params['host'] = _host.trim();
+    params['port'] = _port;
+    return params;
+  }
+}

@@ -254,7 +254,9 @@
 #pragma mark - Client Actions
 
 - (void)connect:(id)arguments result:(FlutterResult)result {
-    if (![arguments isKindOfClass:[NSString class]]) {
+    NSDictionary *data = (NSDictionary *)arguments;
+    
+    if (![data isKindOfClass:[NSDictionary class]]) {
         result(nil);
         return;
     }
@@ -265,10 +267,18 @@
     }
     isConnecting = YES;
     
-    NSString *token = (NSString *)arguments;
+    NSString *token = [data objectForKey:@"token"];
     
     if (!_client) {
-        _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
+        NSString *strServerAddressesData = [data objectForKey:@"serverAddresses"];
+        if (strServerAddressesData != nil) {
+            NSArray *serverAddressesData = [StringeeHelper StringToArray:strServerAddressesData];
+            NSArray *serverAddresses = [StringeeHelper parseServerAddressesWithData:serverAddressesData];
+            _client = [[StringeeClient alloc] initWithConnectionDelegate:self serverAddress:serverAddresses];
+        } else {
+            _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
+        }
+
         _client.incomingCallDelegate = self;
     }
     

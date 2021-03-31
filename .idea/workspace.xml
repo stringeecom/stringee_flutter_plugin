@@ -25,13 +25,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bb5e12ef-f814-4430-bbc6-90d2bee1717b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/stringee_flutter_plugin.podspec" beforeDir="false" afterPath="$PROJECT_DIR$/ios/stringee_flutter_plugin.podspec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeFlutterPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeFlutterPlugin.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeHelper.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeHelper.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/StringeeHelper.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/StringeeClient.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/StringeeClient.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/StringeeConstants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/StringeeConstants.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,13 +153,12 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2709" y="374" key="#com.intellij.debugger.actions.ViewTextAction/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609217251419" />
-    <state x="-1131" y="262" width="392" height="730" key="#com.intellij.ide.util.MemberChooser" timestamp="1612233653842">
-      <screen x="-1879" y="23" width="1879" height="1057" />
+    <state x="2204" y="262" width="392" height="730" key="#com.intellij.ide.util.MemberChooser" timestamp="1617156565589">
+      <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state x="2684" y="235" width="392" height="730" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609835876370" />
-    <state x="764" y="235" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1608260994937" />
     <state x="-1131" y="262" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@-1879.23.1879.1057" timestamp="1612233653842" />
-    <state x="2204" y="262" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1611137357158" />
+    <state x="2204" y="262" key="#com.intellij.ide.util.MemberChooser/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1617156565589" />
     <state x="2609" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1609815014815">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
@@ -243,11 +242,11 @@
     </state>
     <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040/1920.0.1920.1040@1920.0.1920.1040" timestamp="1609410948145" />
     <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1609251195516" />
-    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog" timestamp="1616726209600">
+    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog" timestamp="1617156068512">
       <screen x="1440" y="23" width="1920" height="1057" />
     </state>
     <state x="-1346" y="349" key="com.intellij.ide.util.TipDialog/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@-1879.23.1879.1057" timestamp="1612143455929" />
-    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1616726209600" />
+    <state x="1985" y="349" key="com.intellij.ide.util.TipDialog/0.23.1440.877/1440.23.1920.1057/-1879.23.1879.1057@1440.23.1920.1057" timestamp="1617156068512" />
     <state x="2536" y="240" key="run.anything.popup" timestamp="1609410305714">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>

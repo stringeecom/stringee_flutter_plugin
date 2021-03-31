@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSSet<StringeeIdentity *> *)parsePartsWithData:(NSArray *)data;
 
++ (NSArray<StringeeServerAddress *> *)parseServerAddressesWithData:(NSArray *)data;
+
 @end
 
 NS_ASSUME_NONNULL_END
