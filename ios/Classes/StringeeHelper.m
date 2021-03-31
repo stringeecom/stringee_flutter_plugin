@@ -410,4 +410,16 @@
     return parts;
 }
 
++ (NSArray<StringeeServerAddress *> *)parseServerAddressesWithData:(NSArray *)data {
+    NSMutableArray *serverAddresses = [[NSMutableArray alloc] init];
+    for (NSDictionary *serverAddrData in data) {
+        NSString *host = [serverAddrData objectForKey:@"host"];
+        int port = [[serverAddrData objectForKey:@"port"] intValue];
+        StringeeServerAddress *serverAddr = [[StringeeServerAddress alloc] initWithHost:host port:port];
+        [serverAddresses addObject:serverAddr];
+    }
+    
+    return serverAddresses;
+}
+
 @end

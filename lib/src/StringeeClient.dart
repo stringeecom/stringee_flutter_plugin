@@ -17,6 +17,7 @@ class StringeeClient {
   static const MethodChannel methodChannel = MethodChannel('com.stringee.flutter.methodchannel');
   static const EventChannel eventChannel = EventChannel('com.stringee.flutter.eventchannel');
   StreamController<dynamic> _eventStreamController = StreamController.broadcast();
+  static List<StringeeServerAddress> _serverAddresses = null;
 
   String _userId;
   String _projectId;
@@ -33,7 +34,8 @@ class StringeeClient {
 
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
-  factory StringeeClient() {
+  factory StringeeClient({List<StringeeServerAddress> serverAddresses}) {
+    _serverAddresses = serverAddresses;
     return _instance;
   }
 
@@ -80,7 +82,13 @@ class StringeeClient {
   /// Connect to [StringeeClient] by [token]
   Future<Map<dynamic, dynamic>> connect(String token) async {
     if (token == null || token.trim().isEmpty) return await reportInvalidValue('token');
-    return await methodChannel.invokeMethod('connect', token.trim());
+
+    final params = {
+      'serverAddresses': json.encode(_serverAddresses),
+      'token': token.trim(),
+    };
+
+    return await methodChannel.invokeMethod('connect', params);
   }
 
   /// Disconnect from [StringeeCLient]
