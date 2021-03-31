@@ -25,18 +25,18 @@
     if (self) {
         DTMF = @[@"0", @"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"*", @"#"];
         
-        if (!_client) {
-            _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
-            _client.incomingCallDelegate = self;
-            
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
-        }
-        
-        _callManager = [[StringeeCallManager alloc] initWithClient:_client];
-        _call2Manager = [[StringeeCall2Manager alloc] initWithClient:_client];
-        _convManager = [[StringeeConversationManager alloc] initWithClient:_client];
-        _msgManager = [[StringeeMessageManager alloc] initWithClient:_client];
+//        if (!_client) {
+//            _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
+//            _client.incomingCallDelegate = self;
+//
+//            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
+//            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
+//        }
+//
+        _callManager = [[StringeeCallManager alloc] init];
+        _call2Manager = [[StringeeCall2Manager alloc] init];
+        _convManager = [[StringeeConversationManager alloc] init];
+        _msgManager = [[StringeeMessageManager alloc] init];
     }
     return self;
 }
@@ -270,16 +270,27 @@
     NSString *token = [data objectForKey:@"token"];
     
     if (!_client) {
-        NSString *strServerAddressesData = [data objectForKey:@"serverAddresses"];
-        if (strServerAddressesData != nil) {
+        id strServerAddressesData = [data objectForKey:@"serverAddresses"];
+        if (strServerAddressesData != nil && strServerAddressesData != [NSNull null]) {
             NSArray *serverAddressesData = [StringeeHelper StringToArray:strServerAddressesData];
             NSArray *serverAddresses = [StringeeHelper parseServerAddressesWithData:serverAddressesData];
-            _client = [[StringeeClient alloc] initWithConnectionDelegate:self serverAddress:serverAddresses];
+            if (serverAddresses.count > 0) {
+                _client = [[StringeeClient alloc] initWithConnectionDelegate:self serverAddress:serverAddresses];
+            } else {
+                _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
+            }
         } else {
             _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
         }
-
         _client.incomingCallDelegate = self;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
+        
+        [_callManager setClient:_client];
+        [_call2Manager setClient:_client];
+        [_convManager setClient:_client];
+        [_msgManager setClient:_client];
     }
     
     [_client connectWithAccessToken:token];

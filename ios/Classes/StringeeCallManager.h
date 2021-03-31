@@ -13,7 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface StringeeCallManager : NSObject<StringeeCallDelegate>
 
-- (instancetype)initWithClient:(StringeeClient *)client;
+//- (instancetype)initWithClient:(StringeeClient *)client;
+
+- (void)setClient:(StringeeClient *)client;
 
 - (void)setEventSink:(FlutterEventSink)eventSink;
 

@@ -25,6 +25,19 @@
     return self;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.trackedMessages = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (void)setClient:(StringeeClient *)client {
+    _client = client;
+}
+
 - (void)setEventSink:(FlutterEventSink)eventSink {
     _eventSink = eventSink;
 }

@@ -84,7 +84,7 @@ class StringeeClient {
     if (token == null || token.trim().isEmpty) return await reportInvalidValue('token');
 
     final params = {
-      'serverAddresses': json.encode(_serverAddresses),
+      'serverAddresses': _serverAddresses != null ? json.encode(_serverAddresses) : null,
       'token': token.trim(),
     };
 

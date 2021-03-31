@@ -24,6 +24,10 @@
     return self;
 }
 
+- (void)setClient:(StringeeClient *)client {
+    _client = client;
+}
+
 - (void)setEventSink:(FlutterEventSink)eventSink {
     _eventSink = eventSink;
 }

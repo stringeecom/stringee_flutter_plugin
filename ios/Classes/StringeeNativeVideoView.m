@@ -13,7 +13,7 @@
               binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger {
     if (self = [super init]) {
         _view = [[UIView alloc] init];
-        NSLog(@"KHOI TAO StringeeNativeVideoView: %@ - (%f, %f, %f %f)", args, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+//        NSLog(@"KHOI TAO StringeeNativeVideoView: %@ - (%f, %f, %f %f)", args, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 
         NSString *callId = [args objectForKey:@"callId"];
         BOOL isLocal = [[args objectForKey:@"isLocal"] boolValue];
@@ -67,7 +67,7 @@
 
 - (void)dealloc
 {
-    NSLog(@"Dealloc method is called");
+//    NSLog(@"Dealloc method is called");
     for (UIView *subview in _view.subviews) {
         [subview removeFromSuperview];
     }

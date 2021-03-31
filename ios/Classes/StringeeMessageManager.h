@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithClient:(StringeeClient *)client;
 
+- (void)setClient:(StringeeClient *)client;
+
 - (void)setEventSink:(FlutterEventSink)eventSink;
 
 - (void)sendMessage:(id)arguments result:(FlutterResult)result;

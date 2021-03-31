@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     /// Connect
-    _client.connect(user1);
+    _client.connect(user2);
   }
 
   requestPermissions() async {
