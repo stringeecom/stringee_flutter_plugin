@@ -22,6 +22,8 @@ import java.util.Map;
 
 import io.flutter.plugin.platform.PlatformView;
 
+import static org.webrtc.RendererCommon.ScalingType.*;
+
 public class StringeeVideoView implements PlatformView {
     private FrameLayout frameLayout;
     private static final String TAG = "Stringee sdk";
@@ -68,11 +70,11 @@ public class StringeeVideoView implements PlatformView {
 
                 ScalingType scalingType = null;
                 if (creationParams.get("scalingType").equals("FILL")) {
-                    scalingType = org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FILL;
+                    scalingType = SCALE_ASPECT_FILL;
                 } else if (creationParams.get("scalingType").equals("FIT")) {
-                    scalingType = org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FIT;
+                    scalingType = SCALE_ASPECT_FIT;
                 } else if (creationParams.get("scalingType").equals("BALANCED")) {
-                    scalingType = org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
+                    scalingType = SCALE_ASPECT_BALANCED;
                 }
 
                 if (creationParams.containsKey("isMirror")) {

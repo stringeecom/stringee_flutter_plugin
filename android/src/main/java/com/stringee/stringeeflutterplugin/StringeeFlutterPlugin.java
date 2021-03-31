@@ -2,9 +2,11 @@ package com.stringee.stringeeflutterplugin;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.stringee.common.SocketAddress;
 import com.stringee.messaging.ConversationOptions;
 import com.stringee.messaging.Message;
 import com.stringee.messaging.User;
@@ -26,7 +28,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
-
     private static StringeeManager _stringeeManager;
     private static StringeeClientManager _clientManager;
     private static StringeeCallManager _callManager;
@@ -37,6 +38,8 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     private static Handler _handler;
     FlutterPluginBinding _binding;
     public static MethodChannel channel;
+
+    private static final String TAG = "Stringee sdk";
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
@@ -69,7 +72,31 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     public void onMethodCall(MethodCall call, final Result result) {
         switch (call.method) {
             case "connect":
-                _clientManager.connect((String) call.arguments, result);
+                try {
+                    JSONArray array = new JSONArray((String) call.argument("serverAddresses"));
+                    List<SocketAddress> socketAddressList = new ArrayList<>();
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject object = (JSONObject) array.get(i);
+                        String host = object.optString("host", null);
+                        int port = object.optInt("port", -1);
+                        if (host != null || host.equalsIgnoreCase("null") || host.equalsIgnoreCase("")) {
+                            Log.d(TAG, "host is invalid");
+                        }
+
+                        if (port == -1) {
+                            Log.d(TAG, "port is invalid");
+                        }
+
+                        if (host != null && host.equalsIgnoreCase("null") && host.equalsIgnoreCase("") && port != -1) {
+                            SocketAddress socketAddress = new SocketAddress(host, port);
+                            socketAddressList.add(socketAddress);
+                        }
+
+                    }
+                    _clientManager.connect((String) call.argument("token"), socketAddressList, result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
             case "disconnect":
                 _clientManager.disconnect(result);
@@ -83,7 +110,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "sendCustomMessage":
                 try {
                     _clientManager.sendCustomMessage((String) call.argument("userId"), new JSONObject((String) call.argument("msg")), result);
-                } catch (org.json.JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -245,7 +272,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     List<User> participants = new ArrayList<>();
                     participants = Utils.getListUser((String) call.argument("participants"));
                     _conversationManager.removeParticipants((String) call.argument("convId"), participants, result);
-                } catch (org.json.JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -302,7 +329,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                         message.setCustomData(msgObject.getJSONObject("customData"));
                     }
                     _conversationManager.sendMessage(convId, message, result);
-                } catch (org.json.JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -337,7 +364,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 try {
                     JSONArray msgIdArray = new JSONArray(((List<String>) call.argument("msgIds")).toArray(new String[0]));
                     _conversationManager.deleteMessages((String) call.argument("convId"), msgIdArray, result);
-                } catch (org.json.JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -345,7 +372,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 try {
                     JSONArray msgIdArray = new JSONArray(((List<String>) call.argument("msgIds")).toArray(new String[0]));
                     _conversationManager.revokeMessages((String) call.argument("convId"), msgIdArray, (boolean) call.argument("isDeleted"), result);
-                } catch (org.json.JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
