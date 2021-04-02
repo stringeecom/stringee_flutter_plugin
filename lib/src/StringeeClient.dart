@@ -96,6 +96,12 @@ class StringeeClient {
     return await methodChannel.invokeMethod('disconnect');
   }
 
+  /// Set base API url
+  Future<Map<dynamic, dynamic>> setBaseAPIUrl(String baseAPIUrl) async {
+    if (baseAPIUrl == null || baseAPIUrl.isEmpty) return await reportInvalidValue(baseAPIUrl);
+    return await methodChannel.invokeMapMethod('setBaseAPIUrl', baseAPIUrl);
+  }
+
   /// Register push from Stringee by [deviceToken]
   Future<Map<dynamic, dynamic>> registerPush(
     String deviceToken, {

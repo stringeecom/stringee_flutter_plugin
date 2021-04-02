@@ -129,19 +129,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
      * Disconnect from Stringee server
      */
     public void disconnect(final Result result) {
-        if (_client != null || _client.isConnected()) {
-            _client.disconnect();
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                }
-            });
-        } else {
+        if (_client == null || !_client.isConnected()) {
             _handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -152,7 +140,53 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
                     result.success(map);
                 }
             });
+            return;
         }
+
+        _client.disconnect();
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("status", true);
+                map.put("code", 0);
+                map.put("message", "Success");
+                result.success(map);
+            }
+        });
+    }
+
+    /**
+     * Set base API url
+     *
+     * @param baseAPIUrl
+     */
+    public void setBaseAPIUrl(String baseAPIUrl, final Result result) {
+        if (_client == null) {
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Map map = new HashMap();
+                    map.put("status", false);
+                    map.put("code", -1);
+                    map.put("message", "StringeeClient is not initialized or disconnected");
+                    result.success(map);
+                }
+            });
+            return;
+        }
+
+        _client.setBaseAPIUrl(baseAPIUrl);
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Map map = new HashMap();
+                map.put("status", true);
+                map.put("code", 0);
+                map.put("message", "Success");
+                result.success(map);
+            }
+        });
     }
 
     /**

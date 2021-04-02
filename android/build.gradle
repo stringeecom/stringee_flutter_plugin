@@ -5,6 +5,9 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+            url  "https://dl.bintray.com/stringee/Stringee-Android-SDK"
+        }
     }
 
     dependencies {
@@ -16,6 +19,9 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url  "https://dl.bintray.com/stringee/Stringee-Android-SDK"
+        }
     }
 }
 
@@ -35,6 +41,6 @@ android {
 
 dependencies {
 //    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
-    implementation 'com.stringee.sdk.android:stringee-android-sdk:1.6.6'
+    implementation 'com.stringee.sdk.android:stringee-android-sdk:1.6.8'
     implementation 'androidx.annotation:annotation:1.1.0'
 }
