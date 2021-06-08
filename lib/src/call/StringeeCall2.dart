@@ -289,11 +289,9 @@ class StringeeCall2 {
   }
 
   /// Switch camera
-  Future<Map<dynamic, dynamic>> switchCamera(bool isMirror) async {
-    if (isMirror == null) return await reportInvalidValue('isMirror');
+  Future<Map<dynamic, dynamic>> switchCamera() async {
     final params = {
       'callId': this._id,
-      'isMirror': isMirror,
     };
     return await StringeeClient.methodChannel.invokeMethod('switchCamera2', params);
   }
@@ -312,6 +310,27 @@ class StringeeCall2 {
         'callId': this._id,
       };
       return await StringeeClient.methodChannel.invokeMethod('resumeVideo2', params);
+    }
+  }
+
+  /// Set stream like a mirror
+  Future<Map<dynamic, dynamic>> setMirror(bool isLocal, bool isMirror) async {
+    if (isLocal == null) return await reportInvalidValue('isLocal');
+    if (isMirror == null) return await reportInvalidValue('isMirror');
+    if (Platform.isIOS) {
+      final params = {
+        'status': false,
+        "code": '-4',
+        "message": "This function work only for Android",
+      };
+      return params;
+    } else {
+      final params = {
+        'callId': this._id,
+        'isLocal': isLocal,
+        'isMirror': isMirror,
+      };
+      return await StringeeClient.methodChannel.invokeMethod('setMirror2', params);
     }
   }
 

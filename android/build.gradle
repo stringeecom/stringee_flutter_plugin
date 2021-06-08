@@ -5,11 +5,10 @@ buildscript {
     repositories {
         google()
         jcenter()
-        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:4.2.1'
     }
 }
 
@@ -17,14 +16,13 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
-        mavenCentral()
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 20
@@ -37,6 +35,6 @@ android {
 
 dependencies {
 //    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
-    implementation 'com.stringee.sdk.android:stringee-android-sdk:1.7.1'
-    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.stringee.sdk.android:stringee-android-sdk:1.7.2'
+    implementation 'androidx.annotation:annotation:1.2.0'
 }
