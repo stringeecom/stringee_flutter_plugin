@@ -237,14 +237,14 @@ public class Utils {
                     User addUser = new User(notifyObject.getString("addedby"));
                     addUser.setName(notifyObject.getJSONObject("addedInfo").getString("displayName"));
                     addUser.setAvatarUrl(null);
-                    contentMap.put("addedby", convertUserToMap(addUser));
+                    contentMap.put("addedInfo", convertUserToMap(addUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
                     break;
                 case 2:
                     User removeUser = new User(notifyObject.getString("removedBy"));
                     removeUser.setName(notifyObject.getJSONObject("removedInfo").getString("displayName"));
                     removeUser.setAvatarUrl(null);
-                    contentMap.put("removedBy", convertUserToMap(removeUser));
+                    contentMap.put("removedInfo", convertUserToMap(removeUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
                     break;
                 case 3:

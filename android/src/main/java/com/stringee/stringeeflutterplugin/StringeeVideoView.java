@@ -12,9 +12,6 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.stringee.call.StringeeCall;
-import com.stringee.call.StringeeCall2;
-
 import org.webrtc.RendererCommon.ScalingType;
 
 import java.util.HashMap;
@@ -22,7 +19,9 @@ import java.util.Map;
 
 import io.flutter.plugin.platform.PlatformView;
 
-import static org.webrtc.RendererCommon.ScalingType.*;
+import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
+import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FILL;
+import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FIT;
 
 public class StringeeVideoView implements PlatformView {
     private FrameLayout frameLayout;
@@ -58,8 +57,8 @@ public class StringeeVideoView implements PlatformView {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                StringeeCall call = StringeeManager.getInstance().getCallsMap().get(callId);
-                StringeeCall2 call2 = StringeeManager.getInstance().getCall2sMap().get(callId);
+                MStringeeCall call = StringeeManager.getInstance().getCallsMap().get(callId);
+                MStringeeCall2 call2 = StringeeManager.getInstance().getCall2sMap().get(callId);
 
                 if (call == null && call2 == null) {
                     return;

@@ -1,6 +1,7 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
@@ -21,14 +22,16 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ConversationManager {
     private static ConversationManager _conversationManager;
-    private static StringeeManager _stringeeManager;
+    private static StringeeManager _manager;
     private static Handler _handler;
 
-    public static synchronized ConversationManager getInstance(StringeeManager stringeeManager, Handler handler) {
+    private static final String TAG = "StringeeSDK";
+
+    public static synchronized ConversationManager getInstance() {
         if (_conversationManager == null) {
             _conversationManager = new ConversationManager();
-            _stringeeManager = stringeeManager;
-            _handler = handler;
+            _manager = StringeeManager.getInstance();
+            _handler = _manager.getHandler();
         }
         return _conversationManager;
     }
@@ -55,31 +58,23 @@ public class ConversationManager {
      * @param result
      */
     public void deleteConversation(final String convId, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "deleteConversation: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "deleteConversation: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -92,6 +87,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "deleteConversation: success");
                                 Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
@@ -103,10 +99,10 @@ public class ConversationManager {
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -120,10 +116,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
@@ -143,34 +139,23 @@ public class ConversationManager {
      * @param result
      */
     public void addParticipants(final String convId, final List<User> participants, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "addParticipants: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "addParticipants: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -183,6 +168,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "addParticipants: success");
                                 Map map = new HashMap();
                                 List participantsArray = new ArrayList();
                                 for (int j = 0; j < users.size(); j++) {
@@ -200,15 +186,14 @@ public class ConversationManager {
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -218,15 +203,14 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
-                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -242,34 +226,23 @@ public class ConversationManager {
      * @param result
      */
     public void removeParticipants(final String convId, final List<User> participants, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "removeParticipants: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "removeParticipants: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -282,6 +255,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "removeParticipants: success");
                                 Map map = new HashMap();
                                 List participantsArray = new ArrayList();
                                 for (int j = 0; j < users.size(); j++) {
@@ -291,7 +265,6 @@ public class ConversationManager {
                                 map.put("code", 0);
                                 map.put("message", "Success");
                                 map.put("body", participantsArray);
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -300,15 +273,14 @@ public class ConversationManager {
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -318,15 +290,14 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
-                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -341,32 +312,23 @@ public class ConversationManager {
      * @param result
      */
     public void sendMessage(final String convId, final Message message, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "sendMessage: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "sendMessage: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -379,6 +341,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "sendMessage: success");
                                 Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
@@ -390,10 +353,10 @@ public class ConversationManager {
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -407,10 +370,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
@@ -430,34 +393,23 @@ public class ConversationManager {
      * @param result
      */
     public void getMessages(String convId, final String[] msgIds, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "getMessages: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "getMessages: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -470,6 +422,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getMessages: success");
                                 Map map = new HashMap();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
@@ -486,15 +439,14 @@ public class ConversationManager {
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -504,15 +456,14 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
-                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -528,34 +479,23 @@ public class ConversationManager {
      * @param result
      */
     public void getLocalMessages(String convId, final int count, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "getLocalMessages: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "getLocalMessages: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -568,6 +508,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getLocalMessages: success");
                                 Map map = new HashMap();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
@@ -589,10 +530,10 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Map map = new HashMap();
+                                Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -606,11 +547,11 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
-                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -626,34 +567,23 @@ public class ConversationManager {
      * @param result
      */
     public void getLastMessages(String convId, final int count, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "getLastMessages: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "getLastMessages: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -666,6 +596,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getLastMessages: success");
                                 Map map = new HashMap();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
@@ -686,11 +617,11 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -704,11 +635,11 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
-                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -725,34 +656,23 @@ public class ConversationManager {
      * @param result
      */
     public void getMessagesAfter(String convId, final long seq, final int count, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "getMessagesAfter: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "getMessagesAfter: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -765,6 +685,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getMessagesAfter: success");
                                 Map map = new HashMap();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
@@ -785,11 +706,11 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -803,11 +724,11 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
-                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -824,34 +745,23 @@ public class ConversationManager {
      * @param result
      */
     public void getMessagesBefore(String convId, final long seq, final int count, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "getMessagesBefore: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    map.put("body", null);
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "getMessagesBefore: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -864,6 +774,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getMessagesBefore: success");
                                 Map map = new HashMap();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
@@ -885,11 +796,11 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
-                                map.put("body", null);
                                 result.success(map);
                             }
                         });
@@ -903,11 +814,11 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
-                        map.put("body", null);
                         result.success(map);
                     }
                 });
@@ -924,32 +835,23 @@ public class ConversationManager {
      * @param result
      */
     public void updateConversation(String convId, final String name, final String avatar, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "updateConversation: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "updateConversation: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -962,6 +864,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "updateConversation: success");
                                 Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
@@ -977,6 +880,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -994,6 +898,7 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
@@ -1014,32 +919,23 @@ public class ConversationManager {
      * @param result
      */
     public void setRole(String convId, final String userId, final UserRole role, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "setRole: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "setRole: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -1054,6 +950,7 @@ public class ConversationManager {
                                 _handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Log.d(TAG, "setRole: success");
                                         Map map = new HashMap();
                                         map.put("status", true);
                                         map.put("code", 0);
@@ -1069,6 +966,7 @@ public class ConversationManager {
                                 _handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                         Map map = new HashMap();
                                         map.put("status", false);
                                         map.put("code", stringeeError.getCode());
@@ -1086,6 +984,7 @@ public class ConversationManager {
                                 _handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Log.d(TAG, "setRole: success");
                                         Map map = new HashMap();
                                         map.put("status", true);
                                         map.put("code", 0);
@@ -1101,6 +1000,7 @@ public class ConversationManager {
                                 _handler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                         Map map = new HashMap();
                                         map.put("status", false);
                                         map.put("code", stringeeError.getCode());
@@ -1120,6 +1020,7 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
@@ -1139,32 +1040,23 @@ public class ConversationManager {
      * @param result
      */
     public void deleteMessages(String convId, JSONArray msgIdArray, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "deleteMessages: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "deleteMessages: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -1174,6 +1066,7 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "deleteMessages: success");
                         Map map = new HashMap();
                         map.put("status", true);
                         map.put("code", 0);
@@ -1185,10 +1078,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "deleteMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
@@ -1201,61 +1094,48 @@ public class ConversationManager {
     }
 
     public void revokeMessages(String convId, JSONArray msgIdArray, boolean deleted, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
-        StringeeClient _client = _stringeeManager.getClient();
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+            Log.d(TAG, "revokeMessages: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
 
-        _client.revokeMessages(convId, msgIdArray, deleted, new com.stringee.messaging.listeners.CallbackListener<org.json.JSONArray>() {
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "revokeMessages: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
+            return;
+        }
+
+        _client.revokeMessages(convId, msgIdArray, deleted, new StatusListener() {
                     @Override
-                    public void onSuccess(final JSONArray jsonArray) {
+                    public void onSuccess() {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                try {
-                                    Map map = new HashMap();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    map.put("body", Utils.toList(jsonArray));
-                                    result.success(map);
-                                } catch (org.json.JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                Log.d(TAG, "revokeMessages: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
                             }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        super.onError(stringeeError);
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "revokeMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -1275,31 +1155,23 @@ public class ConversationManager {
      * @param result
      */
     public void markAsRead(String convId, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
+        Map map = new HashMap();
+        StringeeClient _client = _manager.getClient();
+        if (_client == null || !_client.isConnected()) {
+            Log.d(TAG, "markAsRead: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
             return;
         }
-        final StringeeClient _client = _stringeeManager.getClient();
-        if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "markAsRead: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
             return;
         }
 
@@ -1312,6 +1184,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "markAsRead: success");
                                 Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
@@ -1327,6 +1200,7 @@ public class ConversationManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -1344,6 +1218,7 @@ public class ConversationManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());

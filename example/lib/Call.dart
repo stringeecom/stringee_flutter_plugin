@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
@@ -217,8 +218,7 @@ class _CallState extends State<Call> {
           break;
         case StringeeCallEvents.didChangeAudioDevice:
           if (Platform.isAndroid) {
-            handleChangeAudioDeviceEvent(
-                map['selectedAudioDevice'], _stringeeCall, null);
+            handleChangeAudioDeviceEvent(map['selectedAudioDevice'], _stringeeCall, null);
           }
           break;
         default:
@@ -287,8 +287,7 @@ class _CallState extends State<Call> {
           break;
         case StringeeCall2Events.didChangeAudioDevice:
           if (Platform.isAndroid) {
-            handleChangeAudioDeviceEvent(
-                map['selectedAudioDevice'], null, _stringeeCall2);
+            handleChangeAudioDeviceEvent(map['selectedAudioDevice'], null, _stringeeCall2);
           }
           break;
         default:
@@ -521,13 +520,13 @@ class _ButtonSwitchCameraState extends State<ButtonSwitchCamera> {
   void _toggleSwitchCamera() {
     if (_stringeeCall != null) {
       widget.isMirror = !widget.isMirror;
-      _stringeeCall.switchCamera(widget.isMirror).then((result) {
+      _stringeeCall.switchCamera().then((result) {
         bool status = result['status'];
         if (status) {}
       });
     } else {
       widget.isMirror = !widget.isMirror;
-      _stringeeCall2.switchCamera(widget.isMirror).then((result) {
+      _stringeeCall2.switchCamera().then((result) {
         bool status = result['status'];
         if (status) {}
       });
