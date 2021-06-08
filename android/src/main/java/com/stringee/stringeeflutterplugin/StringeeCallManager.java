@@ -426,7 +426,7 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
      * @param callInfo
      * @param result
      */
-    public void sendCallInfo(String callId, Map callInfo, MethodChannel.Result result) {
+    public void sendCallInfo(String callId, Map callInfo, final MethodChannel.Result result) {
         if (_client == null || !_client.isConnected()) {
             Map map = new HashMap();
             map.put("status", false);
@@ -457,12 +457,16 @@ public class StringeeCallManager implements StringeeCall.StringeeCallListener {
         JSONObject jsonObject = null;
         try {
             jsonObject = Utils.convertMapToJson(callInfo);
-            _call.sendCallInfo(jsonObject);
-            Map map = new HashMap();
-            map.put("status", true);
-            map.put("code", 0);
-            map.put("message", "Success");
-            result.success(map);
+            _call.sendCallInfo(jsonObject, new StatusListener() {
+                @Override
+                public void onSuccess() {
+                    Map map = new HashMap();
+                    map.put("status", true);
+                    map.put("code", 0);
+                    map.put("message", "Success");
+                    result.success(map);
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
             Map map = new HashMap();
