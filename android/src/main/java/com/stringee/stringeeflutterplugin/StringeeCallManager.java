@@ -440,7 +440,7 @@ public class StringeeCallManager {
                     });
                 }
             });
-        } catch (JSONException e) {
+        } catch (final JSONException e) {
             e.printStackTrace();
             _handler.post(new Runnable() {
                 @Override
