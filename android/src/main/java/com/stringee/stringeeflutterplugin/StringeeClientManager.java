@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall2;
 import com.stringee.common.SocketAddress;
@@ -32,7 +33,7 @@ import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventTy
 
 public class StringeeClientManager implements StringeeConnectionListener, ChangeEventListenter {
     private static StringeeClientManager _clientManager;
-    private static com.stringee.StringeeClient _client;
+    private static StringeeClient _client;
     private static StringeeManager _manager;
     private static Context _context;
     private static Handler _handler;
@@ -90,7 +91,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
 
         _client = _manager.getClient();
         if (_client == null) {
-            _client = new com.stringee.StringeeClient(_context);
+            _client = new StringeeClient(_context);
             _manager.setClient(_client);
         }
 
@@ -857,7 +858,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
 
     //listener
     @Override
-    public void onConnectionConnected(final com.stringee.StringeeClient stringeeClient, final boolean b) {
+    public void onConnectionConnected(final StringeeClient stringeeClient, final boolean b) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -876,7 +877,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
     }
 
     @Override
-    public void onConnectionDisconnected(final com.stringee.StringeeClient stringeeClient, final boolean b) {
+    public void onConnectionDisconnected(final StringeeClient stringeeClient, final boolean b) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -960,7 +961,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
     }
 
     @Override
-    public void onConnectionError(final com.stringee.StringeeClient stringeeClient, final StringeeError stringeeError) {
+    public void onConnectionError(final StringeeClient stringeeClient, final StringeeError stringeeError) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -979,7 +980,7 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
     }
 
     @Override
-    public void onRequestNewToken(final com.stringee.StringeeClient stringeeClient) {
+    public void onRequestNewToken(final StringeeClient stringeeClient) {
         _handler.post(new Runnable() {
             @Override
             public void run() {

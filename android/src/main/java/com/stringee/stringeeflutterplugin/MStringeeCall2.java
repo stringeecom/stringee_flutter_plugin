@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall2;
 import com.stringee.call.StringeeCall2.MediaState;
 import com.stringee.common.StringeeAudioManager;
@@ -26,7 +27,7 @@ import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventTy
 import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent;
 
 public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
-    private com.stringee.StringeeClient _client;
+    private StringeeClient _client;
     private StringeeCall2 _call;
     private StringeeManager _manager;
     private Result _makeCallResult;

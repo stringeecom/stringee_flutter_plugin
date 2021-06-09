@@ -3,6 +3,7 @@ package com.stringee.stringeeflutterplugin;
 import android.os.Handler;
 import android.util.Log;
 
+import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
 import com.stringee.messaging.Message;
@@ -38,7 +39,7 @@ public class MessageManager {
      */
     public void edit(String convId, String msgId, final String content, final Result result) {
         Map map = new HashMap();
-        com.stringee.StringeeClient _client = _manager.getClient();
+        StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "edit: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -130,7 +131,7 @@ public class MessageManager {
      */
     public void pinOrUnPin(String convId, String msgId, final boolean pinOrUnPin, final Result result) {
         Map map = new HashMap();
-        com.stringee.StringeeClient _client = _manager.getClient();
+        StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "pinOrUnPin: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);

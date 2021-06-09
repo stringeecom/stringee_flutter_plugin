@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall2;
 import com.stringee.call.StringeeCall2.CallStatsListener;
 import com.stringee.call.StringeeCall2.StringeeCallStats;
@@ -20,7 +21,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeCall2Manager {
     private static StringeeCall2Manager _callManager;
-    private static com.stringee.StringeeClient _client;
+    private static StringeeClient _client;
     private static StringeeManager _manager;
     private static Context _context;
     private static Handler _handler;

@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.FrameLayout;
 
+import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall.CallStatsListener;
 import com.stringee.call.StringeeCall.MediaState;
@@ -28,7 +29,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent;
 
 public class MStringeeCall implements StringeeCall.StringeeCallListener {
-    private com.stringee.StringeeClient _client;
+    private StringeeClient _client;
     private StringeeCall _call;
     private StringeeManager _manager;
     private Result _makeCallResult;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.stringee.StringeeClient;
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 public class StringeeManager {
     private static StringeeManager stringeeManager;
-    private com.stringee.StringeeClient mClient;
+    private StringeeClient mClient;
     private Map<String, MStringeeCall> callsMap = new HashMap<>();
     private Map<String, MStringeeCall2> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
@@ -45,11 +46,11 @@ public class StringeeManager {
         return stringeeManager;
     }
 
-    public com.stringee.StringeeClient getClient() {
+    public StringeeClient getClient() {
         return mClient;
     }
 
-    public void setClient(com.stringee.StringeeClient mClient) {
+    public void setClient(StringeeClient mClient) {
         this.mClient = mClient;
     }
 
