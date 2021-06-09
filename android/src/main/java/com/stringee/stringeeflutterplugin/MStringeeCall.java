@@ -9,6 +9,7 @@ import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall.CallStatsListener;
 import com.stringee.call.StringeeCall.MediaState;
+import com.stringee.call.StringeeCall.SignalingState;
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioDevice;
 import com.stringee.listener.StatusListener;
@@ -38,6 +39,7 @@ public class MStringeeCall implements StringeeCall.StringeeCallListener {
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
     private boolean isResumeVideo = false;
+    private SignalingState _signalingState;
 
     private static final String TAG = "StringeeSDK";
 
@@ -182,32 +184,34 @@ public class MStringeeCall implements StringeeCall.StringeeCallListener {
         _handler.post(new Runnable() {
             @Override
             public void run() {
-                if (signalingState == StringeeCall.SignalingState.CALLING) {
+                _signalingState = signalingState;
+                _call = stringeeCall;
+                if (_signalingState == StringeeCall.SignalingState.CALLING) {
                     Log.d(TAG, "makeCall: success");
-                    _manager.getCallsMap().put(stringeeCall.getCallId(), MStringeeCall.this);
+                    _manager.getCallsMap().put(_call.getCallId(), MStringeeCall.this);
                     Map map = new HashMap();
                     map.put("status", true);
                     map.put("code", 0);
                     map.put("message", "Success");
                     Map callInfoMap = new HashMap();
-                    callInfoMap.put("callId", stringeeCall.getCallId());
-                    callInfoMap.put("from", stringeeCall.getFrom());
-                    callInfoMap.put("to", stringeeCall.getTo());
-                    callInfoMap.put("fromAlias", stringeeCall.getFromAlias());
-                    callInfoMap.put("toAlias", stringeeCall.getToAlias());
-                    callInfoMap.put("isVideocall", stringeeCall.isVideoCall());
+                    callInfoMap.put("callId", _call.getCallId());
+                    callInfoMap.put("from", _call.getFrom());
+                    callInfoMap.put("to", _call.getTo());
+                    callInfoMap.put("fromAlias", _call.getFromAlias());
+                    callInfoMap.put("toAlias", _call.getToAlias());
+                    callInfoMap.put("isVideocall", _call.isVideoCall());
                     int callType = 0;
-                    if (!stringeeCall.getFrom().equals(_client.getUserId())) {
+                    if (!_call.getFrom().equals(_client.getUserId())) {
                         callType = 1;
                     }
-                    if (stringeeCall.isAppToPhoneCall()) {
+                    if (_call.isAppToPhoneCall()) {
                         callType = 2;
-                    } else if (stringeeCall.isPhoneToAppCall()) {
+                    } else if (_call.isPhoneToAppCall()) {
                         callType = 3;
                     }
                     callInfoMap.put("callType", callType);
-                    callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
-                    callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
+                    callInfoMap.put("isVideoCall", _call.isVideoCall());
+                    callInfoMap.put("customDataFromYourServer", _call.getCustomDataFromYourServer());
                     map.put("callInfo", callInfoMap);
                     if (_makeCallResult != null) {
                         _makeCallResult.success(map);
@@ -215,13 +219,13 @@ public class MStringeeCall implements StringeeCall.StringeeCallListener {
                     }
                 }
 
-                Log.d(TAG, "onSignalingStateChange: " + signalingState);
+                Log.d(TAG, "onSignalingStateChange: " + _signalingState);
                 Map map = new HashMap();
                 map.put("nativeEventType", CallEvent.getValue());
                 map.put("event", "didChangeSignalingState");
                 Map bodyMap = new HashMap();
-                bodyMap.put("callId", stringeeCall.getCallId());
-                bodyMap.put("code", signalingState.getValue());
+                bodyMap.put("callId", _call.getCallId());
+                bodyMap.put("code", _signalingState.getValue());
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin._eventSink.success(map);
             }

@@ -18,6 +18,7 @@ public class MessageManager {
     private static MessageManager _messageManager;
     private static StringeeManager _manager;
     private static Handler _handler;
+    private StringeeClient _client;
 
     private static final String TAG = "StringeeSDK";
 
@@ -39,7 +40,7 @@ public class MessageManager {
      */
     public void edit(String convId, String msgId, final String content, final Result result) {
         Map map = new HashMap();
-        final StringeeClient _client = _manager.getClient();
+        _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "edit: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -131,7 +132,7 @@ public class MessageManager {
      */
     public void pinOrUnPin(String convId, String msgId, final boolean pinOrUnPin, final Result result) {
         Map map = new HashMap();
-        final StringeeClient _client = _manager.getClient();
+        _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "pinOrUnPin: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
