@@ -80,10 +80,10 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void initAnswer(String callId, final Result result) {
-        Map map = new HashMap();
         _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "initAnswer: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -92,6 +92,7 @@ public class StringeeCall2Manager {
         }
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "initAnswer: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -102,6 +103,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "initAnswer: false - -3 - StringeeCall2 is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -151,9 +153,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void answer(String callId, Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "answer: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -162,6 +164,7 @@ public class StringeeCall2Manager {
         }
 
         if (callId == null || callId.isEmpty()) {
+            Map map = new HashMap();
             Log.d(TAG, "answer: false - -2 - callId is invalid");
             map.put("status", false);
             map.put("code", -2);
@@ -172,6 +175,7 @@ public class StringeeCall2Manager {
 
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
+            Map map = new HashMap();
             Log.d(TAG, "answer: false - -3 - StringeeCall2 is not found");
             map.put("status", false);
             map.put("code", -3);
@@ -182,6 +186,7 @@ public class StringeeCall2Manager {
 
         call.answer();
         Log.d(TAG, "answer: success");
+        Map map = new HashMap();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -195,9 +200,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void hangup(String callId, Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "hangup: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -207,6 +212,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "hangup: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -217,6 +223,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "hangup: false - -3 - StringeeCall2 is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -227,6 +234,7 @@ public class StringeeCall2Manager {
         call.hangup();
         _manager.getCallsMap().put(callId, null);
         Log.d(TAG, "hangup: success");
+        Map map = new HashMap();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -240,9 +248,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void reject(String callId, Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "reject: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -252,6 +260,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "reject: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -262,6 +271,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "reject: false - -3 - StringeeCall is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -272,6 +282,7 @@ public class StringeeCall2Manager {
         call.reject();
         _manager.getCallsMap().put(callId, null);
         Log.d(TAG, "reject: success");
+        Map map = new HashMap();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -286,9 +297,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void sendCallInfo(String callId, Map callInfo, final Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "sendCallInfo: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -298,6 +309,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "sendCallInfo: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -308,6 +320,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "sendCallInfo: false - -3 - StringeeCall is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -334,7 +347,7 @@ public class StringeeCall2Manager {
                 }
 
                 @Override
-                public void onError(StringeeError stringeeError) {
+                public void onError(final StringeeError stringeeError) {
                     _handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -348,7 +361,7 @@ public class StringeeCall2Manager {
                     });
                 }
             });
-        } catch (JSONException e) {
+        } catch (final JSONException e) {
             e.printStackTrace();
             _handler.post(new Runnable() {
                 @Override
@@ -372,9 +385,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void mute(String callId, boolean mute, Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "mute: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -384,6 +397,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "mute: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -394,6 +408,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "mute: false - -3 - StringeeCall2 is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -403,6 +418,7 @@ public class StringeeCall2Manager {
 
         call.mute(mute);
         Log.d(TAG, "mute: success");
+        Map map = new HashMap();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -417,9 +433,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void enableVideo(String callId, boolean isVideoEnable, Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "enableVideo: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -429,6 +445,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "enableVideo: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -439,6 +456,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "enableVideo: false - -3 - StringeeCall2 is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -448,6 +466,7 @@ public class StringeeCall2Manager {
 
         call.enableVideo(isVideoEnable);
         Log.d(TAG, "enableVideo: success");
+        Map map = new HashMap();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -461,8 +480,8 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void setSpeakerphoneOn(boolean on, final Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -487,7 +506,7 @@ public class StringeeCall2Manager {
             }
 
             @Override
-            public void onError(StringeeError error) {
+            public void onError(final StringeeError error) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -510,9 +529,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void switchCamera(String callId, final Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "switchCamera: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -522,6 +541,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "switchCamera: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -532,6 +552,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "switchCamera: false - -3 - StringeeCall2 is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -546,6 +567,7 @@ public class StringeeCall2Manager {
                     @Override
                     public void run() {
                         Log.d(TAG, "switchCamera: success");
+                        Map map = new HashMap();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -561,6 +583,7 @@ public class StringeeCall2Manager {
                     @Override
                     public void run() {
                         Log.d(TAG, "switchCamera: false - code: " + stringeeError.getCode() + " - message: " + stringeeError.getMessage());
+                        Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -578,9 +601,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void resumeVideo(String callId, Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "resumeVideo: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -590,6 +613,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "resumeVideo: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -600,6 +624,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "resumeVideo: false - -3 - StringeeCall2 is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -609,6 +634,7 @@ public class StringeeCall2Manager {
 
         call.resumeVideo();
         Log.d(TAG, "resumeVideo: success");
+        Map map = new HashMap();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -622,9 +648,9 @@ public class StringeeCall2Manager {
      * @param result
      */
     public void getCallStats(String callId, final Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "getCallStats: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -634,6 +660,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "getCallStats: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -644,6 +671,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "getCallStats: false - -3 - StringeeCall is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -661,6 +689,7 @@ public class StringeeCall2Manager {
                                 " - callPacketsLost: " + stringeeCallStats.callPacketsLost +
                                 " - callPacketsReceived: " + stringeeCallStats.callPacketsReceived +
                                 " - timeStamp: " + stringeeCallStats.timeStamp);
+                        Map map = new HashMap();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -678,9 +707,9 @@ public class StringeeCall2Manager {
     }
 
     public void setMirror(String callId, boolean isLocal, boolean isMirror, final Result result) {
-        Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "setMirror: false - -1 - StringeeClient is not initialized or disconnected");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is not initialized or disconnected");
@@ -690,6 +719,7 @@ public class StringeeCall2Manager {
 
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, "setMirror: false - -2 - callId is invalid");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -700,6 +730,7 @@ public class StringeeCall2Manager {
         MStringeeCall2 call = _manager.getCall2sMap().get(callId);
         if (call == null) {
             Log.d(TAG, "setMirror: false - -3 - StringeeCall is not found");
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall is not found");
@@ -714,6 +745,7 @@ public class StringeeCall2Manager {
         }
 
         Log.d(TAG, "setMirror: success");
+        Map map = new HashMap();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
