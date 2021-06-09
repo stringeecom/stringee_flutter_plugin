@@ -205,7 +205,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 _call2Manager.getCallStats((String) call.arguments, result);
                 break;
             case "sendCallInfo2":
-                _call2Manager.sendCallInfo(call.argument("callId"), call.argument("callInfo"), result);
+                _call2Manager.sendCallInfo((String) call.argument("callId"), (Map) call.argument("callInfo"), result);
                 break;
             case "mute2":
                 _call2Manager.mute((String) call.argument("callId"), (Boolean) call.argument("mute"), result);

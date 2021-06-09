@@ -172,7 +172,7 @@ public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
-    public void onSignalingStateChange(StringeeCall2 stringeeCall, StringeeCall2.SignalingState signalingState, String s, int i, String s1) {
+    public void onSignalingStateChange(final StringeeCall2 stringeeCall, final StringeeCall2.SignalingState signalingState, final String s, final int i, final String s1) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -218,7 +218,7 @@ public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
-    public void onError(StringeeCall2 stringeeCall, int code, String message) {
+    public void onError(final StringeeCall2 stringeeCall, final int code, final String message) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -236,7 +236,7 @@ public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
-    public void onHandledOnAnotherDevice(StringeeCall2 stringeeCall, StringeeCall2.SignalingState signalingState, String description) {
+    public void onHandledOnAnotherDevice(final StringeeCall2 stringeeCall, final StringeeCall2.SignalingState signalingState, final String description) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -255,7 +255,7 @@ public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
-    public void onMediaStateChange(StringeeCall2 stringeeCall, StringeeCall2.MediaState mediaState) {
+    public void onMediaStateChange(final StringeeCall2 stringeeCall, final StringeeCall2.MediaState mediaState) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -285,7 +285,7 @@ public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
-    public void onLocalStream(StringeeCall2 stringeeCall) {
+    public void onLocalStream(final StringeeCall2 stringeeCall) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -319,7 +319,7 @@ public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
-    public void onRemoteStream(StringeeCall2 stringeeCall) {
+    public void onRemoteStream(final StringeeCall2 stringeeCall) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -343,7 +343,7 @@ public class MStringeeCall2 implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
-    public void onCallInfo(StringeeCall2 stringeeCall, JSONObject jsonObject) {
+    public void onCallInfo(final StringeeCall2 stringeeCall, final JSONObject jsonObject) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
