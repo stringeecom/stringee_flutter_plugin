@@ -48,7 +48,7 @@ public class StringeeCall2Manager {
      * @param customData
      * @param videoResolution
      */
-    public void makeCall(String from, String to, final boolean isVideoCall, String customData, String videoResolution, Result result) {
+    public void makeCall(String from, String to, final boolean isVideoCall, String customData, String videoResolution, final Result result) {
         _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "makeCall: false - -1 - StringeeClient is not initialized or disconnected");
@@ -79,7 +79,7 @@ public class StringeeCall2Manager {
      * @param callId
      * @param result
      */
-    public void initAnswer(String callId, Result result) {
+    public void initAnswer(String callId, final Result result) {
         Map map = new HashMap();
         _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
@@ -128,7 +128,7 @@ public class StringeeCall2Manager {
             }
 
             @Override
-            public void onError(StringeeError stringeeError) {
+            public void onError(final StringeeError stringeeError) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -285,7 +285,7 @@ public class StringeeCall2Manager {
      * @param callInfo
      * @param result
      */
-    public void sendCallInfo(String callId, Map callInfo, Result result) {
+    public void sendCallInfo(String callId, Map callInfo, final Result result) {
         Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "sendCallInfo: false - -1 - StringeeClient is not initialized or disconnected");
@@ -460,7 +460,7 @@ public class StringeeCall2Manager {
      * @param on
      * @param result
      */
-    public void setSpeakerphoneOn(boolean on, Result result) {
+    public void setSpeakerphoneOn(boolean on, final Result result) {
         Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             map.put("status", false);
@@ -555,7 +555,7 @@ public class StringeeCall2Manager {
             }
 
             @Override
-            public void onError(StringeeError stringeeError) {
+            public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
@@ -653,7 +653,7 @@ public class StringeeCall2Manager {
 
         call.getStats(new CallStatsListener() {
             @Override
-            public void onCallStats(StringeeCallStats stringeeCallStats) {
+            public void onCallStats(final StringeeCallStats stringeeCallStats) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {

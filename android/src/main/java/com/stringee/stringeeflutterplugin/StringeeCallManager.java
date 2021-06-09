@@ -46,7 +46,7 @@ public class StringeeCallManager {
      * @param customData
      * @param videoResolution
      */
-    public void makeCall(String from, String to, final boolean isVideoCall, String customData, String videoResolution, MethodChannel.Result result) {
+    public void makeCall(String from, String to, final boolean isVideoCall, String customData, String videoResolution,final MethodChannel.Result result) {
         _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "makeCall: false - -1 - StringeeClient is not initialized or disconnected");
@@ -86,7 +86,7 @@ public class StringeeCallManager {
      * @param callId
      * @param result
      */
-    public void initAnswer(String callId, MethodChannel.Result result) {
+    public void initAnswer(String callId,final MethodChannel.Result result) {
         Map map = new HashMap();
         _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
@@ -135,7 +135,7 @@ public class StringeeCallManager {
             }
 
             @Override
-            public void onError(StringeeError stringeeError) {
+            public void onError(final StringeeError stringeeError) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -362,7 +362,7 @@ public class StringeeCallManager {
      * @param callInfo
      * @param result
      */
-    public void sendCallInfo(String callId, Map callInfo, MethodChannel.Result result) {
+    public void sendCallInfo(String callId, Map callInfo,final MethodChannel.Result result) {
         Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "sendCallInfo: false - -1 - StringeeClient is not initialized or disconnected");
@@ -411,7 +411,7 @@ public class StringeeCallManager {
                 }
 
                 @Override
-                public void onError(StringeeError stringeeError) {
+                public void onError(final StringeeError stringeeError) {
                     _handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -537,7 +537,7 @@ public class StringeeCallManager {
      * @param on
      * @param result
      */
-    public void setSpeakerphoneOn(boolean on, MethodChannel.Result result) {
+    public void setSpeakerphoneOn(boolean on,final MethodChannel.Result result) {
         Map map = new HashMap();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "setSpeakerphoneOn: false - -1 - StringeeClient is not initialized or disconnected");
@@ -565,7 +565,7 @@ public class StringeeCallManager {
             }
 
             @Override
-            public void onError(StringeeError error) {
+            public void onError(final StringeeError error) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -633,7 +633,7 @@ public class StringeeCallManager {
             }
 
             @Override
-            public void onError(StringeeError stringeeError) {
+            public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
                 _handler.post(new Runnable() {
                     @Override
@@ -731,7 +731,7 @@ public class StringeeCallManager {
 
         call.getStats(new StringeeCall.CallStatsListener() {
             @Override
-            public void onCallStats(StringeeCall.StringeeCallStats stringeeCallStats) {
+            public void onCallStats(final StringeeCall.StringeeCallStats stringeeCallStats) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
