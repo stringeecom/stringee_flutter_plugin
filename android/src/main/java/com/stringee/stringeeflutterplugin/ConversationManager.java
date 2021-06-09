@@ -59,7 +59,7 @@ public class ConversationManager {
      */
     public void deleteConversation(final String convId, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "deleteConversation: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -140,7 +140,7 @@ public class ConversationManager {
      */
     public void addParticipants(final String convId, final List<User> participants, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "addParticipants: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -227,7 +227,7 @@ public class ConversationManager {
      */
     public void removeParticipants(final String convId, final List<User> participants, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "removeParticipants: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -313,7 +313,7 @@ public class ConversationManager {
      */
     public void sendMessage(final String convId, final Message message, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "sendMessage: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -394,7 +394,7 @@ public class ConversationManager {
      */
     public void getMessages(String convId, final String[] msgIds, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "getMessages: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -480,7 +480,7 @@ public class ConversationManager {
      */
     public void getLocalMessages(String convId, final int count, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "getLocalMessages: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -568,7 +568,7 @@ public class ConversationManager {
      */
     public void getLastMessages(String convId, final int count, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "getLastMessages: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -657,7 +657,7 @@ public class ConversationManager {
      */
     public void getMessagesAfter(String convId, final long seq, final int count, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "getMessagesAfter: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -746,7 +746,7 @@ public class ConversationManager {
      */
     public void getMessagesBefore(String convId, final long seq, final int count, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "getMessagesBefore: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -836,7 +836,7 @@ public class ConversationManager {
      */
     public void updateConversation(String convId, final String name, final String avatar, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "updateConversation: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -920,7 +920,7 @@ public class ConversationManager {
      */
     public void setRole(String convId, final String userId, final UserRole role, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "setRole: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -1041,7 +1041,7 @@ public class ConversationManager {
      */
     public void deleteMessages(String convId, JSONArray msgIdArray, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "deleteMessages: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -1095,7 +1095,7 @@ public class ConversationManager {
 
     public void revokeMessages(String convId, JSONArray msgIdArray, boolean deleted, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "revokeMessages: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
@@ -1156,7 +1156,7 @@ public class ConversationManager {
      */
     public void markAsRead(String convId, final Result result) {
         Map map = new HashMap();
-        StringeeClient _client = _manager.getClient();
+        final StringeeClient _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
             Log.d(TAG, "markAsRead: false - -1 - StringeeClient is not initialized or disconnected");
             map.put("status", false);
