@@ -229,7 +229,7 @@ public class MStringeeCall implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onError(final StringeeCall stringeeCall, int code, final String message) {
+    public void onError(final StringeeCall stringeeCall, final int code, final String message) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
@@ -354,7 +354,7 @@ public class MStringeeCall implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onCallInfo(final StringeeCall stringeeCall, JSONObject jsonObject) {
+    public void onCallInfo(final StringeeCall stringeeCall, final JSONObject jsonObject) {
         _handler.post(new Runnable() {
             @Override
             public void run() {
