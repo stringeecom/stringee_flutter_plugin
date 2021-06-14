@@ -141,7 +141,6 @@
              @"name": name,
              @"participants": participants,
              @"isGroup": @(conversation.isGroup),
-             @"isDistinct": @(conversation.isDistinct),
              @"updatedAt" : @(conversation.lastUpdate),
              @"lastMsgSender" : lastMsgSender,
              @"text": lastMsgContent,
