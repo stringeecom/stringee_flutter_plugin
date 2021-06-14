@@ -93,6 +93,7 @@ public class Utils {
             conversationMap.put("id", conversation.getId());
             conversationMap.put("name", conversation.getName());
             conversationMap.put("isGroup", conversation.isGroup());
+            conversationMap.put("isDistinct", conversation.isDistinct());
             conversationMap.put("creator", conversation.getCreator());
             conversationMap.put("createdAt", conversation.getCreateAt());
             conversationMap.put("updatedAt", conversation.getUpdateAt());

@@ -10,6 +10,7 @@ class StringeeConversation {
   String _id;
   String _name;
   bool _isGroup;
+  bool _isDistinct;
   String _creator;
   int _createdAt;
   int _updatedAt;
@@ -27,6 +28,8 @@ class StringeeConversation {
   String get name => _name;
 
   bool get isGroup => _isGroup;
+
+  bool get isDistinct => _isDistinct;
 
   String get creator => _creator;
 
@@ -46,7 +49,7 @@ class StringeeConversation {
 
   @override
   String toString() {
-    return '{id: ${_id}, name: ${_name}, isGroup: ${_isGroup}, creator: ${_creator}, createdAt: ${_createdAt}, updatedAt: ${_updatedAt}, totalUnread: ${_totalUnread}, text: ${_text}, lastMsg: ${_lastMsg}, pinnedMsgId: ${_pinnedMsgId}, participants: ${_participants}}';
+    return '{id: ${_id}, name: ${_name}, isGroup: ${_isGroup}, isDistinct: ${_isDistinct}, creator: ${_creator}, createdAt: ${_createdAt}, updatedAt: ${_updatedAt}, totalUnread: ${_totalUnread}, text: ${_text}, lastMsg: ${_lastMsg}, pinnedMsgId: ${_pinnedMsgId}, participants: ${_participants}}';
   }
 
   StringeeConversation.fromJson(Map<dynamic, dynamic> convInfor) {
@@ -57,6 +60,7 @@ class StringeeConversation {
     this._id = convInfor['id'];
     this._name = convInfor['name'];
     this._isGroup = convInfor['isGroup'];
+    this._isDistinct = convInfor['isDistinct'];
     this._creator = convInfor['creator'];
     this._createdAt = convInfor['createdAt'];
     this._updatedAt = convInfor['updatedAt'];
