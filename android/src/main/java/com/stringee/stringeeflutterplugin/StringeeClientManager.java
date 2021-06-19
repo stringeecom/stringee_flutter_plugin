@@ -161,32 +161,8 @@ public class StringeeClientManager implements StringeeConnectionListener, Change
      *
      * @param baseAPIUrl
      */
-    public void setBaseAPIUrl(String baseAPIUrl, final Result result) {
-        if (_client == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
+    public void setBaseAPIUrl(String baseAPIUrl) {
         _client.setBaseAPIUrl(baseAPIUrl);
-        _handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
-            }
-        });
     }
 
     /**

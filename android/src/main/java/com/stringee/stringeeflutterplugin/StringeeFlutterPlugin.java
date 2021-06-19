@@ -104,7 +104,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 _clientManager.disconnect(result);
                 break;
             case "setBaseAPIUrl":
-                _clientManager.setBaseAPIUrl((String) call.arguments, result);
+                _clientManager.setBaseAPIUrl((String) call.arguments);
                 break;
             case "registerPush":
                 _clientManager.registerPush((String) call.arguments, result);

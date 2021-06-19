@@ -34,8 +34,9 @@ class StringeeClient {
 
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
-  factory StringeeClient({List<StringeeServerAddress> serverAddresses}) {
+  factory StringeeClient({List<StringeeServerAddress> serverAddresses, String baseAPIUrl}) {
     _serverAddresses = serverAddresses;
+    if (baseAPIUrl != null && baseAPIUrl.isNotEmpty) methodChannel.invokeMapMethod('setBaseAPIUrl', baseAPIUrl);
     return _instance;
   }
 
