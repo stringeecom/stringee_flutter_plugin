@@ -28,29 +28,26 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
-    private static StringeeManager _stringeeManager;
+    private static StringeeManager _manager;
     private static StringeeClientManager _clientManager;
     private static StringeeCallManager _callManager;
     private static StringeeCall2Manager _call2Manager;
     private static ConversationManager _conversationManager;
     private static MessageManager _messageManager;
     public static EventChannel.EventSink _eventSink;
-    private static Handler _handler;
-    FlutterPluginBinding _binding;
     public static MethodChannel channel;
 
-    private static final String TAG = "Stringee sdk";
+    private static final String TAG = "StringeeSDK";
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        _binding = binding;
-        _handler = new Handler(Looper.getMainLooper());
-        _stringeeManager = StringeeManager.getInstance();
-        _clientManager = StringeeClientManager.getInstance(binding.getApplicationContext(), _stringeeManager, _handler);
-        _callManager = StringeeCallManager.getInstance(binding.getApplicationContext(), _stringeeManager, _handler);
-        _call2Manager = StringeeCall2Manager.getInstance(binding.getApplicationContext(), _stringeeManager, _handler);
-        _conversationManager = ConversationManager.getInstance(_stringeeManager, _handler);
-        _messageManager = MessageManager.getInstance(_stringeeManager, _handler);
+        _manager = StringeeManager.getInstance();
+        _manager.setHandler(new Handler(Looper.getMainLooper()));
+        _clientManager = StringeeClientManager.getInstance(binding.getApplicationContext());
+        _callManager = StringeeCallManager.getInstance(binding.getApplicationContext());
+        _call2Manager = StringeeCall2Manager.getInstance(binding.getApplicationContext());
+        _conversationManager = ConversationManager.getInstance();
+        _messageManager = MessageManager.getInstance();
 
         channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
         channel.setMethodCallHandler(this);
@@ -164,13 +161,16 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 _callManager.enableVideo((String) call.argument("callId"), (Boolean) call.argument("enableVideo"), result);
                 break;
             case "setSpeakerphoneOn":
-                _callManager.setSpeakerphoneOn((String) call.argument("callId"), (Boolean) call.argument("speaker"), result);
+                _callManager.setSpeakerphoneOn((Boolean) call.argument("speaker"), result);
                 break;
             case "switchCamera":
-                _callManager.switchCamera((String) call.argument("callId"), (boolean) call.argument("isMirror"), result);
+                _callManager.switchCamera((String) call.argument("callId"), result);
                 break;
             case "resumeVideo":
                 _callManager.resumeVideo((String) call.argument("callId"), result);
+                break;
+            case "setMirror":
+                _callManager.setMirror((String) call.argument("callId"), (boolean) call.argument("isLocal"), (boolean) call.argument("isMirror"), result);
                 break;
             case "makeCall2":
                 String from2 = (String) call.argument("from");
@@ -204,6 +204,9 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "getCallStats2":
                 _call2Manager.getCallStats((String) call.arguments, result);
                 break;
+            case "sendCallInfo2":
+                _call2Manager.sendCallInfo((String) call.argument("callId"), (Map) call.argument("callInfo"), result);
+                break;
             case "mute2":
                 _call2Manager.mute((String) call.argument("callId"), (Boolean) call.argument("mute"), result);
                 break;
@@ -211,13 +214,16 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 _call2Manager.enableVideo((String) call.argument("callId"), (Boolean) call.argument("enableVideo"), result);
                 break;
             case "setSpeakerphoneOn2":
-                _call2Manager.setSpeakerphoneOn((String) call.argument("callId"), (Boolean) call.argument("speaker"), result);
+                _call2Manager.setSpeakerphoneOn((Boolean) call.argument("speaker"), result);
                 break;
             case "switchCamera2":
-                _call2Manager.switchCamera((String) call.argument("callId"), (Boolean) call.argument("isMirror"), result);
+                _call2Manager.switchCamera((String) call.argument("callId"), result);
                 break;
             case "resumeVideo2":
                 _call2Manager.resumeVideo((String) call.argument("callId"), result);
+                break;
+            case "setMirror2":
+                _call2Manager.setMirror((String) call.argument("callId"), (boolean) call.argument("isLocal"), (boolean) call.argument("isMirror"), result);
                 break;
             case "createConversation":
                 try {
@@ -286,7 +292,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     JSONObject msgObject = new JSONObject((String) call.arguments);
                     String convId = msgObject.getString("convId");
                     int msgType = msgObject.getInt("type");
-                    Message message = new com.stringee.messaging.Message(msgType);
+                    Message message = new Message(msgType);
                     switch (message.getType()) {
                         case Message.TYPE_TEXT:
                         case Message.TYPE_LINK:
@@ -384,7 +390,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "markAsRead":
                 _conversationManager.markAsRead((String) call.arguments, result);
                 break;
-            case "edit":
+            case "editMsg":
                 _messageManager.edit((String) call.argument("convId"), (String) call.argument("msgId"), (String) call.argument("content"), result);
                 break;
             case "pinOrUnPin":

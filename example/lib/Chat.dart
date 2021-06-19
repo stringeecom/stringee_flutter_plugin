@@ -262,7 +262,7 @@ class ChatState extends State<Chat> {
                               _client.getTotalUnread().then((value) {
                                 print(value.toString());
                                 setState(() {
-                                  _log.add('Get total unread:' + value['message']);
+                                  _log.add('Get total unread: msg:' + value['message']);
                                 });
                               });
                             },
@@ -351,6 +351,7 @@ class ChatState extends State<Chat> {
                                 print("Flutter - getConversationsBefore - result: " +
                                     value.toString());
                                 setState(() {
+                                  _log.add('Get Conversation before: msg:' + value['message']);
                                   if (value['status']) {
                                     _conversations.clear();
                                     _conversations.addAll(value['body']);
@@ -376,6 +377,7 @@ class ChatState extends State<Chat> {
                                     value.toString());
                                 setState(() {
                                   if (value['status']) {
+                                    _log.add('Get Conversation after: msg:' + value['message']);
                                     _conversations.clear();
                                     _conversations.addAll(value['body']);
                                   }

@@ -1,6 +1,7 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
@@ -15,14 +16,17 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class MessageManager {
     private static MessageManager _messageManager;
-    private static StringeeManager _stringeeManager;
+    private static StringeeManager _manager;
     private static Handler _handler;
+    private StringeeClient _client;
 
-    public static synchronized MessageManager getInstance(StringeeManager stringeeManager, Handler handler) {
+    private static final String TAG = "StringeeSDK";
+
+    public static synchronized MessageManager getInstance() {
         if (_messageManager == null) {
             _messageManager = new MessageManager();
-            _stringeeManager = stringeeManager;
-            _handler = handler;
+            _manager = StringeeManager.getInstance();
+            _handler = _manager.getHandler();
         }
         return _messageManager;
     }
@@ -35,46 +39,32 @@ public class MessageManager {
      * @param result
      */
     public void edit(String convId, String msgId, final String content, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
-        if (msgId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "msgId is invalid");
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
-        final StringeeClient _client = _stringeeManager.getClient();
+        Map map = new HashMap();
+        _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+            Log.d(TAG, "edit: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
+            return;
+        }
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "edit: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
+            return;
+        }
+
+        if (msgId == null || msgId.isEmpty()) {
+            Log.d(TAG, "edit: false - -2 - msgId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "msgId is invalid");
+            result.success(map);
             return;
         }
 
@@ -87,6 +77,7 @@ public class MessageManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "edit: success");
                                 Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
@@ -102,6 +93,7 @@ public class MessageManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "edit: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -119,6 +111,7 @@ public class MessageManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "edit: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
@@ -138,46 +131,32 @@ public class MessageManager {
      * @param result
      */
     public void pinOrUnPin(String convId, String msgId, final boolean pinOrUnPin, final Result result) {
-        if (convId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "convId is invalid");
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
-        if (msgId == null) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -2);
-                    map.put("message", "msgId is invalid");
-                    result.success(map);
-                }
-            });
-            return;
-        }
-
-        final StringeeClient _client = _stringeeManager.getClient();
+        Map map = new HashMap();
+        _client = _manager.getClient();
         if (_client == null || !_client.isConnected()) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", -1);
-                    map.put("message", "StringeeClient is not initialized or disconnected");
-                    result.success(map);
-                }
-            });
+            Log.d(TAG, "pinOrUnPin: false - -1 - StringeeClient is not initialized or disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is not initialized or disconnected");
+            result.success(map);
+            return;
+        }
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "pinOrUnPin: false - -2 - convId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
+            return;
+        }
+
+        if (msgId == null || msgId.isEmpty()) {
+            Log.d(TAG, "pinOrUnPin: false - -2 - msgId is invalid");
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "msgId is invalid");
+            result.success(map);
             return;
         }
 
@@ -190,6 +169,7 @@ public class MessageManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "pinOrUnPin: success");
                                 Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
@@ -205,6 +185,7 @@ public class MessageManager {
                         _handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "pinOrUnPin: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -222,6 +203,7 @@ public class MessageManager {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "pinOrUnPin: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());

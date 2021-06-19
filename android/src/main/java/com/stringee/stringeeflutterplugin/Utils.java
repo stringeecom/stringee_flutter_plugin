@@ -2,7 +2,6 @@ package com.stringee.stringeeflutterplugin;
 
 import androidx.annotation.NonNull;
 
-import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
 import com.stringee.messaging.Conversation;
 import com.stringee.messaging.Message;
@@ -237,14 +236,14 @@ public class Utils {
                     User addUser = new User(notifyObject.getString("addedby"));
                     addUser.setName(notifyObject.getJSONObject("addedInfo").getString("displayName"));
                     addUser.setAvatarUrl(null);
-                    contentMap.put("addedby", convertUserToMap(addUser));
+                    contentMap.put("addedInfo", convertUserToMap(addUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
                     break;
                 case 2:
                     User removeUser = new User(notifyObject.getString("removedBy"));
                     removeUser.setName(notifyObject.getJSONObject("removedInfo").getString("displayName"));
                     removeUser.setAvatarUrl(null);
-                    contentMap.put("removedBy", convertUserToMap(removeUser));
+                    contentMap.put("removedInfo", convertUserToMap(removeUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
                     break;
                 case 3:
@@ -281,7 +280,7 @@ public class Utils {
         return resultArray;
     }
 
-    public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
+    public static void getConversation(@NonNull com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
         client.getConversation(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
@@ -296,7 +295,7 @@ public class Utils {
         });
     }
 
-    public static void getLastMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
+    public static void getLastMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
@@ -324,7 +323,7 @@ public class Utils {
         });
     }
 
-    public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
+    public static void getMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {

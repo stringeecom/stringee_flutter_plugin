@@ -279,14 +279,14 @@ class StringeeMessage {
         this._filePath = photoMap['filePath'];
         this._fileUrl = photoMap['fileUrl'];
         this._thumbnail = photoMap['thumbnail'];
-        this._ratio = photoMap['ratio'];
+        this._ratio = photoMap['ratio'].toDouble();
         break;
       case MsgType.video:
         Map<dynamic, dynamic> videoMap = msgInfor['content']['video'];
         this._filePath = videoMap['filePath'];
         this._fileUrl = videoMap['fileUrl'];
         this._thumbnail = videoMap['thumbnail'];
-        this._ratio = videoMap['ratio'];
+        this._ratio = videoMap['ratio'].toDouble();
         this._duration = videoMap['duration'];
         break;
       case MsgType.audio:
@@ -397,14 +397,14 @@ class StringeeMessage {
         this._filePath = photoMap['filePath'];
         this._fileUrl = photoMap['fileUrl'];
         this._thumbnail = photoMap['thumbnail'];
-        this._ratio = photoMap['ratio'];
+        this._ratio = photoMap['ratio'].toDouble();
         break;
       case MsgType.video:
         Map<dynamic, dynamic> videoMap = msgInfor['video'];
         this._filePath = videoMap['filePath'];
         this._fileUrl = videoMap['fileUrl'];
         this._thumbnail = videoMap['thumbnail'];
-        this._ratio = videoMap['ratio'];
+        this._ratio = videoMap['ratio'].toDouble();
         this._duration = videoMap['duration'];
         break;
       case MsgType.audio:
