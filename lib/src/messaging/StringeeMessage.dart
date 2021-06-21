@@ -58,6 +58,9 @@ class StringeeMessage {
     String text, {
     Map<dynamic, dynamic> customData,
   }) : assert(text != null || text.trim().isNotEmpty) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
     this._type = MsgType.text;
     this._text = text.trim();
@@ -73,6 +76,9 @@ class StringeeMessage {
     double ratio,
     Map<dynamic, dynamic> customData,
   }) : assert(filePath != null || filePath.trim().isNotEmpty) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.photo;
@@ -97,6 +103,9 @@ class StringeeMessage {
     Map<dynamic, dynamic> customData,
   })  : assert(filePath != null || filePath.trim().isNotEmpty),
         assert(duration != null || duration > 0) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.video;
@@ -120,6 +129,9 @@ class StringeeMessage {
     Map<dynamic, dynamic> customData,
   })  : assert(filePath != null || filePath.trim().isNotEmpty),
         assert(duration != null || duration > 0) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.audio;
@@ -137,6 +149,9 @@ class StringeeMessage {
     int fileLength,
     Map<dynamic, dynamic> customData,
   }) : assert(filePath != null || filePath.trim().isNotEmpty) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.file;
@@ -158,6 +173,9 @@ class StringeeMessage {
     String text, {
     Map<dynamic, dynamic> customData,
   }) : assert(text != null || text.trim().isNotEmpty) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.link;
@@ -174,6 +192,9 @@ class StringeeMessage {
     Map<dynamic, dynamic> customData,
   })  : assert(latitude != null || latitude > 0),
         assert(longitude != null || longitude > 0) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.location;
@@ -189,6 +210,9 @@ class StringeeMessage {
     String vcard, {
     Map<dynamic, dynamic> customData,
   }) : assert(vcard != null || vcard.trim().isNotEmpty) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.contact;
@@ -205,6 +229,9 @@ class StringeeMessage {
     Map<dynamic, dynamic> customData,
   })  : assert(stickerCategory != null || stickerCategory.trim().isNotEmpty),
         assert(stickerName != null || stickerName.trim().isNotEmpty) {
+    if (client == null) {
+      throw Exception("Client can not be null");
+    }
     _client = client;
 
     this._type = MsgType.contact;
