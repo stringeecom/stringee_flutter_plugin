@@ -13,13 +13,14 @@
 @implementation StringeeConversationManager {
     StringeeClient *_client;
     FlutterEventSink _eventSink;
+    NSString *_identifier;
 }
 
-- (instancetype)initWithClient:(StringeeClient *)client
+- (instancetype)initWithIdentifier:(NSString *)identifier
 {
     self = [super init];
     if (self) {
-        _client = client;
+        _identifier = identifier;
     }
     return self;
 }
@@ -38,7 +39,6 @@
         return;
     }
     
-    NSLog(@"==== createConversation: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSDictionary *optionData = [StringeeHelper StringToDictionary:[data objectForKey:@"option"]];
     NSArray *partsData = [StringeeHelper StringToArray:[data objectForKey:@"participants"]];
@@ -62,8 +62,8 @@
         return;
     }
     
-    NSLog(@"==== getConversationById: %@", arguments);
-    NSString *convId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = data[@"convId"];
     
     if (convId == nil || convId.length == 0) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"ConvId is invalid."});
@@ -81,8 +81,8 @@
         return;
     }
     
-    NSLog(@"==== getConversationByUserId: %@", arguments);
-    NSString *userId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *userId = data[@"userId"];
     
     if (userId == nil || userId.length == 0) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"UserId is invalid."});
@@ -119,7 +119,6 @@
         return;
     }
     
-    NSLog(@"==== getLocalConversations: %@", arguments);
     [_client getLocalConversationsWithCount:500 userId:_client.userId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
     }];
@@ -131,9 +130,9 @@
         return;
     }
     
-    NSLog(@"==== getLastConversation: %@", arguments);
-    int count = [(NSNumber *)arguments intValue];
-
+    NSDictionary *data = (NSDictionary *)arguments;
+    int count = [[data objectForKey:@"count"] intValue];
+    
     [_client getLastConversationsWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
     }];
@@ -145,7 +144,6 @@
         return;
     }
     
-    NSLog(@"==== getConversationsBefore: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     int count = [[data objectForKey:@"count"] intValue];
     long long datetime = [[data objectForKey:@"datetime"] longLongValue];
@@ -161,7 +159,6 @@
         return;
     }
     
-    NSLog(@"==== getConversationsAfter: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     int count = [[data objectForKey:@"count"] intValue];
     long long datetime = [[data objectForKey:@"datetime"] longLongValue];
@@ -177,7 +174,6 @@
         return;
     }
     
-    NSLog(@"==== clearDb: %@", arguments);
     [_client clearData];
 }
 
@@ -187,7 +183,6 @@
         return;
     }
     
-    NSLog(@"==== getTotalUnread: %@", arguments);
     [_client getUnreadConversationCountWithCompletionHandler:^(BOOL status, int code, NSString *message, int count) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: @(count)});
     }];
@@ -199,8 +194,9 @@
         return;
     }
     
-    NSLog(@"==== deleteConversation: %@", arguments);
-    NSString *convId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    
     if (convId == nil || convId.length == 0) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Conversation's id is invalid"});
         return;
@@ -224,7 +220,6 @@
         return;
     }
     
-    NSLog(@"==== addParticipants: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSArray *partDatas = [StringeeHelper StringToArray:[data objectForKey:@"participants"]];
@@ -253,7 +248,6 @@
         return;
     }
     
-    NSLog(@"==== removeParticipants: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSArray *partDatas = [StringeeHelper StringToArray:[data objectForKey:@"participants"]];
@@ -282,7 +276,6 @@
         return;
     }
     
-    NSLog(@"==== setRole: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSString *userId = [data objectForKey:@"userId"];
@@ -315,7 +308,6 @@
         return;
     }
     
-    NSLog(@"==== updateConversation: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSString *name = [data objectForKey:@"name"];
@@ -343,9 +335,9 @@
         return;
     }
     
-    NSLog(@"==== markAsRead: %@", arguments);
-    NSString *convId = (NSString *)arguments;
-
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+    
     if (convId == nil || convId.length == 0) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;

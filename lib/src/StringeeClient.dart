@@ -12,12 +12,14 @@ import 'call/StringeeCall.dart';
 import 'call/StringeeCall2.dart';
 
 class StringeeClient {
-  static final StringeeClient _instance = StringeeClient._internal();
-
+  // Native
   static const MethodChannel methodChannel = MethodChannel('com.stringee.flutter.methodchannel');
   static const EventChannel eventChannel = EventChannel('com.stringee.flutter.eventchannel');
+
+  // Flutter
   StreamController<dynamic> _eventStreamController = StreamController.broadcast();
-  static List<StringeeServerAddress> _serverAddresses = null;
+
+  // static final StringeeClient _instance = StringeeClient._internal();
 
   String _userId;
   String _projectId;
@@ -25,30 +27,42 @@ class StringeeClient {
   bool _isReconnecting = false;
 
   String get userId => _userId;
-
   String get projectId => _projectId;
-
   bool get hasConnected => _hasConnected;
-
   bool get isReconnecting => _isReconnecting;
 
   StreamController<dynamic> get eventStreamController => _eventStreamController;
+  String get uuid => _uuid;
 
-  factory StringeeClient({List<StringeeServerAddress> serverAddresses, String baseAPIUrl}) {
+  // Multi Client
+  List<StringeeServerAddress> _serverAddresses = null;
+  final String _uuid = GUIDGen.generate();
+
+  StringeeClient({List<StringeeServerAddress> serverAddresses, String baseAPIUrl}) {
     _serverAddresses = serverAddresses;
-    if (baseAPIUrl != null && baseAPIUrl.isNotEmpty) methodChannel.invokeMapMethod('setBaseAPIUrl', baseAPIUrl);
-    return _instance;
-  }
 
-  StringeeClient._internal() {
+    print("_uuid: " + _uuid);
+    final params = {
+      'uuid': _uuid,
+      'baseAPIUrl': baseAPIUrl
+    };
+
+    // Config client
+    methodChannel.invokeMapMethod('setupClient', params);
+
+    // Xu ly su kien nhan duoc tu native
     eventChannel.receiveBroadcastStream().listen(this._listener);
   }
+
+  // StringeeClient._internal() {
+  //   eventChannel.receiveBroadcastStream().listen(this._listener);
+  // }
 
   ///send StringeeClient event
   void _listener(dynamic event) {
     assert(event != null);
     final Map<dynamic, dynamic> map = event;
-    if (map['nativeEventType'] == StringeeObjectEventType.client.index) {
+    if (map['nativeEventType'] == StringeeObjectEventType.client.index && map['uuid'] == _uuid) {
       switch (map['event']) {
         case 'didConnect':
           _handleDidConnectEvent(map['body']);
@@ -76,7 +90,7 @@ class StringeeClient {
           break;
       }
     } else {
-      eventStreamController.add(event);
+      _eventStreamController.add(event);
     }
   }
 
@@ -87,6 +101,7 @@ class StringeeClient {
     final params = {
       'serverAddresses': _serverAddresses != null ? json.encode(_serverAddresses) : null,
       'token': token.trim(),
+      'uuid': _uuid
     };
 
     return await methodChannel.invokeMethod('connect', params);
@@ -94,13 +109,11 @@ class StringeeClient {
 
   /// Disconnect from [StringeeCLient]
   Future<Map<dynamic, dynamic>> disconnect() async {
-    return await methodChannel.invokeMethod('disconnect');
-  }
+    final params = {
+      'uuid': _uuid
+    };
 
-  /// Set base API url
-  Future<Map<dynamic, dynamic>> setBaseAPIUrl(String baseAPIUrl) async {
-    if (baseAPIUrl == null || baseAPIUrl.isEmpty) return await reportInvalidValue(baseAPIUrl);
-    return await methodChannel.invokeMapMethod('setBaseAPIUrl', baseAPIUrl);
+    return await methodChannel.invokeMethod('disconnect', params);
   }
 
   /// Register push from Stringee by [deviceToken]
@@ -118,7 +131,8 @@ class StringeeClient {
       final params = {
         'deviceToken': deviceToken.trim(),
         'isProduction': paramIsProduction,
-        'isVoip': paramsIsVoip
+        'isVoip': paramsIsVoip,
+        'uuid': _uuid
       };
       return await methodChannel.invokeMethod('registerPush', params);
     } else {
@@ -130,7 +144,13 @@ class StringeeClient {
   Future<Map<dynamic, dynamic>> unregisterPush(String deviceToken) async {
     if (deviceToken == null || deviceToken.trim().isEmpty)
       return await reportInvalidValue('deviceToken');
-    return await methodChannel.invokeMethod('unregisterPush', deviceToken.trim());
+
+    final params = {
+      'deviceToken': deviceToken.trim(),
+      'uuid': _uuid
+    };
+
+    return await methodChannel.invokeMethod('unregisterPush', params);
   }
 
   /// Send a [customData] to [userId]
@@ -141,6 +161,7 @@ class StringeeClient {
     final params = {
       'userId': userId.trim(),
       'msg': customData,
+      'uuid': _uuid
     };
     return await methodChannel.invokeMethod('sendCustomMessage', params);
   }
@@ -154,38 +175,56 @@ class StringeeClient {
     final params = {
       'participants': json.encode(participants),
       'option': json.encode(options),
+      'uuid': _uuid
     };
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('createConversation', params);
-    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body']);
+    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body'], this);
     return result;
   }
 
   /// Get [StringeeConversation] with [StringeeConversation.id] = [convId]
   Future<Map<dynamic, dynamic>> getConversationById(String convId) async {
     if (convId == null || convId.trim().isEmpty) return await reportInvalidValue('convId');
+
+    final params = {
+      'convId': convId.trim(),
+      'uuid': _uuid
+    };
+
     Map<dynamic, dynamic> result =
-        await methodChannel.invokeMethod('getConversationById', convId.trim());
-    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body']);
+        await methodChannel.invokeMethod('getConversationById', params);
+    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body'], this);
     return result;
   }
 
   /// Get [StringeeConversation] by [userId] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationByUserId(String userId) async {
     if (userId == null || userId.trim().isEmpty) return await reportInvalidValue('convId');
+
+    final params = {
+      'userId': userId.trim(),
+      'uuid': _uuid
+    };
+
     Map<dynamic, dynamic> result =
-        await methodChannel.invokeMethod('getConversationByUserId', userId.trim());
-    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body']);
+        await methodChannel.invokeMethod('getConversationByUserId', params);
+    if (result['status']) result['body'] = StringeeConversation.fromJson(result['body'], this);
     return result;
   }
 
   /// Get local [StringeeConversation]
   Future<Map<dynamic, dynamic>> getLocalConversations() async {
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLocalConversations');
+
+    final params = {
+      'uuid': _uuid
+    };
+
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLocalConversations', params);
     if (result['status']) {
       List<dynamic> list = result['body'];
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(StringeeConversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i], this));
       }
       result['body'] = conversations;
     }
@@ -195,12 +234,18 @@ class StringeeClient {
   /// Get [count] of lastest [StringeeConversation] from Stringee server
   Future<Map<dynamic, dynamic>> getLastConversation(int count) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLastConversation', count);
+
+    final param = {
+      'count': count,
+      'uuid': _uuid
+    };
+
+    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getLastConversation', param);
     if (result['status']) {
       List<dynamic> list = result['body'];
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(StringeeConversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i], this));
       }
       result['body'] = conversations;
     }
@@ -214,6 +259,7 @@ class StringeeClient {
     final param = {
       'count': count,
       'datetime': datetime,
+      'uuid': _uuid
     };
     Map<dynamic, dynamic> result =
         await methodChannel.invokeMethod('getConversationsBefore', param);
@@ -221,7 +267,7 @@ class StringeeClient {
       List<dynamic> list = result['body'];
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(StringeeConversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i], this));
       }
       result['body'] = conversations;
     }
@@ -235,13 +281,14 @@ class StringeeClient {
     final param = {
       'count': count,
       'datetime': datetime,
+      'uuid': _uuid
     };
     Map<dynamic, dynamic> result = await methodChannel.invokeMethod('getConversationsAfter', param);
     if (result['status']) {
       List<dynamic> list = result['body'];
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
-        conversations.add(StringeeConversation.fromJson(list[i]));
+        conversations.add(StringeeConversation.fromJson(list[i], this));
       }
       result['body'] = conversations;
     }
@@ -250,12 +297,20 @@ class StringeeClient {
 
   /// Clear local database
   Future<Map<dynamic, dynamic>> clearDb() async {
-    return await methodChannel.invokeMethod('clearDb');
+    final param = {
+      'uuid': _uuid
+    };
+
+    return await methodChannel.invokeMethod('clearDb', param);
   }
 
   /// Get total of unread [StringeeConversation]
   Future<Map<dynamic, dynamic>> getTotalUnread() async {
-    return await methodChannel.invokeMethod('getTotalUnread');
+    final param = {
+      'uuid': _uuid
+    };
+
+    return await methodChannel.invokeMethod('getTotalUnread', param);
   }
 
   void _handleDidConnectEvent(Map<dynamic, dynamic> map) {
@@ -298,12 +353,12 @@ class StringeeClient {
   }
 
   void _handleIncomingCallEvent(Map<dynamic, dynamic> map) {
-    StringeeCall call = StringeeCall.fromCallInfo(map);
+    StringeeCall call = StringeeCall.fromCallInfo(map, this);
     _eventStreamController.add({"eventType": StringeeClientEvents.incomingCall, "body": call});
   }
 
   void _handleIncomingCall2Event(Map<dynamic, dynamic> map) {
-    StringeeCall2 call = StringeeCall2.fromCallInfo(map);
+    StringeeCall2 call = StringeeCall2.fromCallInfo(map, this);
     _eventStreamController.add({"eventType": StringeeClientEvents.incomingCall2, "body": call});
   }
 
@@ -316,19 +371,19 @@ class StringeeClient {
     switch (objectType) {
       case ObjectType.conversation:
         for (int i = 0; i < objectDatas.length; i++) {
-          StringeeConversation conv = new StringeeConversation.fromJson(objectDatas[i]);
+          StringeeConversation conv = new StringeeConversation.fromJson(objectDatas[i], this);
           objects.add(conv);
         }
         break;
       case ObjectType.message:
         for (int i = 0; i < objectDatas.length; i++) {
-          StringeeMessage msg = new StringeeMessage.fromJson(objectDatas[i]);
+          StringeeMessage msg = new StringeeMessage.fromJson(objectDatas[i], this);
           objects.add(msg);
         }
         break;
     }
     StringeeObjectChange stringeeChange = new StringeeObjectChange(changeType, objectType, objects);
-    eventStreamController
+    _eventStreamController
         .add({"eventType": StringeeClientEvents.didReceiveObjectChange, "body": stringeeChange});
   }
 }

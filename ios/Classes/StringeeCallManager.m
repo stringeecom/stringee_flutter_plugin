@@ -14,13 +14,14 @@
     StringeeClient *_client;
     FlutterEventSink _eventSink;
     NSArray *DTMF;
+    NSString *_identifier;
 }
 
-- (instancetype)initWithClient:(StringeeClient *)client
+- (instancetype)initWithIdentifier:(NSString *)identifier
 {
     self = [super init];
     if (self) {
-        _client = client;
+        _identifier = identifier;
         DTMF = @[@"0", @"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"*", @"#"];
     }
     return self;
@@ -94,7 +95,8 @@
         return;
     }
     
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Init answer call failed. The callId is invalid."});
@@ -113,8 +115,8 @@
 }
 
 - (void)answer:(id)arguments result:(FlutterResult)result {
-    
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Answer call failed. The callId is invalid."});
@@ -134,7 +136,8 @@
 }
 
 - (void)hangup:(id)arguments result:(FlutterResult)result {
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Hangup call failed. The callId is invalid."});
@@ -154,7 +157,8 @@
 }
 
 - (void)reject:(id)arguments result:(FlutterResult)result {
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Reject call failed. The callId is invalid."});
@@ -287,7 +291,8 @@
         return;
     }
     
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
@@ -412,22 +417,22 @@
 #pragma mark - Call Delegate
 
 - (void)didChangeMediaState:(StringeeCall *)stringeeCall mediaState:(MediaState)mediaState {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(mediaState) }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(mediaState) }});
 }
 
 - (void)didChangeSignalingState:(StringeeCall *)stringeeCall signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState) }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState) }});
     if (signalingState == SignalingStateBusy || signalingState == SignalingStateEnded) {
         [[StringeeManager instance].calls removeObjectForKey:stringeeCall.callId];
     }
 }
 
 - (void)didReceiveLocalStream:(StringeeCall *)stringeeCall {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall.callId }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall.callId }});
 }
 
 - (void)didReceiveRemoteStream:(StringeeCall *)stringeeCall {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall.callId }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall.callId }});
 }
 
 - (void)didReceiveDtmfDigit:(StringeeCall *)stringeeCall callDTMF:(CallDTMF)callDTMF {
@@ -439,15 +444,15 @@
     } else if (callDTMF == 11) {
         digit = @"#";
     }
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveDtmfDigit, STEBody : @{ @"callId" : stringeeCall.callId, @"dtmf" : digit }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveDtmfDigit, STEBody : @{ @"callId" : stringeeCall.callId, @"dtmf" : digit }});
 }
 
 - (void)didReceiveCallInfo:(StringeeCall *)stringeeCall info:(NSDictionary *)info {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveCallInfo, STEBody : @{ @"callId" : stringeeCall.callId, @"data" : info }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveCallInfo, STEBody : @{ @"callId" : stringeeCall.callId, @"data" : info }});
 }
 
 - (void)didHandleOnAnotherDevice:(StringeeCall *)stringeeCall signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState), @"description" : reason }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState), @"description" : reason }});
 }
 
 

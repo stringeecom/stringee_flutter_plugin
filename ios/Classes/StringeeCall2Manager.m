@@ -13,13 +13,14 @@
 @implementation StringeeCall2Manager {
     StringeeClient *_client;
     FlutterEventSink _eventSink;
+    NSString *_identifier;
 }
 
-- (instancetype)initWithClient:(StringeeClient *)client
+- (instancetype)initWithIdentifier:(NSString *)identifier
 {
     self = [super init];
     if (self) {
-        _client = client;
+        _identifier = identifier;
     }
     return self;
 }
@@ -83,7 +84,8 @@
         return;
     }
     
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Init answer call failed. The callId is invalid."});
@@ -102,8 +104,8 @@
 }
 
 - (void)answer:(id)arguments result:(FlutterResult)result {
-    
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Answer call failed. The callId is invalid."});
@@ -123,7 +125,8 @@
 }
 
 - (void)hangup:(id)arguments result:(FlutterResult)result {
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Hangup call failed. The callId is invalid."});
@@ -143,7 +146,8 @@
 }
 
 - (void)reject:(id)arguments result:(FlutterResult)result {
-    NSString *callId = (NSString *)arguments;
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
     
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Reject call failed. The callId is invalid."});
@@ -268,26 +272,26 @@
 #pragma mark - Call Delegate
 
 - (void)didChangeMediaState2:(StringeeCall2 *)stringeeCall2 mediaState:(MediaState)mediaState {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(mediaState) }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(mediaState) }});
 }
 
 - (void)didChangeSignalingState2:(StringeeCall2 *)stringeeCall2 signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState) }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState) }});
     if (signalingState == SignalingStateBusy || signalingState == SignalingStateEnded) {
         [[StringeeManager instance].call2s removeObjectForKey:stringeeCall2.callId];
     }
 }
 
 - (void)didReceiveLocalStream2:(StringeeCall2 *)stringeeCall2 {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
 }
 
 - (void)didReceiveRemoteStream2:(StringeeCall2 *)stringeeCall2 {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
 }
 
 - (void)didHandleOnAnotherDevice2:(StringeeCall2 *)stringeeCall2 signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState), @"description" : reason }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState), @"description" : reason }});
 }
 
 @end

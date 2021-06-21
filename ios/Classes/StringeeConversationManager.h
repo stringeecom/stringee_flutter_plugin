@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface StringeeConversationManager : NSObject
 
-//- (instancetype)initWithClient:(StringeeClient *)client;
+- (instancetype)initWithIdentifier:(NSString *)identifier;
 
 - (void)setClient:(StringeeClient *)client;
 
