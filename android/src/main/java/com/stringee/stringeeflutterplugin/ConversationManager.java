@@ -37,7 +37,7 @@ public class ConversationManager {
      * @param convId
      * @param result
      */
-    public void deleteConversation(final String convId, final Result result) {
+    public void delete(final String convId, final Result result) {
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "deleteConversation: false - -2 - convId is invalid");
             Map map = new HashMap();

@@ -7,10 +7,11 @@ import android.os.Looper;
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
-import com.stringee.listener.StatusListener;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeManager {
     private static StringeeManager stringeeManager;
@@ -126,12 +127,28 @@ public class StringeeManager {
         }
     }
 
-    public void setSpeakerphoneOn(boolean on, StatusListener listener) {
+    /**
+     * Set speaker on/off
+     *
+     * @param on
+     * @param result
+     */
+    public void setSpeakerphoneOn(boolean on, Result result) {
         if (audioManager != null) {
             audioManager.setSpeakerphoneOn(on);
-            listener.onSuccess();
+            android.util.Log.d("StringeeSDK", "setSpeakerphoneOn: success");
+            Map map = new HashMap();
+            map.put("status", true);
+            map.put("code", 0);
+            map.put("message", "Success");
+            result.success(map);
         } else {
-            listener.onError(new StringeeError(-2, "AudioManager is not found"));
+            android.util.Log.d("StringeeSDK", "setSpeakerphoneOn: false - -2 - AudioManager is not found");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "AudioManager is not found");
+            result.success(map);
         }
     }
 }

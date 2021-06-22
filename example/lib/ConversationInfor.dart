@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
+import 'main.dart' as main;
+
 StringeeClient _client;
 StringeeConversation _conversation;
 
@@ -50,7 +52,7 @@ class ConversationInforState extends State<ConversationInfor> {
     users.add(user1);
     users.add(user2);
 
-    msg = StringeeMessage.typeText('test', customData: {'custom': 'abc'});
+    msg = StringeeMessage.typeText(main.client, 'test', customData: {'custom': 'abc'});
 
     _client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;

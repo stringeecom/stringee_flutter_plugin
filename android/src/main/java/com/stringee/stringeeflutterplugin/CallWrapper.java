@@ -295,40 +295,6 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Set speaker on/off
-     *
-     * @param on
-     * @param result
-     */
-    public void setSpeakerphoneOn(final boolean on, final Result result) {
-        _manager.setSpeakerphoneOn(on, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                _handler.post(() -> {
-                    Log.d(TAG, "setSpeakerphoneOn: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                });
-            }
-
-            @Override
-            public void onError(final StringeeError error) {
-                _handler.post(() -> {
-                    Log.d(TAG, "setSpeakerphoneOn: false - " + error.getCode() + " - " + error.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
-                });
-            }
-        });
-    }
-
-    /**
      * Switch Camera
      *
      * @param result
