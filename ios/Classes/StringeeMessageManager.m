@@ -13,13 +13,14 @@
 @implementation StringeeMessageManager {
     StringeeClient *_client;
     FlutterEventSink _eventSink;
+    NSString *_identifier;
 }
 
-- (instancetype)initWithClient:(StringeeClient *)client
+- (instancetype)initWithIdentifier:(NSString *)identifier
 {
     self = [super init];
     if (self) {
-        _client = client;
+        _identifier = identifier;
         self.trackedMessages = [[NSMutableDictionary alloc] init];
     }
     return self;
@@ -49,7 +50,8 @@
     }
     
     NSLog(@"==== sendMessage: %@", arguments);
-    NSDictionary *data = [StringeeHelper StringToDictionary:arguments];
+//    NSDictionary *data = [StringeeHelper StringToDictionary:arguments];
+    NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSDictionary *customData = [data objectForKey:@"customData"];
     int type = [[data objectForKey:@"type"] intValue];
