@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.stringee.StringeeClient;
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
@@ -15,12 +14,30 @@ import java.util.Map;
 
 public class StringeeManager {
     private static StringeeManager stringeeManager;
-    private StringeeClient mClient;
-    private Map<String, MStringeeCall> callsMap = new HashMap<>();
-    private Map<String, MStringeeCall2> call2sMap = new HashMap<>();
+    private Context context;
+    private Map<String, ClientWrapper> clientMap = new HashMap<>();
+    private Map<String, CallWrapper> callsMap = new HashMap<>();
+    private Map<String, Call2Wrapper> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
+
+    public enum StringeeCallType {
+        AppToAppOutgoing(0),
+        AppToAppIncoming(1),
+        AppToPhone(2),
+        PhoneToApp(3);
+
+        public final short value;
+
+        StringeeCallType(int value) {
+            this.value = (short) value;
+        }
+
+        public short getValue() {
+            return this.value;
+        }
+    }
 
     public enum StringeeEventType {
         ClientEvent(0),
@@ -38,6 +55,21 @@ public class StringeeManager {
         }
     }
 
+    public enum UserRole {
+        Admin(0),
+        Member(1);
+
+        public final short value;
+
+        UserRole(int value) {
+            this.value = (short) value;
+        }
+
+        public short getValue() {
+            return this.value;
+        }
+    }
+
     public static synchronized StringeeManager getInstance() {
         if (stringeeManager == null) {
             stringeeManager = new StringeeManager();
@@ -46,15 +78,23 @@ public class StringeeManager {
         return stringeeManager;
     }
 
-    public StringeeClient getClient() {
-        return mClient;
+    public Context getContext() {
+        return context;
     }
 
-    public void setClient(StringeeClient mClient) {
-        this.mClient = mClient;
+    public void setContext(Context context) {
+        this.context = context;
     }
 
-    public Map<String, MStringeeCall2> getCall2sMap() {
+    public Map<String, ClientWrapper> getClientMap() {
+        return clientMap;
+    }
+
+    public void setClientMap(Map<String, ClientWrapper> clientMap) {
+        this.clientMap = clientMap;
+    }
+
+    public Map<String, Call2Wrapper> getCall2sMap() {
         return call2sMap;
     }
 
@@ -62,7 +102,7 @@ public class StringeeManager {
         return localViewOption;
     }
 
-    public Map<String, MStringeeCall> getCallsMap() {
+    public Map<String, CallWrapper> getCallsMap() {
         return callsMap;
     }
 

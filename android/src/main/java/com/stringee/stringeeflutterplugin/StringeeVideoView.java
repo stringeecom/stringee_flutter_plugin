@@ -57,8 +57,8 @@ public class StringeeVideoView implements PlatformView {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                MStringeeCall call = StringeeManager.getInstance().getCallsMap().get(callId);
-                MStringeeCall2 call2 = StringeeManager.getInstance().getCall2sMap().get(callId);
+                CallWrapper call = StringeeManager.getInstance().getCallsMap().get(callId);
+                Call2Wrapper call2 = StringeeManager.getInstance().getCall2sMap().get(callId);
 
                 if (call == null && call2 == null) {
                     return;
