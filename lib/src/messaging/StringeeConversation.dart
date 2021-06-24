@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
 import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
 
