@@ -41,7 +41,6 @@ class StringeeClient {
   StringeeClient({List<StringeeServerAddress> serverAddresses, String baseAPIUrl}) {
     _serverAddresses = serverAddresses;
 
-    print("_uuid: " + _uuid);
     final params = {
       'uuid': _uuid,
       'baseAPIUrl': baseAPIUrl
