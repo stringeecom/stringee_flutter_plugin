@@ -8,8 +8,10 @@ import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
-var token = 'PUT YOUR TOKEN HERE';
-StringeeClient _client = StringeeClient();
+var user2 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTQzODYiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ2Mzg2LCJ1c2VySWQiOiJ1c2VyMiJ9.ARSD5PS1wFGjNT447SOY3Z-PGm0Qtgvfqj3nt0t8zmc';
+var user1 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTMwMjciLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ1MDI3LCJ1c2VySWQiOiJ1c2VyMSJ9.9wrpbsDPM2-OpR4Sq5yOutacNlo9bYy78htcRDpPjCo';
+
+StringeeClient client = StringeeClient();
 
 String strUserId = "";
 
@@ -46,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     /// Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
-    _client.eventStreamController.stream.listen((event) {
+    client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       switch (map['eventType']) {
         case StringeeClientEvents.didConnect:
@@ -83,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     /// Connect
-    _client.connect(token);
+    client.connect(user2);
   }
 
   requestPermissions() async {
@@ -126,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //region Handle Client Event
   void handleDidConnectEvent() {
     setState(() {
-      myUserId = _client.userId;
+      myUserId = client.userId;
     });
   }
 
@@ -290,7 +292,7 @@ class _MyFormState extends State<MyForm> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => Chat(
-                                    client: _client,
+                                    client: client,
                                   )));
                     },
                     child: Text('CHAT'),
@@ -311,13 +313,13 @@ class _MyFormState extends State<MyForm> {
   }
 
   void _CallTapped(bool isVideoCall, StringeeObjectEventType callType) {
-    if (strUserId.isEmpty || !_client.hasConnected) return;
+    if (strUserId.isEmpty || !client.hasConnected) return;
 
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => Call(
-              fromUserId: _client.userId,
+              fromUserId: client.userId,
               toUserId: strUserId,
               isVideoCall: isVideoCall,
               callType: callType,

@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSMutableDictionary *trackedMessages;
 
-- (instancetype)initWithClient:(StringeeClient *)client;
+- (instancetype)initWithIdentifier:(NSString *)identifier;
 
 - (void)setClient:(StringeeClient *)client;
 

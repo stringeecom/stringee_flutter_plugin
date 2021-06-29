@@ -1,5 +1,7 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.stringee.exception.StringeeError;
@@ -7,7 +9,7 @@ import com.stringee.messaging.Conversation;
 import com.stringee.messaging.Message;
 import com.stringee.messaging.User;
 import com.stringee.messaging.listeners.CallbackListener;
-import com.stringee.stringeeflutterplugin.ConversationManager.UserRole;
+import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +21,61 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.flutter.plugin.common.MethodChannel.Result;
+
 public class Utils {
+    private static final String TAG = "StringeeSDK";
+
+    public static boolean isCallWrapperAvaiable(String methodName, String callId, Result result) {
+        if (callId == null || callId.isEmpty()) {
+            Log.d(TAG, methodName + ": false - -2 - callId is invalid");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "callId is invalid");
+            result.success(map);
+            return false;
+        }
+
+        CallWrapper call = StringeeManager.getInstance().getCallsMap().get(callId);
+        if (call == null) {
+            Log.d(TAG, methodName + ": false - -3 - StringeeCall is not found");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -3);
+            map.put("message", "StringeeCall is not found");
+            result.success(map);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean isCall2WrapperAvaiable(String methodName, String callId, Result result) {
+        if (callId == null || callId.isEmpty()) {
+            Log.d(TAG, methodName + ": false - -2 - callId is invalid");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "callId is invalid");
+            result.success(map);
+            return false;
+        }
+
+        Call2Wrapper call = StringeeManager.getInstance().getCall2sMap().get(callId);
+        if (call == null) {
+            Log.d(TAG, methodName + ": false - -3 - StringeeCall2 is not found");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -3);
+            map.put("message", "StringeeCall2 is not found");
+            result.success(map);
+            return false;
+        }
+
+        return true;
+    }
+
     public static Map convertJsonToMap(JSONObject object) throws JSONException {
         if (object != null) {
             Map<String, Object> map = new HashMap<String, Object>();

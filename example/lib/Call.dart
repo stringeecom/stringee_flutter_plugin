@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import 'package:stringee_flutter_plugin_example/main.dart' as main;
 
 StringeeCall _stringeeCall;
 StringeeCall2 _stringeeCall2;
@@ -190,7 +191,7 @@ class _CallState extends State<Call> {
     _stringeeCall = widget.incomingCall;
 
     if (!widget.showIncomingUi) {
-      _stringeeCall = StringeeCall();
+      _stringeeCall = StringeeCall(main.client);
     }
 
     // Listen events
@@ -260,7 +261,7 @@ class _CallState extends State<Call> {
     _stringeeCall2 = widget.incomingCall2;
 
     if (!widget.showIncomingUi) {
-      _stringeeCall2 = StringeeCall2();
+      _stringeeCall2 = StringeeCall2(main.client);
     }
 
     // Listen events
