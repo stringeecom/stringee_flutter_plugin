@@ -296,6 +296,41 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     }
 
     /**
+     * Switch Camera
+     *
+     * @param result
+     * @param cameraId
+     */
+    public void switchCamera(int cameraId, final Result result) {
+        _call.switchCamera(new StatusListener() {
+            @Override
+            public void onSuccess() {
+                _handler.post(() -> {
+                    Log.d(TAG, "switchCamera: success");
+                    Map map = new HashMap();
+                    map.put("status", true);
+                    map.put("code", 0);
+                    map.put("message", "Success");
+                    result.success(map);
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(() -> {
+                    Log.d(TAG, "switchCamera: false - code: " + stringeeError.getCode() + " - message: " + stringeeError.getMessage());
+                    Map map = new HashMap();
+                    map.put("status", false);
+                    map.put("code", stringeeError.getCode());
+                    map.put("message", stringeeError.getMessage());
+                    result.success(map);
+                });
+            }
+        }, cameraId);
+    }
+
+    /**
      * Resume Video
      *
      * @param result

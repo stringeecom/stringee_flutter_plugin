@@ -217,7 +217,11 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "switchCamera":
                 if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
-                    clientWrapper.callWrapper(callId).switchCamera(result);
+                    if (call.hasArgument("cameraId")) {
+                        clientWrapper.callWrapper(callId).switchCamera((int) call.argument("cameraId"), result);
+                    } else {
+                        clientWrapper.callWrapper(callId).switchCamera(result);
+                    }
                 }
                 break;
             case "resumeVideo":
@@ -286,6 +290,11 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "switchCamera2":
                 if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).switchCamera(result);
+                    if (call.hasArgument("cameraId")) {
+                        clientWrapper.call2Wrapper(callId).switchCamera((int) call.argument("cameraId"), result);
+                    } else {
+                        clientWrapper.call2Wrapper(callId).switchCamera(result);
+                    }
                 }
                 break;
             case "resumeVideo2":

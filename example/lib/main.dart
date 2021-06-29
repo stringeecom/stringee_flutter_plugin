@@ -57,7 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
           handleDiddisconnectEvent();
           break;
         case StringeeClientEvents.didFailWithError:
-          handleDidFailWithErrorEvent(map['body']['code'], map['body']['message']);
+          handleDidFailWithErrorEvent(
+              map['body']['code'], map['body']['message']);
           break;
         case StringeeClientEvents.requestAccessToken:
           handleRequestAccessTokenEvent();
@@ -75,7 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
           break;
         case StringeeClientEvents.didReceiveObjectChange:
           StringeeObjectChange objectChange = map['body'];
-          print(objectChange.objectType.toString() + '\t' + objectChange.type.toString());
+          print(objectChange.objectType.toString() +
+              '\t' +
+              objectChange.type.toString());
           print(objectChange.objects.toString());
           break;
         default:
@@ -165,7 +168,9 @@ class _MyHomePageState extends State<MyHomePage> {
           fromUserId: call != null ? call.from : call2.from,
           toUserId: call != null ? call.to : call2.to,
           isVideoCall: call != null ? call.isVideoCall : call2.isVideoCall,
-          callType: call != null ? StringeeObjectEventType.call : StringeeObjectEventType.call2,
+          callType: call != null
+              ? StringeeObjectEventType.call
+              : StringeeObjectEventType.call2,
           showIncomingUi: true,
           incomingCall2: call != null ? null : call2,
           incomingCall: call != null ? call : null,

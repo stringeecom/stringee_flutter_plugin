@@ -3,10 +3,10 @@ package com.stringee.stringeeflutterplugin;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
-import com.stringee.exception.StringeeError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,10 +91,6 @@ public class StringeeManager {
         return clientMap;
     }
 
-    public void setClientMap(Map<String, ClientWrapper> clientMap) {
-        this.clientMap = clientMap;
-    }
-
     public Map<String, Call2Wrapper> getCall2sMap() {
         return call2sMap;
     }
@@ -136,14 +132,14 @@ public class StringeeManager {
     public void setSpeakerphoneOn(boolean on, Result result) {
         if (audioManager != null) {
             audioManager.setSpeakerphoneOn(on);
-            android.util.Log.d("StringeeSDK", "setSpeakerphoneOn: success");
+            Log.d("StringeeSDK", "setSpeakerphoneOn: success");
             Map map = new HashMap();
             map.put("status", true);
             map.put("code", 0);
             map.put("message", "Success");
             result.success(map);
         } else {
-            android.util.Log.d("StringeeSDK", "setSpeakerphoneOn: false - -2 - AudioManager is not found");
+            Log.d("StringeeSDK", "setSpeakerphoneOn: false - -2 - AudioManager is not found");
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
