@@ -8,8 +8,9 @@ import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
-var token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MjQzMzI0MzUiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjI2OTI0NDM1LCJ1c2VySWQiOiJ1c2VyMiJ9.h5HGLiHZiiyd92O04ZE0Ai_ftQ5dszfkxy9txTuXt0g';
+var user2 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTQzODYiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ2Mzg2LCJ1c2VySWQiOiJ1c2VyMiJ9.ARSD5PS1wFGjNT447SOY3Z-PGm0Qtgvfqj3nt0t8zmc';
+var user1 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTMwMjciLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ1MDI3LCJ1c2VySWQiOiJ1c2VyMSJ9.9wrpbsDPM2-OpR4Sq5yOutacNlo9bYy78htcRDpPjCo';
+
 StringeeClient client = StringeeClient();
 
 String strUserId = "";
@@ -84,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     /// Connect
-    client.connect(token);
+    client.connect(user2);
   }
 
   requestPermissions() async {
