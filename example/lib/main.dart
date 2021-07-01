@@ -2,14 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:permission/permission.dart';
+
+// import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
-var user2 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTQzODYiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ2Mzg2LCJ1c2VySWQiOiJ1c2VyMiJ9.ARSD5PS1wFGjNT447SOY3Z-PGm0Qtgvfqj3nt0t8zmc';
-var user1 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTMwMjciLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ1MDI3LCJ1c2VySWQiOiJ1c2VyMSJ9.9wrpbsDPM2-OpR4Sq5yOutacNlo9bYy78htcRDpPjCo';
+var user2 =
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MjUxMDg0ODkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjI3NzAwNDg5LCJ1c2VySWQiOiJ1c2VyMiJ9.ytNNDUrpfWpczPYTkVj21OJv0zn7yo_sw1l3UZQzo9c';
+var user1 =
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTMwMjciLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ1MDI3LCJ1c2VySWQiOiJ1c2VyMSJ9.9wrpbsDPM2-OpR4Sq5yOutacNlo9bYy78htcRDpPjCo';
 
 StringeeClient client = StringeeClient();
 
@@ -29,18 +32,16 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _MyHomePageState();
   }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String myUserId = 'Not connected...';
+  String? myUserId = 'Not connected...';
   bool isAppInBackground = false;
 
   @override
-  Future<void> initState() {
-    // TODO: implement initState
+  void initState() {
     super.initState();
 
     if (Platform.isAndroid) {
@@ -68,11 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
           handleDidReceiveCustomMessageEvent(map['body']);
           break;
         case StringeeClientEvents.incomingCall:
-          StringeeCall call = map['body'];
+          StringeeCall? call = map['body'];
           handleIncomingCallEvent(call);
           break;
         case StringeeClientEvents.incomingCall2:
-          StringeeCall2 call = map['body'];
+          StringeeCall2? call = map['body'];
           handleIncomingCall2Event(call);
           break;
         case StringeeClientEvents.didReceiveObjectChange:
@@ -92,16 +93,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   requestPermissions() async {
-    List<PermissionName> permissionNames = [];
-    permissionNames.add(PermissionName.Camera);
-    permissionNames.add(PermissionName.Contacts);
-    permissionNames.add(PermissionName.Microphone);
-    permissionNames.add(PermissionName.Location);
-    permissionNames.add(PermissionName.Storage);
-    permissionNames.add(PermissionName.State);
-    permissionNames.add(PermissionName.Internet);
-    var permissions = await Permission.requestPermissions(permissionNames);
-    permissions.forEach((permission) {});
+    // List<PermissionName> permissionNames = [];
+    // permissionNames.add(PermissionName.Camera);
+    // permissionNames.add(PermissionName.Contacts);
+    // permissionNames.add(PermissionName.Microphone);
+    // permissionNames.add(PermissionName.Location);
+    // permissionNames.add(PermissionName.Storage);
+    // permissionNames.add(PermissionName.State);
+    // permissionNames.add(PermissionName.Internet);
+    // var permissions = await Permission.requestPermissions(permissionNames);
+    // permissions.forEach((permission) {});
   }
 
   @override
@@ -141,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void handleDidFailWithErrorEvent(int code, String message) {
+  void handleDidFailWithErrorEvent(int? code, String message) {
     print('code: ' + code.toString() + '\nmessage: ' + message);
   }
 
@@ -153,22 +154,22 @@ class _MyHomePageState extends State<MyHomePage> {
     print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message']);
   }
 
-  void handleIncomingCallEvent(StringeeCall call) {
+  void handleIncomingCallEvent(StringeeCall? call) {
     showCallScreen(call, null);
   }
 
-  void handleIncomingCall2Event(StringeeCall2 call) {
+  void handleIncomingCall2Event(StringeeCall2? call) {
     showCallScreen(null, call);
   }
 
-  void showCallScreen(StringeeCall call, StringeeCall2 call2) {
+  void showCallScreen(StringeeCall? call, StringeeCall2? call2) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => Call(
-          fromUserId: call != null ? call.from : call2.from,
-          toUserId: call != null ? call.to : call2.to,
-          isVideoCall: call != null ? call.isVideoCall : call2.isVideoCall,
+          fromUserId: call != null ? call.from : call2!.from,
+          toUserId: call != null ? call.to : call2!.to,
+          isVideoCall: call != null ? call.isVideoCall : call2!.isVideoCall,
           callType: call != null
               ? StringeeObjectEventType.call
               : StringeeObjectEventType.call2,
@@ -185,7 +186,6 @@ class _MyHomePageState extends State<MyHomePage> {
 class MyForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _MyFormState();
   }
 }
@@ -193,7 +193,6 @@ class MyForm extends StatefulWidget {
 class _MyFormState extends State<MyForm> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return new Form(
 //      key: _formKey,
       child: new Column(
@@ -227,11 +226,9 @@ class _MyFormState extends State<MyForm> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
-                              _CallTapped(false, StringeeObjectEventType.call);
+                              _callTapped(false, StringeeObjectEventType.call);
                             },
                             child: Text('CALL'),
                           ),
@@ -240,11 +237,9 @@ class _MyFormState extends State<MyForm> {
                           height: 40.0,
                           width: 175.0,
                           margin: EdgeInsets.only(top: 20.0),
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
-                              _CallTapped(true, StringeeObjectEventType.call);
+                              _callTapped(true, StringeeObjectEventType.call);
                             },
                             child: Text('VIDEOCALL'),
                           ),
@@ -257,12 +252,12 @@ class _MyFormState extends State<MyForm> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
-                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: new ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                padding:
+                                    EdgeInsets.only(left: 20.0, right: 20.0)),
                             onPressed: () {
-                              _CallTapped(false, StringeeObjectEventType.call2);
+                              _callTapped(false, StringeeObjectEventType.call2);
                             },
                             child: Text('CALL2'),
                           ),
@@ -271,12 +266,12 @@ class _MyFormState extends State<MyForm> {
                           height: 40.0,
                           width: 175.0,
                           margin: EdgeInsets.only(top: 20.0),
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
-                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: new ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                padding:
+                                    EdgeInsets.only(left: 20.0, right: 20.0)),
                             onPressed: () {
-                              _CallTapped(true, StringeeObjectEventType.call2);
+                              _callTapped(true, StringeeObjectEventType.call2);
                             },
                             child: Text('VIDEOCALL2'),
                           ),
@@ -289,9 +284,7 @@ class _MyFormState extends State<MyForm> {
                   height: 40.0,
                   width: 175.0,
                   margin: EdgeInsets.only(top: 20.0),
-                  child: new RaisedButton(
-                    color: Colors.grey[300],
-                    textColor: Colors.black,
+                  child: new ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -317,7 +310,7 @@ class _MyFormState extends State<MyForm> {
     });
   }
 
-  void _CallTapped(bool isVideoCall, StringeeObjectEventType callType) {
+  void _callTapped(bool isVideoCall, StringeeObjectEventType callType) {
     if (strUserId.isEmpty || !client.hasConnected) return;
 
     Navigator.push(

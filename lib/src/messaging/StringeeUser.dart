@@ -1,37 +1,36 @@
-import 'package:flutter/cupertino.dart';
 import 'package:stringee_flutter_plugin/src/StringeeConstants.dart';
 
 class StringeeUser {
-  String _userId;
-  String _name;
-  String _avatarUrl;
-  UserRole _role = UserRole.member;
+  late String _userId;
+  String? _name;
+  String? _avatarUrl;
+  UserRole? _role = UserRole.member;
 
-  StringeeUser({@required String userId, String name, String avatarUrl}) {
+  StringeeUser({required String userId, String? name, String? avatarUrl}) {
     this._userId = userId;
     this._name = name;
     this._avatarUrl = avatarUrl;
   }
 
-  String get userId => _userId;
+  String? get userId => _userId;
 
-  String get name => _name;
+  String? get name => _name;
 
-  String get avatarUrl => _avatarUrl;
+  String? get avatarUrl => _avatarUrl;
 
-  UserRole get role => _role;
+  UserRole? get role => _role;
 
   @override
   String toString() {
-    return '{userId: ${_userId}, name: ${name}, avatarUrl: ${avatarUrl}, role: ${role}}';
+    return '{userId: $_userId, name: $name, avatarUrl: $avatarUrl, role: $role}';
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
     params['userId'] = _userId.trim();
-    if (_name != null) params['name'] = _name.trim();
-    if (_avatarUrl != null) params['avatarUrl'] = _avatarUrl.trim();
-    if (_role != null) params['role'] = _role.index;
+    if (_name != null) params['name'] = _name!.trim();
+    if (_avatarUrl != null) params['avatarUrl'] = _avatarUrl!.trim();
+    if (_role != null) params['role'] = _role!.index;
     return params;
   }
 
@@ -40,7 +39,7 @@ class StringeeUser {
     this._name = json['name'];
     this._avatarUrl = json['avatarUrl'];
     if (json.containsKey('role')) {
-      String role = json['role'];
+      String? role = json['role'];
       switch (role) {
         case 'member':
           this._role = UserRole.member;
@@ -60,7 +59,7 @@ class StringeeUser {
     this._name = json['displayName'];
     this._avatarUrl = json['avatarUrl'];
     if (json.containsKey('role')) {
-      String role = json['role'];
+      String? role = json['role'];
       switch (role) {
         case 'member':
           this._role = UserRole.member;

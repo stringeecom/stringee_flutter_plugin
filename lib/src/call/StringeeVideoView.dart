@@ -11,21 +11,21 @@ import '../StringeeConstants.dart';
 class StringeeVideoView extends StatefulWidget {
   final String callId;
   bool isLocal = true;
-  bool isOverlay = false;
-  bool isMirror = false;
-  final EdgeInsetsGeometry margin;
-  final AlignmentGeometry alignment;
-  final EdgeInsetsGeometry padding;
-  ScalingType scalingType = ScalingType.fill;
-  final double height;
-  final double width;
-  final Color color;
-  final Widget child;
+  bool? isOverlay = false;
+  bool? isMirror = false;
+  final EdgeInsetsGeometry? margin;
+  final AlignmentGeometry? alignment;
+  final EdgeInsetsGeometry? padding;
+  ScalingType? scalingType = ScalingType.fill;
+  final double? height;
+  final double? width;
+  final Color? color;
+  final Widget? child;
 
   StringeeVideoView(
     this.callId,
     this.isLocal, {
-    Key key,
+    Key? key,
     this.isOverlay,
     this.isMirror,
     this.color,
@@ -53,7 +53,6 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     creationParams = {
@@ -77,7 +76,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     }
 
     if (Platform.isAndroid) {
-      creationParams['isMirror'] = widget.isMirror == null ? false : widget.isMirror;
+      creationParams['isMirror'] =
+          widget.isMirror == null ? false : widget.isMirror;
     }
   }
 
@@ -86,10 +86,12 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
       case TargetPlatform.android:
         return PlatformViewLink(
           viewType: viewType,
-          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
             return AndroidViewSurface(
-              controller: controller,
-              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+              controller: controller as AndroidViewController,
+              gestureRecognizers: const <
+                  Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },
@@ -105,7 +107,6 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
               ..create();
           },
         );
-        break;
       case TargetPlatform.iOS:
         // Co loi FlutterPlatformView chua duoc fix => dung tam cach nay
         if (widget.width == null) {
@@ -122,10 +123,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
           creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
         );
-        break;
       default:
         throw UnsupportedError("Unsupported platform view");
-        break;
     }
   }
 
@@ -145,17 +144,17 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     );
 
     if (widget.child != null) {
-      Widget child = widget.child;
+      Widget? child = widget.child;
 
       if (widget.padding != null) {
-        child = Padding(padding: widget.padding, child: child);
+        child = Padding(padding: widget.padding!, child: child);
       }
 
-      childrenWidget.add(child);
+      childrenWidget.add(child!);
     }
 
     if (widget.alignment != null) {
-      current = Align(alignment: widget.alignment, child: current);
+      current = Align(alignment: widget.alignment!, child: current);
     }
 
     return current;

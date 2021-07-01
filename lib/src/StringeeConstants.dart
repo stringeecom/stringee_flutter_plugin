@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
 
 /// Events for StringeeClient
@@ -103,45 +102,46 @@ enum ScalingType {
 
 ///Class represents options for make a call
 class MakeCallParams {
-  String _from;
-  String _to;
-  bool _isVideoCall;
-  Map<dynamic, dynamic> _customData;
-  VideoQuality _videoQuality;
+  String? _from;
+  String? _to;
+  bool? _isVideoCall;
+  Map<dynamic, dynamic>? _customData;
+  VideoQuality? _videoQuality;
 
   MakeCallParams(
     String from,
     String to, {
-    bool isVideoCall,
-    Map<dynamic, dynamic> customData,
-    VideoQuality videoQuality,
-  })  : assert(from != null || from.trim().isNotEmpty),
-        assert(to != null || to.trim().isNotEmpty) {
+    bool? isVideoCall,
+    Map<dynamic, dynamic>? customData,
+    VideoQuality? videoQuality,
+  })  : assert(from.trim().isNotEmpty),
+        assert(to.trim().isNotEmpty) {
     this._from = from.trim();
     this._to = to.trim();
     this._isVideoCall = (isVideoCall != null) ? isVideoCall : false;
     if (customData != null) this._customData = customData;
-    if (this._isVideoCall)
-      this._videoQuality = (videoQuality != null) ? videoQuality : VideoQuality.normal;
+    if (this._isVideoCall!)
+      this._videoQuality =
+          (videoQuality != null) ? videoQuality : VideoQuality.normal;
   }
 
-  VideoQuality get videoQuality => _videoQuality;
+  VideoQuality? get videoQuality => _videoQuality;
 
-  Map<dynamic, dynamic> get customData => _customData;
+  Map<dynamic, dynamic>? get customData => _customData;
 
-  bool get isVideoCall => _isVideoCall;
+  bool? get isVideoCall => _isVideoCall;
 
-  String get to => _to;
+  String? get to => _to;
 
-  String get from => _from;
+  String? get from => _from;
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    params['from'] = this._from.trim();
-    params['to'] = this._to.trim();
+    params['from'] = this._from!.trim();
+    params['to'] = this._to!.trim();
     if (this._customData != null) params['customData'] = this._customData;
     params['isVideoCall'] = this._isVideoCall;
-    if (this._isVideoCall) {
+    if (this._isVideoCall!) {
       switch (this._videoQuality) {
         case VideoQuality.normal:
           params['videoResolution'] = "NORMAL";
@@ -151,6 +151,9 @@ class MakeCallParams {
           break;
         case VideoQuality.fullHd:
           params['videoResolution'] = "FULLHD";
+          break;
+        default:
+          params['videoResolution'] = "NORMAL";
           break;
       }
     }
@@ -202,90 +205,70 @@ enum MsgType {
   notification,
 }
 
-extension MsgTypeValueExtension on MsgType {
+extension MsgTypeValueExtension on MsgType? {
   // ignore: missing_return
   int get value {
     switch (this) {
       case MsgType.text:
         return 1;
-        break;
       case MsgType.photo:
         return 2;
-        break;
       case MsgType.video:
         return 3;
-        break;
       case MsgType.audio:
         return 4;
-        break;
       case MsgType.file:
         return 5;
-        break;
       case MsgType.link:
         return 6;
-        break;
       case MsgType.createConversation:
         return 7;
-        break;
       case MsgType.renameConversation:
         return 8;
-        break;
       case MsgType.location:
         return 9;
-        break;
       case MsgType.contact:
         return 10;
-        break;
       case MsgType.sticker:
         return 11;
-        break;
       case MsgType.notification:
         return 100;
-        break;
+      default:
+        return 1;
     }
   }
 }
 
-extension MsgTypeExtension on int {
+extension MsgTypeExtension on int? {
   // ignore: missing_return
   MsgType get msgType {
     switch (this) {
       case 1:
         return MsgType.text;
-        break;
       case 2:
         return MsgType.photo;
-        break;
       case 3:
         return MsgType.video;
-        break;
       case 4:
         return MsgType.audio;
-        break;
       case 5:
         return MsgType.file;
-        break;
       case 6:
         return MsgType.link;
-        break;
       case 7:
         return MsgType.createConversation;
-        break;
       case 8:
         return MsgType.renameConversation;
-        break;
       case 9:
         return MsgType.location;
-        break;
       case 10:
         return MsgType.contact;
-        break;
       case 11:
         return MsgType.sticker;
-        break;
       case 100:
         return MsgType.notification;
-        break;
+      default:
+        return MsgType.text;
     }
   }
 }
@@ -297,43 +280,38 @@ enum MsgNotifyType {
   changeGroupName,
 }
 
-extension MsgNotifyTypeExtension on int {
+extension MsgNotifyTypeExtension on int? {
   // ignore: missing_return
   MsgNotifyType get notifyType {
     switch (this) {
       case 1:
         return MsgNotifyType.addParticipants;
-        break;
       case 2:
         return MsgNotifyType.removeParticipants;
-        break;
       case 3:
         return MsgNotifyType.changeGroupName;
-        break;
+      default:
+        return MsgNotifyType.changeGroupName;
     }
   }
 }
 
 ///Class represents options for create a new [StringeeConversation]
 class StringeeConversationOption {
-  String _name;
-  bool _isGroup;
-  bool _isDistinct;
+  String? _name;
+  bool _isGroup = false;
+  bool _isDistinct = false;
 
-  StringeeConversationOption({@required bool isGroup, String name, bool isDistinct})
-      : assert(isGroup != null) {
+  StringeeConversationOption(
+      {required bool isGroup, String? name, required bool isDistinct}) {
     if (name != null) this._name = name;
-    this._isGroup = isGroup != null ? isGroup : true;
-    this._isDistinct = isDistinct != null
-        ? isDistinct
-        : isGroup
-            ? false
-            : true;
+    this._isGroup = isGroup;
+    this._isDistinct = isDistinct;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (_name != null) 'name': _name.trim(),
+      if (_name != null) 'name': _name!.trim(),
       'isGroup': _isGroup,
       'isDistinct': _isDistinct,
     };
@@ -342,17 +320,18 @@ class StringeeConversationOption {
 
 /// Class represents the change of [StringeeConversation] and [StringeeMessage]
 class StringeeObjectChange {
-  ChangeType _type;
-  ObjectType _objectType;
-  List<dynamic> _objects;
+  ChangeType? _type;
+  ObjectType? _objectType;
+  List<dynamic>? _objects;
 
-  ChangeType get type => _type;
+  ChangeType? get type => _type;
 
-  ObjectType get objectType => _objectType;
+  ObjectType? get objectType => _objectType;
 
-  List<dynamic> get objects => _objects;
+  List<dynamic>? get objects => _objects;
 
-  StringeeObjectChange(ChangeType type, ObjectType objectType, List<dynamic> objects) {
+  StringeeObjectChange(
+      ChangeType type, ObjectType objectType, List<dynamic> objects) {
     this._type = type;
     this._objects = objects;
     this._objectType = objectType;
@@ -360,12 +339,12 @@ class StringeeObjectChange {
 }
 
 class StringeeServerAddress {
-  String _host;
-  int _port;
+  String? _host;
+  int? _port;
 
-  String get host => _host;
+  String? get host => _host;
 
-  int get port => _port;
+  int? get port => _port;
 
   StringeeServerAddress(String host, int port) {
     this._host = host;
@@ -374,7 +353,7 @@ class StringeeServerAddress {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    if (_host != null) params['host'] = _host.trim();
+    if (_host != null) params['host'] = _host!.trim();
     if (_port != null) params['port'] = _port;
     return params;
   }
@@ -385,16 +364,18 @@ class GUIDGen {
     Random random = new Random(new DateTime.now().millisecond);
 
     final String hexDigits = "0123456789abcdef";
-    final List<String> uuid = new List<String>(36);
+    final List<String?> uuid =
+        new List<String?>.filled(36, null, growable: false);
 
     for (int i = 0; i < 36; i++) {
       final int hexPos = random.nextInt(16);
       uuid[i] = (hexDigits.substring(hexPos, hexPos + 1));
     }
 
-    int pos = (int.parse(uuid[19], radix: 16) & 0x3) | 0x8; // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    int pos = (int.parse(uuid[19]!, radix: 16) & 0x3) |
+        0x8; // bits 6-7 of the clock_seq_hi_and_reserved to 01
 
-    uuid[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+    uuid[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
     uuid[19] = hexDigits.substring(pos, pos + 1);
 
     uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";
