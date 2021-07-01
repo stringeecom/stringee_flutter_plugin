@@ -390,7 +390,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void onError(final StringeeError error) {
                 _handler.post(() -> {
-                    Log.d(TAG, "initAnswer: false - " + error.getCode() + " - " + error.getMessage());
+                    Log.d(TAG, "registerPush: false - " + error.getCode() + " - " + error.getMessage());
                     Map map = new HashMap();
                     map.put("status", false);
                     map.put("code", error.getCode());
