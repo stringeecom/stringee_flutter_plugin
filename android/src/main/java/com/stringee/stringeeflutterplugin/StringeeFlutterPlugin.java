@@ -289,7 +289,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "switchCamera2":
                 if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
-                    clientWrapper.call2Wrapper(callId).switchCamera(result);
                     if (call.hasArgument("cameraId")) {
                         clientWrapper.call2Wrapper(callId).switchCamera((int) call.argument("cameraId"), result);
                     } else {

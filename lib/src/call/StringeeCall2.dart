@@ -350,7 +350,7 @@ class StringeeCall2 {
     };
     if (Platform.isAndroid) {
       if (cameraId != null) {
-        params['cameraId'] = cameraId.toString();
+        params['cameraId'] = cameraId;
       }
     }
     return await StringeeClient.methodChannel
