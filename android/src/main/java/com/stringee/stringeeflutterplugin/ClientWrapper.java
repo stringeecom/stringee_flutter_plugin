@@ -142,144 +142,165 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
 
     @Override
     public void onConnectionConnected(final StringeeClient stringeeClient, final boolean b) {
-        _handler.post(() -> {
-            Log.d(TAG, "onConnectionConnected: " + stringeeClient.getUserId());
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "didConnect");
-            map.put("uuid", _uuid);
-            Map bodyMap = new HashMap();
-            bodyMap.put("userId", stringeeClient.getUserId());
-            bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
-            bodyMap.put("isReconnecting", b);
-            map.put("body", bodyMap);
-            StringeeFlutterPlugin._eventSink.success(map);
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onConnectionConnected: " + stringeeClient.getUserId());
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "didConnect");
+                map.put("uuid", _uuid);
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
+                bodyMap.put("isReconnecting", b);
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
+            }
         });
     }
 
     @Override
     public void onConnectionDisconnected(final StringeeClient stringeeClient, final boolean b) {
-        _handler.post(() -> {
-            Log.d(TAG, "onConnectionDisconnected: " + stringeeClient.getUserId());
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "didDisconnect");
-            map.put("uuid", _uuid);
-            Map bodyMap = new HashMap();
-            bodyMap.put("userId", stringeeClient.getUserId());
-            bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
-            bodyMap.put("isReconnecting", b);
-            map.put("body", bodyMap);
-            StringeeFlutterPlugin._eventSink.success(map);
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onConnectionDisconnected: " + stringeeClient.getUserId());
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "didDisconnect");
+                map.put("uuid", _uuid);
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
+                bodyMap.put("isReconnecting", b);
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
+            }
         });
     }
 
     @Override
     public void onIncomingCall(final StringeeCall stringeeCall) {
-        _handler.post(() -> {
-            Log.d(TAG, "onIncomingCall: " + stringeeCall.getCallId());
-            _manager.getCallsMap().put(stringeeCall.getCallId(), new CallWrapper(this, stringeeCall));
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "incomingCall");
-            map.put("uuid", _uuid);
-            Map callInfoMap = new HashMap();
-            callInfoMap.put("callId", stringeeCall.getCallId());
-            callInfoMap.put("from", stringeeCall.getFrom());
-            callInfoMap.put("to", stringeeCall.getTo());
-            callInfoMap.put("fromAlias", stringeeCall.getFromAlias());
-            callInfoMap.put("toAlias", stringeeCall.getToAlias());
-            callInfoMap.put("isVideocall", stringeeCall.isVideoCall());
-            int callType = StringeeCallType.AppToAppOutgoing.getValue();
-            if (!stringeeCall.getFrom().equals(_client.getUserId())) {
-                callType = StringeeCallType.AppToAppIncoming.getValue();
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onIncomingCall: " + stringeeCall.getCallId());
+                _manager.getCallsMap().put(stringeeCall.getCallId(), new CallWrapper(ClientWrapper.this, stringeeCall));
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "incomingCall");
+                map.put("uuid", _uuid);
+                Map callInfoMap = new HashMap();
+                callInfoMap.put("callId", stringeeCall.getCallId());
+                callInfoMap.put("from", stringeeCall.getFrom());
+                callInfoMap.put("to", stringeeCall.getTo());
+                callInfoMap.put("fromAlias", stringeeCall.getFromAlias());
+                callInfoMap.put("toAlias", stringeeCall.getToAlias());
+                callInfoMap.put("isVideocall", stringeeCall.isVideoCall());
+                int callType = StringeeCallType.AppToAppOutgoing.getValue();
+                if (!stringeeCall.getFrom().equals(_client.getUserId())) {
+                    callType = StringeeCallType.AppToAppIncoming.getValue();
+                }
+                if (stringeeCall.isAppToPhoneCall()) {
+                    callType = StringeeCallType.AppToPhone.getValue();
+                } else if (stringeeCall.isPhoneToAppCall()) {
+                    callType = StringeeCallType.PhoneToApp.getValue();
+                }
+                callInfoMap.put("callType", callType);
+                callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
+                callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
+                map.put("body", callInfoMap);
+                StringeeFlutterPlugin._eventSink.success(map);
             }
-            if (stringeeCall.isAppToPhoneCall()) {
-                callType = StringeeCallType.AppToPhone.getValue();
-            } else if (stringeeCall.isPhoneToAppCall()) {
-                callType = StringeeCallType.PhoneToApp.getValue();
-            }
-            callInfoMap.put("callType", callType);
-            callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
-            callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
-            map.put("body", callInfoMap);
-            StringeeFlutterPlugin._eventSink.success(map);
         });
     }
 
     @Override
     public void onIncomingCall2(final StringeeCall2 stringeeCall2) {
-        _handler.post(() -> {
-            Log.d(TAG, "onIncomingCall2: " + stringeeCall2.getCallId());
-            _manager.getCall2sMap().put(stringeeCall2.getCallId(), new Call2Wrapper(this, stringeeCall2));
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "incomingCall2");
-            map.put("uuid", _uuid);
-            Map callInfoMap = new HashMap();
-            callInfoMap.put("callId", stringeeCall2.getCallId());
-            callInfoMap.put("from", stringeeCall2.getFrom());
-            callInfoMap.put("to", stringeeCall2.getTo());
-            callInfoMap.put("fromAlias", stringeeCall2.getFromAlias());
-            callInfoMap.put("toAlias", stringeeCall2.getToAlias());
-            callInfoMap.put("isVideocall", stringeeCall2.isVideoCall());
-            int callType = StringeeCallType.AppToAppOutgoing.getValue();
-            if (!stringeeCall2.getFrom().equals(_client.getUserId())) {
-                callType = StringeeCallType.AppToAppIncoming.getValue();
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onIncomingCall2: " + stringeeCall2.getCallId());
+                _manager.getCall2sMap().put(stringeeCall2.getCallId(), new Call2Wrapper(ClientWrapper.this, stringeeCall2));
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "incomingCall2");
+                map.put("uuid", _uuid);
+                Map callInfoMap = new HashMap();
+                callInfoMap.put("callId", stringeeCall2.getCallId());
+                callInfoMap.put("from", stringeeCall2.getFrom());
+                callInfoMap.put("to", stringeeCall2.getTo());
+                callInfoMap.put("fromAlias", stringeeCall2.getFromAlias());
+                callInfoMap.put("toAlias", stringeeCall2.getToAlias());
+                callInfoMap.put("isVideocall", stringeeCall2.isVideoCall());
+                int callType = StringeeCallType.AppToAppOutgoing.getValue();
+                if (!stringeeCall2.getFrom().equals(_client.getUserId())) {
+                    callType = StringeeCallType.AppToAppIncoming.getValue();
+                }
+                callInfoMap.put("callType", callType);
+                callInfoMap.put("isVideoCall", stringeeCall2.isVideoCall());
+                callInfoMap.put("customDataFromYourServer", stringeeCall2.getCustomDataFromYourServer());
+                map.put("body", callInfoMap);
+                StringeeFlutterPlugin._eventSink.success(map);
             }
-            callInfoMap.put("callType", callType);
-            callInfoMap.put("isVideoCall", stringeeCall2.isVideoCall());
-            callInfoMap.put("customDataFromYourServer", stringeeCall2.getCustomDataFromYourServer());
-            map.put("body", callInfoMap);
-            StringeeFlutterPlugin._eventSink.success(map);
         });
     }
 
     @Override
     public void onConnectionError(final StringeeClient stringeeClient, final StringeeError stringeeError) {
-        _handler.post(() -> {
-            Log.d(TAG, "onConnectionError: " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "didFailWithError");
-            map.put("uuid", _uuid);
-            Map bodyMap = new HashMap();
-            bodyMap.put("userId", stringeeClient.getUserId());
-            bodyMap.put("code", stringeeError.getCode());
-            bodyMap.put("message", stringeeError.getMessage());
-            map.put("body", bodyMap);
-            StringeeFlutterPlugin._eventSink.success(map);
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onConnectionError: " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "didFailWithError");
+                map.put("uuid", _uuid);
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                bodyMap.put("code", stringeeError.getCode());
+                bodyMap.put("message", stringeeError.getMessage());
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
+            }
         });
     }
 
     @Override
     public void onRequestNewToken(final StringeeClient stringeeClient) {
-        _handler.post(() -> {
-            Log.d(TAG, "onRequestNewToken: " + stringeeClient.getUserId());
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "requestAccessToken");
-            map.put("uuid", _uuid);
-            Map bodyMap = new HashMap();
-            bodyMap.put("userId", stringeeClient.getUserId());
-            map.put("body", bodyMap);
-            StringeeFlutterPlugin._eventSink.success(map);
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onRequestNewToken: " + stringeeClient.getUserId());
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "requestAccessToken");
+                map.put("uuid", _uuid);
+                Map bodyMap = new HashMap();
+                bodyMap.put("userId", stringeeClient.getUserId());
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
+            }
         });
     }
 
     @Override
     public void onCustomMessage(final String from, final JSONObject jsonObject) {
-        _handler.post(() -> {
-            Log.d(TAG, "onCustomMessage: " + from + " - " + jsonObject.toString());
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "didReceiveCustomMessage");
-            map.put("uuid", _uuid);
-            Map bodyMap = new HashMap();
-            bodyMap.put("fromUserId", from);
-            bodyMap.put("message", jsonObject.toString());
-            map.put("body", bodyMap);
-            StringeeFlutterPlugin._eventSink.success(map);
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onCustomMessage: " + from + " - " + jsonObject.toString());
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "didReceiveCustomMessage");
+                map.put("uuid", _uuid);
+                Map bodyMap = new HashMap();
+                bodyMap.put("fromUserId", from);
+                bodyMap.put("message", jsonObject.toString());
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
+            }
         });
     }
 
@@ -290,27 +311,30 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
 
     @Override
     public void onChangeEvent(final StringeeChange stringeeChange) {
-        _handler.post(() -> {
-            Log.d(TAG, "onChangeEvent: " + stringeeChange.getObjectType() + " - " + stringeeChange.getChangeType());
-            Map map = new HashMap();
-            map.put("nativeEventType", ClientEvent.getValue());
-            map.put("event", "didReceiveChangeEvent");
-            map.put("uuid", _uuid);
-            Map bodyMap = new HashMap();
-            Type objectType = stringeeChange.getObjectType();
-            bodyMap.put("objectType", objectType.getValue());
-            bodyMap.put("changeType", stringeeChange.getChangeType().getValue());
-            java.util.ArrayList objects = new java.util.ArrayList();
-            Map objectMap = new HashMap();
-            if (objectType == Type.CONVERSATION) {
-                objectMap = Utils.convertConversationToMap((Conversation) stringeeChange.getObject());
-            } else if (objectType == Type.MESSAGE) {
-                objectMap = Utils.convertMessageToMap((Message) stringeeChange.getObject());
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "onChangeEvent: " + stringeeChange.getObjectType() + " - " + stringeeChange.getChangeType());
+                Map map = new HashMap();
+                map.put("nativeEventType", ClientEvent.getValue());
+                map.put("event", "didReceiveChangeEvent");
+                map.put("uuid", _uuid);
+                Map bodyMap = new HashMap();
+                Type objectType = stringeeChange.getObjectType();
+                bodyMap.put("objectType", objectType.getValue());
+                bodyMap.put("changeType", stringeeChange.getChangeType().getValue());
+                java.util.ArrayList objects = new java.util.ArrayList();
+                Map objectMap = new HashMap();
+                if (objectType == Type.CONVERSATION) {
+                    objectMap = Utils.convertConversationToMap((Conversation) stringeeChange.getObject());
+                } else if (objectType == Type.MESSAGE) {
+                    objectMap = Utils.convertMessageToMap((Message) stringeeChange.getObject());
+                }
+                objects.add(objectMap);
+                bodyMap.put("objects", objects);
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
             }
-            objects.add(objectMap);
-            bodyMap.put("objects", objects);
-            map.put("body", bodyMap);
-            StringeeFlutterPlugin._eventSink.success(map);
         });
     }
 
@@ -377,25 +401,31 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.registerPushToken(registrationToken, new StatusListener() {
             @Override
             public void onSuccess() {
-                _handler.post(() -> {
-                    Log.d(TAG, "registerPush: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "registerPush: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError error) {
-                _handler.post(() -> {
-                    Log.d(TAG, "registerPush: false - " + error.getCode() + " - " + error.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "registerPush: false - " + error.getCode() + " - " + error.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", error.getCode());
+                        map.put("message", error.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -412,25 +442,31 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.unregisterPushToken(registrationToken, new StatusListener() {
             @Override
             public void onSuccess() {
-                _handler.post(() -> {
-                    Log.d(TAG, "unregisterPush: success");
-                    Map map1 = new HashMap();
-                    map1.put("status", true);
-                    map1.put("code", 0);
-                    map1.put("message", "Success");
-                    result.success(map1);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "unregisterPush: success");
+                        Map map1 = new HashMap();
+                        map1.put("status", true);
+                        map1.put("code", 0);
+                        map1.put("message", "Success");
+                        result.success(map1);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError error) {
-                _handler.post(() -> {
-                    Log.d(TAG, "unregisterPush: false - " + error.getCode() + " - " + error.getMessage());
-                    Map map12 = new HashMap();
-                    map12.put("status", false);
-                    map12.put("code", error.getCode());
-                    map12.put("message", error.getMessage());
-                    result.success(map12);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "unregisterPush: false - " + error.getCode() + " - " + error.getMessage());
+                        Map map12 = new HashMap();
+                        map12.put("status", false);
+                        map12.put("code", error.getCode());
+                        map12.put("message", error.getMessage());
+                        result.success(map12);
+                    }
                 });
             }
         });
@@ -447,25 +483,31 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.sendCustomMessage(toUserId, data, new StatusListener() {
             @Override
             public void onSuccess() {
-                _handler.post(() -> {
-                    Log.d(TAG, "sendCustomMessage: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "sendCustomMessage: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError error) {
-                _handler.post(() -> {
-                    Log.d(TAG, "sendCustomMessage: false - " + error.getCode() + " - " + error.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "sendCustomMessage: false - " + error.getCode() + " - " + error.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", error.getCode());
+                        map.put("message", error.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -482,26 +524,32 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.createConversation(participants, options, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
-                _handler.post(() -> {
-                    Log.d(TAG, "createConversation: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", Utils.convertConversationToMap(conversation));
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "createConversation: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        map.put("body", Utils.convertConversationToMap(conversation));
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError error) {
-                _handler.post(() -> {
-                    Log.d(TAG, "createConversation: false - " + error.getCode() + " - " + error.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "createConversation: false - " + error.getCode() + " - " + error.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", error.getCode());
+                        map.put("message", error.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -517,26 +565,32 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.getConversation(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getConversationById: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", Utils.convertConversationToMap(conversation));
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getConversationById: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        map.put("body", Utils.convertConversationToMap(conversation));
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError error) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getConversationById: false - " + error.getCode() + " - " + error.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getConversationById: false - " + error.getCode() + " - " + error.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", error.getCode());
+                        map.put("message", error.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -552,26 +606,32 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.getConversationByUserId(userId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getConversationByUserId: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", Utils.convertConversationToMap(conversation));
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getConversationByUserId: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        map.put("body", Utils.convertConversationToMap(conversation));
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError error) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getConversationByUserId: false - " + error.getCode() + " - " + error.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getConversationByUserId: false - " + error.getCode() + " - " + error.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", error.getCode());
+                        map.put("message", error.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -586,32 +646,38 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.getLocalConversations(_client.getUserId(), new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
-                _handler.post(() -> {
-                    Map map = new HashMap();
-                    if (conversations.size() > 0) {
-                        Log.d(TAG, "getLocalConversations: success");
-                        List bodyArray = new java.util.ArrayList();
-                        for (int i = 0; i < conversations.size(); i++) {
-                            bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        if (conversations.size() > 0) {
+                            Log.d(TAG, "getLocalConversations: success");
+                            List bodyArray = new java.util.ArrayList();
+                            for (int i = 0; i < conversations.size(); i++) {
+                                bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                            }
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", bodyArray);
+                            result.success(map);
                         }
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyArray);
-                        result.success(map);
                     }
                 });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getLocalConversations: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getLocalConversations: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -628,32 +694,38 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.getLastConversations(count, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
-                _handler.post(() -> {
-                    Map map = new HashMap();
-                    if (conversations.size() > 0) {
-                        Log.d(TAG, "getLastConversation: success");
-                        List bodyArray = new java.util.ArrayList();
-                        for (int i = 0; i < conversations.size(); i++) {
-                            bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        if (conversations.size() > 0) {
+                            Log.d(TAG, "getLastConversation: success");
+                            List bodyArray = new java.util.ArrayList();
+                            for (int i = 0; i < conversations.size(); i++) {
+                                bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                            }
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", bodyArray);
+                            result.success(map);
                         }
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyArray);
-                        result.success(map);
                     }
                 });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getLastConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getLastConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -670,32 +742,38 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.getConversationsBefore(updateAt, count, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
-                _handler.post(() -> {
-                    Map map = new HashMap();
-                    if (conversations.size() > 0) {
-                        Log.d(TAG, "getConversationsBefore: success");
-                        List bodyArray = new java.util.ArrayList();
-                        for (int i = 0; i < conversations.size(); i++) {
-                            bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        if (conversations.size() > 0) {
+                            Log.d(TAG, "getConversationsBefore: success");
+                            List bodyArray = new java.util.ArrayList();
+                            for (int i = 0; i < conversations.size(); i++) {
+                                bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                            }
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", bodyArray);
+                            result.success(map);
                         }
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyArray);
-                        result.success(map);
                     }
                 });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getConversationsBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getConversationsBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -712,32 +790,38 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.getConversationsAfter(updateAt, count, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
-                _handler.post(() -> {
-                    Map map = new HashMap();
-                    if (conversations.size() > 0) {
-                        Log.d(TAG, "getConversationsAfter: success");
-                        List bodyArray = new java.util.ArrayList();
-                        for (int i = 0; i < conversations.size(); i++) {
-                            bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Map map = new HashMap();
+                        if (conversations.size() > 0) {
+                            Log.d(TAG, "getConversationsAfter: success");
+                            List bodyArray = new java.util.ArrayList();
+                            for (int i = 0; i < conversations.size(); i++) {
+                                bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
+                            }
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", bodyArray);
+                            result.success(map);
                         }
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body", bodyArray);
-                        result.success(map);
                     }
                 });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getConversationsAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getConversationsAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -768,25 +852,31 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.blockUser(userId, new StatusListener() {
             @Override
             public void onSuccess() {
-                _handler.post(() -> {
-                    Log.d(TAG, "blockUser: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "blockUser: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "blockUser: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "blockUser: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -801,26 +891,32 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _client.getTotalUnread(new CallbackListener<Integer>() {
             @Override
             public void onSuccess(final Integer integer) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getTotalUnread: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", integer);
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getTotalUnread: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        map.put("body", integer);
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getTotalUnread: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getTotalUnread: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
