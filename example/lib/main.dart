@@ -12,7 +12,7 @@ import 'Call.dart';
 var user2 =
     'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MjUxMDg0ODkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjI3NzAwNDg5LCJ1c2VySWQiOiJ1c2VyMiJ9.ytNNDUrpfWpczPYTkVj21OJv0zn7yo_sw1l3UZQzo9c';
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTMwMjciLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ1MDI3LCJ1c2VySWQiOiJ1c2VyMSJ9.9wrpbsDPM2-OpR4Sq5yOutacNlo9bYy78htcRDpPjCo';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MjUyMTkzNDAiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjI3ODExMzQwLCJ1c2VySWQiOiJ1c2VyMSJ9.F-Ys-a6bZpfmbRQMX8OCMStuF7sTR0woy33KxZ_RpR8';
 
 StringeeClient client = StringeeClient();
 
@@ -37,7 +37,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String? myUserId = 'Not connected...';
+  String myUserId = 'Not connected...';
   bool isAppInBackground = false;
 
   @override
@@ -69,11 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
           handleDidReceiveCustomMessageEvent(map['body']);
           break;
         case StringeeClientEvents.incomingCall:
-          StringeeCall? call = map['body'];
+          StringeeCall call = map['body'];
           handleIncomingCallEvent(call);
           break;
         case StringeeClientEvents.incomingCall2:
-          StringeeCall2? call = map['body'];
+          StringeeCall2 call = map['body'];
           handleIncomingCall2Event(call);
           break;
         case StringeeClientEvents.didReceiveObjectChange:
@@ -89,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     /// Connect
-    client.connect(user2);
+    client.connect(user1);
   }
 
   requestPermissions() async {
@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void handleDidFailWithErrorEvent(int? code, String message) {
+  void handleDidFailWithErrorEvent(int code, String message) {
     print('code: ' + code.toString() + '\nmessage: ' + message);
   }
 
@@ -154,22 +154,22 @@ class _MyHomePageState extends State<MyHomePage> {
     print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message']);
   }
 
-  void handleIncomingCallEvent(StringeeCall? call) {
+  void handleIncomingCallEvent(StringeeCall call) {
     showCallScreen(call, null);
   }
 
-  void handleIncomingCall2Event(StringeeCall2? call) {
+  void handleIncomingCall2Event(StringeeCall2 call) {
     showCallScreen(null, call);
   }
 
-  void showCallScreen(StringeeCall? call, StringeeCall2? call2) {
+  void showCallScreen(StringeeCall call, StringeeCall2 call2) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => Call(
-          fromUserId: call != null ? call.from : call2!.from,
-          toUserId: call != null ? call.to : call2!.to,
-          isVideoCall: call != null ? call.isVideoCall : call2!.isVideoCall,
+          fromUserId: call != null ? call.from : call2.from,
+          toUserId: call != null ? call.to : call2.to,
+          isVideoCall: call != null ? call.isVideoCall : call2.isVideoCall,
           callType: call != null
               ? StringeeObjectEventType.call
               : StringeeObjectEventType.call2,

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/ConversationInfor.dart';
 
-StringeeClient? _client;
+StringeeClient _client;
 
 class Chat extends StatefulWidget {
-  Chat({required StringeeClient client}) {
+  Chat({StringeeClient client}) {
     _client = client;
   }
 
@@ -17,8 +17,8 @@ class Chat extends StatefulWidget {
 }
 
 class ChatState extends State<Chat> {
-  late List<String> _log;
-  late List<StringeeConversation?> _conversations;
+  List<String> _log;
+  List<StringeeConversation> _conversations;
 
   @override
   void initState() {
@@ -28,15 +28,15 @@ class ChatState extends State<Chat> {
     _log = [];
     _conversations = [];
 
-    _client!.eventStreamController.stream.listen((event) {
+    _client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       if (map['typeEvent'] == StringeeClientEvents &&
           map['eventType'] == StringeeClientEvents.didReceiveObjectChange) {
         StringeeObjectChange objectChange = map['body'];
         if (objectChange.objectType == ObjectType.conversation) {
-          StringeeConversation? conversation = objectChange.objects!.first;
+          StringeeConversation conversation = objectChange.objects.first;
           setState(() {
-            _log.add(conversation!.id! + ' ' + objectChange.type.toString());
+            _log.add(conversation.id + ' ' + objectChange.type.toString());
           });
         }
       }
@@ -131,10 +131,10 @@ class ChatState extends State<Chat> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'convId: ' + _conversations[index]!.id!,
+                              'convId: ' + _conversations[index].id,
                             ),
                             Text(
-                              'name: ' + _conversations[index]!.name!,
+                              'name: ' + _conversations[index].name,
                             ),
                           ],
                         )),
@@ -169,18 +169,27 @@ class ChatState extends State<Chat> {
                           textColor: Colors.black,
                           onPressed: () {
                             List<StringeeUser> participants = [];
-                            StringeeUser user1 = StringeeUser(userId: 'id1', name: 'user1');
-                            StringeeUser user2 = StringeeUser(userId: 'id2', name: 'user2');
+                            StringeeUser user1 =
+                                StringeeUser(userId: 'id1', name: 'user1');
+                            StringeeUser user2 =
+                                StringeeUser(userId: 'id2', name: 'user2');
                             participants.add(user1);
                             participants.add(user2);
 
-                            StringeeConversationOption options = StringeeConversationOption(
-                                name: 'name', isGroup: true, isDistinct: true);
+                            StringeeConversationOption options =
+                                StringeeConversationOption(
+                                    name: 'name',
+                                    isGroup: true,
+                                    isDistinct: true);
 
-                            _client!.createConversation(options, participants).then((value) {
-                              print("Flutter - createConversation - result: " + value.toString());
+                            _client
+                                .createConversation(options, participants)
+                                .then((value) {
+                              print("Flutter - createConversation - result: " +
+                                  value.toString());
                               setState(() {
-                                _log.add('Create conversation: msg:' + value['message']);
+                                _log.add('Create conversation: msg:' +
+                                    value['message']);
                                 if (value['status']) {
                                   _conversations.clear();
                                   _conversations.add(value['body']);
@@ -201,11 +210,13 @@ class ChatState extends State<Chat> {
                           color: Colors.grey[300],
                           textColor: Colors.black,
                           onPressed: () {
-                            _client!.getConversationById('convid').then((value) {
-                              print("Flutter - getConversationById - result: " + value.toString());
+                            _client.getConversationById('convid').then((value) {
+                              print("Flutter - getConversationById - result: " +
+                                  value.toString());
 
                               setState(() {
-                                _log.add('Get conversation by Id: msg:' + value['message']);
+                                _log.add('Get conversation by Id: msg:' +
+                                    value['message']);
                                 if (value['status']) {
                                   _conversations.clear();
                                   _conversations.add(value['body']);
@@ -234,11 +245,15 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client!.getConversationByUserId('id2').then((value) {
-                                print("Flutter - getConversationByUserId - result: " +
-                                    value.toString());
+                              _client
+                                  .getConversationByUserId('id2')
+                                  .then((value) {
+                                print(
+                                    "Flutter - getConversationByUserId - result: " +
+                                        value.toString());
                                 setState(() {
-                                  _log.add('Get Conversation by UserId: msg:' + value['message']);
+                                  _log.add('Get Conversation by UserId: msg:' +
+                                      value['message']);
                                   if (value['status']) {
                                     _conversations.clear();
                                     _conversations.add(value['body']);
@@ -259,10 +274,11 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client!.getTotalUnread().then((value) {
+                              _client.getTotalUnread().then((value) {
                                 print(value.toString());
                                 setState(() {
-                                  _log.add('Get total unread: msg:' + value['message']);
+                                  _log.add('Get total unread: msg:' +
+                                      value['message']);
                                 });
                               });
                             },
@@ -288,11 +304,13 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client!.getLocalConversations().then((value) {
-                                print("Flutter - getLocalConversations - result: " +
-                                    value.toString());
+                              _client.getLocalConversations().then((value) {
+                                print(
+                                    "Flutter - getLocalConversations - result: " +
+                                        value.toString());
                                 setState(() {
-                                  _log.add('Get local Conversation: msg:' + value['message']);
+                                  _log.add('Get local Conversation: msg:' +
+                                      value['message']);
                                   if (value['status']) {
                                     _conversations.clear();
                                     _conversations.addAll(value['body']);
@@ -313,11 +331,13 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client!.getLastConversation(50).then((value) {
+                              _client.getLastConversation(50).then((value) {
                                 print(
-                                    "Flutter - getLastConversation - result: " + value.toString());
+                                    "Flutter - getLastConversation - result: " +
+                                        value.toString());
                                 setState(() {
-                                  _log.add('Get last Conversation: msg:' + value['message']);
+                                  _log.add('Get last Conversation: msg:' +
+                                      value['message']);
                                   if (value['status']) {
                                     _conversations.clear();
                                     _conversations.addAll(value['body']);
@@ -347,11 +367,15 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client!.getConversationsBefore(2, 1602215811388).then((value) {
-                                print("Flutter - getConversationsBefore - result: " +
-                                    value.toString());
+                              _client
+                                  .getConversationsBefore(2, 1602215811388)
+                                  .then((value) {
+                                print(
+                                    "Flutter - getConversationsBefore - result: " +
+                                        value.toString());
                                 setState(() {
-                                  _log.add('Get Conversation before: msg:' + value['message']);
+                                  _log.add('Get Conversation before: msg:' +
+                                      value['message']);
                                   if (value['status']) {
                                     _conversations.clear();
                                     _conversations.addAll(value['body']);
@@ -372,12 +396,16 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client!.getConversationsAfter(2, 1602215811388).then((value) {
-                                print("Flutter - getConversationsAfter - result: " +
-                                    value.toString());
+                              _client
+                                  .getConversationsAfter(2, 1602215811388)
+                                  .then((value) {
+                                print(
+                                    "Flutter - getConversationsAfter - result: " +
+                                        value.toString());
                                 setState(() {
                                   if (value['status']) {
-                                    _log.add('Get Conversation after: msg:' + value['message']);
+                                    _log.add('Get Conversation after: msg:' +
+                                        value['message']);
                                     _conversations.clear();
                                     _conversations.addAll(value['body']);
                                   }
@@ -406,9 +434,10 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _client!.clearDb().then((value) {
+                              _client.clearDb().then((value) {
                                 setState(() {
-                                  _log.add('Clear database: msg:' + value['message']);
+                                  _log.add('Clear database: msg:' +
+                                      value['message']);
                                 });
                               });
                             },

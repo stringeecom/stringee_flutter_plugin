@@ -3,7 +3,7 @@ description: Demonstrates how to use the stringee_flutter_plugin plugin.
 publish_to: 'none'
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -14,7 +14,9 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   stringee_flutter_plugin:
-    path: ../
+    git:
+      url: https://github.com/stringeecom/stringee_flutter_plugin.git
+      ref: master-no-null-safety
 
 #  permission: ^0.1.7
 
