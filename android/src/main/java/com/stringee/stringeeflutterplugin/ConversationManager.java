@@ -54,25 +54,31 @@ public class ConversationManager {
                 conversation.delete(_clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(() -> {
-                            Log.d(TAG, "deleteConversation: success");
-                            Map map1 = new HashMap();
-                            map1.put("status", true);
-                            map1.put("code", 0);
-                            map1.put("message", "Success");
-                            result.success(map1);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "deleteConversation: success");
+                                Map map1 = new HashMap();
+                                map1.put("status", true);
+                                map1.put("code", 0);
+                                map1.put("message", "Success");
+                                result.success(map1);
+                            }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map12 = new HashMap();
-                            map12.put("status", false);
-                            map12.put("code", stringeeError.getCode());
-                            map12.put("message", stringeeError.getMessage());
-                            result.success(map12);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map12 = new HashMap();
+                                map12.put("status", false);
+                                map12.put("code", stringeeError.getCode());
+                                map12.put("message", stringeeError.getMessage());
+                                result.success(map12);
+                            }
                         });
                     }
                 });
@@ -80,13 +86,16 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map13 = new HashMap();
-                    map13.put("status", false);
-                    map13.put("code", stringeeError.getCode());
-                    map13.put("message", stringeeError.getMessage());
-                    result.success(map13);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map13 = new HashMap();
+                        map13.put("status", false);
+                        map13.put("code", stringeeError.getCode());
+                        map13.put("message", stringeeError.getMessage());
+                        result.success(map13);
+                    }
                 });
             }
         });
@@ -116,31 +125,37 @@ public class ConversationManager {
                 conversation.addParticipants(_clientWrapper.getClient(), participants, new CallbackListener<List<User>>() {
                     @Override
                     public void onSuccess(final List<User> users) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "addParticipants: success");
-                            Map map1 = new HashMap();
-                            java.util.List participantsArray = new java.util.ArrayList();
-                            for (int j = 0; j < users.size(); j++) {
-                                participantsArray.add(Utils.convertUserToMap(users.get(j)));
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "addParticipants: success");
+                                Map map1 = new HashMap();
+                                java.util.List participantsArray = new java.util.ArrayList();
+                                for (int j = 0; j < users.size(); j++) {
+                                    participantsArray.add(Utils.convertUserToMap(users.get(j)));
+                                }
+                                map1.put("status", true);
+                                map1.put("code", 0);
+                                map1.put("message", "Success");
+                                map1.put("body", participantsArray);
+                                result.success(map1);
                             }
-                            map1.put("status", true);
-                            map1.put("code", 0);
-                            map1.put("message", "Success");
-                            map1.put("body", participantsArray);
-                            result.success(map1);
                         });
 
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map12 = new HashMap();
-                            map12.put("status", false);
-                            map12.put("code", stringeeError.getCode());
-                            map12.put("message", stringeeError.getMessage());
-                            result.success(map12);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map12 = new HashMap();
+                                map12.put("status", false);
+                                map12.put("code", stringeeError.getCode());
+                                map12.put("message", stringeeError.getMessage());
+                                result.success(map12);
+                            }
                         });
                     }
                 });
@@ -148,13 +163,16 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map13 = new HashMap();
-                    map13.put("status", false);
-                    map13.put("code", stringeeError.getCode());
-                    map13.put("message", stringeeError.getMessage());
-                    result.success(map13);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map13 = new HashMap();
+                        map13.put("status", false);
+                        map13.put("code", stringeeError.getCode());
+                        map13.put("message", stringeeError.getMessage());
+                        result.success(map13);
+                    }
                 });
             }
         });
@@ -184,31 +202,37 @@ public class ConversationManager {
                 conversation.removeParticipants(_clientWrapper.getClient(), participants, new CallbackListener<List<User>>() {
                     @Override
                     public void onSuccess(final List<User> users) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "removeParticipants: success");
-                            Map map = new HashMap();
-                            java.util.List participantsArray = new java.util.ArrayList();
-                            for (int j = 0; j < users.size(); j++) {
-                                participantsArray.add(Utils.convertUserToMap(users.get(j)));
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "removeParticipants: success");
+                                Map map = new HashMap();
+                                java.util.List participantsArray = new java.util.ArrayList();
+                                for (int j = 0; j < users.size(); j++) {
+                                    participantsArray.add(Utils.convertUserToMap(users.get(j)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", participantsArray);
+                                result.success(map);
                             }
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            map.put("body", participantsArray);
-                            result.success(map);
                         });
 
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -216,13 +240,16 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -251,25 +278,31 @@ public class ConversationManager {
                 conversation.sendMessage(_clientWrapper.getClient(), message, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(() -> {
-                            Log.d(TAG, "sendMessage: success");
-                            Map map = new HashMap();
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "sendMessage: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -277,13 +310,16 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -313,30 +349,36 @@ public class ConversationManager {
                 conversation.getMessages(_clientWrapper.getClient(), msgIds, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "getMessages: success");
-                            Map map = new HashMap();
-                            java.util.List msgArray = new java.util.ArrayList();
-                            for (int i = 0; i < messages.size(); i++) {
-                                msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getMessages: success");
+                                Map map = new HashMap();
+                                java.util.List msgArray = new java.util.ArrayList();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray);
+                                result.success(map);
                             }
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            map.put("body", msgArray);
-                            result.success(map);
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -344,13 +386,16 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -380,31 +425,37 @@ public class ConversationManager {
                 conversation.getLocalMessages(_clientWrapper.getClient(), count, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "getLocalMessages: success");
-                            Map map = new HashMap();
-                            java.util.List msgArray = new java.util.ArrayList();
-                            for (int i = 0; i < messages.size(); i++) {
-                                msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getLocalMessages: success");
+                                Map map = new HashMap();
+                                java.util.List msgArray = new java.util.ArrayList();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray);
+                                result.success(map);
                             }
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            map.put("body", msgArray);
-                            result.success(map);
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(() -> {
-                            Map map = new HashMap();
-                            Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Map map = new HashMap();
+                                Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -413,13 +464,16 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(() -> {
-                    Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -449,31 +503,37 @@ public class ConversationManager {
                 conversation.getLastMessages(_clientWrapper.getClient(), count, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "getLastMessages: success");
-                            Map map = new HashMap();
-                            java.util.List msgArray = new java.util.ArrayList();
-                            for (int i = 0; i < messages.size(); i++) {
-                                msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getLastMessages: success");
+                                Map map = new HashMap();
+                                java.util.List msgArray = new java.util.ArrayList();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray);
+                                result.success(map);
                             }
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            map.put("body", msgArray);
-                            result.success(map);
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(() -> {
-                            Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -482,13 +542,16 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(() -> {
-                    Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -519,31 +582,37 @@ public class ConversationManager {
                 conversation.getMessagesAfter(_clientWrapper.getClient(), seq, count, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "getMessagesAfter: success");
-                            Map map = new HashMap();
-                            java.util.List msgArray = new java.util.ArrayList();
-                            for (int i = 0; i < messages.size(); i++) {
-                                msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getMessagesAfter: success");
+                                Map map = new HashMap();
+                                java.util.List msgArray = new java.util.ArrayList();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray);
+                                result.success(map);
                             }
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            map.put("body", msgArray);
-                            result.success(map);
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(() -> {
-                            Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -552,13 +621,16 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(() -> {
-                    Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -589,18 +661,21 @@ public class ConversationManager {
                 conversation.getMessagesBefore(_clientWrapper.getClient(), seq, count, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "getMessagesBefore: success");
-                            Map map = new HashMap();
-                            java.util.List msgArray = new java.util.ArrayList();
-                            for (int i = 0; i < messages.size(); i++) {
-                                msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getMessagesBefore: success");
+                                Map map = new HashMap();
+                                java.util.List msgArray = new java.util.ArrayList();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                                }
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                map.put("body", msgArray);
+                                result.success(map);
                             }
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            map.put("body", msgArray);
-                            result.success(map);
                         });
 
                     }
@@ -608,13 +683,16 @@ public class ConversationManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(() -> {
-                            Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -623,13 +701,16 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(() -> {
-                    Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -660,26 +741,32 @@ public class ConversationManager {
                 conversation.updateConversation(_clientWrapper.getClient(), name, avatar, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(() -> {
-                            Log.d(TAG, "updateConversation: success");
-                            Map map = new HashMap();
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "updateConversation: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(() -> {
-                            Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -688,13 +775,16 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(() -> {
-                    Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -728,26 +818,32 @@ public class ConversationManager {
                         conversation.setAsAdmin(_clientWrapper.getClient(), userId, new StatusListener() {
                             @Override
                             public void onSuccess() {
-                                _handler.post(() -> {
-                                    Log.d(TAG, "setRole: success");
-                                    Map map = new HashMap();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    result.success(map);
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "setRole: success");
+                                        Map map = new HashMap();
+                                        map.put("status", true);
+                                        map.put("code", 0);
+                                        map.put("message", "Success");
+                                        result.success(map);
+                                    }
                                 });
                             }
 
                             @Override
                             public void onError(final StringeeError stringeeError) {
                                 super.onError(stringeeError);
-                                _handler.post(() -> {
-                                    Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                    Map map = new HashMap();
-                                    map.put("status", false);
-                                    map.put("code", stringeeError.getCode());
-                                    map.put("message", stringeeError.getMessage());
-                                    result.success(map);
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                        Map map = new HashMap();
+                                        map.put("status", false);
+                                        map.put("code", stringeeError.getCode());
+                                        map.put("message", stringeeError.getMessage());
+                                        result.success(map);
+                                    }
                                 });
                             }
                         });
@@ -756,26 +852,32 @@ public class ConversationManager {
                         conversation.setAsMember(_clientWrapper.getClient(), userId, new StatusListener() {
                             @Override
                             public void onSuccess() {
-                                _handler.post(() -> {
-                                    Log.d(TAG, "setRole: success");
-                                    Map map = new HashMap();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    result.success(map);
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "setRole: success");
+                                        Map map = new HashMap();
+                                        map.put("status", true);
+                                        map.put("code", 0);
+                                        map.put("message", "Success");
+                                        result.success(map);
+                                    }
                                 });
                             }
 
                             @Override
                             public void onError(final StringeeError stringeeError) {
                                 super.onError(stringeeError);
-                                _handler.post(() -> {
-                                    Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                    Map map = new HashMap();
-                                    map.put("status", false);
-                                    map.put("code", stringeeError.getCode());
-                                    map.put("message", stringeeError.getMessage());
-                                    result.success(map);
+                                _handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                        Map map = new HashMap();
+                                        map.put("status", false);
+                                        map.put("code", stringeeError.getCode());
+                                        map.put("message", stringeeError.getMessage());
+                                        result.success(map);
+                                    }
                                 });
                             }
                         });
@@ -786,13 +888,16 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(() -> {
-                    Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -819,25 +924,31 @@ public class ConversationManager {
         _clientWrapper.getClient().deleteMessages(convId, msgIdArray, new StatusListener() {
             @Override
             public void onSuccess() {
-                _handler.post(() -> {
-                    Log.d(TAG, "deleteMessages: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "deleteMessages: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
                 });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                _handler.post(() -> {
-                    Log.d(TAG, "deleteMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "deleteMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
@@ -857,25 +968,31 @@ public class ConversationManager {
         _clientWrapper.getClient().revokeMessages(convId, msgIdArray, deleted, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(() -> {
-                            Log.d(TAG, "revokeMessages: success");
-                            Map map1 = new HashMap();
-                            map1.put("status", true);
-                            map1.put("code", 0);
-                            map1.put("message", "Success");
-                            result.success(map1);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "revokeMessages: success");
+                                Map map1 = new HashMap();
+                                map1.put("status", true);
+                                map1.put("code", 0);
+                                map1.put("message", "Success");
+                                result.success(map1);
+                            }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        _handler.post(() -> {
-                            Log.d(TAG, "revokeMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map12 = new HashMap();
-                            map12.put("status", false);
-                            map12.put("code", stringeeError.getCode());
-                            map12.put("message", stringeeError.getMessage());
-                            result.success(map12);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "revokeMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map12 = new HashMap();
+                                map12.put("status", false);
+                                map12.put("code", stringeeError.getCode());
+                                map12.put("message", stringeeError.getMessage());
+                                result.success(map12);
+                            }
                         });
                     }
                 }
@@ -905,26 +1022,32 @@ public class ConversationManager {
                 message.markAsRead(_clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(() -> {
-                            Log.d(TAG, "markAsRead: success");
-                            Map map = new HashMap();
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "markAsRead: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(() -> {
-                            Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map map = new HashMap();
-                            map.put("status", false);
-                            map.put("code", stringeeError.getCode());
-                            map.put("message", stringeeError.getMessage());
-                            result.success(map);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
                         });
                     }
                 });
@@ -933,13 +1056,16 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(() -> {
-                    Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
                 });
             }
         });
