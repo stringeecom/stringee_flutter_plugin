@@ -61,7 +61,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     public void prepareCall() {
         _manager.startAudioManager(_manager.getContext(), new AudioManagerEvents() {
             @Override
-            public void onAudioDeviceChanged(AudioDevice selectedAudioDevice, Set<AudioDevice> availableAudioDevices) {
+            public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -393,7 +393,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     public void getCallStats(final Result result) {
         _call.getStats(new CallStatsListener() {
             @Override
-            public void onCallStats(StringeeCallStats stringeeCallStats) {
+            public void onCallStats(final StringeeCallStats stringeeCallStats) {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
