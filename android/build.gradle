@@ -31,10 +31,15 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '30.0.3'
 }
 
 dependencies {
 //    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
-    implementation 'com.stringee.sdk.android:stringee-android-sdk:1.7.2'
+    implementation 'com.stringee.sdk.android:stringee-android-sdk:1.7.3'
     implementation 'androidx.annotation:annotation:1.2.0'
 }
