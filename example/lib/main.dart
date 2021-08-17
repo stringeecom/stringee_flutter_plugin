@@ -1,15 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
-var user2 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MjUxMzQ3NTAiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjI3NzI2NzUwLCJ1c2VySWQiOiJ1c2VyMiJ9.Ll4bfqF2XZwpQPen-P4KLkdWTmuBbMG_akLsnIDsvM0';
-var user1 = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MjQ4NTMwMjciLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjI3NDQ1MDI3LCJ1c2VySWQiOiJ1c2VyMSJ9.9wrpbsDPM2-OpR4Sq5yOutacNlo9bYy78htcRDpPjCo';
+var user1 = 'PUT_YOUR_TOKEN_HERE';
+var user2 = 'PUT_YOUR_TOKEN2_HERE';
 
 StringeeClient client = StringeeClient();
 
@@ -42,10 +39,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> initState() {
     // TODO: implement initState
     super.initState();
-
-    if (Platform.isAndroid) {
-      requestPermissions();
-    }
 
     /// Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
@@ -89,19 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     /// Connect
     client.connect(user2);
-  }
-
-  requestPermissions() async {
-    List<PermissionName> permissionNames = [];
-    permissionNames.add(PermissionName.Camera);
-    permissionNames.add(PermissionName.Contacts);
-    permissionNames.add(PermissionName.Microphone);
-    permissionNames.add(PermissionName.Location);
-    permissionNames.add(PermissionName.Storage);
-    permissionNames.add(PermissionName.State);
-    permissionNames.add(PermissionName.Internet);
-    var permissions = await Permission.requestPermissions(permissionNames);
-    permissions.forEach((permission) {});
   }
 
   @override
