@@ -123,18 +123,9 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             return;
         }
 
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, call.method + ": false - -1 - StringeeClient is not initialized or disconnected");
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is not initialized or disconnected");
-            result.success(map);
-            return;
-        }
-
         switch (call.method) {
             case "disconnect":
-                clientWrapper.disconnect(result);
+                clientWrapper.disconnect(uuid, result);
                 break;
             case "registerPush":
                 clientWrapper.registerPush((String) call.argument("deviceToken"), result);

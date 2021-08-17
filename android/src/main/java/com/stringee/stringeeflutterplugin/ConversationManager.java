@@ -38,6 +38,16 @@ public class ConversationManager {
      * @param result
      */
     public void delete(final String convId, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "delete: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "deleteConversation: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -109,6 +119,16 @@ public class ConversationManager {
      * @param result
      */
     public void addParticipants(final String convId, final List<User> participants, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "addParticipants: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "addParticipants: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -186,6 +206,16 @@ public class ConversationManager {
      * @param result
      */
     public void removeParticipants(final String convId, final List<User> participants, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "removeParticipants: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "removeParticipants: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -262,6 +292,16 @@ public class ConversationManager {
      * @param result
      */
     public void sendMessage(final String convId, final Message message, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "sendMessage: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "sendMessage: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -333,6 +373,16 @@ public class ConversationManager {
      * @param result
      */
     public void getMessages(String convId, final String[] msgIds, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "getMessages: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "getMessages: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -487,6 +537,16 @@ public class ConversationManager {
      * @param result
      */
     public void getLastMessages(String convId, final int count, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "getLastMessages: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "getLastMessages: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -566,6 +626,16 @@ public class ConversationManager {
      * @param result
      */
     public void getMessagesAfter(String convId, final long seq, final int count, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "getMessagesAfter: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "getMessagesAfter: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -645,6 +715,16 @@ public class ConversationManager {
      * @param result
      */
     public void getMessagesBefore(String convId, final long seq, final int count, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "getMessagesBefore: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "getMessagesBefore: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -725,6 +805,16 @@ public class ConversationManager {
      * @param result
      */
     public void updateConversation(String convId, final String name, final String avatar, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "updateConversation: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "updateConversation: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -799,6 +889,15 @@ public class ConversationManager {
      * @param result
      */
     public void setRole(String convId, final String userId, final UserRole role, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "setRole: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
 
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "setRole: false - -2 - convId is invalid");
@@ -911,6 +1010,16 @@ public class ConversationManager {
      * @param result
      */
     public void deleteMessages(String convId, JSONArray msgIdArray, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "deleteMessages: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "deleteMessages: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -955,6 +1064,16 @@ public class ConversationManager {
     }
 
     public void revokeMessages(String convId, JSONArray msgIdArray, boolean deleted, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "revokeMessages: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "revokeMessages: false - -2 - convId is invalid");
             Map map = new HashMap();
@@ -1006,6 +1125,16 @@ public class ConversationManager {
      * @param result
      */
     public void markAsRead(String convId, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "markAsRead: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "markAsRead: false - -2 - convId is invalid");
             Map map = new HashMap();
