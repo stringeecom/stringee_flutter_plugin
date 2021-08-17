@@ -35,6 +35,16 @@ public class MessageManager {
      */
     public void edit(String convId, String msgId, final String content, final Result result) {
         Map map = new HashMap();
+
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "edit: false - -1 - StringeeClient is disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "edit: false - -2 - convId is invalid");
             map.put("status", false);
@@ -117,6 +127,15 @@ public class MessageManager {
      */
     public void pinOrUnPin(String convId, String msgId, final boolean pinOrUnPin, final Result result) {
         Map map = new HashMap();
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "pinOrUnPin: false - -1 - StringeeClient is disconnected");
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "pinOrUnPin: false - -2 - convId is invalid");
             map.put("status", false);

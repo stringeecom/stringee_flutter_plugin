@@ -96,6 +96,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * Make a new call
      */
     public void makeCall() {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "makeCall: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            _makeCallResult.success(map);
+            return;
+        }
+
         prepareCall();
         _call.makeCall();
     }
@@ -106,6 +116,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void initAnswer(final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "initAnswer: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         prepareCall();
         _call.ringing(new StatusListener() {
             @Override
@@ -146,6 +166,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void answer(final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "answer: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         _call.answer();
         Log.d(TAG, "answer: success");
         Map map = new HashMap();
@@ -206,6 +236,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void sendDTMF(final String dtmf, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "sendDTMF: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         _call.sendDTMF(dtmf, new StatusListener() {
             @Override
             public void onSuccess() {
@@ -246,6 +286,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void sendCallInfo(final Map callInfo, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "sendCallInfo: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         try {
             JSONObject jsonObject = Utils.convertMapToJson(callInfo);
             _call.sendCallInfo(jsonObject, new StatusListener() {
@@ -302,6 +352,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void mute(final boolean mute, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "mute: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         _call.mute(mute);
         Log.d(TAG, "mute: success");
         Map map = new HashMap();
@@ -318,6 +378,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void enableVideo(final boolean enable, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "enableVideo: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         _call.enableVideo(enable);
         Log.d(TAG, "enableVideo: success");
         Map map = new HashMap();
@@ -333,6 +403,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void switchCamera(final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "switchCamera: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         _call.switchCamera(new StatusListener() {
             @Override
             public void onSuccess() {
@@ -374,6 +454,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param cameraId
      */
     public void switchCamera(int cameraId, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "switchCamera: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         _call.switchCamera(new StatusListener() {
             @Override
             public void onSuccess() {
@@ -414,6 +504,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void resumeVideo(final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "resumeVideo: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         isResumeVideo = true;
         _call.resumeVideo();
         Log.d(TAG, "resumeVideo: success");
@@ -463,6 +563,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param result
      */
     public void setMirror(final boolean isLocal, final boolean isMirror, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "setMirror: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
         if (isLocal) {
             _call.getLocalView().setMirror(isMirror);
         } else {
