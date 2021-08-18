@@ -286,7 +286,7 @@
 }
 
 - (void)getCallStats:(id)arguments result:(FlutterResult)result {
-    if (!_client || !_client.hasConnected) {
+    if (!_client) {
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
@@ -307,7 +307,13 @@
     }
     
     [call statsWithCompletionHandler:^(NSDictionary<NSString *,NSString *> *values) {
-        result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found.", @"stats" : values});
+        NSMutableDictionary *dic;
+        if (values != nil) {
+            dic = [[NSMutableDictionary alloc] initWithDictionary:values];
+            long long milliseconds = (long long)([[NSDate date] timeIntervalSince1970] * 1000);
+            [dic setValue:@(milliseconds) forKey:@"timeStamp"];
+        }
+        result(@{STEStatus : @(true), STECode : @(0), STEMessage: @"Success", @"stats" : dic});
     }];
 }
 
