@@ -307,11 +307,13 @@
     }
     
     [call statsWithCompletionHandler:^(NSDictionary<NSString *,NSString *> *values) {
-        NSMutableDictionary *dic;
+        id dic;
         if (values != nil) {
             dic = [[NSMutableDictionary alloc] initWithDictionary:values];
             long long milliseconds = (long long)([[NSDate date] timeIntervalSince1970] * 1000);
             [dic setValue:@(milliseconds) forKey:@"timeStamp"];
+        } else {
+            dic = [NSNull null];
         }
         result(@{STEStatus : @(true), STECode : @(0), STEMessage: @"Success", @"stats" : dic});
     }];
