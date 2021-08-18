@@ -154,6 +154,9 @@
     else if ([call.method isEqualToString:@"enableVideo2"]) {
         [wrapper.call2Manager enableVideo:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"getCallStats2"]) {
+        [wrapper.call2Manager getCallStats:call.arguments result:result];
+    }
     
     // Conversation
     else if ([call.method isEqualToString:@"createConversation"]) {

@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enableVideo:(id)arguments result:(FlutterResult)result;
 
+- (void)getCallStats:(id)arguments result:(FlutterResult)result;
+
 @end
 
 NS_ASSUME_NONNULL_END

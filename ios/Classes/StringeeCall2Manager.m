@@ -269,6 +269,38 @@
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success."});
 }
 
+- (void)getCallStats:(id)arguments result:(FlutterResult)result {
+    if (!_client) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
+    
+    if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
+        return;
+    }
+    
+    StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
+    
+    if (!call) {
+        result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found."});
+        return;
+    }
+    
+    [call stats:false completionHandler:^(NSDictionary<NSString *,NSString *> *values) {
+        NSMutableDictionary *dic;
+        if (values != nil) {
+            dic = [[NSMutableDictionary alloc] initWithDictionary:values];
+            long long milliseconds = (long long)([[NSDate date] timeIntervalSince1970] * 1000);
+            [dic setValue:@(milliseconds) forKey:@"timeStamp"];
+        }
+        result(@{STEStatus : @(true), STECode : @(0), STEMessage: @"Success", @"stats" : dic});
+    }];
+}
+
 #pragma mark - Call Delegate
 
 - (void)didChangeMediaState2:(StringeeCall2 *)stringeeCall2 mediaState:(MediaState)mediaState {
