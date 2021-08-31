@@ -268,7 +268,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 
     id returnObjects = jsObjectDatas ? jsObjectDatas : [NSNull null];
 
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }});
 }
 
 - (void)handleNewMessageNotification:(NSNotification *)notification {
@@ -286,7 +286,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
             return;
         }
         
-        self->_eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
+        self->_eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
     }];
 }
 

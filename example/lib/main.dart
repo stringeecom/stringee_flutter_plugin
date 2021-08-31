@@ -10,9 +10,9 @@ import 'package:stringee_flutter_plugin_example/Chat.dart';
 import 'Call.dart';
 
 var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MjUxMDg0ODkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjI3NzAwNDg5LCJ1c2VySWQiOiJ1c2VyMiJ9.ytNNDUrpfWpczPYTkVj21OJv0zn7yo_sw1l3UZQzo9c';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MzAzMTYyMDMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjMyOTA4MjAzLCJ1c2VySWQiOiJ1c2VyMiJ9.r41arMsQmj1wwwca7OhZccc-afEU1c4GvvwqLzxEOWo';
 var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MjUyMTkzNDAiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjI3ODExMzQwLCJ1c2VySWQiOiJ1c2VyMSJ9.F-Ys-a6bZpfmbRQMX8OCMStuF7sTR0woy33KxZ_RpR8';
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MzAzMTYxOTMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjMyOTA4MTkzLCJ1c2VySWQiOiJ1c2VyMSJ9.HbeDbBkm8FcyFf0WcfBLAbWJXeHowAKLWh6vqDOgrH4';
 
 StringeeClient client = StringeeClient();
 
@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
       requestPermissions();
     }
 
+    MakeCallParams a = MakeCallParams(null, null);
     /// Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
@@ -76,12 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {
           StringeeCall2 call = map['body'];
           handleIncomingCall2Event(call);
           break;
-        case StringeeClientEvents.didReceiveObjectChange:
-          StringeeObjectChange objectChange = map['body'];
-          print(objectChange.objectType.toString() +
-              '\t' +
-              objectChange.type.toString());
-          print(objectChange.objects.toString());
+        // case StringeeClientEvents.didReceiveObjectChange:
+        //   StringeeObjectChange objectChange = map['body'];
+        //   print(objectChange.objectType.toString() +
+        //       '\t' +
+        //       objectChange.type.toString());
+        //   print(objectChange.objects.toString());
           break;
         default:
           break;

@@ -44,6 +44,7 @@ typedef NS_ENUM(NSInteger, StringeeNativeEventType) {
     StringeeNativeEventTypeClient  = 0,
     StringeeNativeEventTypeCall    = 1,
     StringeeNativeEventTypeCall2   = 2,
+    StringeeNativeEventTypeChat    = 3,
 };
 
 NS_ASSUME_NONNULL_BEGIN

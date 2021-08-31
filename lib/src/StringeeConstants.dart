@@ -9,7 +9,6 @@ enum StringeeClientEvents {
   didReceiveCustomMessage,
   incomingCall,
   incomingCall2,
-  didReceiveObjectChange,
 }
 
 /// Events for StringeeCall
@@ -34,11 +33,29 @@ enum StringeeCall2Events {
   didChangeAudioDevice
 }
 
+/// Events for StringeeChat
+enum StringeeChatEvents {
+  didReceiveObjectChange
+}
+
+enum StringeeChannelType {
+  normal,
+  livechat,
+  facebook,
+  zalo
+}
+
+enum StringeeChatRequestType {
+  normal,
+  transfer
+}
+
 /// Type of event
 enum StringeeObjectEventType {
   client,
   call,
   call2,
+  chat
 }
 
 /// Error code and message in flutter:

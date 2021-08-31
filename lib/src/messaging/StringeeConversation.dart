@@ -86,6 +86,29 @@ class StringeeConversation {
     this._participants = participants;
   }
 
+  /// ====================== BEGIN LIVE CHAT =======================
+  ///
+  Future<Map<dynamic, dynamic>> sendChatTranscript(String email, String domain) async {
+    if (email.trim().isEmpty) return await reportInvalidValue('email');
+    if (domain.trim().isEmpty) return await reportInvalidValue('domain');
+    if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
+
+    final params = {'email': email.trim(), 'domain': domain.trim(), 'convId': _id, 'uuid': _client.uuid};
+
+    return await StringeeClient.methodChannel.invokeMethod('sendChatTranscript', params);
+  }
+
+  Future<Map<dynamic, dynamic>> endChat() async {
+    if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
+
+    final params = {'convId': _id, 'uuid': _client.uuid};
+
+    return await StringeeClient.methodChannel.invokeMethod('endChat', params);
+  }
+
+  /// ====================== END LIVE CHAT =======================
+
+
   /// Delete [StringeeConversation]
   Future<Map<dynamic, dynamic>> delete() async {
     final params = {'convId': this._id, 'uuid': _client.uuid};

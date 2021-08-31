@@ -6,12 +6,14 @@ import 'main.dart' as main;
 
 StringeeClient _client;
 StringeeConversation _conversation;
+StringeeChat _chat;
 
 class ConversationInfor extends StatefulWidget {
   ConversationInfor(
-      {StringeeClient client, StringeeConversation conversation}) {
+      {StringeeClient client, StringeeConversation conversation, StringeeChat chat}) {
     _client = client;
     _conversation = conversation;
+    _chat = chat;
   }
 
   @override
@@ -55,10 +57,9 @@ class ConversationInforState extends State<ConversationInfor> {
     msg = StringeeMessage.typeText(main.client, 'test',
         customData: {'custom': 'abc'});
 
-    _client.eventStreamController.stream.listen((event) {
+    _chat.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      if (map['typeEvent'] == StringeeClientEvents &&
-          map['eventType'] == StringeeClientEvents.didReceiveObjectChange) {
+      if (map['eventType'] == StringeeChatEvents.didReceiveObjectChange) {
         StringeeObjectChange objectChange = map['body'];
         if (objectChange.objectType == ObjectType.message) {
           StringeeMessage message = objectChange.objects.first;
