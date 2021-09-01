@@ -474,4 +474,20 @@
     return response;
 }
 
++ (id)StringeeChatRequest:(StringeeChatRequest *)request {
+    if (!request) return [NSNull null];
+    
+    NSString *convId = request.convId != nil ? request.convId : @"";
+    NSString *customerId = request.customerId != nil ? request.customerId : @"";
+    NSString *customerName = request.customerName != nil ? request.customerName : @"";
+    
+    return @{
+             @"convId": convId,
+             @"customerId": customerId,
+             @"customerName": customerName,
+             @"channelType": @(request.channelType),
+             @"type": @(request.type),
+             };
+}
+
 @end

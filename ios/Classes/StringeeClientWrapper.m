@@ -114,7 +114,8 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleUserTypingNotification:) name:StringeeChatUserTypingNotification object:_client];
+
         [_callManager setClient:_client];
         [_call2Manager setClient:_client];
         [_convManager setClient:_client];
@@ -230,6 +231,28 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall2, STEBody : [StringeeHelper StringeeCall2:stringeeCall2] });
 }
 
+- (void)didReceiveChatRequest:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+}
+
+- (void)didReceiveTransferChatRequest:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveTransferChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+}
+
+- (void)timeoutAnswerChat:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutAnswerChat, STEBody : [StringeeHelper StringeeChatRequest:request] });
+}
+
+- (void)timeoutInQueue:(StringeeClient *)stringeeClient info:(NSDictionary *)info {
+    id rInfo = info != nil ? info : [NSNull null];
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutInQueue, STEBody : rInfo });
+}
+
+- (void)conversationEnded:(StringeeClient *)stringeeClient info:(NSDictionary *)info {
+    id rInfo = info != nil ? info : [NSNull null];
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEConversationEnded, STEBody : rInfo });
+}
+
 #pragma mark - Chat Event
 
 - (void)handleObjectChangeNotification:(NSNotification *)notification {
@@ -292,6 +315,29 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         
         self->_eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
     }];
+}
+
+- (void)handleUserTypingNotification:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    if (!userInfo) return;
+    
+    NSString *convId = [userInfo objectForKey:@"convId"] != nil ? [userInfo objectForKey:@"convId"] : @"";
+    NSString *userId = [userInfo objectForKey:@"userId"] != nil ? [userInfo objectForKey:@"userId"] : @"";
+    NSString *displayName = [userInfo objectForKey:@"displayName"] != nil ? [userInfo objectForKey:@"displayName"] : @"";
+    BOOL begin = [[userInfo objectForKey:@"begin"] boolValue];
+
+    NSDictionary *infos = @{
+                            @"convId" : convId,
+                            @"userId" : userId,
+                            @"displayName" : displayName
+                            };
+    if (begin) {
+        // begin
+        _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserBeginTyping, STEBody : infos });
+    } else {
+        // end
+        _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserEndTyping, STEBody : infos });
+    }
 }
 
 @end

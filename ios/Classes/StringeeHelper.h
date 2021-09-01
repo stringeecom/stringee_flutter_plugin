@@ -40,6 +40,16 @@ static NSString *STEDidReceiveDtmfDigit         = @"didReceiveDtmfDigit";
 static NSString *STEDidReceiveCallInfo          = @"didReceiveCallInfo";
 static NSString *STEDidHandleOnAnotherDevice    = @"didHandleOnAnotherDevice";
 
+// Live-chat
+static NSString *STEDidReceiveChatRequest            = @"STEDidReceiveChatRequest";
+static NSString *STEDidReceiveTransferChatRequest    = @"STEDidReceiveTransferChatRequest";
+static NSString *STETimeoutAnswerChat                = @"STETimeoutAnswerChat";
+static NSString *STETimeoutInQueue                   = @"STETimeoutInQueue";
+static NSString *STEConversationEnded                = @"STEConversationEnded";
+static NSString *STEUserBeginTyping                  = @"STEUserBeginTyping";
+static NSString *STEUserEndTyping                    = @"STEUserEndTyping";
+
+
 typedef NS_ENUM(NSInteger, StringeeNativeEventType) {
     StringeeNativeEventTypeClient  = 0,
     StringeeNativeEventTypeCall    = 1,
@@ -79,6 +89,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray<StringeeServerAddress *> *)parseServerAddressesWithData:(NSArray *)data;
 
 + (id)ChatProfile:(StringeeChatProfile *)profile;
+
++ (id)StringeeChatRequest:(StringeeChatRequest *)request;
 
 @end
 
