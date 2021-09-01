@@ -48,7 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
       requestPermissions();
     }
 
-    MakeCallParams a = MakeCallParams(null, null);
     /// Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
     client.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
