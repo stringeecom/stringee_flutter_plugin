@@ -9,6 +9,11 @@ enum StringeeClientEvents {
   didReceiveCustomMessage,
   incomingCall,
   incomingCall2,
+  didReceiveChatRequest,
+  didReceiveTransferChatRequest,
+  timeoutAnswerChat,
+  timeoutInQueue,
+  conversationEnded
 }
 
 /// Events for StringeeCall

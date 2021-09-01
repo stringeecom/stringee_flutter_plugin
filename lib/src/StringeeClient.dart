@@ -10,6 +10,7 @@ import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
 import 'StringeeConstants.dart';
 import 'call/StringeeCall.dart';
 import 'call/StringeeCall2.dart';
+import 'messaging/StringeeChatRequest.dart';
 
 class StringeeClient {
   // Native
@@ -387,62 +388,25 @@ class StringeeClient {
   // }
 
   void _handleDidReceiveChatRequestEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
-    Map<dynamic, dynamic> bodyMap = {
-      'code': map['code'],
-      'message': map['message'],
-    };
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didFailWithError,
-      "body": bodyMap,
-    });
+    StringeeChatRequest request = StringeeChatRequest(map, this);
+    _eventStreamController.add({"eventType": StringeeClientEvents.didReceiveChatRequest, "body": request});
   }
 
   void _handleDidReceiveTransferChatRequestEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
-    Map<dynamic, dynamic> bodyMap = {
-      'code': map['code'],
-      'message': map['message'],
-    };
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didFailWithError,
-      "body": bodyMap,
-    });
+    StringeeChatRequest request = StringeeChatRequest(map, this);
+    _eventStreamController.add({"eventType": StringeeClientEvents.didReceiveTransferChatRequest, "body": request});
   }
 
   void _handleTimeoutAnswerChatEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
-    Map<dynamic, dynamic> bodyMap = {
-      'code': map['code'],
-      'message': map['message'],
-    };
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didFailWithError,
-      "body": bodyMap,
-    });
+    StringeeChatRequest request = StringeeChatRequest(map, this);
+    _eventStreamController.add({"eventType": StringeeClientEvents.timeoutAnswerChat, "body": request});
   }
 
   void _handleTimeoutInQueueEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
-    Map<dynamic, dynamic> bodyMap = {
-      'code': map['code'],
-      'message': map['message'],
-    };
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didFailWithError,
-      "body": bodyMap,
-    });
+    _eventStreamController.add({"eventType": StringeeClientEvents.timeoutInQueue, "body": map});
   }
 
   void _handleConversationEndedEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
-    Map<dynamic, dynamic> bodyMap = {
-      'code': map['code'],
-      'message': map['message'],
-    };
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didFailWithError,
-      "body": bodyMap,
-    });
+    _eventStreamController.add({"eventType": StringeeClientEvents.conversationEnded, "body": map});
   }
 }
