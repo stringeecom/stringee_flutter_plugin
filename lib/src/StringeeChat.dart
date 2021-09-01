@@ -10,7 +10,7 @@ import 'messaging/StringeeUser.dart';
 class StringeeChat {
   late StringeeClient _client;
   late StreamSubscription<dynamic> _subscriber;
-  StreamController<dynamic> _eventStreamController = StreamController();
+  StreamController<dynamic> _eventStreamController = StreamController.broadcast();
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
   StringeeChat(StringeeClient client) {

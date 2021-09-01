@@ -126,6 +126,7 @@ class ChatState extends State<Chat> {
                                   builder: (context) => ConversationInfor(
                                         client: _client,
                                         conversation: _conversations[index],
+                                        chat: _chat
                                       )));
                         },
                         child: Column(
