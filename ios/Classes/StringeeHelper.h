@@ -78,6 +78,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSArray<StringeeServerAddress *> *)parseServerAddressesWithData:(NSArray *)data;
 
++ (id)ChatProfile:(StringeeChatProfile *)profile;
+
 @end
 
 NS_ASSUME_NONNULL_END

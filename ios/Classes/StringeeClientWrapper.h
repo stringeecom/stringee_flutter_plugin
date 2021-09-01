@@ -12,6 +12,7 @@
 #import "StringeeCall2Manager.h"
 #import "StringeeConversationManager.h"
 #import "StringeeMessageManager.h"
+#import "StringeeChatManager.h"
 
 @interface StringeeClientWrapper : NSObject<StringeeIncomingCallDelegate, StringeeConnectionDelegate>
 
@@ -29,6 +30,7 @@
 @property (nonatomic) StringeeCall2Manager *call2Manager;
 @property (nonatomic) StringeeConversationManager *convManager;
 @property (nonatomic) StringeeMessageManager *msgManager;
+@property (nonatomic) StringeeChatManager *chatManager;
 
 - (instancetype)initWithIdentifier:(NSString *)identifier eventSink:(FlutterEventSink)eventSink;
 

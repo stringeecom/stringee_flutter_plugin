@@ -237,6 +237,41 @@
         [wrapper.msgManager pinOrUnPin:call.arguments result:result];
     }
     
+    // Live-chat
+    else if ([call.method isEqualToString:@"getChatProfile"]) {
+        [wrapper.chatManager getChatProfile:data result:result];
+    }
+    else if ([call.method isEqualToString:@"getLiveChatToken"]) {
+        [wrapper.chatManager getLiveChatToken:data result:result];
+    }
+    else if ([call.method isEqualToString:@"updateUserInfo"]) {
+        [wrapper.chatManager updateUserInfo:data result:result];
+    }
+    else if ([call.method isEqualToString:@"createLiveChatConversation"]) {
+        [wrapper.chatManager createLiveChatConversation:data result:result];
+    }
+    else if ([call.method isEqualToString:@"createLiveChatTicket"]) {
+        [wrapper.chatManager createLiveChatTicket:data result:result];
+    }
+    else if ([call.method isEqualToString:@"sendChatTranscript"]) {
+        [wrapper.chatManager sendChatTranscript:data result:result];
+    }
+    else if ([call.method isEqualToString:@"endChat"]) {
+        [wrapper.chatManager endChat:data result:result];
+    }
+    else if ([call.method isEqualToString:@"beginTyping"]) {
+        [wrapper.chatManager beginTyping:data result:result];
+    }
+    else if ([call.method isEqualToString:@"endTyping"]) {
+        [wrapper.chatManager endTyping:data result:result];
+    }
+    else if ([call.method isEqualToString:@"acceptChatRequest"]) {
+        [wrapper.chatManager acceptChatRequest:data result:result];
+    }
+    else if ([call.method isEqualToString:@"rejectChatRequest"]) {
+        [wrapper.chatManager rejectChatRequest:data result:result];
+    }
+    
     else {
         result(FlutterMethodNotImplemented);
     }

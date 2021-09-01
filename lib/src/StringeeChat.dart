@@ -61,7 +61,11 @@ class StringeeChat {
 
     final params = {'queueId': queueId, 'uuid': _client.uuid};
 
-    return await StringeeClient.methodChannel.invokeMethod('createLiveChatConversation', params);
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel.invokeMethod('createLiveChatConversation', params);
+    if (result['status']) {
+      result['body'] = StringeeConversation.fromJson(result['body'], _client);
+    }
+    return result;
   }
 
   Future<Map<dynamic, dynamic>> createLiveChatTicket(String key, String name, String email, String description) async {

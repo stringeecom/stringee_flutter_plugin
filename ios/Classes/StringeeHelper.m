@@ -422,4 +422,56 @@
     return serverAddresses;
 }
 
++ (id)ChatProfile:(StringeeChatProfile *)profile {
+    if (!profile) return [NSNull null];
+    
+    NSString *identifier = profile.identifier != nil ? profile.identifier : @"";
+    NSString *background = profile.background != nil ? profile.background : @"";
+    NSString *hour = profile.hour != nil ? profile.hour : @"";
+    NSString *language = profile.language != nil ? profile.language : @"";
+    NSString *logo_url = profile.logo_url != nil ? profile.logo_url : @"";
+    NSString *popup_answer_url = profile.popup_answer_url != nil ? profile.popup_answer_url : @"";
+    NSString *portal = profile.portal != nil ? profile.portal : @"";
+    NSArray *queues = [StringeeHelper Queues:profile.queues];
+    
+    return @{
+             @"id": identifier,
+             @"background": background,
+             @"hour": hour,
+             @"language": language,
+             @"logo_url": logo_url,
+             @"popup_answer_url": popup_answer_url,
+             @"portal": portal,
+             @"queues": queues,
+             @"auto_create_ticket": @(profile.auto_create_ticket),
+             @"enabled": @(profile.enabled),
+             @"facebook_as_livechat": @(profile.facebook_as_livechat),
+             @"project_id": @(profile.project_id),
+             @"zalo_as_livechat": @(profile.zalo_as_livechat)
+             };
+}
+
++ (id)StringeeQueue:(StringeeQueue *)queue {
+    if (!queue) return [NSNull null];
+    
+    NSString *identifier = queue.identifier != nil ? queue.identifier : @"";
+    NSString *name = queue.name != nil ? queue.name : @"";
+
+    return @{
+             @"id": identifier,
+             @"name": name
+             };
+}
+
++ (NSArray *)Queues:(NSArray<StringeeQueue *> *)queues {
+    if (!queues) {
+        return @[];
+    }
+    NSMutableArray *response = [NSMutableArray array];
+    for (StringeeQueue *queue in queues) {
+        [response addObject:[self StringeeQueue:queue]];
+    }
+    return response;
+}
+
 @end
