@@ -13,7 +13,9 @@ enum StringeeClientEvents {
   didReceiveTransferChatRequest,
   timeoutAnswerChat,
   timeoutInQueue,
-  conversationEnded
+  conversationEnded,
+  userBeginTyping,
+  userEndTyping
 }
 
 /// Events for StringeeCall

@@ -103,6 +103,12 @@ class StringeeClient {
         case 'conversationEnded':
           _handleConversationEndedEvent(map['body']);
           break;
+        case 'userBeginTyping':
+          _handleUserBeginTypingEvent(map['body']);
+          break;
+        case 'userEndTyping':
+          _handleUserEndTypingEvent(map['body']);
+          break;
       }
     } else {
       _eventStreamController.add(event);
@@ -408,5 +414,13 @@ class StringeeClient {
 
   void _handleConversationEndedEvent(Map<dynamic, dynamic> map) {
     _eventStreamController.add({"eventType": StringeeClientEvents.conversationEnded, "body": map});
+  }
+
+  void _handleUserBeginTypingEvent(Map<dynamic, dynamic> map) {
+    _eventStreamController.add({"eventType": StringeeClientEvents.userBeginTyping, "body": map});
+  }
+
+  void _handleUserEndTypingEvent(Map<dynamic, dynamic> map) {
+    _eventStreamController.add({"eventType": StringeeClientEvents.userEndTyping, "body": map});
   }
 }
