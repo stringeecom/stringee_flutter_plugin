@@ -43,7 +43,8 @@ public class StringeeManager {
     public enum StringeeEventType {
         ClientEvent(0),
         CallEvent(1),
-        Call2Event(2);
+        Call2Event(2),
+        ChatEvent(3);
 
         public final short value;
 

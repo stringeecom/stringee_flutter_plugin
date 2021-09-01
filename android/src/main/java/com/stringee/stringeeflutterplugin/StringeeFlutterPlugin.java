@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.stringee.common.SocketAddress;
 import com.stringee.messaging.ConversationOptions;
 import com.stringee.messaging.Message;
+import com.stringee.messaging.Message.Type;
 import com.stringee.messaging.User;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
 
@@ -363,21 +364,21 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 try {
                     Map msgMap = (Map) call.arguments;
                     String convId = (String) msgMap.get("convId");
-                    int msgType = (int) msgMap.get("type");
+                    Type msgType = Type.getType((int) msgMap.get("type"));
                     Message message = new Message(msgType);
                     switch (message.getType()) {
-                        case Message.TYPE_TEXT:
-                        case Message.TYPE_LINK:
+                        case TEXT:
+                        case LINK:
                             message = new Message((String) msgMap.get("text"));
                             break;
-                        case Message.TYPE_PHOTO:
+                        case PHOTO:
                             message.setFileUrl((String) msgMap.get("filePath"));
                             if (msgMap.containsKey("thumbnail"))
                                 message.setThumbnailUrl((String) msgMap.get("thumbnail"));
                             if (msgMap.containsKey("ratio"))
                                 message.setImageRatio((Float) msgMap.get("ratio"));
                             break;
-                        case Message.TYPE_VIDEO:
+                        case VIDEO:
                             message.setFileUrl((String) msgMap.get("filePath"));
                             message.setDuration((Integer) msgMap.get("duration"));
                             if (msgMap.containsKey("thumbnail"))
@@ -385,25 +386,25 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             if (msgMap.containsKey("ratio"))
                                 message.setImageRatio((Float) msgMap.get("ratio"));
                             break;
-                        case Message.TYPE_AUDIO:
+                        case AUDIO:
                             message.setFileUrl((String) msgMap.get("filePath"));
                             message.setDuration((Integer) msgMap.get("duration"));
                             break;
-                        case Message.TYPE_FILE:
+                        case FILE:
                             message.setFileUrl((String) msgMap.get("filePath"));
                             if (msgMap.containsKey("filename"))
                                 message.setFileName((String) msgMap.get("filename"));
                             if (msgMap.containsKey("length"))
                                 message.setFileLength((Long) msgMap.get("length"));
                             break;
-                        case Message.TYPE_LOCATION:
+                        case LOCATION:
                             message.setLatitude((Double) msgMap.get("lat"));
                             message.setLongitude((Double) msgMap.get("lon"));
                             break;
-                        case Message.TYPE_CONTACT:
+                        case CONTACT:
                             message.setContact((String) msgMap.get("vcard"));
                             break;
-                        case Message.TYPE_STICKER:
+                        case STICKER:
                             message.setStickerCategory((String) msgMap.get("stickerCategory"));
                             message.setStickerName((String) msgMap.get("stickerName"));
                             break;
@@ -467,6 +468,39 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "pinOrUnPin":
                 clientWrapper.message().pinOrUnPin((String) call.argument("convId"), (String) call.argument("msgId"), (boolean) call.argument("pinOrUnPin"), result);
+                break;
+            case "getChatProfile":
+                clientWrapper.getChatProfile((String) call.argument("key"), result);
+                break;
+            case "getLiveChatToken":
+                clientWrapper.getLiveChatToken((String) call.argument("key"), (String) call.argument("name"), (String) call.argument("email"), result);
+                break;
+            case "updateUserInfo":
+                clientWrapper.updateUserInfo((String) call.argument("name"), (String) call.argument("email"), (String) call.argument("avatar"), result);
+                break;
+            case "createLiveChatConversation":
+                clientWrapper.createLiveChatConversation((String) call.argument("queueId"), result);
+                break;
+            case "createLiveChatTicket":
+                clientWrapper.createLiveChatTicket((String) call.argument("key"), (String) call.argument("name"), (String) call.argument("email"), (String) call.argument("description"), result);
+                break;
+            case "sendChatTranscript":
+                clientWrapper.conversation().sendChatTranscript((String) call.argument("convId"),(String) call.argument("email"),(String) call.argument("domain"), result);
+                break;
+            case "endChat":
+                clientWrapper.conversation().endChat((String) call.argument("convId"), result);
+                break;
+            case "beginTyping":
+                clientWrapper.conversation().beginTyping((String) call.argument("convId"), result);
+                break;
+            case "endTyping":
+                clientWrapper.conversation().endTyping((String) call.argument("convId"), result);
+                break;
+            case "acceptChatRequest":
+                clientWrapper.chatRequest().acceptChatRequest((String) call.argument("convId"), result);
+                break;
+            case "rejectChatRequest":
+                clientWrapper.chatRequest().rejectChatRequest((String) call.argument("convId"), result);
                 break;
             default:
                 result.notImplemented();
