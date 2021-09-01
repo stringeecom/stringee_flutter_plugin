@@ -106,6 +106,18 @@ class StringeeConversation {
     return await StringeeClient.methodChannel.invokeMethod('endChat', params);
   }
 
+  Future<Map<dynamic, dynamic>> beginTyping() async {
+    if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
+    final params = {'convId': _id, 'uuid': _client.uuid};
+    return await StringeeClient.methodChannel.invokeMethod('beginTyping', params);
+  }
+
+  Future<Map<dynamic, dynamic>> endTyping() async {
+    if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
+    final params = {'convId': _id, 'uuid': _client.uuid};
+    return await StringeeClient.methodChannel.invokeMethod('endTyping', params);
+  }
+
   /// ====================== END LIVE CHAT =======================
 
 
