@@ -376,7 +376,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             if (msgMap.containsKey("thumbnail"))
                                 message.setThumbnailUrl((String) msgMap.get("thumbnail"));
                             if (msgMap.containsKey("ratio"))
-                                message.setImageRatio((Float) msgMap.get("ratio"));
+                                message.setImageRatio(((Double) msgMap.get("ratio")).floatValue());
                             break;
                         case VIDEO:
                             message.setFileUrl((String) msgMap.get("filePath"));
@@ -384,7 +384,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             if (msgMap.containsKey("thumbnail"))
                                 message.setThumbnailUrl((String) msgMap.get("thumbnail"));
                             if (msgMap.containsKey("ratio"))
-                                message.setImageRatio((Float) msgMap.get("ratio"));
+                                message.setImageRatio(((Double) msgMap.get("ratio")).floatValue());
                             break;
                         case AUDIO:
                             message.setFileUrl((String) msgMap.get("filePath"));

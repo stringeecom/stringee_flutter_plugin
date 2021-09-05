@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
 import com.stringee.messaging.ChatProfile;
 import com.stringee.messaging.ChatRequest;
@@ -170,11 +169,11 @@ public class Utils {
             conversationMap.put("totalUnread", conversation.getTotalUnread());
             conversationMap.put("text", conversation.getText());
             conversationMap.put("lastMsgSender", conversation.getLastMsgSender());
-            conversationMap.put("lastMsgType", conversation.getLastMsgType());
+            conversationMap.put("lastMsgType", conversation.getLastMsgType().getValue());
             conversationMap.put("lastMsgId", conversation.getLastMsgId());
             conversationMap.put("lastMsgSeqReceived", conversation.getLastMsgSeqReceived());
             conversationMap.put("lastTimeNewMsg", conversation.getLastTimeNewMsg());
-            conversationMap.put("lastMsgState", conversation.getLastMsgState());
+            conversationMap.put("lastMsgState", conversation.getLastMsgState().getValue());
 
             if (conversation.getLastMsg() != null) {
                 JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
@@ -205,7 +204,7 @@ public class Utils {
             msgMap.put("sequence", message.getSequence());
             msgMap.put("customData", convertJsonToMap(message.getCustomData()));
             msgMap.put("state", message.getState().getValue());
-            msgMap.put("type", message.getType());
+            msgMap.put("type", message.getType().getValue());
             Map contentMap = new HashMap();
             switch (message.getType()) {
                 case TEXT:
@@ -293,7 +292,7 @@ public class Utils {
         userMap.put("userId", user.getUserId());
         userMap.put("name", user.getName());
         userMap.put("avatarUrl", user.getAvatarUrl());
-        userMap.put("role", user.getRole());
+        userMap.put("role", user.getRole().getValue());
         return userMap;
     }
 
@@ -371,7 +370,7 @@ public class Utils {
                 User user = new User(userObject.getString("user"));
                 user.setName(userObject.optString("displayName", null));
                 user.setAvatarUrl(userObject.optString("avatarUrl", null));
-                user.setRole(Role.getRole(userObject.optString("role", null)));
+                user.setRole(Role.getRole(userObject.optString("role")));
 
                 resultArray.add(convertUserToMap(user));
             }
@@ -381,7 +380,7 @@ public class Utils {
         return resultArray;
     }
 
-    public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
+    public static void getConversation(@NonNull com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
         client.getConversation(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
@@ -396,7 +395,7 @@ public class Utils {
         });
     }
 
-    public static void getLastMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
+    public static void getLastMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
@@ -424,7 +423,7 @@ public class Utils {
         });
     }
 
-    public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
+    public static void getMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
@@ -452,7 +451,7 @@ public class Utils {
         });
     }
 
-    public static void getChatRequest(@NonNull final StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
+    public static void getChatRequest(@NonNull final com.stringee.StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
         client.getChatRequests(new CallbackListener<List<ChatRequest>>() {
             @Override
             public void onSuccess(List<ChatRequest> chatRequestList) {
