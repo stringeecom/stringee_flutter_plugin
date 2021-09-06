@@ -15,7 +15,7 @@ class ChatTab extends StatefulWidget {
 
 class ChatTabState extends State<ChatTab> with AutomaticKeepAliveClientMixin<ChatTab>{
   String myUserId = 'Not connected...';
-  String token = 'PUT_YOUR_TOKEN_HERE';
+  String token = '';
 
   List<String> _log = [];
   List<StringeeConversation> _conversations = [];
@@ -53,7 +53,9 @@ class ChatTabState extends State<ChatTab> with AutomaticKeepAliveClientMixin<Cha
     });
 
     /// Connect
-    client.connect(token);
+    if (token.isNotEmpty) {
+      client.connect(token);
+    }
 
     chat.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;

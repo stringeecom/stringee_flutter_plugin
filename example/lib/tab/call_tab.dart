@@ -15,7 +15,7 @@ class CallTab extends StatefulWidget {
 class CallTabState extends State<CallTab>
     with AutomaticKeepAliveClientMixin<CallTab> {
   String myUserId = 'Not connected...';
-  String token = 'PUT_YOUR_TOKEN_HERE';
+  String token = '';
   String toUser = '';
 
   @override
@@ -57,7 +57,9 @@ class CallTabState extends State<CallTab>
     });
 
     /// Connect
-    client.connect(token);
+    if (token.isNotEmpty) {
+      client.connect(token);
+    }
   }
 
   @override
