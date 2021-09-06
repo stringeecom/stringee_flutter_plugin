@@ -1199,16 +1199,6 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param result
      */
     public void getChatProfile(String key, final Result result) {
-        if (!isConnected()) {
-            Log.d(TAG, "getChatProfile: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
-            return;
-        }
-
         _client.getChatProfile(key, new CallbackListener<ChatProfile>() {
             @Override
             public void onSuccess(final ChatProfile chatProfile) {
@@ -1252,16 +1242,6 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param result
      */
     public void getLiveChatToken(String key, String name, String email, final Result result) {
-        if (!isConnected()) {
-            Log.d(TAG, "getLiveChatToken: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
-            return;
-        }
-
         _client.getLiveChatToken(key, name, email, new CallbackListener<String>() {
             @Override
             public void onSuccess(final String token) {

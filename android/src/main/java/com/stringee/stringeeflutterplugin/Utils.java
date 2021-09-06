@@ -297,21 +297,23 @@ public class Utils {
     }
 
     public static Map convertNotifyContentToMap(@NonNull JSONObject notifyObject) {
-        Map contentMap = new java.util.HashMap();
+        Map contentMap = new HashMap();
         try {
             int type = notifyObject.getInt("type");
             contentMap.put("type", type);
             switch (type) {
                 case 1:
                     User addUser = new User(notifyObject.getString("addedby"));
-                    addUser.setName(notifyObject.getJSONObject("addedInfo").getString("displayName"));
+                    JSONObject addedInfoObject = notifyObject.optJSONObject("addedInfo");
+                    addUser.setName(addedInfoObject.optString("displayName", null));
                     addUser.setAvatarUrl(null);
                     contentMap.put("addedInfo", convertUserToMap(addUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
                     break;
                 case 2:
                     User removeUser = new User(notifyObject.getString("removedBy"));
-                    removeUser.setName(notifyObject.getJSONObject("removedInfo").getString("displayName"));
+                    JSONObject removedInfoObject = notifyObject.optJSONObject("removedInfo");
+                    removeUser.setName(removedInfoObject.optString("displayName", null));
                     removeUser.setAvatarUrl(null);
                     contentMap.put("removedInfo", convertUserToMap(removeUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
