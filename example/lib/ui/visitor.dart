@@ -14,8 +14,7 @@ class VisitorPage extends StatefulWidget {
 
 class _VisitorPageState extends State<VisitorPage>
     with AutomaticKeepAliveClientMixin<VisitorPage> {
-  // String key = 'PUT_YOUR_KEY_HERE';
-  String key = 'VVUvcHN2YUhRa2QvVytLbUhPcjN6QT09';
+  String key = 'PUT_YOUR_KEY_HERE';
   String queueId = '';
 
   String visitorName = '';
@@ -94,7 +93,6 @@ class _VisitorPageState extends State<VisitorPage>
         }
       }
     });
-
   }
 
   @override
@@ -366,7 +364,7 @@ class _VisitorPageState extends State<VisitorPage>
       if (status) {
         List queueList = value['body']['queues'];
         setState(() {
-          queueId = queueList[1]['id'];
+          queueId = queueList[0]['id'];
         });
 
         chat.getLiveChatToken(key, visitorName, visitorEmail).then((value) {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 /// Events for StringeeClient
@@ -41,29 +42,14 @@ enum StringeeCall2Events {
 }
 
 /// Events for StringeeChat
-enum StringeeChatEvents {
-  didReceiveObjectChange
-}
+enum StringeeChatEvents { didReceiveObjectChange }
 
-enum StringeeChannelType {
-  normal,
-  livechat,
-  facebook,
-  zalo
-}
+enum StringeeChannelType { normal, livechat, facebook, zalo }
 
-enum StringeeChatRequestType {
-  normal,
-  transfer
-}
+enum StringeeChatRequestType { normal, transfer }
 
 /// Type of event
-enum StringeeObjectEventType {
-  client,
-  call,
-  call2,
-  chat
-}
+enum StringeeObjectEventType { client, call, call2, chat }
 
 /// Error code and message in flutter:
 /// -1 : StringeeClient is not initialized or disconnected

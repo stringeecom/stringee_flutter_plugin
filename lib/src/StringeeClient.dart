@@ -82,7 +82,6 @@ class StringeeClient {
         case 'incomingCall2':
           _handleIncomingCall2Event(map['body']);
           break;
-
         case 'didReceiveChatRequest':
           _handleDidReceiveChatRequestEvent(map['body']);
           break;

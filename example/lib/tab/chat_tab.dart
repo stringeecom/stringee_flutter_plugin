@@ -13,7 +13,7 @@ class ChatTab extends StatefulWidget {
   }
 }
 
-class ChatTabState extends State<ChatTab> with AutomaticKeepAliveClientMixin<ChatTab>{
+class ChatTabState extends State<ChatTab>{
   String myUserId = 'Not connected...';
   String token = '';
 
