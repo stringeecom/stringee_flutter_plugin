@@ -1,43 +1,70 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
-import 'package:stringee_flutter_plugin_example/ConversationInfor.dart';
 
-StringeeClient _client;
-StringeeChat _chat;
+class ConversationInfor extends StatefulWidget {
+  late StringeeConversation _conversation;
+  late StringeeClient _client;
+  late StringeeChat _chat;
 
-class Chat extends StatefulWidget {
-  Chat({StringeeClient client}) {
+  ConversationInfor(
+    StringeeClient client,
+    StringeeChat chat,
+    StringeeConversation conversation,
+  ) {
     _client = client;
-    _chat = StringeeChat(_client);
+    _chat = chat;
+    _conversation = conversation;
   }
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return ChatState();
+    return ConversationInforState();
   }
 }
 
-class ChatState extends State<Chat> {
-  List<String> _log;
-  List<StringeeConversation> _conversations;
+class ConversationInforState extends State<ConversationInfor> {
+  List<String> _log = [];
+  List<StringeeMessage> _messages = [];
+  List<StringeeUser> users = [];
+  late StringeeMessage msg;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    _log = [];
-    _conversations = [];
+    widget._conversation.getLastMessages(50).then((value) {
+      print(value.toString());
+      setState(() {
+        _log.add('Get last messages: msg:' + value['message']);
+        if (value['status']) {
+          _messages.clear();
+          _messages.addAll(value['body']);
+        }
+      });
+    });
 
-    _chat.eventStreamController.stream.listen((event) {
+    users = [];
+    StringeeUser user1 = StringeeUser(userId: 'id1', name: 'user1');
+    StringeeUser user2 = StringeeUser(userId: 'id2', name: 'user2');
+    users.add(user1);
+    users.add(user2);
+
+    msg = StringeeMessage.typeText(widget._client, 'test',
+        customData: {'custom': 'abc'});
+
+    widget._chat.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       if (map['eventType'] == StringeeChatEvents.didReceiveObjectChange) {
         StringeeObjectChange objectChange = map['body'];
-        if (objectChange.objectType == ObjectType.conversation) {
-          StringeeConversation conversation = objectChange.objects.first;
+        if (objectChange.objectType == ObjectType.message) {
+          StringeeMessage message = objectChange.objects!.first;
           setState(() {
-            _log.add(conversation.id + ' ' + objectChange.type.toString());
+            _log.add((message.id != null)
+                ? message.id!
+                : 'null' + ' ' + objectChange.type.toString());
           });
         }
       }
@@ -49,7 +76,7 @@ class ChatState extends State<Chat> {
     // TODO: implement build
     return new Scaffold(
       appBar: AppBar(
-        title: Text("Chat"),
+        title: Text("Conversation infor"),
         backgroundColor: Colors.indigo[600],
       ),
       body: Column(
@@ -95,7 +122,7 @@ class ChatState extends State<Chat> {
             alignment: Alignment.topLeft,
             margin: EdgeInsets.only(left: 5.0),
             child: Text(
-              'Conversation',
+              'Message',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 20.0,
@@ -112,7 +139,7 @@ class ChatState extends State<Chat> {
             ),
             height: 150.0,
             child: ListView.builder(
-              itemCount: _conversations.length,
+              itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return Container(
                   padding: EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
@@ -120,23 +147,19 @@ class ChatState extends State<Chat> {
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ConversationInfor(
-                                        client: _client,
-                                        conversation: _conversations[index],
-                                        chat: _chat
-                                      )));
+                          showMsgDialog(_messages[index]);
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'convId: ' + _conversations[index].id,
+                              'msgId: ' + _messages[index].id!,
                             ),
                             Text(
-                              'name: ' + _conversations[index].name,
+                              'msgType: ' + _messages[index].type.toString(),
+                            ),
+                            Text(
+                              'text: ' + _messages[index].text!,
                             ),
                           ],
                         )),
@@ -170,37 +193,16 @@ class ChatState extends State<Chat> {
                           color: Colors.grey[300],
                           textColor: Colors.black,
                           onPressed: () {
-                            List<StringeeUser> participants = [];
-                            StringeeUser user1 =
-                                StringeeUser(userId: 'id1', name: 'user1');
-                            StringeeUser user2 =
-                                StringeeUser(userId: 'id2', name: 'user2');
-                            participants.add(user1);
-                            participants.add(user2);
-
-                            StringeeConversationOption options =
-                                StringeeConversationOption(
-                                    name: 'name',
-                                    isGroup: true,
-                                    isDistinct: true);
-
-                            _chat
-                                .createConversation(options, participants)
-                                .then((value) {
-                              print("Flutter - createConversation - result: " +
-                                  value.toString());
+                            widget._conversation.delete().then((value) {
+                              print(value.toString());
                               setState(() {
-                                _log.add('Create conversation: msg:' +
+                                _log.add('Delete conversation: msg:' +
                                     value['message']);
-                                if (value['status']) {
-                                  _conversations.clear();
-                                  _conversations.add(value['body']);
-                                }
                               });
                             });
                           },
                           child: Text(
-                            'Create Conversation',
+                            'Delete Conversation',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -212,22 +214,18 @@ class ChatState extends State<Chat> {
                           color: Colors.grey[300],
                           textColor: Colors.black,
                           onPressed: () {
-                            _chat.getConversationById('convid').then((value) {
-                              print("Flutter - getConversationById - result: " +
-                                  value.toString());
-
+                            widget._conversation
+                                .addParticipants(users)
+                                .then((value) {
+                              print(value.toString());
                               setState(() {
-                                _log.add('Get conversation by Id: msg:' +
+                                _log.add('Add participants: msg:' +
                                     value['message']);
-                                if (value['status']) {
-                                  _conversations.clear();
-                                  _conversations.add(value['body']);
-                                }
                               });
                             });
                           },
                           child: Text(
-                            'Get Conversation by Id',
+                            'Add participants',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -247,81 +245,18 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _chat
-                                  .getConversationByUserId('id2')
+                              widget._conversation
+                                  .removeParticipants(users)
                                   .then((value) {
-                                print(
-                                    "Flutter - getConversationByUserId - result: " +
-                                        value.toString());
-                                setState(() {
-                                  _log.add('Get Conversation by UserId: msg:' +
-                                      value['message']);
-                                  if (value['status']) {
-                                    _conversations.clear();
-                                    _conversations.add(value['body']);
-                                  }
-                                });
-                              });
-                            },
-                            child: Text(
-                              'Get Conversation by UserId',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        new Container(
-                          height: 40.0,
-                          width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
-                            onPressed: () {
-                              _chat.getTotalUnread().then((value) {
                                 print(value.toString());
                                 setState(() {
-                                  _log.add('Get total unread: msg:' +
+                                  _log.add('Remove participants: msg:' +
                                       value['message']);
                                 });
                               });
                             },
                             child: Text(
-                              'Get total unread',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        new Container(
-                          height: 40.0,
-                          width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
-                            onPressed: () {
-                              _chat.getLocalConversations().then((value) {
-                                print(
-                                    "Flutter - getLocalConversations - result: " +
-                                        value.toString());
-                                setState(() {
-                                  _log.add('Get local Conversation: msg:' +
-                                      value['message']);
-                                  if (value['status']) {
-                                    _conversations.clear();
-                                    _conversations.addAll(value['body']);
-                                  }
-                                });
-                              });
-                            },
-                            child: Text(
-                              'Get local Conversation',
+                              'Remove participants',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -333,22 +268,18 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _chat.getLastConversation(50).then((value) {
-                                print(
-                                    "Flutter - getLastConversation - result: " +
-                                        value.toString());
+                              widget._conversation
+                                  .sendMessage(msg)
+                                  .then((value) {
+                                print(value.toString());
                                 setState(() {
-                                  _log.add('Get last Conversation: msg:' +
-                                      value['message']);
-                                  if (value['status']) {
-                                    _conversations.clear();
-                                    _conversations.addAll(value['body']);
-                                  }
+                                  _log.add(
+                                      'Send message: msg:' + value['message']);
                                 });
                               });
                             },
                             child: Text(
-                              'Get last Conversation',
+                              'Send message',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -369,24 +300,23 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _chat
-                                  .getConversationsBefore(2, 1602215811388)
-                                  .then((value) {
-                                print(
-                                    "Flutter - getConversationsBefore - result: " +
-                                        value.toString());
+                              widget._conversation.getMessages([
+                                'msg-vn-1-MWE3BG0IJE-1610578358918',
+                                'msg-vn-1-MWE3BG0IJE-1610578360615'
+                              ]).then((value) {
+                                print(value.toString());
                                 setState(() {
-                                  _log.add('Get Conversation before: msg:' +
-                                      value['message']);
+                                  _log.add(
+                                      'Get messages: msg:' + value['message']);
                                   if (value['status']) {
-                                    _conversations.clear();
-                                    _conversations.addAll(value['body']);
+                                    _messages.clear();
+                                    _messages.addAll(value['body']);
                                   }
                                 });
                               });
                             },
                             child: Text(
-                              'Get Conversation before',
+                              'Get messages',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -398,24 +328,22 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _chat
-                                  .getConversationsAfter(2, 1602215811388)
+                              widget._conversation
+                                  .getLocalMessages(3)
                                   .then((value) {
-                                print(
-                                    "Flutter - getConversationsAfter - result: " +
-                                        value.toString());
+                                print(value.toString());
                                 setState(() {
+                                  _log.add('Get local Messages: msg:' +
+                                      value['message']);
                                   if (value['status']) {
-                                    _log.add('Get Conversation after: msg:' +
-                                        value['message']);
-                                    _conversations.clear();
-                                    _conversations.addAll(value['body']);
+                                    _messages.clear();
+                                    _messages.addAll(value['body']);
                                   }
                                 });
                               });
                             },
                             child: Text(
-                              'Get Conversation after',
+                              'Get local Messages',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -436,15 +364,22 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              _chat.clearDb().then((value) {
+                              widget._conversation
+                                  .getLastMessages(50)
+                                  .then((value) {
+                                print(value.toString());
                                 setState(() {
-                                  _log.add('Clear database: msg:' +
+                                  _log.add('Get last Messages: msg:' +
                                       value['message']);
+                                  if (value['status']) {
+                                    _messages.clear();
+                                    _messages.addAll(value['body']);
+                                  }
                                 });
                               });
                             },
                             child: Text(
-                              'Clear database',
+                              'Get last Messages',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -456,12 +391,188 @@ class ChatState extends State<Chat> {
                             color: Colors.grey[300],
                             textColor: Colors.black,
                             onPressed: () {
-                              setState(() {
-                                _conversations.clear();
+                              widget._conversation
+                                  .getMessagesAfter(50, 4)
+                                  .then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Get Messages after: msg:' +
+                                      value['message']);
+                                  if (value['status']) {
+                                    _messages.clear();
+                                    _messages.addAll(value['body']);
+                                  }
+                                });
                               });
                             },
                             child: Text(
-                              'Clear Console',
+                              'Get Messages after',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              widget._conversation
+                                  .getMessagesBefore(50, 4)
+                                  .then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Get Messages before: msg:' +
+                                      value['message']);
+                                  if (value['status']) {
+                                    _messages.clear();
+                                    _messages.addAll(value['body']);
+                                  }
+                                });
+                              });
+                            },
+                            child: Text(
+                              'Get Messages before',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              String newConvName =
+                                  widget._conversation.name! + ' NEW NAME';
+                              widget._conversation
+                                  .updateConversation(newConvName)
+                                  .then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Update Conversation: msg:' +
+                                      value['message']);
+                                });
+                              });
+                            },
+                            child: Text(
+                              'Update Conversation',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              widget._conversation
+                                  .setRole('id1', UserRole.member)
+                                  .then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Set role: msg:' + value['message']);
+                                });
+                              });
+                            },
+                            child: Text(
+                              'Set role',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              widget._conversation.deleteMessages(
+                                  ['msgid1', 'msgid2']).then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Delete messages: msg:' +
+                                      value['message']);
+                                });
+                              });
+                            },
+                            child: Text(
+                              'Delete messages',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              widget._conversation.revokeMessages(
+                                  ['msgid1', 'msgid2'], true).then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Revoke messages: msg:' +
+                                      value['message']);
+                                });
+                              });
+                            },
+                            child: Text(
+                              'Revoke messages',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              widget._conversation.markAsRead().then((value) {
+                                print(value.toString());
+                                setState(() {
+                                  _log.add('Mark conversation as read: msg:' +
+                                      value['message']);
+                                });
+                              });
+                            },
+                            child: Text(
+                              'Mark conversation as read',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -472,9 +583,56 @@ class ChatState extends State<Chat> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
+    );
+  }
+
+  void showMsgDialog(StringeeMessage message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Message'),
+        content: Text('msgId: ' + message.id!),
+        actions: [
+          new FlatButton(
+            color: Colors.grey[300],
+            textColor: Colors.black,
+            onPressed: () {
+              message.edit('ok ok').then((value) {
+                print(value.toString());
+                setState(() {
+                  _log.add('Edit messages: msg:' + value['message']);
+                  Navigator.of(context, rootNavigator: true).pop();
+                });
+              });
+            },
+            child: Text(
+              'Edit messages',
+              textAlign: TextAlign.center,
+            ),
+          ),
+          new FlatButton(
+            color: Colors.grey[300],
+            textColor: Colors.black,
+            onPressed: () {
+              message.pinOrUnPin(false).then((value) {
+                print(value.toString());
+                setState(() {
+                  _log.add('Pin/UnPin messages: msg:' + value['message']);
+                  Navigator.of(context, rootNavigator: true).pop();
+                });
+              });
+            },
+            child: Text(
+              'Pin/UnPin messages',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: true,
     );
   }
 }

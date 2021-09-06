@@ -13,7 +13,7 @@ class StringeeCall {
   String? _toAlias;
   StringeeCallType? _callType;
   String? _customDataFromYourServer;
-  bool? _isVideoCall = false;
+  bool _isVideoCall = false;
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
   late StringeeClient _client;
@@ -30,7 +30,7 @@ class StringeeCall {
 
   String? get toAlias => _toAlias;
 
-  bool? get isVideoCall => _isVideoCall;
+  bool get isVideoCall => _isVideoCall;
 
   StringeeCallType? get callType => _callType;
 

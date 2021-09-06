@@ -105,6 +105,7 @@ class StringeeConversation {
 
     return await StringeeClient.methodChannel.invokeMethod('endChat', params);
   }
+  /// ====================== END LIVE CHAT =======================
 
   Future<Map<dynamic, dynamic>> beginTyping() async {
     if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
@@ -117,9 +118,6 @@ class StringeeConversation {
     final params = {'convId': _id, 'uuid': _client.uuid};
     return await StringeeClient.methodChannel.invokeMethod('endTyping', params);
   }
-
-  /// ====================== END LIVE CHAT =======================
-
 
   /// Delete [StringeeConversation]
   Future<Map<dynamic, dynamic>> delete() async {
