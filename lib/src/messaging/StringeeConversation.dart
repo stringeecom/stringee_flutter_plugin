@@ -88,14 +88,21 @@ class StringeeConversation {
 
   /// ====================== BEGIN LIVE CHAT =======================
   ///
-  Future<Map<dynamic, dynamic>> sendChatTranscript(String email, String domain) async {
+  Future<Map<dynamic, dynamic>> sendChatTranscript(
+      String email, String domain) async {
     if (email.trim().isEmpty) return await reportInvalidValue('email');
     if (domain.trim().isEmpty) return await reportInvalidValue('domain');
     if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
 
-    final params = {'email': email.trim(), 'domain': domain.trim(), 'convId': _id, 'uuid': _client.uuid};
+    final params = {
+      'email': email.trim(),
+      'domain': domain.trim(),
+      'convId': _id,
+      'uuid': _client.uuid
+    };
 
-    return await StringeeClient.methodChannel.invokeMethod('sendChatTranscript', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('sendChatTranscript', params);
   }
 
   Future<Map<dynamic, dynamic>> endChat() async {
@@ -105,12 +112,14 @@ class StringeeConversation {
 
     return await StringeeClient.methodChannel.invokeMethod('endChat', params);
   }
+
   /// ====================== END LIVE CHAT =======================
 
   Future<Map<dynamic, dynamic>> beginTyping() async {
     if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
     final params = {'convId': _id, 'uuid': _client.uuid};
-    return await StringeeClient.methodChannel.invokeMethod('beginTyping', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('beginTyping', params);
   }
 
   Future<Map<dynamic, dynamic>> endTyping() async {
@@ -189,11 +198,7 @@ class StringeeConversation {
   /// Get [List] of [StringeeMessage] of [StringeeConversation] by [msgIds]
   Future<Map<dynamic, dynamic>> getMessages(List<String> msgIds) async {
     if (msgIds.length == 0) return await reportInvalidValue('msgIds');
-    final params = {
-      'convId': this._id,
-      'msgIds': msgIds,
-      'uuid': _client.uuid
-    };
+    final params = {'convId': this._id, 'msgIds': msgIds, 'uuid': _client.uuid};
     Map<dynamic, dynamic> result =
         await StringeeClient.methodChannel.invokeMethod('getMessages', params);
     if (result['status']) {
@@ -321,11 +326,7 @@ class StringeeConversation {
   /// Delete [List] of [StringeeMessage]
   Future<Map<dynamic, dynamic>> deleteMessages(List<String> msgIds) async {
     if (msgIds.length == 0) return await reportInvalidValue('msgIds');
-    final params = {
-      'convId': this._id,
-      'msgIds': msgIds,
-      'uuid': _client.uuid
-    };
+    final params = {'convId': this._id, 'msgIds': msgIds, 'uuid': _client.uuid};
     return await StringeeClient.methodChannel
         .invokeMethod('deleteMessages', params);
   }

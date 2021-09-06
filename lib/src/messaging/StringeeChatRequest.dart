@@ -1,5 +1,5 @@
-import '../StringeeConstants.dart';
 import '../StringeeClient.dart';
+import '../StringeeConstants.dart';
 
 class StringeeChatRequest {
   late String _convId;
@@ -9,9 +9,13 @@ class StringeeChatRequest {
   StringeeChatRequestType _type = StringeeChatRequestType.normal;
 
   String get convId => _convId;
+
   String get customerId => _customerId;
+
   String get customerName => _customerName;
+
   StringeeChannelType get channelType => _channelType;
+
   StringeeChatRequestType get type => _type;
 
   late StringeeClient _client;
@@ -28,13 +32,14 @@ class StringeeChatRequest {
   Future<Map<dynamic, dynamic>> accept() async {
     if (_convId.isEmpty) return await reportInvalidValue('convId');
     final params = {'convId': _convId, 'uuid': _client.uuid};
-    return await StringeeClient.methodChannel.invokeMethod('acceptChatRequest', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('acceptChatRequest', params);
   }
 
   Future<Map<dynamic, dynamic>> reject() async {
     if (_convId.isEmpty) return await reportInvalidValue('convId');
     final params = {'convId': _convId, 'uuid': _client.uuid};
-    return await StringeeClient.methodChannel.invokeMethod('rejectChatRequest', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('rejectChatRequest', params);
   }
-
 }
