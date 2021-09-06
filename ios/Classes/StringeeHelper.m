@@ -174,7 +174,18 @@
     NSString *identifier = message.identifier.length ? message.identifier : @"";
     NSString *conversationId = message.convId.length ? message.convId : @"";
     NSString *sender = message.sender.length ? message.sender : @"";
-    id customData = message.metadata ? message.metadata : [NSNull null];
+    id customData;
+    if (message.metadata != nil) {
+        if ([message.metadata isKindOfClass:[NSDictionary class]]) {
+            customData = message.metadata;
+        } else if ([message.metadata isKindOfClass:[NSString class]]) {
+            customData = [self StringToDictionary:(NSString *)message.metadata];
+        } else {
+            customData = [NSNull null];
+        }
+    } else {
+        customData = [NSNull null];
+    }
     
     NSString *thumbnailPath = @"";
     NSString *thumbnailUrl = @"";

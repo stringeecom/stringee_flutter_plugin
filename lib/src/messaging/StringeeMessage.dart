@@ -1,5 +1,5 @@
 import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
-
+import 'dart:convert';
 import '../StringeeClient.dart';
 import '../StringeeConstants.dart';
 
@@ -405,8 +405,8 @@ class StringeeMessage {
     this._senderId = senderId;
     this._createdAt = createdAt;
     this._sequence = sequence;
-    if (msgInfor.containsKey('metadata'))
-      this._customData = msgInfor['metadata'];
+    if (msgInfor.containsKey('metadata') && msgInfor['metadata'] != null && !msgInfor['metadata'].toString().isEmpty)
+      this._customData = json.decode(msgInfor['metadata']);
     this._state = msgState;
     this._type = msgType;
     String? text = '';

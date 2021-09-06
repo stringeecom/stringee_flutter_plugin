@@ -119,7 +119,13 @@ class StringeeClient {
       params['serverAddresses'] = json.encode(_serverAddresses);
     }
 
-    return await methodChannel.invokeMethod('connect', params);
+    await methodChannel.invokeMethod('connect', params);
+    Map<String, dynamic> rData = {
+      'status': true,
+      'code': 0,
+      'message': 'Success',
+    };
+    return rData;
   }
 
   /// Disconnect from [StringeeCLient]

@@ -15,7 +15,7 @@ class VisitorPage extends StatefulWidget {
 class _VisitorPageState extends State<VisitorPage>
     with AutomaticKeepAliveClientMixin<VisitorPage> {
   // String key = 'PUT_YOUR_KEY_HERE';
-  String key = 'eFNhb2JwZGMvMG1ESzB3cHBHQ3pkUT09';
+  String key = 'VVUvcHN2YUhRa2QvVytLbUhPcjN6QT09';
   String queueId = '';
 
   String visitorName = '';
@@ -95,16 +95,6 @@ class _VisitorPageState extends State<VisitorPage>
       }
     });
 
-    /// Get chat profile
-    chat.getChatProfile(key).then((value) {
-      bool status = value['status'];
-      if (status) {
-        List queueList = value['body']['queues'];
-        setState(() {
-          queueId = queueList[0]['id'];
-        });
-      }
-    });
   }
 
   @override
@@ -352,6 +342,7 @@ class _VisitorPageState extends State<VisitorPage>
         .updateUserInfo("new name", "new email", "new avatar url")
         .then((value) {
       bool status = value['status'];
+      print("updateUserInfo: " + status.toString());
       if (status) {}
     });
   }
@@ -368,11 +359,25 @@ class _VisitorPageState extends State<VisitorPage>
   }
 
   void connect() {
-    chat.getLiveChatToken(key, visitorName, visitorEmail).then((value) {
+    /// Get chat profile
+    chat.getChatProfile(key).then((value) {
+      print("getChatProfile 12345: " + value.toString());
       bool status = value['status'];
       if (status) {
-        String token = value['body'];
-        client.connect(token);
+        List queueList = value['body']['queues'];
+        setState(() {
+          queueId = queueList[1]['id'];
+        });
+
+        chat.getLiveChatToken(key, visitorName, visitorEmail).then((value) {
+          print("getLiveChatToken: " + value.toString());
+
+          bool status = value['status'];
+          if (status) {
+            String token = value['body'];
+            client.connect(token);
+          }
+        });
       }
     });
   }

@@ -41,13 +41,13 @@ static NSString *STEDidReceiveCallInfo          = @"didReceiveCallInfo";
 static NSString *STEDidHandleOnAnotherDevice    = @"didHandleOnAnotherDevice";
 
 // Live-chat
-static NSString *STEDidReceiveChatRequest            = @"STEDidReceiveChatRequest";
-static NSString *STEDidReceiveTransferChatRequest    = @"STEDidReceiveTransferChatRequest";
-static NSString *STETimeoutAnswerChat                = @"STETimeoutAnswerChat";
-static NSString *STETimeoutInQueue                   = @"STETimeoutInQueue";
-static NSString *STEConversationEnded                = @"STEConversationEnded";
-static NSString *STEUserBeginTyping                  = @"STEUserBeginTyping";
-static NSString *STEUserEndTyping                    = @"STEUserEndTyping";
+static NSString *STEDidReceiveChatRequest            = @"didReceiveChatRequest";
+static NSString *STEDidReceiveTransferChatRequest    = @"didReceiveTransferChatRequest";
+static NSString *STETimeoutAnswerChat                = @"timeoutAnswerChat";
+static NSString *STETimeoutInQueue                   = @"timeoutInQueue";
+static NSString *STEConversationEnded                = @"conversationEnded";
+static NSString *STEUserBeginTyping                  = @"userBeginTyping";
+static NSString *STEUserEndTyping                    = @"userEndTyping";
 
 
 typedef NS_ENUM(NSInteger, StringeeNativeEventType) {

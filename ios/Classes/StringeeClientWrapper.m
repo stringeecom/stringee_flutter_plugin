@@ -14,6 +14,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 @implementation StringeeClientWrapper {
     FlutterEventSink _eventSink;
     BOOL isConnecting;
+    BOOL _firstConnectTime;
 }
 
 + (void)initialize {
@@ -42,6 +43,11 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         [_convManager setEventSink:_eventSink];
         [_msgManager setEventSink:_eventSink];
         [_chatManager setEventSink:_eventSink];
+        
+        // Fix cho phan live-chat
+        _firstConnectTime = true;
+        _client = [[StringeeClient alloc] init];
+        [_chatManager setClient:_client];
     }
     return self;
 }
@@ -97,7 +103,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     
     NSString *token = [data objectForKey:@"token"];
     
-    if (!_client) {
+    if (!_client || _firstConnectTime) {
         id strServerAddressesData = [data objectForKey:@"serverAddresses"];
         if (strServerAddressesData != nil && strServerAddressesData != [NSNull null]) {
             NSArray *serverAddressesData = [StringeeHelper StringToArray:strServerAddressesData];
@@ -121,6 +127,8 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         [_convManager setClient:_client];
         [_msgManager setClient:_client];
         [_chatManager setClient:_client];
+        
+        _firstConnectTime = false;
     }
     
     [_client connectWithAccessToken:token];
@@ -244,6 +252,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 }
 
 - (void)timeoutInQueue:(StringeeClient *)stringeeClient info:(NSDictionary *)info {
+    NSLog(@"timeoutInQueue %@", info);
     id rInfo = info != nil ? info : [NSNull null];
     _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutInQueue, STEBody : rInfo });
 }
