@@ -406,7 +406,7 @@ class StringeeMessage {
     this._createdAt = createdAt;
     this._sequence = sequence;
     if (msgInfor.containsKey('metadata') && msgInfor['metadata'] != null && !msgInfor['metadata'].toString().isEmpty)
-      this._customData = json.decode(msgInfor['metadata']);
+      this._customData = msgInfor['metadata'];
     this._state = msgState;
     this._type = msgType;
     String? text = '';
