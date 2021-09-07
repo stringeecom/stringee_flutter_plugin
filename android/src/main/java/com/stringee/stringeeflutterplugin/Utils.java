@@ -1,9 +1,12 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
 import com.stringee.messaging.ChatProfile;
 import com.stringee.messaging.ChatRequest;
@@ -382,37 +385,15 @@ public class Utils {
         return resultArray;
     }
 
-    public static void getConversation(@NonNull com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
+    public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
+        Handler handler = new Handler(Looper.getMainLooper());
         client.getConversation(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
-                callbackListener.onSuccess(conversation);
-            }
-
-            @Override
-            public void onError(final StringeeError error) {
-                super.onError(error);
-                callbackListener.onError(error);
-            }
-        });
-    }
-
-    public static void getLastMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
-        getConversation(client, convId, new CallbackListener<Conversation>() {
-            @Override
-            public void onSuccess(Conversation conversation) {
-                conversation.getLastMessages(client, 1, true, true, false, new CallbackListener<List<Message>>() {
+                handler.post(new Runnable() {
                     @Override
-                    public void onSuccess(List<Message> messages) {
-                        if (messages != null && messages.size() > 0) {
-                            callbackListener.onSuccess(messages.get(0));
-                        }
-                    }
-
-                    @Override
-                    public void onError(StringeeError stringeeError) {
-                        super.onError(stringeeError);
-                        callbackListener.onError(stringeeError);
+                    public void run() {
+                        callbackListener.onSuccess(conversation);
                     }
                 });
             }
@@ -420,27 +401,48 @@ public class Utils {
             @Override
             public void onError(final StringeeError error) {
                 super.onError(error);
-                callbackListener.onError(error);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callbackListener.onError(error);
+                    }
+                });
             }
         });
     }
 
-    public static void getMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
+    public static void getLastMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
+        Handler handler = new Handler(Looper.getMainLooper());
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                conversation.getMessages(client, msgId, new CallbackListener<List<Message>>() {
+                handler.post(new Runnable() {
                     @Override
-                    public void onSuccess(List<Message> messages) {
-                        if (messages != null && messages.size() > 0) {
-                            callbackListener.onSuccess(messages.get(0));
-                        }
-                    }
+                    public void run() {
+                        conversation.getLastMessages(client, 1, true, true, false, new CallbackListener<List<Message>>() {
+                            @Override
+                            public void onSuccess(List<Message> messages) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (messages != null && messages.size() > 0) {
+                                            callbackListener.onSuccess(messages.get(0));
+                                        }
+                                    }
+                                });
+                            }
 
-                    @Override
-                    public void onError(StringeeError stringeeError) {
-                        super.onError(stringeeError);
-                        callbackListener.onError(stringeeError);
+                            @Override
+                            public void onError(StringeeError stringeeError) {
+                                super.onError(stringeeError);
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callbackListener.onError(stringeeError);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
@@ -448,33 +450,88 @@ public class Utils {
             @Override
             public void onError(final StringeeError error) {
                 super.onError(error);
-                callbackListener.onError(error);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callbackListener.onError(error);
+                    }
+                });
             }
         });
     }
 
-    public static void getChatRequest(@NonNull final com.stringee.StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
+    public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        getConversation(client, convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        conversation.getMessages(client, msgId, new CallbackListener<List<Message>>() {
+                            @Override
+                            public void onSuccess(List<Message> messages) {
+                                if (messages != null && messages.size() > 0) {
+                                    callbackListener.onSuccess(messages.get(0));
+                                }
+                            }
+
+                            @Override
+                            public void onError(StringeeError stringeeError) {
+                                super.onError(stringeeError);
+                                callbackListener.onError(stringeeError);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError error) {
+                super.onError(error);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callbackListener.onError(error);
+                    }
+                });
+            }
+        });
+    }
+
+    public static void getChatRequest(@NonNull final StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
+        Handler handler = new Handler(Looper.getMainLooper());
         client.getChatRequests(new CallbackListener<List<ChatRequest>>() {
             @Override
             public void onSuccess(List<ChatRequest> chatRequestList) {
-                ChatRequest finalChatRequest = null;
-                for (int i = 0; i < chatRequestList.size(); i++) {
-                    ChatRequest chatRequest = chatRequestList.get(i);
-                    if (chatRequest.getConvId().equals(convId)) {
-                        finalChatRequest = chatRequest;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ChatRequest finalChatRequest = null;
+                        for (int i = 0; i < chatRequestList.size(); i++) {
+                            ChatRequest chatRequest = chatRequestList.get(i);
+                            if (chatRequest.getConvId().equals(convId)) {
+                                finalChatRequest = chatRequest;
+                            }
+                        }
+                        if (finalChatRequest != null) {
+                            callbackListener.onSuccess(finalChatRequest);
+                        } else {
+                            callbackListener.onError(new StringeeError(-3, "No chat request found"));
+                        }
                     }
-                }
-                if (finalChatRequest != null) {
-                    callbackListener.onSuccess(finalChatRequest);
-                } else {
-                    callbackListener.onError(new StringeeError(-3, "No chat request found"));
-                }
+                });
             }
 
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                callbackListener.onError(stringeeError);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callbackListener.onError(stringeeError);
+                    }
+                });
             }
         });
     }
