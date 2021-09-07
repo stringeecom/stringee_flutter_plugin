@@ -15,6 +15,7 @@ class StringeeClient {
       MethodChannel('com.stringee.flutter.methodchannel');
   static const EventChannel eventChannel =
       EventChannel('com.stringee.flutter.eventchannel');
+  static Stream broadcastStream = eventChannel.receiveBroadcastStream();
 
   // Flutter
   StreamController<dynamic> _eventStreamController =
@@ -51,7 +52,8 @@ class StringeeClient {
     methodChannel.invokeMapMethod('setupClient', params);
 
     // Xu ly su kien nhan duoc tu native
-    eventChannel.receiveBroadcastStream().listen(this._listener);
+    // eventChannel.receiveBroadcastStream().listen(this._listener);
+    broadcastStream.listen(this._listener);
   }
 
   ///send StringeeClient event
