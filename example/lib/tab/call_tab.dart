@@ -252,8 +252,8 @@ class CallTabState extends State<CallTab> {
                 client,
                 client.userId!,
                 toUser,
-                isVideoCall,
                 false,
+                isVideoCall,
                 callType,
               )),
     );

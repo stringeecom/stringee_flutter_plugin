@@ -14,8 +14,10 @@ class VisitorPage extends StatefulWidget {
 
 class _VisitorPageState extends State<VisitorPage>
     with AutomaticKeepAliveClientMixin<VisitorPage> {
-  String key = 'PUT_YOUR_KEY_HERE';
+  String key = '';
   String queueId = '';
+
+  String userId = 'Not connected...';
 
   String visitorName = '';
   String visitorEmail = '';
@@ -25,8 +27,6 @@ class _VisitorPageState extends State<VisitorPage>
 
   bool connected = false;
   bool inConv = false;
-
-  String userId = 'Not connected...';
 
   List<String> _log = [];
 
@@ -51,10 +51,6 @@ class _VisitorPageState extends State<VisitorPage>
         case StringeeClientEvents.requestAccessToken:
           break;
         case StringeeClientEvents.didReceiveCustomMessage:
-          break;
-        case StringeeClientEvents.incomingCall:
-          break;
-        case StringeeClientEvents.incomingCall2:
           break;
         case StringeeClientEvents.timeoutInQueue:
           setState(() {

@@ -33,8 +33,12 @@ class Call extends StatefulWidget {
     _showIncomingUi = showIncomingUi;
     _isVideoCall = isVideoCall;
     _callType = callType;
-    _stringeeCall2 = stringeeCall2!;
-    _stringeeCall = stringeeCall!;
+    if (stringeeCall2 != null) {
+      _stringeeCall2 = stringeeCall2;
+    }
+    if (stringeeCall != null) {
+      _stringeeCall = stringeeCall;
+    }
   }
 
   @override

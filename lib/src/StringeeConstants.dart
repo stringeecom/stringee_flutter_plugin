@@ -42,7 +42,9 @@ enum StringeeCall2Events {
 }
 
 /// Events for StringeeChat
-enum StringeeChatEvents { didReceiveObjectChange }
+enum StringeeChatEvents {
+  didReceiveObjectChange,
+}
 
 enum StringeeChannelType {
   normal,
