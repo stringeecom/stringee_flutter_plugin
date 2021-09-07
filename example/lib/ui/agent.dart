@@ -105,15 +105,19 @@ class AgentPageState extends State<AgentPage>
               onPressed: () {
                 _chatRequest!.accept().then((value) {
                   bool status = value['status'];
-                  if (status) {
+                  setState(() {
                     _log.add('Accept chat request: msg:' + value['message']);
+                  });
+                  if (status) {
                     chat
                         .getConversationById(_chatRequest!.convId)
                         .then((value) {
                       bool status = value['status'];
+                      setState(() {
+                        _log.add('get conversation: msg:' + value['message']);
+                      });
                       if (status) {
                         setState(() {
-                          _log.add('get conversation: msg:' + value['message']);
                           _conversation = value['body'];
                           hasChatRequest = false;
                           inConv = true;
@@ -137,9 +141,11 @@ class AgentPageState extends State<AgentPage>
               onPressed: () {
                 _chatRequest!.reject().then((value) {
                   bool status = value['status'];
+                  setState(() {
+                    _log.add('Reject chat request: msg:' + value['message']);
+                  });
                   if (status) {
                     setState(() {
-                      _log.add('Reject chat request: msg:' + value['message']);
                       hasChatRequest = false;
                     });
                   }
