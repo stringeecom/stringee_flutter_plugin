@@ -8,6 +8,9 @@ import com.stringee.messaging.ChatRequest;
 import com.stringee.messaging.Conversation;
 import com.stringee.messaging.listeners.CallbackListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ChatRequestManager {
@@ -31,7 +34,7 @@ public class ChatRequestManager {
     public void acceptChatRequest(String convId, final Result result) {
         if (!_clientWrapper.isConnected()) {
             Log.d(TAG, "acceptChatRequest: false - -1 - StringeeClient is disconnected");
-            java.util.Map map = new java.util.HashMap();
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -41,7 +44,7 @@ public class ChatRequestManager {
 
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "acceptChatRequest: false - -2 - convId is invalid");
-            java.util.Map map = new java.util.HashMap();
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -59,7 +62,7 @@ public class ChatRequestManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "acceptChatRequest: success");
-                                java.util.Map map = new java.util.HashMap();
+                                Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -75,7 +78,7 @@ public class ChatRequestManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                java.util.Map map = new java.util.HashMap();
+                                Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -93,7 +96,7 @@ public class ChatRequestManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        java.util.Map map = new java.util.HashMap();
+                        Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -113,7 +116,7 @@ public class ChatRequestManager {
     public void rejectChatRequest(String convId, final Result result) {
         if (!_clientWrapper.isConnected()) {
             Log.d(TAG, "rejectChatRequest: false - -1 - StringeeClient is disconnected");
-            java.util.Map map = new java.util.HashMap();
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -123,7 +126,7 @@ public class ChatRequestManager {
 
         if (convId == null || convId.isEmpty()) {
             Log.d(TAG, "rejectChatRequest: false - -2 - convId is invalid");
-            java.util.Map map = new java.util.HashMap();
+            Map map = new HashMap();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -141,7 +144,7 @@ public class ChatRequestManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "rejectChatRequest: success");
-                                java.util.Map map = new java.util.HashMap();
+                                Map map = new HashMap();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -157,7 +160,7 @@ public class ChatRequestManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "rejectChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                java.util.Map map = new java.util.HashMap();
+                                Map map = new HashMap();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -175,7 +178,7 @@ public class ChatRequestManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "rejectChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        java.util.Map map = new java.util.HashMap();
+                        Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
