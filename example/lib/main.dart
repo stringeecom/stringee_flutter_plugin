@@ -7,13 +7,6 @@ import 'package:stringee_flutter_plugin_example/tab/chat_tab.dart';
 
 import 'tab/live_chat_tab.dart';
 
-var user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MzAzMTYyMDMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjMyOTA4MjAzLCJ1c2VySWQiOiJ1c2VyMiJ9.r41arMsQmj1wwwca7OhZccc-afEU1c4GvvwqLzxEOWo';
-var user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MzAzMTYxOTMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjMyOTA4MTkzLCJ1c2VySWQiOiJ1c2VyMSJ9.HbeDbBkm8FcyFf0WcfBLAbWJXeHowAKLWh6vqDOgrH4';
-
-String strUserId = "";
-
 void main() {
   runApp(new MyApp());
 }
@@ -22,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: "Stringee flutter sample", home: new MyHomePage());
   }
 }

@@ -178,6 +178,8 @@ class StringeeClient {
     return await methodChannel.invokeMethod('sendCustomMessage', params);
   }
 
+  /// Begin handle events
+
   void _handleDidConnectEvent(Map<dynamic, dynamic> map) {
     _userId = map['userId'];
     _projectId = map['projectId'];
@@ -274,4 +276,6 @@ class StringeeClient {
     _eventStreamController
         .add({"eventType": StringeeClientEvents.userEndTyping, "body": map});
   }
+
+  /// End handle events
 }
