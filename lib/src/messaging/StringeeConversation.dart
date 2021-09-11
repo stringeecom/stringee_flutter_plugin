@@ -87,7 +87,8 @@ class StringeeConversation {
   }
 
   /// ====================== BEGIN LIVE CHAT =======================
-  ///
+
+  /// Send chat transcript
   Future<Map<dynamic, dynamic>> sendChatTranscript(
       String email, String domain) async {
     if (email.trim().isEmpty) return await reportInvalidValue('email');
@@ -105,6 +106,7 @@ class StringeeConversation {
         .invokeMethod('sendChatTranscript', params);
   }
 
+  /// End live-chat [StringeeConversation]
   Future<Map<dynamic, dynamic>> endChat() async {
     if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
 
@@ -115,6 +117,7 @@ class StringeeConversation {
 
   /// ====================== END LIVE CHAT =======================
 
+  /// Send begin typing
   Future<Map<dynamic, dynamic>> beginTyping() async {
     if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
     final params = {'convId': _id, 'uuid': _client.uuid};
@@ -122,6 +125,7 @@ class StringeeConversation {
         .invokeMethod('beginTyping', params);
   }
 
+  /// Send end typing
   Future<Map<dynamic, dynamic>> endTyping() async {
     if (_id == null || _id!.isEmpty) return await reportInvalidValue('convId');
     final params = {'convId': _id, 'uuid': _client.uuid};

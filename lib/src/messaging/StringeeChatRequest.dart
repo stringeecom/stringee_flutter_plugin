@@ -29,6 +29,7 @@ class StringeeChatRequest {
     _client = client;
   }
 
+  /// Accept [StringeeChatRequest]
   Future<Map<dynamic, dynamic>> accept() async {
     if (_convId.isEmpty) return await reportInvalidValue('convId');
     final params = {'convId': _convId, 'uuid': _client.uuid};
@@ -36,6 +37,7 @@ class StringeeChatRequest {
         .invokeMethod('acceptChatRequest', params);
   }
 
+  /// Reject [StringeeChatRequest]
   Future<Map<dynamic, dynamic>> reject() async {
     if (_convId.isEmpty) return await reportInvalidValue('convId');
     final params = {'convId': _convId, 'uuid': _client.uuid};

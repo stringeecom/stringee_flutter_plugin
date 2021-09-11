@@ -32,6 +32,8 @@ class StringeeChat {
   }
 
   /// ====================== BEGIN LIVE CHAT =======================
+
+  /// Get chat profile which contain portal info and list of queues
   Future<Map<dynamic, dynamic>> getChatProfile(String key) async {
     if (key.trim().isEmpty) return await reportInvalidValue('key');
 
@@ -40,6 +42,7 @@ class StringeeChat {
     return await StringeeClient.methodChannel.invokeMethod('getChatProfile', params);
   }
 
+  /// Get live-chat token
   Future<Map<dynamic, dynamic>> getLiveChatToken(String key, String name, String email) async {
     if (key.trim().isEmpty) return await reportInvalidValue('key');
     if (name.trim().isEmpty) return await reportInvalidValue('name');
@@ -50,12 +53,14 @@ class StringeeChat {
     return await StringeeClient.methodChannel.invokeMethod('getLiveChatToken', params);
   }
 
+  /// Update user info
   Future<Map<dynamic, dynamic>> updateUserInfo(String name, String email, String avatar) async {
     final params = {'name': name.trim(), 'email': email.trim(), 'avatar': avatar.trim(), 'uuid': _client.uuid};
 
     return await StringeeClient.methodChannel.invokeMethod('updateUserInfo', params);
   }
 
+  /// Create live-chat [StringeeConversation]
   Future<Map<dynamic, dynamic>> createLiveChatConversation(String queueId) async {
     if (queueId.trim().isEmpty) return await reportInvalidValue('queueId');
 
@@ -68,6 +73,7 @@ class StringeeChat {
     return result;
   }
 
+  /// Create live-chat ticket
   Future<Map<dynamic, dynamic>> createLiveChatTicket(String key, String name, String email, String description) async {
     if (key.trim().isEmpty) return await reportInvalidValue('key');
     if (name.trim().isEmpty) return await reportInvalidValue('name');
