@@ -49,7 +49,7 @@
         return;
     }
     
-    NSLog(@"==== sendMessage: %@", arguments);
+//    NSLog(@"==== sendMessage: %@", arguments);
 //    NSDictionary *data = [StringeeHelper StringToDictionary:arguments];
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -212,7 +212,7 @@
         return;
     }
     
-    NSLog(@"==== getMessages: %@", arguments);
+//    NSLog(@"==== getMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSArray *msgIds = [data objectForKey:@"msgIds"];
@@ -240,7 +240,7 @@
         return;
     }
     
-    NSLog(@"==== getLocalMessages: %@", arguments);
+//    NSLog(@"==== getLocalMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     int count = [[data objectForKey:@"count"] intValue];
@@ -268,7 +268,7 @@
         return;
     }
     
-    NSLog(@"==== getLastMessages: %@", arguments);
+//    NSLog(@"==== getLastMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     int count = [[data objectForKey:@"count"] intValue];
@@ -296,7 +296,7 @@
         return;
     }
     
-    NSLog(@"==== getMessagesAfter: %@", arguments);
+//    NSLog(@"==== getMessagesAfter: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     int count = [[data objectForKey:@"count"] intValue];
@@ -325,7 +325,7 @@
         return;
     }
     
-    NSLog(@"==== getMessagesBefore: %@", arguments);
+//    NSLog(@"==== getMessagesBefore: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     int count = [[data objectForKey:@"count"] intValue];
@@ -354,7 +354,7 @@
         return;
     }
     
-    NSLog(@"==== deleteMessages: %@", arguments);
+//    NSLog(@"==== deleteMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSArray *msgIds = [data objectForKey:@"msgIds"];
@@ -382,7 +382,7 @@
         return;
     }
     
-    NSLog(@"==== revokeMessages: %@", arguments);
+//    NSLog(@"==== revokeMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSArray *msgIds = [data objectForKey:@"msgIds"];
@@ -438,7 +438,6 @@
         return;
     }
     
-    NSLog(@"==== editMsg: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSString *msgId = [data objectForKey:@"msgId"];
@@ -474,7 +473,7 @@
         return;
     }
     
-    NSLog(@"==== pinOrUnPin: %@", arguments);
+//    NSLog(@"==== pinOrUnPin: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSString *msgId = [data objectForKey:@"msgId"];

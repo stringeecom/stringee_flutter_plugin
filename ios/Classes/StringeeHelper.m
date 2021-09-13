@@ -174,7 +174,18 @@
     NSString *identifier = message.identifier.length ? message.identifier : @"";
     NSString *conversationId = message.convId.length ? message.convId : @"";
     NSString *sender = message.sender.length ? message.sender : @"";
-    id customData = message.metadata ? message.metadata : [NSNull null];
+    id customData;
+    if (message.metadata != nil) {
+        if ([message.metadata isKindOfClass:[NSDictionary class]]) {
+            customData = message.metadata;
+        } else if ([message.metadata isKindOfClass:[NSString class]]) {
+            customData = [self StringToDictionary:(NSString *)message.metadata];
+        } else {
+            customData = [NSNull null];
+        }
+    } else {
+        customData = [NSNull null];
+    }
     
     NSString *thumbnailPath = @"";
     NSString *thumbnailUrl = @"";
@@ -420,6 +431,74 @@
     }
     
     return serverAddresses;
+}
+
++ (id)ChatProfile:(StringeeChatProfile *)profile {
+    if (!profile) return [NSNull null];
+    
+    NSString *identifier = profile.identifier != nil ? profile.identifier : @"";
+    NSString *background = profile.background != nil ? profile.background : @"";
+    NSString *hour = profile.hour != nil ? profile.hour : @"";
+    NSString *language = profile.language != nil ? profile.language : @"";
+    NSString *logo_url = profile.logo_url != nil ? profile.logo_url : @"";
+    NSString *popup_answer_url = profile.popup_answer_url != nil ? profile.popup_answer_url : @"";
+    NSString *portal = profile.portal != nil ? profile.portal : @"";
+    NSArray *queues = [StringeeHelper Queues:profile.queues];
+    
+    return @{
+             @"id": identifier,
+             @"background": background,
+             @"hour": hour,
+             @"language": language,
+             @"logo_url": logo_url,
+             @"popup_answer_url": popup_answer_url,
+             @"portal": portal,
+             @"queues": queues,
+             @"auto_create_ticket": @(profile.auto_create_ticket),
+             @"enabled": @(profile.enabled),
+             @"facebook_as_livechat": @(profile.facebook_as_livechat),
+             @"project_id": @(profile.project_id),
+             @"zalo_as_livechat": @(profile.zalo_as_livechat)
+             };
+}
+
++ (id)StringeeQueue:(StringeeQueue *)queue {
+    if (!queue) return [NSNull null];
+    
+    NSString *identifier = queue.identifier != nil ? queue.identifier : @"";
+    NSString *name = queue.name != nil ? queue.name : @"";
+
+    return @{
+             @"id": identifier,
+             @"name": name
+             };
+}
+
++ (NSArray *)Queues:(NSArray<StringeeQueue *> *)queues {
+    if (!queues) {
+        return @[];
+    }
+    NSMutableArray *response = [NSMutableArray array];
+    for (StringeeQueue *queue in queues) {
+        [response addObject:[self StringeeQueue:queue]];
+    }
+    return response;
+}
+
++ (id)StringeeChatRequest:(StringeeChatRequest *)request {
+    if (!request) return [NSNull null];
+    
+    NSString *convId = request.convId != nil ? request.convId : @"";
+    NSString *customerId = request.customerId != nil ? request.customerId : @"";
+    NSString *customerName = request.customerName != nil ? request.customerName : @"";
+    
+    return @{
+             @"convId": convId,
+             @"customerId": customerId,
+             @"customerName": customerName,
+             @"channelType": @(request.channelType),
+             @"type": @(request.type),
+             };
 }
 
 @end

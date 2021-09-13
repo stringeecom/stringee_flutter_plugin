@@ -12,3 +12,4 @@ example/.flutter-plugins-dependencies
 contents.xcworkspacedata
 Flutter.podspec
 Podfile
+example/android/app/release/

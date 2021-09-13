@@ -3,7 +3,7 @@ description: Demonstrates how to use the stringee_flutter_plugin plugin.
 publish_to: 'none'
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -15,9 +15,7 @@ dependencies:
 
   stringee_flutter_plugin:
     path: ../
-
-  permission: ^0.1.7
-
+  permission_handler: ^8.1.4+2
 dev_dependencies:
   flutter_test:
     sdk: flutter

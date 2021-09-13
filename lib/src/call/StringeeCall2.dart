@@ -162,9 +162,9 @@ class StringeeCall2 {
 
   void handleChangeAudioDevice(Map<dynamic, dynamic> map) {
     AudioDevice selectedAudioDevice = AudioDevice.values[map['code']];
-    List<dynamic> codeList = List();
+    List<dynamic> codeList = [];
     codeList.addAll(map['codeList']);
-    List<AudioDevice> availableAudioDevices = List();
+    List<AudioDevice> availableAudioDevices = [];
     for (int i = 0; i < codeList.length; i++) {
       AudioDevice audioDevice = AudioDevice.values[codeList[i]];
       availableAudioDevices.add(audioDevice);
@@ -208,6 +208,9 @@ class StringeeCall2 {
               break;
             case VideoQuality.fullHd:
               params['videoQuality'] = "FULLHD";
+              break;
+            default:
+              params['videoQuality'] = "NORMAL";
               break;
           }
         } else {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
@@ -19,29 +20,39 @@ class StringeeConversation {
   StringeeMessage _lastMsg;
   String _pinnedMsgId;
   List<StringeeUser> _participants;
+  StringeeClient _client;
 
   // StringeeConversation();
 
   String get id => _id;
-  String get name => _name;
-  bool get isGroup => _isGroup;
-  String get creator => _creator;
-  int get totalUnread => _totalUnread;
-  int get updatedAt => _updatedAt;
-  int get createdAt => _createdAt;
-  Map<dynamic, dynamic> get text => _text;
-  StringeeMessage get lastMsg => _lastMsg;
-  String get pinnedMsgId => _pinnedMsgId;
-  List<StringeeUser> get participants => _participants;
 
-  StringeeClient _client;
+  String get name => _name;
+
+  bool get isGroup => _isGroup;
+
+  String get creator => _creator;
+
+  int get totalUnread => _totalUnread;
+
+  int get updatedAt => _updatedAt;
+
+  int get createdAt => _createdAt;
+
+  Map<dynamic, dynamic> get text => _text;
+
+  StringeeMessage get lastMsg => _lastMsg;
+
+  String get pinnedMsgId => _pinnedMsgId;
+
+  List<StringeeUser> get participants => _participants;
 
   @override
   String toString() {
-    return '{id: ${_id}, name: ${_name}, isGroup: ${_isGroup}, creator: ${_creator}, createdAt: ${_createdAt}, updatedAt: ${_updatedAt}, totalUnread: ${_totalUnread}, text: ${_text}, lastMsg: ${_lastMsg}, pinnedMsgId: ${_pinnedMsgId}, participants: ${_participants}}';
+    return '{id: $_id, name: $_name, isGroup: $_isGroup, creator: $_creator, createdAt: $_createdAt, updatedAt: $_updatedAt, totalUnread: $_totalUnread, text: $_text, lastMsg: $_lastMsg, pinnedMsgId: $_pinnedMsgId, participants: $_participants}';
   }
 
-  StringeeConversation.fromJson(Map<dynamic, dynamic> convInfor, StringeeClient client) {
+  StringeeConversation.fromJson(
+      Map<dynamic, dynamic> convInfor, StringeeClient client) {
     if (convInfor == null) {
       return;
     }
@@ -75,18 +86,67 @@ class StringeeConversation {
     this._participants = participants;
   }
 
+  /// ====================== BEGIN LIVE CHAT =======================
+
+  /// Send chat transcript
+  Future<Map<dynamic, dynamic>> sendChatTranscript(
+      String email, String domain) async {
+    if (email == null || email.trim().isEmpty)
+      return await reportInvalidValue('email');
+    if (domain == null || domain.trim().isEmpty)
+      return await reportInvalidValue('domain');
+    if (_id == null || _id.isEmpty) return await reportInvalidValue('convId');
+
+    final params = {
+      'email': email.trim(),
+      'domain': domain.trim(),
+      'convId': _id,
+      'uuid': _client.uuid
+    };
+
+    return await StringeeClient.methodChannel
+        .invokeMethod('sendChatTranscript', params);
+  }
+
+  /// End live-chat [StringeeConversation]
+  Future<Map<dynamic, dynamic>> endChat() async {
+    if (_id == null || _id.isEmpty) return await reportInvalidValue('convId');
+
+    final params = {'convId': _id, 'uuid': _client.uuid};
+
+    return await StringeeClient.methodChannel.invokeMethod('endChat', params);
+  }
+
+  /// ====================== END LIVE CHAT =======================
+
+  /// Send begin typing
+  Future<Map<dynamic, dynamic>> beginTyping() async {
+    if (_id == null || _id.isEmpty) return await reportInvalidValue('convId');
+    final params = {'convId': _id, 'uuid': _client.uuid};
+    return await StringeeClient.methodChannel
+        .invokeMethod('beginTyping', params);
+  }
+
+  /// Send end typing
+  Future<Map<dynamic, dynamic>> endTyping() async {
+    if (_id == null || _id.isEmpty) return await reportInvalidValue('convId');
+    final params = {'convId': _id, 'uuid': _client.uuid};
+    return await StringeeClient.methodChannel.invokeMethod('endTyping', params);
+  }
+
   /// Delete [StringeeConversation]
   Future<Map<dynamic, dynamic>> delete() async {
     final params = {
       'convId': this._id,
-      'uuid': _client.uuid
+      'uuid': _client.uuid,
     };
 
     return await StringeeClient.methodChannel.invokeMethod('delete', params);
   }
 
   /// Add [List] of [participants] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> addParticipants(List<StringeeUser> participants) async {
+  Future<Map<dynamic, dynamic>> addParticipants(
+      List<StringeeUser> participants) async {
     if (participants == null || participants.length == 0)
       return await reportInvalidValue('participants');
     final params = {
@@ -94,8 +154,8 @@ class StringeeConversation {
       'participants': json.encode(participants),
       'uuid': _client.uuid
     };
-    Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('addParticipants', params);
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+        .invokeMethod('addParticipants', params);
     if (result['status']) {
       List<StringeeUser> addedParticipants = [];
       List<dynamic> participantArray = result['body'];
@@ -109,7 +169,8 @@ class StringeeConversation {
   }
 
   /// Remove [List] of [participants] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> removeParticipants(List<StringeeUser> participants) async {
+  Future<Map<dynamic, dynamic>> removeParticipants(
+      List<StringeeUser> participants) async {
     if (participants == null || participants.length == 0)
       return await reportInvalidValue('participants');
     final params = {
@@ -117,8 +178,8 @@ class StringeeConversation {
       'participants': json.encode(participants),
       'uuid': _client.uuid
     };
-    Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('removeParticipants', params);
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+        .invokeMethod('removeParticipants', params);
     if (result['status']) {
       List<StringeeUser> removedParticipants = [];
       List<dynamic> participantArray = result['body'];
@@ -139,17 +200,19 @@ class StringeeConversation {
     Map<String, dynamic> params = message.toJson();
     params['uuid'] = _client.uuid;
 
-    return await StringeeClient.methodChannel.invokeMethod('sendMessage', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('sendMessage', params);
     // return await StringeeClient.methodChannel.invokeMethod('sendMessage', json.encode(message));
   }
 
   /// Get [List] of [StringeeMessage] of [StringeeConversation] by [msgIds]
   Future<Map<dynamic, dynamic>> getMessages(List<String> msgIds) async {
-    if (msgIds == null || msgIds.length == 0) return await reportInvalidValue('msgIds');
+    if (msgIds == null || msgIds.length == 0)
+      return await reportInvalidValue('msgIds');
     final params = {
       'convId': this._id,
       'msgIds': msgIds,
-      'uuid': _client.uuid
+      'uuid': _client.uuid,
     };
     Map<dynamic, dynamic> result =
         await StringeeClient.methodChannel.invokeMethod('getMessages', params);
@@ -171,10 +234,10 @@ class StringeeConversation {
     final params = {
       'convId': this._id,
       'count': count,
-      'uuid': _client.uuid
+      'uuid': _client.uuid,
     };
-    Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('getLocalMessages', params);
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+        .invokeMethod('getLocalMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
       List<dynamic> msgArray = result['body'];
@@ -193,10 +256,10 @@ class StringeeConversation {
     final params = {
       'convId': this._id,
       'count': count,
-      'uuid': _client.uuid
+      'uuid': _client.uuid,
     };
-    Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('getLastMessages', params);
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+        .invokeMethod('getLastMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
       List<dynamic> msgArray = result['body'];
@@ -210,17 +273,19 @@ class StringeeConversation {
   }
 
   /// Get [count] of [StringeeMessage] after [StringeeMessage.sequence] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> getMessagesAfter(int count, int sequence) async {
+  Future<Map<dynamic, dynamic>> getMessagesAfter(
+      int count, int sequence) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
-    if (sequence == null || sequence < 0) return await reportInvalidValue('sequence');
+    if (sequence == null || sequence < 0)
+      return await reportInvalidValue('sequence');
     final params = {
       'convId': this._id,
       'count': count,
       'seq': sequence,
       'uuid': _client.uuid
     };
-    Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('getMessagesAfter', params);
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+        .invokeMethod('getMessagesAfter', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
       List<dynamic> msgArray = result['body'];
@@ -234,17 +299,19 @@ class StringeeConversation {
   }
 
   /// Get [count] of [StringeeMessage] before [StringeeMessage.sequence] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> getMessagesBefore(int count, int sequence) async {
+  Future<Map<dynamic, dynamic>> getMessagesBefore(
+      int count, int sequence) async {
     if (count == null || count <= 0) return await reportInvalidValue('count');
-    if (sequence == null || sequence < 0) return await reportInvalidValue('sequence');
+    if (sequence == null || sequence < 0)
+      return await reportInvalidValue('sequence');
     final params = {
       'convId': this._id,
       'count': count,
       'seq': sequence,
       'uuid': _client.uuid
     };
-    Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('getMessagesBefore', params);
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+        .invokeMethod('getMessagesBefore', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
       List<dynamic> msgArray = result['body'];
@@ -259,18 +326,21 @@ class StringeeConversation {
 
   /// Update [StringeeConversation.name]
   Future<Map<dynamic, dynamic>> updateConversation(String name) async {
-    if (name == null || name.trim().isEmpty) return await reportInvalidValue('name');
+    if (name == null || name.trim().isEmpty)
+      return await reportInvalidValue('name');
     final params = {
       'convId': this._id,
       'name': name.trim(),
       'uuid': _client.uuid
     };
-    return await StringeeClient.methodChannel.invokeMethod('updateConversation', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('updateConversation', params);
   }
 
   /// Change [UserRole]
   Future<Map<dynamic, dynamic>> setRole(String userId, UserRole role) async {
-    if (userId == null || userId.trim().isEmpty) return await reportInvalidValue('userId');
+    if (userId == null || userId.trim().isEmpty)
+      return await reportInvalidValue('userId');
     if (role == null) return await reportInvalidValue('role');
     final params = {
       'convId': this._id,
@@ -283,18 +353,22 @@ class StringeeConversation {
 
   /// Delete [List] of [StringeeMessage]
   Future<Map<dynamic, dynamic>> deleteMessages(List<String> msgIds) async {
-    if (msgIds == null || msgIds.length == 0) return await reportInvalidValue('msgIds');
+    if (msgIds == null || msgIds.length == 0)
+      return await reportInvalidValue('msgIds');
     final params = {
       'convId': this._id,
       'msgIds': msgIds,
-      'uuid': _client.uuid
+      'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel.invokeMethod('deleteMessages', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('deleteMessages', params);
   }
 
   /// Revoke [List] of [StringeeMessage] include deleted [StringeeMessage] or not
-  Future<Map<dynamic, dynamic>> revokeMessages(List<String> msgIds, bool isDeleted) async {
-    if (msgIds == null || msgIds.length == 0) return await reportInvalidValue('msgIds');
+  Future<Map<dynamic, dynamic>> revokeMessages(
+      List<String> msgIds, bool isDeleted) async {
+    if (msgIds == null || msgIds.length == 0)
+      return await reportInvalidValue('msgIds');
     if (isDeleted == null) return await reportInvalidValue('isDeleted');
     final params = {
       'convId': this._id,
@@ -302,16 +376,18 @@ class StringeeConversation {
       'isDeleted': isDeleted,
       'uuid': _client.uuid
     };
-    return await StringeeClient.methodChannel.invokeMethod('revokeMessages', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('revokeMessages', params);
   }
 
   /// Mark [StringeeConversation] as readed
   Future<Map<dynamic, dynamic>> markAsRead() async {
     final params = {
       'convId': this._id,
-      'uuid': _client.uuid
+      'uuid': _client.uuid,
     };
 
-    return await StringeeClient.methodChannel.invokeMethod('markAsRead', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('markAsRead', params);
   }
 }

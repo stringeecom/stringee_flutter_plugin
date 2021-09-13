@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/src/StringeeConstants.dart';
 
 class StringeeUser {
@@ -23,7 +23,7 @@ class StringeeUser {
 
   @override
   String toString() {
-    return '{userId: ${_userId}, name: ${name}, avatarUrl: ${avatarUrl}, role: ${role}}';
+    return '{userId: $_userId, name: $name, avatarUrl: $avatarUrl, role: $role}';
   }
 
   Map<String, dynamic> toJson() {

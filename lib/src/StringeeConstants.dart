@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:math';
 
 /// Events for StringeeClient
@@ -10,7 +10,13 @@ enum StringeeClientEvents {
   didReceiveCustomMessage,
   incomingCall,
   incomingCall2,
-  didReceiveObjectChange,
+  didReceiveChatRequest,
+  didReceiveTransferChatRequest,
+  timeoutAnswerChat,
+  timeoutInQueue,
+  conversationEnded,
+  userBeginTyping,
+  userEndTyping
 }
 
 /// Events for StringeeCall
@@ -35,11 +41,29 @@ enum StringeeCall2Events {
   didChangeAudioDevice
 }
 
+/// Events for StringeeChat
+enum StringeeChatEvents {
+  didReceiveObjectChange,
+}
+
+enum StringeeChannelType {
+  normal,
+  livechat,
+  facebook,
+  zalo,
+}
+
+enum StringeeChatRequestType {
+  normal,
+  transfer,
+}
+
 /// Type of event
 enum StringeeObjectEventType {
   client,
   call,
   call2,
+  chat,
 }
 
 /// Error code and message in flutter:
@@ -122,7 +146,8 @@ class MakeCallParams {
     this._isVideoCall = (isVideoCall != null) ? isVideoCall : false;
     if (customData != null) this._customData = customData;
     if (this._isVideoCall)
-      this._videoQuality = (videoQuality != null) ? videoQuality : VideoQuality.normal;
+      this._videoQuality =
+          (videoQuality != null) ? videoQuality : VideoQuality.normal;
   }
 
   VideoQuality get videoQuality => _videoQuality;
@@ -151,6 +176,9 @@ class MakeCallParams {
           break;
         case VideoQuality.fullHd:
           params['videoResolution'] = "FULLHD";
+          break;
+        default:
+          params['videoResolution'] = "NORMAL";
           break;
       }
     }
@@ -242,6 +270,9 @@ extension MsgTypeValueExtension on MsgType {
       case MsgType.notification:
         return 100;
         break;
+      default:
+        return 1;
+        break;
     }
   }
 }
@@ -286,6 +317,9 @@ extension MsgTypeExtension on int {
       case 100:
         return MsgType.notification;
         break;
+      default:
+        return MsgType.text;
+        break;
     }
   }
 }
@@ -310,6 +344,9 @@ extension MsgNotifyTypeExtension on int {
       case 3:
         return MsgNotifyType.changeGroupName;
         break;
+      default:
+        return MsgNotifyType.changeGroupName;
+        break;
     }
   }
 }
@@ -317,18 +354,14 @@ extension MsgNotifyTypeExtension on int {
 ///Class represents options for create a new [StringeeConversation]
 class StringeeConversationOption {
   String _name;
-  bool _isGroup;
-  bool _isDistinct;
+  bool _isGroup = false;
+  bool _isDistinct = false;
 
-  StringeeConversationOption({@required bool isGroup, String name, bool isDistinct})
+  StringeeConversationOption({bool isGroup, String name, bool isDistinct})
       : assert(isGroup != null) {
     if (name != null) this._name = name;
-    this._isGroup = isGroup != null ? isGroup : true;
-    this._isDistinct = isDistinct != null
-        ? isDistinct
-        : isGroup
-            ? false
-            : true;
+    this._isGroup = isGroup;
+    this._isDistinct = isDistinct;
   }
 
   Map<String, dynamic> toJson() {
@@ -352,7 +385,8 @@ class StringeeObjectChange {
 
   List<dynamic> get objects => _objects;
 
-  StringeeObjectChange(ChangeType type, ObjectType objectType, List<dynamic> objects) {
+  StringeeObjectChange(
+      ChangeType type, ObjectType objectType, List<dynamic> objects) {
     this._type = type;
     this._objects = objects;
     this._objectType = objectType;
@@ -385,16 +419,18 @@ class GUIDGen {
     Random random = new Random(new DateTime.now().millisecond);
 
     final String hexDigits = "0123456789abcdef";
-    final List<String> uuid = new List<String>(36);
+    final List<String> uuid =
+        new List<String>.filled(36, null, growable: false);
 
     for (int i = 0; i < 36; i++) {
       final int hexPos = random.nextInt(16);
       uuid[i] = (hexDigits.substring(hexPos, hexPos + 1));
     }
 
-    int pos = (int.parse(uuid[19], radix: 16) & 0x3) | 0x8; // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    int pos = (int.parse(uuid[19], radix: 16) & 0x3) |
+        0x8; // bits 6-7 of the clock_seq_hi_and_reserved to 01
 
-    uuid[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+    uuid[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
     uuid[19] = hexDigits.substring(pos, pos + 1);
 
     uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";

@@ -14,6 +14,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 @implementation StringeeClientWrapper {
     FlutterEventSink _eventSink;
     BOOL isConnecting;
+    BOOL _firstConnectTime;
 }
 
 + (void)initialize {
@@ -34,12 +35,19 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         _call2Manager = [[StringeeCall2Manager alloc] initWithIdentifier:identifier];
         _convManager = [[StringeeConversationManager alloc] initWithIdentifier:identifier];
         _msgManager = [[StringeeMessageManager alloc] initWithIdentifier:identifier];
-        
+        _chatManager = [[StringeeChatManager alloc] initWithIdentifier:identifier];
+
         _eventSink = eventSink;
         [_callManager setEventSink:_eventSink];
         [_call2Manager setEventSink:_eventSink];
         [_convManager setEventSink:_eventSink];
         [_msgManager setEventSink:_eventSink];
+        [_chatManager setEventSink:_eventSink];
+        
+        // Fix cho phan live-chat
+        _firstConnectTime = true;
+        _client = [[StringeeClient alloc] init];
+        [_chatManager setClient:_client];
     }
     return self;
 }
@@ -55,6 +63,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     [_call2Manager setEventSink:_eventSink];
     [_convManager setEventSink:_eventSink];
     [_msgManager setEventSink:_eventSink];
+    [_chatManager setEventSink:_eventSink];
 }
 
 + (void)setEventSinkForAllInstances:(FlutterEventSink)eventSink {
@@ -94,7 +103,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     
     NSString *token = [data objectForKey:@"token"];
     
-    if (!_client) {
+    if (!_client || _firstConnectTime) {
         id strServerAddressesData = [data objectForKey:@"serverAddresses"];
         if (strServerAddressesData != nil && strServerAddressesData != [NSNull null]) {
             NSArray *serverAddressesData = [StringeeHelper StringToArray:strServerAddressesData];
@@ -111,11 +120,15 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleUserTypingNotification:) name:StringeeChatUserTypingNotification object:_client];
+
         [_callManager setClient:_client];
         [_call2Manager setClient:_client];
         [_convManager setClient:_client];
         [_msgManager setClient:_client];
+        [_chatManager setClient:_client];
+        
+        _firstConnectTime = false;
     }
     
     [_client connectWithAccessToken:token];
@@ -226,6 +239,29 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall2, STEBody : [StringeeHelper StringeeCall2:stringeeCall2] });
 }
 
+- (void)didReceiveChatRequest:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+}
+
+- (void)didReceiveTransferChatRequest:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveTransferChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+}
+
+- (void)timeoutAnswerChat:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutAnswerChat, STEBody : [StringeeHelper StringeeChatRequest:request] });
+}
+
+- (void)timeoutInQueue:(StringeeClient *)stringeeClient info:(NSDictionary *)info {
+    NSLog(@"timeoutInQueue %@", info);
+    id rInfo = info != nil ? info : [NSNull null];
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutInQueue, STEBody : rInfo });
+}
+
+- (void)conversationEnded:(StringeeClient *)stringeeClient info:(NSDictionary *)info {
+    id rInfo = info != nil ? info : [NSNull null];
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEConversationEnded, STEBody : rInfo });
+}
+
 #pragma mark - Chat Event
 
 - (void)handleObjectChangeNotification:(NSNotification *)notification {
@@ -268,7 +304,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 
     id returnObjects = jsObjectDatas ? jsObjectDatas : [NSNull null];
 
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }});
 }
 
 - (void)handleNewMessageNotification:(NSNotification *)notification {
@@ -286,8 +322,31 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
             return;
         }
         
-        self->_eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
+        self->_eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
     }];
+}
+
+- (void)handleUserTypingNotification:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    if (!userInfo) return;
+    
+    NSString *convId = [userInfo objectForKey:@"convId"] != nil ? [userInfo objectForKey:@"convId"] : @"";
+    NSString *userId = [userInfo objectForKey:@"userId"] != nil ? [userInfo objectForKey:@"userId"] : @"";
+    NSString *displayName = [userInfo objectForKey:@"displayName"] != nil ? [userInfo objectForKey:@"displayName"] : @"";
+    BOOL begin = [[userInfo objectForKey:@"begin"] boolValue];
+
+    NSDictionary *infos = @{
+                            @"convId" : convId,
+                            @"userId" : userId,
+                            @"displayName" : displayName
+                            };
+    if (begin) {
+        // begin
+        _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserBeginTyping, STEBody : infos });
+    } else {
+        // end
+        _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserEndTyping, STEBody : infos });
+    }
 }
 
 @end

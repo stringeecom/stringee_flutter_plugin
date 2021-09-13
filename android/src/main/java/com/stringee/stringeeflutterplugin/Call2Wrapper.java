@@ -16,6 +16,7 @@ import com.stringee.common.StringeeAudioManager.AudioDevice;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
+import com.stringee.video.StringeeVideoTrack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -729,6 +730,16 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 }
             }
         });
+    }
+
+    @Override
+    public void onVideoTrackAdded(StringeeVideoTrack stringeeVideoTrack) {
+
+    }
+
+    @Override
+    public void onVideoTrackRemoved(StringeeVideoTrack stringeeVideoTrack) {
+
     }
 
     @Override

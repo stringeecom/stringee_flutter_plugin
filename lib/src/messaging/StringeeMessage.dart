@@ -1,5 +1,5 @@
 import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
-
+import 'dart:convert';
 import '../StringeeClient.dart';
 import '../StringeeConstants.dart';
 
@@ -46,11 +46,11 @@ class StringeeMessage {
 
   @override
   String toString() {
-    return '{id: ${id}, localId: ${localId}, convId: ${convId}, senderId: ${senderId}, createdAt: ${createdAt}, sequence: ${sequence}, state: ${state}, type: ${type}, text: ${text},'
-        ' thumbnail: ${thumbnail}, filePath: ${filePath}, fileUrl: ${fileUrl},'
-        ' latitude: ${latitude}, longitude: ${longitude}, fileName: ${fileName}, fileLength: ${fileLength},'
-        ' duration: ${duration}, ratio: ${ratio}, vcard: ${vcard}, stickerCategory: ${stickerCategory},'
-        ' stickerName: ${stickerName}, customData: ${customData}, notiContent: ${notiContent}}';
+    return '{id: $id, localId: $localId, convId: $convId, senderId: $senderId, createdAt: $createdAt, sequence: $sequence, state: $state, type: $type, text: $text,'
+        ' thumbnail: $thumbnail, filePath: $filePath, fileUrl: $fileUrl,'
+        ' latitude: $latitude, longitude: $longitude, fileName: $fileName, fileLength: $fileLength,'
+        ' duration: $duration, ratio: $ratio, vcard: $vcard, stickerCategory: $stickerCategory,'
+        ' stickerName: $stickerName, customData: $customData, notiContent: $notiContent}';
   }
 
   StringeeMessage.typeText(
@@ -292,7 +292,8 @@ class StringeeMessage {
     _convId = value;
   }
 
-  StringeeMessage.fromJson(Map<dynamic, dynamic> msgInfor, StringeeClient client) {
+  StringeeMessage.fromJson(
+      Map<dynamic, dynamic> msgInfor, StringeeClient client) {
     if (msgInfor == null) {
       return;
     }
@@ -436,8 +437,11 @@ class StringeeMessage {
     this._senderId = senderId;
     this._createdAt = createdAt;
     this._sequence = sequence;
-    if (msgInfor.containsKey('metadata'))
+    if (msgInfor.containsKey('metadata') &&
+        msgInfor['metadata'] != null &&
+        msgInfor['metadata'].toString().isNotEmpty) {
       this._customData = msgInfor['metadata'];
+    }
     this._state = msgState;
     this._type = msgType;
     String text = '';

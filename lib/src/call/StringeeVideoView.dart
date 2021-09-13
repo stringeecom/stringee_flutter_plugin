@@ -53,7 +53,6 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     creationParams = {
@@ -77,7 +76,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     }
 
     if (Platform.isAndroid) {
-      creationParams['isMirror'] = widget.isMirror == null ? false : widget.isMirror;
+      creationParams['isMirror'] =
+          widget.isMirror == null ? false : widget.isMirror;
     }
   }
 
@@ -86,10 +86,12 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
       case TargetPlatform.android:
         return PlatformViewLink(
           viewType: viewType,
-          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
             return AndroidViewSurface(
-              controller: controller,
-              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+              controller: controller as AndroidViewController,
+              gestureRecognizers: const <
+                  Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },

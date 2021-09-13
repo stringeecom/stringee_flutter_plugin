@@ -1199,4 +1199,334 @@ public class ConversationManager {
             }
         });
     }
+
+    /**
+     * Send chat transcript
+     *
+     * @param convId
+     * @param email
+     * @param domain
+     * @param result
+     */
+    public void sendChatTranscript(String convId, String email, String domain, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "sendChatTranscript: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "sendChatTranscript: false - -2 - convId is invalid");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
+            return;
+        }
+
+        Utils.getConversation(_clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.sendChatTranscriptTo(_clientWrapper.getClient(), email, domain, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "sendChatTranscript: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "sendChatTranscript: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "sendChatTranscript: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * End chat
+     *
+     * @param convId
+     * @param result
+     */
+    public void endChat(String convId, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "endChat: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "endChat: false - -2 - convId is invalid");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
+            return;
+        }
+
+        Utils.getConversation(_clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.endChat(_clientWrapper.getClient(), new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "endChat: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "endChat: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "endChat: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Send state begin typing
+     *
+     * @param convId
+     * @param result
+     */
+    public void beginTyping(String convId, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "beginTyping: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "beginTyping: false - -2 - convId is invalid");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
+            return;
+        }
+
+        Utils.getConversation(_clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.beginTyping(_clientWrapper.getClient(), new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "beginTyping: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Send state end typing
+     *
+     * @param convId
+     * @param result
+     */
+    public void endTyping(String convId, final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "endTyping: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        if (convId == null || convId.isEmpty()) {
+            Log.d(TAG, "endTyping: false - -2 - convId is invalid");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -2);
+            map.put("message", "convId is invalid");
+            result.success(map);
+            return;
+        }
+
+        Utils.getConversation(_clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.endTyping(_clientWrapper.getClient(), new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "endTyping: success");
+                                Map map = new HashMap();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        _handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "endTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                                Map map = new HashMap();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "endTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
 }
