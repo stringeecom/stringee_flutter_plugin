@@ -14,7 +14,7 @@ class CallTab extends StatefulWidget {
 
 class CallTabState extends State<CallTab> {
   String myUserId = 'Not connected...';
-  String token = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYzMTUxNTQ0MSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYzMTYwMTg0MSwidXNlcklkIjoidmlkZW9fODQ5NjUyODAxOTYiLCJjYW5DYWxsb3V0IjpmYWxzZX0.TDI1nO478Og7bxNvg9_D3Q8Q06EXAUTHAwUIUZnnux4';
+  String token = '';
   String toUser = '';
 
   @override
@@ -216,8 +216,8 @@ class CallTabState extends State<CallTab> {
           client,
           call.from,
           call.to,
-          call.isVideoCall,
           true,
+          call.isVideoCall,
           StringeeObjectEventType.call,
           stringeeCall: call,
         ),
@@ -233,8 +233,8 @@ class CallTabState extends State<CallTab> {
           client,
           call.from,
           call.to,
-          call.isVideoCall,
           true,
+          call.isVideoCall,
           StringeeObjectEventType.call2,
           stringeeCall2: call,
         ),
