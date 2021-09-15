@@ -1,22 +1,21 @@
 package com.stringee.stringeeflutterplugin;
 
-import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_BALANCED;
-import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FILL;
-import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FIT;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.webrtc.RendererCommon.ScalingType;
+import com.stringee.video.StringeeVideo.ScalingType;
+
 import org.webrtc.SurfaceViewRenderer;
 
 import java.util.HashMap;
@@ -32,6 +31,7 @@ public class StringeeVideoView implements PlatformView {
     StringeeVideoView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams) {
         try {
             frameLayout = new FrameLayout(context);
+
             String callId = (String) creationParams.get("callId");
 
             if (callId == null || callId.length() == 0) {
@@ -70,11 +70,11 @@ public class StringeeVideoView implements PlatformView {
 
                 ScalingType scalingType = null;
                 if (creationParams.get("scalingType").equals("FILL")) {
-                    scalingType = SCALE_ASPECT_FILL;
+                    scalingType = ScalingType.SCALE_ASPECT_FILL;
                 } else if (creationParams.get("scalingType").equals("FIT")) {
-                    scalingType = SCALE_ASPECT_FIT;
+                    scalingType = ScalingType.SCALE_ASPECT_FIT;
                 } else if (creationParams.get("scalingType").equals("BALANCED")) {
-                    scalingType = SCALE_ASPECT_BALANCED;
+                    scalingType = ScalingType.SCALE_ASPECT_BALANCED;
                 }
 
                 if (creationParams.containsKey("isMirror")) {
@@ -86,30 +86,30 @@ public class StringeeVideoView implements PlatformView {
                     isOverlay = true;
                 }
 
+                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                layoutParams.gravity = Gravity.CENTER;
+
                 layout.removeAllViews();
                 layout.setBackgroundColor(Color.BLACK);
                 if (isLocal) {
                     if (call != null) {
-                        call.getLocalView().setScalingType(scalingType);
-
                         SurfaceViewRenderer localView = call.getLocalView();
                         if (localView.getParent() != null) {
                             ((FrameLayout) localView.getParent()).removeView(localView);
                         }
 
-                        layout.addView(localView);
-                        call.renderLocalView(isOverlay);
+                        layout.addView(localView, layoutParams);
+                        call.renderLocalView(isOverlay, scalingType);
                         localView.setMirror(isMirror);
                     } else {
-                        call2.getLocalView().setScalingType(scalingType);
 
                         SurfaceViewRenderer localView = call2.getLocalView();
                         if (localView.getParent() != null) {
                             ((FrameLayout) localView.getParent()).removeView(localView);
                         }
 
-                        layout.addView(localView);
-                        call2.renderLocalView(isOverlay);
+                        layout.addView(localView, layoutParams);
+                        call2.renderLocalView(isOverlay, scalingType);
                         localView.setMirror(isMirror);
                     }
 
@@ -123,28 +123,32 @@ public class StringeeVideoView implements PlatformView {
 
                 } else {
                     if (call != null) {
-                        call.getRemoteView().setScalingType(scalingType);
-
                         SurfaceViewRenderer remoteView = call.getRemoteView();
                         if (remoteView.getParent() != null) {
                             ((FrameLayout) remoteView.getParent()).removeView(remoteView);
                         }
 
-                        layout.addView(remoteView);
-                        call.renderRemoteView(isOverlay);
+                        layout.addView(remoteView, layoutParams);
+                        call.renderRemoteView(isOverlay, scalingType);
                         remoteView.setMirror(isMirror);
                     } else {
-                        call2.getRemoteView().setScalingType(scalingType);
-
                         SurfaceViewRenderer remoteView = call2.getRemoteView();
                         if (remoteView.getParent() != null) {
                             ((FrameLayout) remoteView.getParent()).removeView(remoteView);
                         }
 
-                        layout.addView(remoteView);
-                        call2.renderRemoteView(isOverlay);
+                        layout.addView(remoteView, layoutParams);
+                        call2.renderRemoteView(isOverlay, scalingType);
                         remoteView.setMirror(isMirror);
                     }
+
+                    //save remoteView option
+                    Map<String, Object> remoteViewOptions = new HashMap<>();
+                    remoteViewOptions.put("isMirror", isMirror);
+                    remoteViewOptions.put("isOverlay", isOverlay);
+                    remoteViewOptions.put("scalingType", scalingType);
+                    remoteViewOptions.put("layout", layout);
+                    StringeeManager.getInstance().getRemoteViewOptions().put(callId, remoteViewOptions);
                 }
             }
         });

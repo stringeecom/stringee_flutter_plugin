@@ -20,6 +20,7 @@ public class StringeeManager {
     private Map<String, CallWrapper> callsMap = new HashMap<>();
     private Map<String, Call2Wrapper> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
+    private Map<String, Map<String, Object>> remoteViewOption = new HashMap<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
 
@@ -98,6 +99,10 @@ public class StringeeManager {
 
     public Map<String, Map<String, Object>> getLocalViewOptions() {
         return localViewOption;
+    }
+
+    public Map<String, Map<String, Object>> getRemoteViewOptions() {
+        return remoteViewOption;
     }
 
     public Map<String, CallWrapper> getCallsMap() {

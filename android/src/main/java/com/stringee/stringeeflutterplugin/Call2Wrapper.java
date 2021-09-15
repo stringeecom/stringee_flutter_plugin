@@ -5,7 +5,9 @@ import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventTy
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 
 import com.stringee.call.StringeeCall2;
 import com.stringee.call.StringeeCall2.CallStatsListener;
@@ -16,11 +18,12 @@ import com.stringee.common.StringeeAudioManager.AudioDevice;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
+import com.stringee.video.StringeeVideo;
+import com.stringee.video.StringeeVideo.ScalingType;
 import com.stringee.video.StringeeVideoTrack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.webrtc.RendererCommon.ScalingType;
 import org.webrtc.SurfaceViewRenderer;
 
 import java.util.ArrayList;
@@ -547,12 +550,12 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         return _call.getRemoteView();
     }
 
-    public void renderLocalView(boolean isOverlay) {
-        _call.renderLocalView(isOverlay);
+    public void renderLocalView(boolean isOverlay, StringeeVideo.ScalingType scalingType) {
+        _call.renderLocalView(isOverlay, scalingType);
     }
 
-    public void renderRemoteView(boolean isOverlay) {
-        _call.renderRemoteView(isOverlay);
+    public void renderRemoteView(boolean isOverlay, StringeeVideo.ScalingType scalingType) {
+        _call.renderRemoteView(isOverlay, scalingType);
     }
 
     @Override
@@ -694,9 +697,13 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                         ScalingType scalingType = (ScalingType) localViewOptions.get("scalingType");
 
                         localView.removeAllViews();
-                        stringeeCall.getLocalView().setScalingType(scalingType);
-                        localView.addView(stringeeCall.getLocalView());
-                        stringeeCall.renderLocalView(isOverlay);
+                        if (stringeeCall.getLocalView().getParent() != null) {
+                            ((FrameLayout) stringeeCall.getLocalView().getParent()).removeView(stringeeCall.getLocalView());
+                        }
+                        LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                        layoutParams.gravity = Gravity.CENTER;
+                        localView.addView(stringeeCall.getLocalView(), layoutParams);
+                        stringeeCall.renderLocalView(isOverlay, scalingType);
                         stringeeCall.getLocalView().setMirror(isMirror);
 
                         isResumeVideo = false;
@@ -726,6 +733,26 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                         StringeeFlutterPlugin._eventSink.success(map);
                     } else {
                         hasRemoteStream = true;
+                    }
+
+                    Map<String, Object> remoteViewOptions = _manager.getRemoteViewOptions().get(stringeeCall.getCallId());
+                    if (remoteViewOptions != null) {
+                        FrameLayout remoteView = (FrameLayout) remoteViewOptions.get("layout");
+                        boolean isMirror = (Boolean) remoteViewOptions.get("isMirror");
+                        boolean isOverlay = (Boolean) remoteViewOptions.get("isOverlay");
+                        ScalingType scalingType = (ScalingType) remoteViewOptions.get("scalingType");
+
+                        if (remoteView != null) {
+                            remoteView.removeAllViews();
+                            if (stringeeCall.getRemoteView().getParent() != null) {
+                                ((FrameLayout) stringeeCall.getRemoteView().getParent()).removeView(stringeeCall.getRemoteView());
+                            }
+                            LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                            layoutParams.gravity = Gravity.CENTER;
+                            remoteView.addView(stringeeCall.getRemoteView(), layoutParams);
+                            stringeeCall.renderRemoteView(isOverlay, scalingType);
+                            stringeeCall.getRemoteView().setMirror(isMirror);
+                        }
                     }
                 }
             }
