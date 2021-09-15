@@ -315,7 +315,7 @@
         } else {
             dic = [NSNull null];
         }
-        result(@{STEStatus : @(true), STECode : @(0), STEMessage: @"Success", @"stats" : dic});
+        result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success", @"stats" : dic});
     }];
 }
 
