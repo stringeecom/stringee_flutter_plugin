@@ -326,12 +326,16 @@ class StringeeConversationOption {
   String? _name;
   bool _isGroup = false;
   bool _isDistinct = false;
+  String? _oaId;
+  String? _customData;
 
   StringeeConversationOption(
-      {required bool isGroup, String? name, required bool isDistinct}) {
+      {required bool isGroup, required bool isDistinct,String? name, String? oaId, String? customData}) {
     if (name != null) this._name = name;
     this._isGroup = isGroup;
     this._isDistinct = isDistinct;
+    this._oaId = oaId;
+    this._customData = customData;
   }
 
   Map<String, dynamic> toJson() {
@@ -339,6 +343,8 @@ class StringeeConversationOption {
       if (_name != null) 'name': _name!.trim(),
       'isGroup': _isGroup,
       'isDistinct': _isDistinct,
+      if (_oaId != null) 'oaId': _oaId!.trim(),
+      if (_customData != null) 'customData': _customData!.trim(),
     };
   }
 }
