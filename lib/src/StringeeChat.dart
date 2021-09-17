@@ -81,13 +81,11 @@ class StringeeChat {
   }
 
   /// Create live-chat [StringeeConversation]
-  Future<Map<dynamic, dynamic>> createLiveChatConversation(String queueId,
-      {String? customData}) async {
+  Future<Map<dynamic, dynamic>> createLiveChatConversation(String queueId) async {
     if (queueId.trim().isEmpty) return await reportInvalidValue('queueId');
 
     final params = {
       'queueId': queueId,
-      if (customData != null) 'customData': customData,
       'uuid': _client.uuid,
     };
 
