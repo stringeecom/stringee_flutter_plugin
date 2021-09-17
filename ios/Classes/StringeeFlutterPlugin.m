@@ -204,6 +204,9 @@
     else if ([call.method isEqualToString:@"markAsRead"]) {
         [wrapper.convManager markAsRead:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"joinOaConversation"]) {
+        [wrapper.convManager joinOAConversation:call.arguments result:result];
+    }
     
     // Message
     else if ([call.method isEqualToString:@"sendMessage"]) {

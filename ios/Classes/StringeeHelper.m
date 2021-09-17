@@ -135,6 +135,8 @@
     id lastMsgContent = [self StringToDictionary:text];
     NSString *creator = conversation.creator ? conversation.creator : @"";
     StringeeMessageStatus lastMsgState = conversation.lastMsgSeqReceived > conversation.lastMsgSeqSeen ? StringeeMessageStatusDelivered : StringeeMessageStatusRead;
+    NSString *oaId = conversation.oaId ? conversation.oaId : @"";
+    NSString *customData = conversation.customData ? conversation.customData : @"";
 
     return @{
              @"id": identifier,
@@ -152,7 +154,9 @@
              @"lastMsgSeqReceived": @(conversation.lastMsgSeqReceived),
              @"lastTimeNewMsg": @(conversation.lastTimeNewMsg),
              @"lastMsgState": @(lastMsgState),
-             @"pinnedMsgId" : pinMsgId
+             @"pinnedMsgId" : pinMsgId,
+             @"oaId": oaId,
+             @"customData": customData
              };
 }
 
@@ -406,6 +410,9 @@
     StringeeConversationOption *option = [[StringeeConversationOption alloc] init];
     option.isGroup = [[data objectForKey:@"isGroup"] boolValue];
     option.distinctByParticipants = [[data objectForKey:@"isDistinct"] boolValue];
+    option.oaId = (NSString *)[data objectForKey:@"oaId"];
+    option.customData = (NSString *)[data objectForKey:@"customData"];
+    
     return option;
 }
 
