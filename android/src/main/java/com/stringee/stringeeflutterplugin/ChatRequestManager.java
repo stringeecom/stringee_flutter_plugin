@@ -1,5 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.os.Handler;
 import android.util.Log;
 
 import com.stringee.exception.StringeeError;
@@ -16,7 +17,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class ChatRequestManager {
     private ClientWrapper _clientWrapper;
     private StringeeManager _manager;
-    private android.os.Handler _handler;
+    private Handler _handler;
     private static final String TAG = "StringeeSDK";
 
     public ChatRequestManager(ClientWrapper clientWrapper) {

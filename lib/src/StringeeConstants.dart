@@ -334,8 +334,8 @@ class StringeeConversationOption {
     if (name != null) this._name = name;
     this._isGroup = isGroup;
     this._isDistinct = isDistinct;
-    this._oaId = oaId;
-    this._customData = customData;
+    if (oaId != null) this._oaId = oaId;
+    if (customData != null) this._customData = customData;
   }
 
   Map<String, dynamic> toJson() {

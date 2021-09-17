@@ -49,9 +49,8 @@ class StringeeChat {
   Future<Map<dynamic, dynamic>> getLiveChatToken(
     String key,
     String name,
-    String email, {
-    String? customData,
-  }) async {
+    String email,
+  ) async {
     if (key.trim().isEmpty) return await reportInvalidValue('key');
     if (name.trim().isEmpty) return await reportInvalidValue('name');
     if (email.trim().isEmpty) return await reportInvalidValue('email');
@@ -61,7 +60,6 @@ class StringeeChat {
       'name': name.trim(),
       'email': email.trim(),
       'uuid': _client.uuid,
-      if (customData != null) 'customData': customData.trim(),
     };
 
     return await StringeeClient.methodChannel
