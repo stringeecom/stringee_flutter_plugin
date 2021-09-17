@@ -190,6 +190,8 @@ public class Utils {
                 participantsList.add(convertUserToMap(participants.get(j)));
             }
             conversationMap.put("participants", participantsList);
+            conversationMap.put("oaId", conversation.getOaId());
+            conversationMap.put("customData", conversation.getCustomData());
         } catch (JSONException e) {
             e.printStackTrace();
         }
