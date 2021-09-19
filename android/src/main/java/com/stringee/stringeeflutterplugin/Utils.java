@@ -2,6 +2,7 @@ package com.stringee.stringeeflutterplugin;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -170,7 +171,11 @@ public class Utils {
             conversationMap.put("createdAt", conversation.getCreateAt());
             conversationMap.put("updatedAt", conversation.getUpdateAt());
             conversationMap.put("totalUnread", conversation.getTotalUnread());
-            conversationMap.put("text", conversation.getText());
+            String text = null;
+            if (!TextUtils.isEmpty(conversation.getText())) {
+                text = conversation.getText();
+            }
+            conversationMap.put("text", text);
             conversationMap.put("lastMsgSender", conversation.getLastMsgSender());
             conversationMap.put("lastMsgType", conversation.getLastMsgType().getValue());
             conversationMap.put("lastMsgId", conversation.getLastMsgId());
@@ -179,8 +184,11 @@ public class Utils {
             conversationMap.put("lastMsgState", conversation.getLastMsgState().getValue());
 
             if (conversation.getLastMsg() != null) {
-                JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
-                conversationMap.put("text", convertJsonToMap(lastMsgMap));
+                String lastMsg = conversation.getLastMsg();
+                if (!TextUtils.isEmpty(lastMsg)) {
+                    JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
+                    conversationMap.put("text", convertJsonToMap(lastMsgMap));
+                }
             }
             conversationMap.put("pinnedMsgId", conversation.getPinnedMsgId());
 
