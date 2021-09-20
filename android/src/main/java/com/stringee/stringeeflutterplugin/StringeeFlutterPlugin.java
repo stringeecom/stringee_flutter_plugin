@@ -66,6 +66,10 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     public void onMethodCall(MethodCall call, final Result result) {
         String uuid = (String) call.argument("uuid");
         String callId = (String) call.argument("callId");
+        String oaId = null;
+        if (call.hasArgument("oaId")) {
+            oaId = (String) call.argument("oaId");
+        }
         if (call.method.equals("setupClient")) {
             ClientWrapper clientWrapper;
             String baseAPIUrl = (String) call.argument("baseAPIUrl");
@@ -152,11 +156,11 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                         resolution = (String) call.argument("videoQuality");
                     }
                 }
-                String customData = null;
+                String callCustomData = null;
                 if (call.hasArgument("customData")) {
-                    customData = (String) call.argument("customData");
+                    callCustomData = (String) call.argument("customData");
                 }
-                clientWrapper.callWrapper(from, to, isVideoCall, customData, resolution, result).makeCall();
+                clientWrapper.callWrapper(from, to, isVideoCall, callCustomData, resolution, result).makeCall();
                 break;
             case "initAnswer":
                 if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
@@ -230,14 +234,14 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 String from2 = (String) call.argument("from");
                 String to2 = (String) call.argument("to");
                 boolean isVideoCall2 = false;
-                String customData2 = null;
                 if (call.hasArgument("isVideoCall")) {
                     isVideoCall2 = (boolean) call.argument("isVideoCall");
                 }
+                String call2CustomData = null;
                 if (call.hasArgument("customData")) {
-                    customData2 = (String) call.argument("customData");
+                    call2CustomData = (String) call.argument("customData");
                 }
-                clientWrapper.call2Wrapper(from2, to2, isVideoCall2, customData2, result).makeCall();
+                clientWrapper.call2Wrapper(from2, to2, isVideoCall2, call2CustomData, result).makeCall();
                 break;
             case "initAnswer2":
                 if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
@@ -307,6 +311,8 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     option.setName(optionObject.optString("name", null));
                     option.setGroup(optionObject.getBoolean("isGroup"));
                     option.setDistinct(optionObject.getBoolean("isDistinct"));
+                    option.setOaId(optionObject.optString("oaId"));
+                    option.setCustomData(optionObject.optString("customData"));
                     clientWrapper.createConversation(participants, option, result);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -319,16 +325,19 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.getConversationByUserId((String) call.argument("userId"), result);
                 break;
             case "getLocalConversations":
-                clientWrapper.getLocalConversations(result);
+                clientWrapper.getLocalConversations(oaId, result);
                 break;
             case "getLastConversation":
-                clientWrapper.getLastConversation((int) call.argument("count"), result);
+                clientWrapper.getLastConversation((int) call.argument("count"), oaId, result);
                 break;
             case "getConversationsBefore":
-                clientWrapper.getConversationsBefore((long) call.argument("datetime"), (int) call.argument("count"), result);
+                clientWrapper.getConversationsBefore((long) call.argument("datetime"), (int) call.argument("count"), oaId, result);
                 break;
             case "getConversationsAfter":
-                clientWrapper.getConversationsAfter((long) call.argument("datetime"), (int) call.argument("count"), result);
+                clientWrapper.getConversationsAfter((long) call.argument("datetime"), (int) call.argument("count"), oaId, result);
+                break;
+            case "joinOaConversation":
+                clientWrapper.joinOaConversation((String) call.argument("convId"), result);
                 break;
             case "clearDb":
                 clientWrapper.clearDb(result);
@@ -479,13 +488,17 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.updateUserInfo((String) call.argument("name"), (String) call.argument("email"), (String) call.argument("avatar"), result);
                 break;
             case "createLiveChatConversation":
-                clientWrapper.createLiveChatConversation((String) call.argument("queueId"), result);
+                String customData = null;
+                if (call.hasArgument("customData")) {
+                    customData = (String) call.argument("customData");
+                }
+                clientWrapper.createLiveChatConversation((String) call.argument("queueId"), customData, result);
                 break;
             case "createLiveChatTicket":
                 clientWrapper.createLiveChatTicket((String) call.argument("key"), (String) call.argument("name"), (String) call.argument("email"), (String) call.argument("description"), result);
                 break;
             case "sendChatTranscript":
-                clientWrapper.conversation().sendChatTranscript((String) call.argument("convId"),(String) call.argument("email"),(String) call.argument("domain"), result);
+                clientWrapper.conversation().sendChatTranscript((String) call.argument("convId"), (String) call.argument("email"), (String) call.argument("domain"), result);
                 break;
             case "endChat":
                 clientWrapper.conversation().endChat((String) call.argument("convId"), result);

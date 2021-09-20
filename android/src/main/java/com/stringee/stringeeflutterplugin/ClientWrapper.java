@@ -862,8 +862,8 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      *
      * @param result
      */
-    public void getLocalConversations(final Result result) {
-        _client.getLocalConversations(_client.getUserId(), new CallbackListener<List<Conversation>>() {
+    public void getLocalConversations(final String oaId, final Result result) {
+        _client.getLocalConversations(_client.getUserId(), oaId, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
                 _handler.post(new Runnable() {
@@ -910,7 +910,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param count
      * @param result
      */
-    public void getLastConversation(int count, final Result result) {
+    public void getLastConversation(final int count, final String oaId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getLastConversation: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -921,7 +921,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        _client.getLastConversations(count, new CallbackListener<List<Conversation>>() {
+        _client.getLastConversations(count, oaId, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
                 _handler.post(new Runnable() {
@@ -968,7 +968,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param count
      * @param result
      */
-    public void getConversationsBefore(final long updateAt, final int count, final Result result) {
+    public void getConversationsBefore(final long updateAt, final int count, final String oaId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getConversationsBefore: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -979,7 +979,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        _client.getConversationsBefore(updateAt, count, new CallbackListener<List<Conversation>>() {
+        _client.getConversationsBefore(updateAt, count, oaId, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
                 _handler.post(new Runnable() {
@@ -1026,7 +1026,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param count
      * @param result
      */
-    public void getConversationsAfter(final long updateAt, final int count, final Result result) {
+    public void getConversationsAfter(final long updateAt, final int count, final String oaId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getConversationsAfter: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -1037,7 +1037,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        _client.getConversationsAfter(updateAt, count, new CallbackListener<List<Conversation>>() {
+        _client.getConversationsAfter(updateAt, count, oaId, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
                 _handler.post(new Runnable() {
@@ -1334,7 +1334,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param queueId
      * @param result
      */
-    public void createLiveChatConversation(String queueId, final Result result) {
+    public void createLiveChatConversation(final String queueId, final String customData, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "createLiveChatConversation: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -1345,7 +1345,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        _client.createLiveChat(queueId, new CallbackListener<Conversation>() {
+        _client.createLiveChat(queueId, customData, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 _handler.post(new Runnable() {
@@ -1421,6 +1421,51 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "createLiveChatTicket: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    public void joinOaConversation(final String convId, final Result result) {
+        if (!isConnected()) {
+            Log.d(TAG, "joinOaConversation: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        _client.joinOaConversation(convId, new StatusListener() {
+            @Override
+            public void onSuccess() {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "joinOaConversation: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "joinOaConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
