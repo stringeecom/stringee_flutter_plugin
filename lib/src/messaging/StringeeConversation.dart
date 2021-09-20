@@ -16,13 +16,12 @@ class StringeeConversation {
   int _updatedAt;
   int _totalUnread;
   Map<dynamic, dynamic> _text;
-
   StringeeMessage _lastMsg;
   String _pinnedMsgId;
   List<StringeeUser> _participants;
+  String _oaId;
+  String _customData;
   StringeeClient _client;
-
-  // StringeeConversation();
 
   String get id => _id;
 
@@ -46,9 +45,25 @@ class StringeeConversation {
 
   List<StringeeUser> get participants => _participants;
 
+  String get oaId => _oaId;
+
+  String get customData => _customData;
+
   @override
   String toString() {
-    return '{id: $_id, name: $_name, isGroup: $_isGroup, creator: $_creator, createdAt: $_createdAt, updatedAt: $_updatedAt, totalUnread: $_totalUnread, text: $_text, lastMsg: $_lastMsg, pinnedMsgId: $_pinnedMsgId, participants: $_participants}';
+    return '{id: $_id, '
+        'name: $_name, '
+        'isGroup: $_isGroup, '
+        'creator: $_creator, '
+        'createdAt: $_createdAt, '
+        'updatedAt: $_updatedAt, '
+        'totalUnread: $_totalUnread, '
+        'text: $_text, '
+        'lastMsg: $_lastMsg, '
+        'pinnedMsgId: $_pinnedMsgId, '
+        'participants: $_participants,'
+        'oaId: $_oaId,'
+        'customData: $_customData, }';
   }
 
   StringeeConversation.fromJson(
@@ -84,6 +99,8 @@ class StringeeConversation {
       participants.add(user);
     }
     this._participants = participants;
+    this._oaId = convInfor['oaId'];
+    this._customData = convInfor['customData'];
   }
 
   /// ====================== BEGIN LIVE CHAT =======================

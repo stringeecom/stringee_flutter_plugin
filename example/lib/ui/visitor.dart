@@ -23,7 +23,7 @@ class _VisitorPageState extends State<VisitorPage>
   String visitorEmail = '';
   String visitorPhone = '';
 
-   StringeeConversation _conversation;
+  StringeeConversation _conversation;
 
   bool connected = false;
   bool inConv = false;

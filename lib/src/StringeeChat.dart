@@ -158,8 +158,11 @@ class StringeeChat {
   }
 
   /// Get local [StringeeConversation]
-  Future<Map<dynamic, dynamic>> getLocalConversations() async {
-    final params = {'uuid': _client.uuid};
+  Future<Map<dynamic, dynamic>> getLocalConversations({String oaId}) async {
+    final params = {
+      if (oaId != null) 'oaId': oaId,
+      'uuid': _client.uuid,
+    };
 
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getLocalConversations', params);
@@ -175,10 +178,17 @@ class StringeeChat {
   }
 
   /// Get [count] of lastest [StringeeConversation] from Stringee server
-  Future<Map<dynamic, dynamic>> getLastConversation(int count) async {
+  Future<Map<dynamic, dynamic>> getLastConversation(
+    int count, {
+    String oaId,
+  }) async {
     if (count <= 0) return await reportInvalidValue('count');
 
-    final param = {'count': count, 'uuid': _client.uuid};
+    final param = {
+      'count': count,
+      if (oaId != null) 'oaId': oaId,
+      'uuid': _client.uuid
+    };
 
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getLastConversation', param);
@@ -195,10 +205,19 @@ class StringeeChat {
 
   /// Get [count] of [StringeeConversation] before [datetime] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationsBefore(
-      int count, int datetime) async {
+    int count,
+    int datetime, {
+    String oaId,
+  }) async {
     if (count <= 0) return await reportInvalidValue('count');
     if (datetime <= 0) return await reportInvalidValue('datetime');
-    final param = {'count': count, 'datetime': datetime, 'uuid': _client.uuid};
+    final param = {
+      'count': count,
+      if (oaId != null) 'oaId': oaId,
+      'datetime': datetime,
+      'uuid': _client.uuid
+    };
+
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getConversationsBefore', param);
     if (result['status']) {
@@ -214,10 +233,19 @@ class StringeeChat {
 
   /// Get [count] of [StringeeConversation] after [datetime] from Stringee server
   Future<Map<dynamic, dynamic>> getConversationsAfter(
-      int count, int datetime) async {
+    int count,
+    int datetime, {
+    String oaId,
+  }) async {
     if (count <= 0) return await reportInvalidValue('count');
     if (datetime <= 0) return await reportInvalidValue('datetime');
-    final param = {'count': count, 'datetime': datetime, 'uuid': _client.uuid};
+    final param = {
+      'count': count,
+      if (oaId != null) 'oaId': oaId,
+      'datetime': datetime,
+      'uuid': _client.uuid
+    };
+
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getConversationsAfter', param);
     if (result['status']) {
@@ -244,6 +272,16 @@ class StringeeChat {
 
     return await StringeeClient.methodChannel
         .invokeMethod('getTotalUnread', param);
+  }
+
+  /// Join Oa [StringeeConversation]
+  Future<Map<dynamic, dynamic>> joinOaConversation(String convId) async {
+    final params = {
+      'convId': convId,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('joinOaConversation', params);
   }
 
   void _handleReceiveChangeEvent(Map<dynamic, dynamic> map) {
