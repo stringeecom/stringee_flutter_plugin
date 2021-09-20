@@ -119,9 +119,17 @@
         return;
     }
     
-    [_client getLocalConversationsWithCount:500 userId:_client.userId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
-        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
-    }];
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *oaId = data[@"oaId"];
+    if (oaId != nil || oaId.length > 0) {
+        [_client getLocalConversationsWithCount:500 userId:_client.userId oaId:oaId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    } else {
+        [_client getLocalConversationsWithCount:500 userId:_client.userId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    }
 }
 
 - (void)getLastConversation:(id)arguments result:(FlutterResult)result {
@@ -132,10 +140,18 @@
     
     NSDictionary *data = (NSDictionary *)arguments;
     int count = [[data objectForKey:@"count"] intValue];
+    NSString *oaId = data[@"oaId"];
     
-    [_client getLastConversationsWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
-        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
-    }];
+    if (oaId != nil || oaId.length > 0) {
+        [_client getLastConversationsWithCount:count oaId:oaId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    } else {
+        [_client getLastConversationsWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    }
+    
 }
 
 - (void)getConversationsBefore:(id)arguments result:(FlutterResult)result {
@@ -147,10 +163,17 @@
     NSDictionary *data = (NSDictionary *)arguments;
     int count = [[data objectForKey:@"count"] intValue];
     long long datetime = [[data objectForKey:@"datetime"] longLongValue];
+    NSString *oaId = data[@"oaId"];
     
-    [_client getConversationsBefore:datetime withCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
-        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
-    }];
+    if (oaId != nil || oaId.length > 0) {
+        [_client getConversationsBefore:datetime withCount:count oaId:oaId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    } else {
+        [_client getConversationsBefore:datetime withCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    }
 }
 
 - (void)getConversationsAfter:(id)arguments result:(FlutterResult)result {
@@ -162,9 +185,35 @@
     NSDictionary *data = (NSDictionary *)arguments;
     int count = [[data objectForKey:@"count"] intValue];
     long long datetime = [[data objectForKey:@"datetime"] longLongValue];
+    NSString *oaId = data[@"oaId"];
     
-    [_client getConversationsAfter:datetime withCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
-        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+    if (oaId != nil || oaId.length > 0) {
+        [_client getConversationsAfter:datetime withCount:count oaId:oaId completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    } else {
+        [_client getConversationsAfter:datetime withCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeConversation *> *conversations) {
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Conversations:conversations]});
+        }];
+    }
+}
+
+- (void)joinOAConversation:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *convId = [data objectForKey:@"convId"];
+
+    if (convId == nil || convId.length == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Conversation's id is invalid"});
+        return;
+    }
+ 
+    [_client joinOAConversationWithConvId:convId completion:^(BOOL status, int code, NSString *message) {
+        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
 }
 

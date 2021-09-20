@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)markAsRead:(id)arguments result:(FlutterResult)result;
 
+- (void)joinOAConversation:(id)arguments result:(FlutterResult)result;
+
 @end
 
 NS_ASSUME_NONNULL_END
