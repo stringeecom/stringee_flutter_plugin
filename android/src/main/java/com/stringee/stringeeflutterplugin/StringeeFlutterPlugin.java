@@ -130,7 +130,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
         switch (call.method) {
             case "disconnect":
-                clientWrapper.disconnect(uuid, result);
+                clientWrapper.disconnect(result);
                 break;
             case "registerPush":
                 clientWrapper.registerPush((String) call.argument("deviceToken"), result);

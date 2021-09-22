@@ -539,7 +539,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      *
      * @param result
      */
-    public void disconnect(final String uuid, final Result result) {
+    public void disconnect(final Result result) {
         _client.disconnect();
         Log.d(TAG, "disconnect: success");
         Map map = new HashMap();
