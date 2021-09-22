@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import '../StringeeClient.dart';
@@ -182,8 +183,7 @@ class StringeeCall2 {
     params['from'] = (parameters['from'] as String).trim();
     params['to'] = (parameters['to'] as String).trim();
     if (parameters.containsKey('customData')) if (parameters['customData'] !=
-        null)
-      params['customData'] = (parameters['customData'] as String).trim();
+        null) params['customData'] = json.encode(parameters['customData']);
     if (parameters.containsKey('isVideoCall')) {
       params['isVideoCall'] = (parameters['isVideoCall'] != null)
           ? parameters['isVideoCall']
