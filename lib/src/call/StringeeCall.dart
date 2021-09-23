@@ -183,7 +183,13 @@ class StringeeCall {
     params['from'] = (parameters['from'] as String).trim();
     params['to'] = (parameters['to'] as String).trim();
     if (parameters.containsKey('customData')) if (parameters['customData'] !=
-        null) params['customData'] = json.encode(parameters['customData']);
+        null) {
+      if (parameters['customData'] is Map) {
+        params['customData'] = json.encode(parameters['customData']);
+      } else {
+        params['customData'] = (parameters['customData'].toString()).trim();
+      }
+    }
     if (parameters.containsKey('isVideoCall')) {
       params['isVideoCall'] = (parameters['isVideoCall'] != null)
           ? parameters['isVideoCall']
