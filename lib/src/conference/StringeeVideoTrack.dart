@@ -41,7 +41,11 @@ class StringeeVideoTrack {
 
   void switchCamera() {}
 
-  void attachView() {}
+  void attach() {}
 
-  void deAttachView() {}
+  void detach() {}
+
+  void close(){
+
+  }
 }

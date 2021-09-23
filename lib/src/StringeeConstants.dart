@@ -46,6 +46,16 @@ enum StringeeChatEvents {
   didReceiveObjectChange,
 }
 
+/// Events for StringeeChat
+enum StringeeRoomEvents {
+  didJoinRoom,
+  didLeaveRoom,
+  didAddVideoTrack,
+  didRemoveVideoTrack,
+  didReceiveRoomMessage,
+  didReceiveVideoTrackControlNotification,
+}
+
 enum StringeeChannelType {
   normal,
   livechat,
@@ -64,6 +74,7 @@ enum StringeeObjectEventType {
   call,
   call2,
   chat,
+  room,
 }
 
 /// Error code and message in flutter:
@@ -329,8 +340,13 @@ class StringeeConversationOption {
   String? _oaId;
   String? _customData;
 
-  StringeeConversationOption(
-      {required bool isGroup, required bool isDistinct,String? name, String? oaId, String? customData}) {
+  StringeeConversationOption({
+    required bool isGroup,
+    required bool isDistinct,
+    String? name,
+    String? oaId,
+    String? customData,
+  }) {
     if (name != null) this._name = name;
     this._isGroup = isGroup;
     this._isDistinct = isDistinct;
@@ -369,6 +385,7 @@ class StringeeObjectChange {
   }
 }
 
+///Class represents server address
 class StringeeServerAddress {
   String? _host;
   int? _port;
@@ -388,6 +405,64 @@ class StringeeServerAddress {
     if (_port != null) params['port'] = _port;
     return params;
   }
+}
+
+///Class represents server address
+class StringeeVideoTrackOptions {
+  late bool _audio;
+  late bool _video;
+  late bool _screen;
+  StringeeVideoDimensions _videoDimension =
+      StringeeVideoDimensions.dimesion_288;
+
+  bool get audio => _audio;
+
+  bool get video => _video;
+
+  bool get screen => _screen;
+
+  StringeeVideoDimensions get videoDimension => _videoDimension;
+
+  StringeeVideoTrackOptions(bool audio, bool video, bool screen,
+      {StringeeVideoDimensions? videoDimension}) {
+    this._audio = audio;
+    this._video = video;
+    this._screen = screen;
+    if (videoDimension != null) this._videoDimension = videoDimension;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> params = new Map();
+    params['audio'] = _audio;
+    params['video'] = _video;
+    params['screen'] = _screen;
+    switch (this._videoDimension) {
+      case StringeeVideoDimensions.dimesion_288:
+        params['videoDimension'] = '288';
+        break;
+      case StringeeVideoDimensions.dimesion_480:
+        params['videoDimension'] = '480';
+        break;
+      case StringeeVideoDimensions.dimesion_720:
+        params['videoDimension'] = '720';
+        break;
+      case StringeeVideoDimensions.dimesion_1080:
+        params['videoDimension'] = '1080';
+        break;
+      default:
+        params['videoDimension'] = '288';
+        break;
+    }
+    return params;
+  }
+}
+
+/// Dimension of [StringeeVideoTrack]
+enum StringeeVideoDimensions {
+  dimesion_1080,
+  dimesion_720,
+  dimesion_480,
+  dimesion_288,
 }
 
 class GUIDGen {
