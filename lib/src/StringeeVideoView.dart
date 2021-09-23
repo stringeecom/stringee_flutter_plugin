@@ -6,10 +6,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../StringeeConstants.dart';
+import 'StringeeConstants.dart';
 
 class StringeeVideoView extends StatefulWidget {
-  final String callId;
+  late final String callId;
+  late final String trackId;
   bool isLocal = true;
   bool? isOverlay = false;
   bool? isMirror = false;
@@ -40,6 +41,21 @@ class StringeeVideoView extends StatefulWidget {
         assert(padding == null || padding.isNonNegative),
         super(key: key);
 
+  StringeeVideoView.forTrack(
+    this.trackId, {
+    Key? key,
+    this.color,
+    this.height,
+    this.width,
+    this.margin,
+    this.alignment,
+    this.padding,
+    this.child,
+    this.scalingType,
+  })  : assert(margin == null || margin.isNonNegative),
+        assert(padding == null || padding.isNonNegative),
+        super(key: key);
+
   @override
   StringeeVideoViewState createState() => StringeeVideoViewState();
 }
@@ -56,6 +72,7 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     super.initState();
 
     creationParams = {
+      'trackId': widget.trackId,
       'callId': widget.callId,
       'isLocal': widget.isLocal,
       'isOverlay': widget.isOverlay,
