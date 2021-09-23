@@ -29,6 +29,7 @@ import com.stringee.messaging.listeners.LiveChatEventListerner;
 import com.stringee.messaging.listeners.UserTypingEventListener;
 import com.stringee.stringeeflutterplugin.StringeeManager.StringeeCallType;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -309,15 +310,19 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onCustomMessage: " + from + " - " + jsonObject.toString());
-                Map map = new HashMap();
-                map.put("nativeEventType", ClientEvent.getValue());
-                map.put("event", "didReceiveCustomMessage");
-                map.put("uuid", _uuid);
-                Map bodyMap = new HashMap();
-                bodyMap.put("fromUserId", from);
-                bodyMap.put("message", jsonObject.toString());
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                try {
+                    Map map = new HashMap();
+                    map.put("nativeEventType", ClientEvent.getValue());
+                    map.put("event", "didReceiveCustomMessage");
+                    map.put("uuid", _uuid);
+                    Map bodyMap = new HashMap();
+                    bodyMap.put("fromUserId", from);
+                    bodyMap.put("message", Utils.convertJsonToMap(jsonObject));
+                    map.put("body", bodyMap);
+                    StringeeFlutterPlugin._eventSink.success(map);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

@@ -140,7 +140,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "sendCustomMessage":
                 try {
-                    clientWrapper.sendCustomMessage((String) call.argument("userId"), new JSONObject((String) call.argument("msg")), result);
+                    clientWrapper.sendCustomMessage((String) call.argument("userId"), Utils.convertMapToJson(call.argument("msg")), result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
