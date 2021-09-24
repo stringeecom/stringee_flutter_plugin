@@ -18,6 +18,9 @@ import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
 import com.stringee.messaging.listeners.CallbackListener;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
+import com.stringee.video.RemoteParticipant;
+import com.stringee.video.StringeeRoom;
+import com.stringee.video.StringeeVideoTrack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -373,6 +376,29 @@ public class Utils {
         queueMap.put("id", queue.getId());
         queueMap.put("name", queue.getName());
         return queueMap;
+    }
+
+    public static Map convertRoomToMap(@NonNull StringeeRoom room) {
+        Map roomMap = new HashMap();
+        roomMap.put("id", room.getId());
+        roomMap.put("recored", room.isRecorded());
+        return roomMap;
+    }
+
+    public static Map convertRoomUserToMap(@NonNull RemoteParticipant participant) {
+        Map userMap = new HashMap();
+        userMap.put("id", participant.getId());
+        return userMap;
+    }
+
+    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack) {
+        Map trackMap = new HashMap();
+        trackMap.put("id", videoTrack.getId());
+        trackMap.put("audio", videoTrack.audioEnabled());
+        trackMap.put("video", videoTrack.videoEnabled());
+        trackMap.put("screen", videoTrack.isScreenCapture());
+        trackMap.put("isLocal", videoTrack.isLocal());
+        return trackMap;
     }
 
     public static List getParticipantsFromNotify(@NonNull JSONArray participantsArray) {
