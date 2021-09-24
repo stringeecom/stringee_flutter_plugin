@@ -2,6 +2,7 @@ import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideoTrack {
   late final String _id;
+  late final StringeeRoomUser _publisher;
   late bool _audioEnable;
   late bool _videoEnable;
   late bool _isScreenCapture;
@@ -9,6 +10,8 @@ class StringeeVideoTrack {
   late final StringeeClient _client;
 
   String get id => _id;
+
+  StringeeRoomUser get publisher => _publisher;
 
   bool get audioEnable => _audioEnable;
 
@@ -20,12 +23,12 @@ class StringeeVideoTrack {
 
   @override
   String toString() {
-    return '{id: $_id, audioEnable: $_audioEnable, videoEnable: $_videoEnable, isScreenCapture: $_isScreenCapture, isLocal: $_isLocal}';
+    return '{id: $_id, publisher: $_publisher, audioEnable: $_audioEnable, videoEnable: $_videoEnable, isScreenCapture: $_isScreenCapture, isLocal: $_isLocal}';
   }
 
-  StringeeVideoTrack.fromTrackInfo(
-    Map<dynamic, dynamic> info,
+  StringeeVideoTrack(
     StringeeClient client,
+    Map<dynamic, dynamic> info,
   ) {
     this._client = client;
     this._id = info['id'];
@@ -35,17 +38,65 @@ class StringeeVideoTrack {
     this._isLocal = info['isLocal'];
   }
 
-  void mute(bool mute) {}
+  /// Mute
+  Future<Map<dynamic, dynamic>> mute(bool mute) async {
+    final params = {
+      'trackId': _id,
+      'uuid': _client.uuid,
+      'mute': mute,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('track.mute', params);
+  }
 
-  void enableVideo(bool enable) {}
+  /// Mute
+  Future<Map<dynamic, dynamic>> enableVideo(bool enable) async {
+    final params = {
+      'trackId': _id,
+      'uuid': _client.uuid,
+      'enable': enable,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('track.enableVideo', params);
+  }
 
-  void switchCamera() {}
+  /// Mute
+  Future<Map<dynamic, dynamic>> switchCamera() async {
+    final params = {
+      'trackId': _id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('track.switchCamera', params);
+  }
 
-  void attach() {}
+  /// Mute
+  Future<Map<dynamic, dynamic>> attach() async {
+    final params = {
+      'trackId': _id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('track.attach', params);
+  }
 
-  void detach() {}
+  /// Mute
+  Future<Map<dynamic, dynamic>> detach() async {
+    final params = {
+      'trackId': _id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('track.detach', params);
+  }
 
-  void close(){
-
+  /// Mute
+  Future<Map<dynamic, dynamic>> close() async {
+    final params = {
+      'trackId': _id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('track.close', params);
   }
 }
