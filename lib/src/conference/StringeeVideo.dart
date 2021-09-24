@@ -48,14 +48,14 @@ class StringeeVideo {
         .invokeMethod('video.createLocalVideoTrack', params);
 
     StringeeVideoTrack videoTrack = StringeeVideoTrack(_client, result['body']);
-    videoTrack.localId = localId;
     result['body'] = videoTrack;
     return result;
   }
 
   /// Release all [StringeeVideoTrack] in [StringeeRoom]
-  Future<Map<dynamic, dynamic>> release() async {
+  Future<Map<dynamic, dynamic>> release(StringeeRoom room) async {
     final params = {
+      'roomId': room.id,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel

@@ -110,6 +110,7 @@ class StringeeRoom {
   /// Publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> publish(StringeeVideoTrack videoTrack) async {
     final params = {
+      'roomId': _id,
       'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
@@ -120,6 +121,7 @@ class StringeeRoom {
   /// Un publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> unPublish(StringeeVideoTrack videoTrack) async {
     final params = {
+      'roomId': _id,
       'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
@@ -131,6 +133,7 @@ class StringeeRoom {
   Future<Map<dynamic, dynamic>> subscribe(
       StringeeVideoTrack videoTrack, StringeeVideoTrackOptions options) async {
     final params = {
+      'roomId': _id,
       'trackId': videoTrack.id,
       'options': options.toJson(),
       'uuid': _client.uuid,
@@ -143,6 +146,7 @@ class StringeeRoom {
   Future<Map<dynamic, dynamic>> unsubscribe(
       StringeeVideoTrack videoTrack) async {
     final params = {
+      'roomId': _id,
       'trackId': videoTrack.id,
       'uuid': _client.uuid,
     };
@@ -153,6 +157,7 @@ class StringeeRoom {
   /// Leave [StringeeRoom]
   Future<Map<dynamic, dynamic>> leave(bool allClient) async {
     final params = {
+      'roomId': _id,
       'allClient': allClient,
       'uuid': _client.uuid,
     };
@@ -163,6 +168,7 @@ class StringeeRoom {
   /// Send a message to [StringeeRoom]
   Future<Map<dynamic, dynamic>> sendMessage(Map<dynamic, dynamic> msg) async {
     final params = {
+      'roomId': _id,
       'msg': msg,
       'uuid': _client.uuid,
     };
