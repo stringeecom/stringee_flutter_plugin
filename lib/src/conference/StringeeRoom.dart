@@ -110,8 +110,7 @@ class StringeeRoom {
   /// Publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> publish(StringeeVideoTrack videoTrack) async {
     final params = {
-      'isLocal': videoTrack.isLocal,
-      'screem': videoTrack.isScreenCapture,
+      'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel
@@ -121,8 +120,7 @@ class StringeeRoom {
   /// Un publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> unPublish(StringeeVideoTrack videoTrack) async {
     final params = {
-      'isLocal': videoTrack.isLocal,
-      'screem': videoTrack.isScreenCapture,
+      'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel

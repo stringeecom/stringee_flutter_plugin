@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideo {
@@ -34,7 +36,10 @@ class StringeeVideo {
   /// Create local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> createLocalVideoTrack(
       StringeeVideoTrackOptions options) async {
+    String localId = Platform.operatingSystem +
+        DateTime.now().millisecondsSinceEpoch.toString();
     final params = {
+      'localId': localId,
       'options': options.toJson(),
       'uuid': _client.uuid,
     };
@@ -43,6 +48,7 @@ class StringeeVideo {
         .invokeMethod('video.createLocalVideoTrack', params);
 
     StringeeVideoTrack videoTrack = StringeeVideoTrack(_client, result['body']);
+    videoTrack.localId = localId;
     result['body'] = videoTrack;
     return result;
   }

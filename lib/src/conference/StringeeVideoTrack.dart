@@ -2,6 +2,7 @@ import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideoTrack {
   late String _id;
+  late String localId;
   late StringeeRoomUser _publisher;
   late bool _audioEnable;
   late bool _videoEnable;
