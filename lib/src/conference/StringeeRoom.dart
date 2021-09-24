@@ -53,17 +53,20 @@ class StringeeRoom {
   void handleDidJoinRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
-
-    _eventStreamController.add(
-        {"eventType": StringeeRoomEvents.didJoinRoom, "body": map['body']});
+    _eventStreamController.add({
+      "eventType": StringeeRoomEvents.didJoinRoom,
+      "body": StringeeRoomUser(map['user'])
+    });
   }
 
   void handleDidLeaveRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
 
-    _eventStreamController.add(
-        {"eventType": StringeeRoomEvents.didLeaveRoom, "body": map['body']});
+    _eventStreamController.add({
+      "eventType": StringeeRoomEvents.didLeaveRoom,
+      "body": StringeeRoomUser(map['user'])
+    });
   }
 
   void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
@@ -72,7 +75,7 @@ class StringeeRoom {
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didAddVideoTrack,
-      "body": map['body']
+      "body": StringeeVideoTrack(_client, map['videoTrack'])
     });
   }
 
@@ -82,17 +85,20 @@ class StringeeRoom {
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didRemoveVideoTrack,
-      "body": map['body']
+      "body": StringeeVideoTrack(_client, map['videoTrack'])
     });
   }
 
   void handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
-
+    Map<dynamic, dynamic> bodyMap = {
+      'msg': map['msg'],
+      'from': StringeeRoomUser(map['from'])
+    };
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didReceiveRoomMessage,
-      "body": map['body']
+      "body": bodyMap
     });
   }
 
@@ -100,10 +106,13 @@ class StringeeRoom {
       Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
-
+    Map<dynamic, dynamic> bodyMap = {
+      'videoTrack': StringeeVideoTrack(_client, map['videoTrack']),
+      'from': StringeeRoomUser(map['from'])
+    };
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didReceiveVideoTrackControlNotification,
-      "body": map['body']
+      "body": bodyMap
     });
   }
 

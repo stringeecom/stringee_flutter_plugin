@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideoTrack {
@@ -76,23 +78,29 @@ class StringeeVideoTrack {
   }
 
   /// Attach view
-  Future<Map<dynamic, dynamic>> attach() async {
-    final params = {
-      'trackId': _id,
-      'uuid': _client.uuid,
-    };
-    return await StringeeClient.methodChannel
-        .invokeMethod('track.attach', params);
-  }
-
-  /// Detach view
-  Future<Map<dynamic, dynamic>> detach() async {
-    final params = {
-      'trackId': _id,
-      'uuid': _client.uuid,
-    };
-    return await StringeeClient.methodChannel
-        .invokeMethod('track.detach', params);
+  Future<StringeeVideoView> attach({
+    Key? key,
+    Color? color,
+    double? height,
+    double? width,
+    EdgeInsetsGeometry? margin,
+    AlignmentGeometry? alignment,
+    EdgeInsetsGeometry? padding,
+    Widget? child,
+    ScalingType? scalingType,
+  }) async {
+    StringeeVideoView videoView = StringeeVideoView.forTrack(
+      _id,
+      color: color,
+      height: height,
+      width: width,
+      margin: margin,
+      padding: padding,
+      alignment: alignment,
+      child: child,
+      scalingType: scalingType,
+    );
+    return videoView;
   }
 
   /// Close track
