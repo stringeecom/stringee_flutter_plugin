@@ -107,20 +107,20 @@ class StringeeRoom {
     });
   }
 
-  /// Publish [StringeeVideoTrack]
+  /// Publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> publish(StringeeVideoTrack videoTrack) async {
     final params = {
-      'trackId': videoTrack.id,
+      'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel
         .invokeMethod('room.publish', params);
   }
 
-  /// Un publish [StringeeVideoTrack]
+  /// Un publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> unPublish(StringeeVideoTrack videoTrack) async {
     final params = {
-      'trackId': videoTrack.id,
+      'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel

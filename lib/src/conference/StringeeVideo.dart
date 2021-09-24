@@ -10,7 +10,10 @@ class StringeeVideo {
   /// Connect to [StringeeRoom]
   Future<Map<dynamic, dynamic>> connect(String roomToken) async {
     if (roomToken.isEmpty) return await reportInvalidValue('roomToken');
-    final params = {'roomToken': roomToken, 'uuid': _client.uuid};
+    final params = {
+      'roomToken': roomToken,
+      'uuid': _client.uuid,
+    };
 
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('video.connect', params);
@@ -31,7 +34,10 @@ class StringeeVideo {
   /// Create local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> createLocalVideoTrack(
       StringeeVideoTrackOptions options) async {
-    final params = {'options': options.toJson(), 'uuid': _client.uuid};
+    final params = {
+      'options': options.toJson(),
+      'uuid': _client.uuid,
+    };
 
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('video.createLocalVideoTrack', params);
@@ -43,7 +49,9 @@ class StringeeVideo {
 
   /// Release all [StringeeVideoTrack] in [StringeeRoom]
   Future<Map<dynamic, dynamic>> release() async {
-    final params = {'uuid': _client.uuid};
+    final params = {
+      'uuid': _client.uuid,
+    };
     return await StringeeClient.methodChannel
         .invokeMethod('video.release', params);
   }
