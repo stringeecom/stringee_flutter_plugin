@@ -543,16 +543,16 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             break;
                     }
 
-                    clientWrapper.videoConference().createLocalVideoTrack(options, result);
+                    clientWrapper.videoConference().createLocalVideoTrack((String) call.argument("localId"), options, result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
             case "video.release":
-                clientWrapper.videoConference().release(result);
+                clientWrapper.videoConference().release((String) call.argument("roomId"), result);
                 break;
             case "room.publish":
-                clientWrapper.videoConference().publish((String) call.argument("convId"), result);
+                clientWrapper.videoConference().publish((String) call.argument("roomId"), (String) call.argument("localId"), result);
                 break;
             case "room.unPublish":
                 clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);

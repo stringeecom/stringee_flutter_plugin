@@ -391,6 +391,17 @@ public class Utils {
         return userMap;
     }
 
+    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack, String localId) {
+        Map trackMap = new HashMap();
+        trackMap.put("id", videoTrack.getId());
+        trackMap.put("localId", localId);
+        trackMap.put("audio", videoTrack.audioEnabled());
+        trackMap.put("video", videoTrack.videoEnabled());
+        trackMap.put("screen", videoTrack.isScreenCapture());
+        trackMap.put("isLocal", videoTrack.isLocal());
+        return trackMap;
+    }
+
     public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack) {
         Map trackMap = new HashMap();
         trackMap.put("id", videoTrack.getId());

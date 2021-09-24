@@ -93,6 +93,10 @@ public class StringeeManager {
         return clientMap;
     }
 
+    public Map<String, CallWrapper> getCallsMap() {
+        return callsMap;
+    }
+
     public Map<String, Call2Wrapper> getCall2sMap() {
         return call2sMap;
     }
@@ -103,10 +107,6 @@ public class StringeeManager {
 
     public Map<String, Map<String, Object>> getRemoteViewOptions() {
         return remoteViewOption;
-    }
-
-    public Map<String, CallWrapper> getCallsMap() {
-        return callsMap;
     }
 
     public Handler getHandler() {
