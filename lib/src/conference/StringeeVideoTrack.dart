@@ -49,7 +49,7 @@ class StringeeVideoTrack {
         .invokeMethod('track.mute', params);
   }
 
-  /// Mute
+  /// Enable video
   Future<Map<dynamic, dynamic>> enableVideo(bool enable) async {
     final params = {
       'trackId': _id,
@@ -60,17 +60,18 @@ class StringeeVideoTrack {
         .invokeMethod('track.enableVideo', params);
   }
 
-  /// Mute
-  Future<Map<dynamic, dynamic>> switchCamera() async {
+  /// Switch camera
+  Future<Map<dynamic, dynamic>> switchCamera({int? cameraId}) async {
     final params = {
       'trackId': _id,
       'uuid': _client.uuid,
+      if (cameraId != null) 'cameraId': cameraId,
     };
     return await StringeeClient.methodChannel
         .invokeMethod('track.switchCamera', params);
   }
 
-  /// Mute
+  /// Attach view
   Future<Map<dynamic, dynamic>> attach() async {
     final params = {
       'trackId': _id,
@@ -80,7 +81,7 @@ class StringeeVideoTrack {
         .invokeMethod('track.attach', params);
   }
 
-  /// Mute
+  /// Detach view
   Future<Map<dynamic, dynamic>> detach() async {
     final params = {
       'trackId': _id,
@@ -90,7 +91,7 @@ class StringeeVideoTrack {
         .invokeMethod('track.detach', params);
   }
 
-  /// Mute
+  /// Close track
   Future<Map<dynamic, dynamic>> close() async {
     final params = {
       'trackId': _id,

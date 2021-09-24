@@ -343,12 +343,8 @@ class StringeeCall {
     Map params = {
       'callId': this._id,
       'uuid': _client.uuid,
+      if (cameraId != null) 'cameraId': cameraId,
     };
-    if (Platform.isAndroid) {
-      if (cameraId != null) {
-        params['cameraId'] = cameraId;
-      }
-    }
     return await StringeeClient.methodChannel
         .invokeMethod('switchCamera', params);
   }
