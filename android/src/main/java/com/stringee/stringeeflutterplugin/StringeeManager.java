@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
+import com.stringee.video.StringeeVideoTrack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class StringeeManager {
     private Map<String, Call2Wrapper> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
     private Map<String, Map<String, Object>> remoteViewOption = new HashMap<>();
+    private Map<String, StringeeVideoTrack> tracksMap = new HashMap<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
 
@@ -45,8 +47,9 @@ public class StringeeManager {
         ClientEvent(0),
         CallEvent(1),
         Call2Event(2),
-        ChatEvent(3);
-
+        ChatEvent(3),
+        RoomEvent(4);
+        
         public final short value;
 
         StringeeEventType(int value) {
@@ -107,6 +110,10 @@ public class StringeeManager {
 
     public Map<String, Map<String, Object>> getRemoteViewOptions() {
         return remoteViewOption;
+    }
+
+    public Map<String, StringeeVideoTrack> getTracksMap() {
+        return tracksMap;
     }
 
     public Handler getHandler() {

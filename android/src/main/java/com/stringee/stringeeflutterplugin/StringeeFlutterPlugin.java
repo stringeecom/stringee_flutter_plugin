@@ -421,7 +421,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             break;
                     }
                     if (msgMap.containsKey("customData")) {
-                        message.setCustomData(Utils.convertMapToJson((java.util.Map) msgMap.get("customData")));
+                        message.setCustomData(Utils.convertMapToJson((Map) msgMap.get("customData")));
                     }
                     clientWrapper.conversation().sendMessage(convId, message, result);
                 } catch (JSONException e) {
@@ -555,37 +555,64 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.videoConference().publish((String) call.argument("roomId"), (String) call.argument("localId"), result);
                 break;
             case "room.unPublish":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                clientWrapper.videoConference().unpublish((String) call.argument("roomId"), (String) call.argument("trackId"), result);
                 break;
             case "room.subscribe":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                try {
+                    JSONObject videoOptionsObject = Utils.convertMapToJson(call.argument("options"));
+                    Options options = new Options();
+                    options.audio(videoOptionsObject.optBoolean("audio"));
+                    options.video(videoOptionsObject.optBoolean("video"));
+                    options.screen(videoOptionsObject.optBoolean("screen"));
+                    String videoDimensions = videoOptionsObject.optString("videoDimension");
+                    switch (videoDimensions) {
+                        case "288":
+                            options.videoDimensions(VideoDimensions.CIF_VIDEO_DIMENSIONS);
+                            break;
+                        case "480":
+                            options.videoDimensions(VideoDimensions.WVGA_VIDEO_DIMENSIONS);
+                            break;
+                        case "720":
+                            options.videoDimensions(VideoDimensions.HD_720P_VIDEO_DIMENSIONS);
+                            break;
+                        case "1080":
+                            options.videoDimensions(VideoDimensions.HD_1080P_VIDEO_DIMENSIONS);
+                            break;
+                    }
+
+                    clientWrapper.videoConference().subscribe((String) call.argument("roomId"), (String) call.argument("trackId"), options, result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
             case "room.unsubscribe":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                clientWrapper.videoConference().unsubscribe((String) call.argument("roomId"), (String) call.argument("trackId"), result);
                 break;
             case "room.leave":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                clientWrapper.videoConference().leave((String) call.argument("roomId"), (boolean) call.argument("allClient"), result);
                 break;
             case "room.sendMessage":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                try {
+                    clientWrapper.videoConference().sendMessage((String) call.argument("roomId"), Utils.convertMapToJson(call.argument("msg")), result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
             case "track.mute":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                clientWrapper.videoConference().mute((String) call.argument("trackId"), (boolean) call.argument("mute"), result);
                 break;
             case "track.enableVideo":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                clientWrapper.videoConference().enableVideo((String) call.argument("trackId"), (boolean) call.argument("enable"), result);
                 break;
             case "track.switchCamera":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
-                break;
-            case "track.attach":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
-                break;
-            case "track.detach":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                if (call.hasArgument("cameraId")) {
+                    clientWrapper.videoConference().switchCamera((String) call.argument("trackId"), (int) call.argument("cameraId"), result);
+                } else {
+                    clientWrapper.videoConference().switchCamera((String) call.argument("trackId"), result);
+                }
                 break;
             case "track.close":
-                clientWrapper.videoConference().rejectChatRequest((String) call.argument("convId"), result);
+                clientWrapper.videoConference().close((String) call.argument("trackId"), result);
                 break;
             default:
                 result.notImplemented();
