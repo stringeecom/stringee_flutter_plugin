@@ -2,7 +2,6 @@ import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideoTrack {
   late String _id;
-  late String _localId;
   late StringeeRoomUser _publisher;
   late bool _audioEnable;
   late bool _videoEnable;
@@ -11,8 +10,6 @@ class StringeeVideoTrack {
   late final StringeeClient _client;
 
   String get id => _id;
-
-  String get localId => _localId;
 
   StringeeRoomUser get publisher => _publisher;
 
@@ -26,7 +23,7 @@ class StringeeVideoTrack {
 
   @override
   String toString() {
-    return '{id: $_id, localId: $_localId, publisher: $_publisher, audioEnable: $_audioEnable, videoEnable: $_videoEnable, isScreenCapture: $_isScreenCapture, isLocal: $_isLocal}';
+    return '{id: $_id, publisher: $_publisher, audioEnable: $_audioEnable, videoEnable: $_videoEnable, isScreenCapture: $_isScreenCapture, isLocal: $_isLocal}';
   }
 
   StringeeVideoTrack(
@@ -35,7 +32,6 @@ class StringeeVideoTrack {
   ) {
     this._client = client;
     this._id = info['id'];
-    this._localId = info['localId'];
     this._audioEnable = info['audio'];
     this._videoEnable = info['video'];
     this._isScreenCapture = info['screen'];
