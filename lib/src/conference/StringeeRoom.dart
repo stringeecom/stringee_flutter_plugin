@@ -114,15 +114,18 @@ class StringeeRoom {
       'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('room.publish', params);
+    Map<dynamic, dynamic> result =
+        await StringeeClient.methodChannel.invokeMethod('room.publish', params);
+    videoTrack = StringeeVideoTrack(_client, result['body']);
+    result['body'] = videoTrack;
+    return result;
   }
 
   /// Un publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> unPublish(StringeeVideoTrack videoTrack) async {
     final params = {
       'roomId': _id,
-      'localId': videoTrack.localId,
+      'trackId': videoTrack.id,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel
