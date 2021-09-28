@@ -49,7 +49,7 @@ public class StringeeManager {
         Call2Event(2),
         ChatEvent(3),
         RoomEvent(4);
-        
+
         public final short value;
 
         StringeeEventType(int value) {

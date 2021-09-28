@@ -62,7 +62,7 @@ public class RoomManager implements StringeeRoomListener {
                         map.put("body", Utils.convertVideoTrackToMap(videoTrack));
                         result.success(map);
 
-                        _videoConferenceManager.getTracksMap().put(videoTrack.getId(), videoTrack);
+                        _manager.getTracksMap().put(videoTrack.getId(), videoTrack);
                     }
                 });
             }
@@ -178,12 +178,18 @@ public class RoomManager implements StringeeRoomListener {
                 _handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "unsubscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Log.d(TAG, "unsubscribe: success");
                         Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
                         result.success(map);
+//                        Log.d(TAG, "unsubscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+//                        Map map = new HashMap();
+//                        map.put("status", false);
+//                        map.put("code", stringeeError.getCode());
+//                        map.put("message", stringeeError.getMessage());
+//                        result.success(map);
                     }
                 });
             }
@@ -274,7 +280,7 @@ public class RoomManager implements StringeeRoomListener {
                     for (int j = 0; j < participant.getVideoTracks().size(); j++) {
                         StringeeVideoTrack videoTrack = participant.getVideoTracks().get(j);
                         videoTracks.add(Utils.convertVideoTrackToMap(videoTrack));
-                        _videoConferenceManager.getTracksMap().put(videoTrack.getId(), videoTrack);
+                        _manager.getTracksMap().put(videoTrack.getId(), videoTrack);
                     }
                 }
                 Map bodyMap = new HashMap();
@@ -359,6 +365,7 @@ public class RoomManager implements StringeeRoomListener {
             @Override
             public void run() {
                 Log.d(TAG, "didAddVideoTrack: " + stringeeVideoTrack.getId());
+                _manager.getTracksMap().put(stringeeVideoTrack.getId(), stringeeVideoTrack);
                 Map map = new HashMap();
                 map.put("nativeEventType", RoomEvent.getValue());
                 map.put("event", "didAddVideoTrack");

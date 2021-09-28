@@ -66,7 +66,7 @@ public class VideoConferenceManager {
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
-        map.put("body", Utils.convertVideoTrackToMap(localVideoTrack, localId));
+        map.put("body", Utils.convertVideoTrackToMap(localVideoTrack, localId, _clientWrapper.getClient().getUserId()));
         result.success(map);
     }
 

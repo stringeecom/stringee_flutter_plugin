@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
@@ -391,7 +392,7 @@ public class Utils {
         return userMap;
     }
 
-    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack, String localId) {
+    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack, String localId, String clientId) {
         Map trackMap = new HashMap();
         trackMap.put("id", videoTrack.getId());
         trackMap.put("localId", localId);
@@ -399,6 +400,9 @@ public class Utils {
         trackMap.put("video", videoTrack.videoEnabled());
         trackMap.put("screen", videoTrack.isScreenCapture());
         trackMap.put("isLocal", videoTrack.isLocal());
+        Map userMap = new HashMap();
+        userMap.put("id", clientId);
+        trackMap.put("publisher", userMap);
         return trackMap;
     }
 
@@ -409,6 +413,9 @@ public class Utils {
         trackMap.put("video", videoTrack.videoEnabled());
         trackMap.put("screen", videoTrack.isScreenCapture());
         trackMap.put("isLocal", videoTrack.isLocal());
+        Map userMap = new HashMap();
+        userMap.put("id", videoTrack.getUserId());
+        trackMap.put("publisher", userMap);
         return trackMap;
     }
 

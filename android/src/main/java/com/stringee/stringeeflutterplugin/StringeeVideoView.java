@@ -33,18 +33,23 @@ public class StringeeVideoView implements PlatformView {
         try {
             frameLayout = new FrameLayout(context);
 
-            boolean forCall = (boolean) creationParams.get("forCall");
-            if (forCall) {
-                String callId = (String) creationParams.get("callId");
-                if (!(callId == null || callId.length() == 0)) {
-                    renderView(frameLayout, callId, creationParams);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    boolean forCall = (boolean) creationParams.get("forCall");
+                    if (forCall) {
+                        String callId = (String) creationParams.get("callId");
+                        if (!(callId == null || callId.length() == 0)) {
+                            renderView(frameLayout, callId, creationParams);
+                        }
+                    } else {
+                        String trackId = (String) creationParams.get("trackId");
+                        if (!(trackId == null || trackId.length() == 0)) {
+                            renderView(context, frameLayout, trackId, creationParams);
+                        }
+                    }
                 }
-            } else {
-                String trackId = (String) creationParams.get("callId");
-                if (!(trackId == null || trackId.length() == 0)) {
-                    renderView(context, frameLayout, trackId, creationParams);
-                }
-            }
+            }, 1000);
 
         } catch (Exception e) {
             Log.d(TAG, "StringeeVideoView render error: " + e.getMessage());
