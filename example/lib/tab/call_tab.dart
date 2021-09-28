@@ -205,7 +205,7 @@ class CallTabState extends State<CallTab> {
   }
 
   void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
-    print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message']);
+    print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message'].toString());
   }
 
   void handleIncomingCallEvent(StringeeCall call) {

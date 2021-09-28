@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stringee_flutter_plugin_example/tab/call_tab.dart';
 import 'package:stringee_flutter_plugin_example/tab/chat_tab.dart';
+import 'package:stringee_flutter_plugin_example/tab/conference_tab.dart';
 
 import 'tab/live_chat_tab.dart';
 
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: "Stringee flutter sample", home: new MyHomePage());
+        title: "Stringee flutter sample",
+        home: new MyHomePage());
   }
 }
 
@@ -33,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
     CallTab(),
     ChatTab(),
     LiveChatTab(),
+    ConferenceTab(),
   ];
 
   @override
@@ -65,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
           onTap: (index) {
             setState(() {
               _currentIndex = index;
@@ -82,6 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.chat),
               label: 'Live chat',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.ondemand_video),
+              label: 'Conference',
             ),
           ]),
     );

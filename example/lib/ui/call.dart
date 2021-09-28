@@ -198,7 +198,7 @@ class _CallState extends State<Call> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: _isVideoEnable ? _toggleVideo : null,
+                        onTap: _toggleVideo,
                         child: Image.asset(
                           _isVideoEnable
                               ? 'images/ic_video.png'

@@ -16,6 +16,7 @@ dependencies:
   stringee_flutter_plugin:
     path: ../
   permission_handler: ^8.1.4+2
+  http: ^0.13.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -40,6 +41,7 @@ flutter:
     - images/end.png
     - images/ic_mic.png
     - images/switch_camera.png
+    - images/ic_switch.png
     - images/ic_speaker_off.png
     - images/ic_video.png
     - images/ic_speaker_on.png
