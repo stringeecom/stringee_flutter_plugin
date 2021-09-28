@@ -22,12 +22,18 @@ class StringeeVideo {
 
     StringeeRoom room = StringeeRoom(_client, result['body']['room']);
     result['body']['room'] = room;
-    List<StringeeVideoTrack> videoTrackList = result['body']['videoTracks']
-        .map((info) => StringeeVideoTrack(_client, info))
-        .toList();
+
+    List<StringeeVideoTrack> videoTrackList = [];
+    List<dynamic> tracksData = result['body']['videoTracks'];
+    if (tracksData.length > 0)
+      videoTrackList =
+          tracksData.map((info) => StringeeVideoTrack(_client, info)).toList();
     result['body']['videoTracks'] = videoTrackList;
-    List<StringeeRoomUser> userList =
-        result['body']['users'].map((info) => StringeeRoomUser(info)).toList();
+
+    List<StringeeRoomUser> userList = [];
+    List<dynamic> usersData = result['body']['users'];
+    if (usersData.length > 0)
+      userList = usersData.map((info) => StringeeRoomUser(info)).toList();
     result['body']['users'] = userList;
 
     return result;
@@ -47,7 +53,7 @@ class StringeeVideo {
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('video.createLocalVideoTrack', params);
 
-    StringeeVideoTrack videoTrack = StringeeVideoTrack(_client, result['body']);
+    StringeeVideoTrack videoTrack = StringeeVideoTrack.local(_client, result['body']);
     result['body'] = videoTrack;
     return result;
   }

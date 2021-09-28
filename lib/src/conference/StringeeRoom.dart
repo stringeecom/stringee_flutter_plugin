@@ -187,4 +187,10 @@ class StringeeRoom {
     return await StringeeClient.methodChannel
         .invokeMethod('room.sendMessage', params);
   }
+
+  /// close event stream
+  void destroy() {
+    _subscriber.cancel();
+    _eventStreamController.close();
+  }
 }

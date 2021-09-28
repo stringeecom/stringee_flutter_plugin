@@ -37,11 +37,24 @@ class StringeeVideoTrack {
   ) {
     this._client = client;
     this._id = info['id'];
+    this._audioEnable = info['audio'];
+    this._videoEnable = info['video'];
+    this._isScreenCapture = info['screen'];
+    this._isLocal = info['isLocal'];
+    this._publisher = StringeeRoomUser(info['publisher']);
+  }
+
+  StringeeVideoTrack.local(
+    StringeeClient client,
+    Map<dynamic, dynamic> info,
+  ) {
+    this._client = client;
     this._localId = info['localId'];
     this._audioEnable = info['audio'];
     this._videoEnable = info['video'];
     this._isScreenCapture = info['screen'];
     this._isLocal = info['isLocal'];
+    this._publisher = StringeeRoomUser(info['publisher']);
   }
 
   /// Mute
@@ -78,9 +91,11 @@ class StringeeVideoTrack {
   }
 
   /// Attach view
-  Future<StringeeVideoView> attach({
+  StringeeVideoView attach({
     Key? key,
     Color? color,
+    bool? isOverlay,
+    bool? isMirror,
     double? height,
     double? width,
     EdgeInsetsGeometry? margin,
@@ -88,11 +103,13 @@ class StringeeVideoTrack {
     EdgeInsetsGeometry? padding,
     Widget? child,
     ScalingType? scalingType,
-  }) async {
+  }) {
     StringeeVideoView videoView = StringeeVideoView.forTrack(
       _id,
       color: color,
       height: height,
+      isOverlay: isOverlay,
+      isMirror: isMirror,
       width: width,
       margin: margin,
       padding: padding,
