@@ -12,6 +12,7 @@ import com.stringee.video.StringeeVideoTrack;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeManager {
@@ -25,6 +26,7 @@ public class StringeeManager {
     private Map<String, StringeeVideoTrack> tracksMap = new HashMap<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
+    private ScreenCaptureManager captureManager;
 
     public enum StringeeCallType {
         AppToAppOutgoing(0),
@@ -134,6 +136,14 @@ public class StringeeManager {
             audioManager.stop();
             audioManager = null;
         }
+    }
+
+    public ScreenCaptureManager getCaptureManager() {
+        return captureManager;
+    }
+
+    public void setCaptureManager(ScreenCaptureManager captureManager) {
+        this.captureManager = captureManager;
     }
 
     /**

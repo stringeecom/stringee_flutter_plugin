@@ -27,13 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
+public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
     private static StringeeManager _manager;
     public static EventChannel.EventSink _eventSink;
     public static MethodChannel channel;
@@ -303,6 +305,15 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).setMirror((boolean) call.argument("isLocal"), (boolean) call.argument("isMirror"), result);
                 }
+            case "startCapture":
+                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                    clientWrapper.call2Wrapper(callId).startCapture(result);
+                }
+                break;
+            case "stopCapture":
+                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                    clientWrapper.call2Wrapper(callId).stopCapture(result);
+                }
                 break;
             case "createConversation":
                 try {
@@ -548,6 +559,9 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     e.printStackTrace();
                 }
                 break;
+            case "video.createCaptureScreenTrack":
+                clientWrapper.videoConference().createCaptureScreenTrack((String) call.argument("localId"), result);
+                break;
             case "video.release":
                 clientWrapper.videoConference().release((String) call.argument("roomId"), result);
                 break;
@@ -626,6 +640,26 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
     @Override
     public void onCancel(Object o) {
+
+    }
+
+    @Override
+    public void onAttachedToActivity(@androidx.annotation.NonNull ActivityPluginBinding binding) {
+        _manager.setCaptureManager(ScreenCaptureManager.getInstance(binding));
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@androidx.annotation.NonNull ActivityPluginBinding binding) {
+
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
 
     }
 }

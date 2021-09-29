@@ -47,7 +47,7 @@ public class RoomManager implements StringeeRoomListener {
         _stringeeRoom = stringeeVideo.connect(_clientWrapper.getClient(), roomToken, this);
     }
 
-    public void publish(final StringeeVideoTrack videoTrack, final Result result) {
+    public void publish(final StringeeVideoTrack videoTrack,final String localId, final Result result) {
         _stringeeRoom.publish(videoTrack, new StatusListener() {
             @Override
             public void onSuccess() {
@@ -63,6 +63,7 @@ public class RoomManager implements StringeeRoomListener {
                         result.success(map);
 
                         _manager.getTracksMap().put(videoTrack.getId(), videoTrack);
+                        _manager.getTracksMap().remove(localId);
                     }
                 });
             }
