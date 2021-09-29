@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../StringeeClient.dart';
-import '../StringeeConstants.dart';
+import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 class StringeeCall2 {
   String? _id;
@@ -91,6 +90,12 @@ class StringeeCall2 {
         case 'didReceiveRemoteStream':
           handleDidReceiveRemoteStream(map['body']);
           break;
+        case 'didAddVideoTrack':
+          handleDidAddVideoTrack(map['body']);
+          break;
+        case 'didRemoveVideoTrack':
+          handleDidRemoveVideoTrack(map['body']);
+          break;
         case 'didChangeAudioDevice':
           handleDidChangeAudioDevice(map['body']);
           break;
@@ -150,6 +155,24 @@ class StringeeCall2 {
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didReceiveRemoteStream,
       "body": map['callId']
+    });
+  }
+
+  void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
+    StringeeVideoTrack videoTrack =
+        StringeeVideoTrack(_client, map['videoTrack']);
+    _eventStreamController.add({
+      "eventType": StringeeCall2Events.didAddVideoTrack,
+      "body": videoTrack
+    });
+  }
+
+  void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
+    StringeeVideoTrack videoTrack =
+        StringeeVideoTrack(_client, map['videoTrack']);
+    _eventStreamController.add({
+      "eventType": StringeeCall2Events.didRemoveVideoTrack,
+      "body": videoTrack
     });
   }
 
@@ -384,6 +407,26 @@ class StringeeCall2 {
       return await StringeeClient.methodChannel
           .invokeMethod('setMirror2', params);
     }
+  }
+
+  /// Start capture screen
+  Future<Map<dynamic, dynamic>> startCapture() async {
+    final params = {
+      'callId': this._id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('startCapture', params);
+  }
+
+  /// Stop capture screen
+  Future<Map<dynamic, dynamic>> stopCapture() async {
+    final params = {
+      'callId': this._id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('stopCapture', params);
   }
 
   /// close event stream

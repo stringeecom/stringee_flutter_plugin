@@ -38,6 +38,8 @@ enum StringeeCall2Events {
   didHandleOnAnotherDevice,
   didReceiveLocalStream,
   didReceiveRemoteStream,
+  didAddVideoTrack,
+  didRemoveVideoTrack,
   didChangeAudioDevice
 }
 

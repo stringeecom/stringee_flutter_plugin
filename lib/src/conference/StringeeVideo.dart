@@ -53,7 +53,26 @@ class StringeeVideo {
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('video.createLocalVideoTrack', params);
 
-    StringeeVideoTrack videoTrack = StringeeVideoTrack.local(_client, result['body']);
+    StringeeVideoTrack videoTrack =
+        StringeeVideoTrack.local(_client, result['body']);
+    result['body'] = videoTrack;
+    return result;
+  }
+
+  /// Create capture screen [StringeeVideoTrack]
+  Future<Map<dynamic, dynamic>> createCaptureScreenTrack() async {
+    String localId = Platform.operatingSystem +
+        DateTime.now().millisecondsSinceEpoch.toString();
+    final params = {
+      'localId': localId,
+      'uuid': _client.uuid,
+    };
+
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+        .invokeMethod('video.createCaptureScreenTrack', params);
+
+    StringeeVideoTrack videoTrack =
+        StringeeVideoTrack.local(_client, result['body']);
     result['body'] = videoTrack;
     return result;
   }
