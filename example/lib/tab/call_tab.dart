@@ -14,7 +14,8 @@ class CallTab extends StatefulWidget {
 
 class CallTabState extends State<CallTab> {
   String myUserId = 'Not connected...';
-  String token = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYzMjk3MzQ5OSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYzMzA1OTg5OSwidXNlcklkIjoiQUNUWFY3QlRBUCIsImljY19hcGkiOnRydWUsImNoYXRBZ2VudCI6dHJ1ZSwiZGlzcGxheU5hbWUiOiJPa3VtdXJhIFJpbiIsImF2YXRhclVybCI6bnVsbCwic3Vic2NyaWJlIjoiIiwiYXR0cmlidXRlcyI6Ilt7XCJhdHRyaWJ1dGVcIjpcIm9ubGluZVN0YXR1c1wiLFwidG9waWNcIjpcIm9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sb25saW5lX3N0YXR1c19HUlBZOUIxMVwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOLGNhbGxfR1JQWTlCMTFcIn1dIn0.ewkL_8ELFwQ4AptqOyDd7gaHcLLCKHMLxU7Vtr5opqA';
+  String token =
+      'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYzMjk3MzQ5OSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYzMzA1OTg5OSwidXNlcklkIjoiQUNUWFY3QlRBUCIsImljY19hcGkiOnRydWUsImNoYXRBZ2VudCI6dHJ1ZSwiZGlzcGxheU5hbWUiOiJPa3VtdXJhIFJpbiIsImF2YXRhclVybCI6bnVsbCwic3Vic2NyaWJlIjoiIiwiYXR0cmlidXRlcyI6Ilt7XCJhdHRyaWJ1dGVcIjpcIm9ubGluZVN0YXR1c1wiLFwidG9waWNcIjpcIm9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sb25saW5lX3N0YXR1c19HUlBZOUIxMVwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOLGNhbGxfR1JQWTlCMTFcIn1dIn0.ewkL_8ELFwQ4AptqOyDd7gaHcLLCKHMLxU7Vtr5opqA';
   String toUser = '';
 
   @override
@@ -67,6 +68,7 @@ class CallTabState extends State<CallTab> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: new Stack(
           children: <Widget>[
             Container(
@@ -205,7 +207,10 @@ class CallTabState extends State<CallTab> {
   }
 
   void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
-    print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message'].toString());
+    print('from: ' +
+        map['fromUserId'] +
+        '\nmessage: ' +
+        map['message'].toString());
   }
 
   void handleIncomingCallEvent(StringeeCall call) {
