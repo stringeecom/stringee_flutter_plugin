@@ -17,6 +17,7 @@ dependencies:
     path: ../
   permission_handler: ^8.1.4+2
   http: ^0.13.3
+  flutter_local_notifications: ^8.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -36,18 +37,6 @@ flutter:
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
-
-  assets:
-    - images/end.png
-    - images/ic_mic.png
-    - images/switch_camera.png
-    - images/ic_switch.png
-    - images/ic_speaker_off.png
-    - images/ic_video.png
-    - images/ic_speaker_on.png
-    - images/ic_video_off.png
-    - images/ic_mute.png
-    - images/answer.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

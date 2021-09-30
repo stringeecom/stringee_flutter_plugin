@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stringee_flutter_plugin_example/tab/call_tab.dart';
 import 'package:stringee_flutter_plugin_example/tab/chat_tab.dart';
@@ -41,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
 
     if (Platform.isAndroid) {
       requestPermissions();
