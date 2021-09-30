@@ -14,8 +14,7 @@ class CallTab extends StatefulWidget {
 
 class CallTabState extends State<CallTab> {
   String myUserId = 'Not connected...';
-  String token =
-      'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYzMjk3MzQ5OSIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYzMzA1OTg5OSwidXNlcklkIjoiQUNUWFY3QlRBUCIsImljY19hcGkiOnRydWUsImNoYXRBZ2VudCI6dHJ1ZSwiZGlzcGxheU5hbWUiOiJPa3VtdXJhIFJpbiIsImF2YXRhclVybCI6bnVsbCwic3Vic2NyaWJlIjoiIiwiYXR0cmlidXRlcyI6Ilt7XCJhdHRyaWJ1dGVcIjpcIm9ubGluZVN0YXR1c1wiLFwidG9waWNcIjpcIm9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sb25saW5lX3N0YXR1c19HUlBZOUIxMVwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOLGNhbGxfR1JQWTlCMTFcIn1dIn0.ewkL_8ELFwQ4AptqOyDd7gaHcLLCKHMLxU7Vtr5opqA';
+  String token = '';
   String toUser = '';
 
   @override
@@ -117,7 +116,7 @@ class CallTabState extends State<CallTab> {
                                   width: 175.0,
                                   child: new ElevatedButton(
                                     onPressed: () {
-                                      _callTapped(
+                                      callTapped(
                                           false, StringeeObjectEventType.call);
                                     },
                                     child: Text('CALL'),
@@ -129,7 +128,7 @@ class CallTabState extends State<CallTab> {
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: new ElevatedButton(
                                     onPressed: () {
-                                      _callTapped(
+                                      callTapped(
                                           true, StringeeObjectEventType.call);
                                     },
                                     child: Text('VIDEOCALL'),
@@ -148,7 +147,7 @@ class CallTabState extends State<CallTab> {
                                         padding: EdgeInsets.only(
                                             left: 20.0, right: 20.0)),
                                     onPressed: () {
-                                      _callTapped(
+                                      callTapped(
                                           false, StringeeObjectEventType.call2);
                                     },
                                     child: Text('CALL2'),
@@ -163,7 +162,7 @@ class CallTabState extends State<CallTab> {
                                         padding: EdgeInsets.only(
                                             left: 20.0, right: 20.0)),
                                     onPressed: () {
-                                      _callTapped(
+                                      callTapped(
                                           true, StringeeObjectEventType.call2);
                                     },
                                     child: Text('VIDEOCALL2'),
@@ -247,7 +246,7 @@ class CallTabState extends State<CallTab> {
     );
   }
 
-  void _callTapped(bool isVideoCall, StringeeObjectEventType callType) {
+  void callTapped(bool isVideoCall, StringeeObjectEventType callType) {
     if (toUser.isEmpty || !client.hasConnected) return;
 
     Navigator.push(

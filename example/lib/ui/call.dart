@@ -75,9 +75,9 @@ class _CallState extends State<Call> {
     _isVideoEnable = widget._isVideoCall;
 
     if (widget._callType == StringeeObjectEventType.call) {
-      _makeOrInitAnswerCall();
+      makeOrInitAnswerCall();
     } else {
-      _makeOrInitAnswerCall2();
+      makeOrInitAnswerCall2();
     }
   }
 
@@ -127,7 +127,9 @@ class _CallState extends State<Call> {
             width: 100.0,
             scalingType: ScalingType.fill,
           )
-        : Placeholder(color: Colors.transparent,);
+        : Placeholder(
+            color: Colors.transparent,
+          );
 
     Widget remoteView = (_hasRemoteStream)
         ? new StringeeVideoView(
@@ -138,7 +140,9 @@ class _CallState extends State<Call> {
             isMirror: false,
             scalingType: ScalingType.fill,
           )
-        : Placeholder(color: Colors.transparent,);
+        : Placeholder(
+            color: Colors.transparent,
+          );
 
     Widget localScreen = (_hasLocalScreen)
         ? _localScreenTrack.attach(
@@ -150,7 +154,9 @@ class _CallState extends State<Call> {
             width: 100.0,
             scalingType: ScalingType.fill,
           )
-        : Placeholder(color: Colors.transparent,);
+        : Placeholder(
+            color: Colors.transparent,
+          );
 
     Widget remoteScreen = (_hasRemoteScreen)
         ? _remoteScreenTrack.attach(
@@ -162,7 +168,9 @@ class _CallState extends State<Call> {
             width: 100.0,
             scalingType: ScalingType.fill,
           )
-        : Placeholder(color: Colors.transparent,);
+        : Placeholder(
+            color: Colors.transparent,
+          );
 
     Widget btnSwitch = Align(
       alignment: Alignment.topLeft,
@@ -308,7 +316,7 @@ class _CallState extends State<Call> {
     );
   }
 
-  Future _makeOrInitAnswerCall() async {
+  Future makeOrInitAnswerCall() async {
     if (!widget._showIncomingUi) {
       widget._stringeeCall = StringeeCall(widget._client);
     }
@@ -375,7 +383,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  Future _makeOrInitAnswerCall2() async {
+  Future makeOrInitAnswerCall2() async {
     if (!widget._showIncomingUi) {
       widget._stringeeCall2 = StringeeCall2(widget._client);
     }
