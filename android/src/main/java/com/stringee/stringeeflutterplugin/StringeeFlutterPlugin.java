@@ -321,11 +321,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     participants = Utils.getListUser((String) call.argument("participants"));
                     ConversationOptions option = new ConversationOptions();
                     JSONObject optionObject = new JSONObject((String) call.argument("option"));
-                    option.setName(optionObject.optString("name", null));
+                    option.setName(optionObject.optString("name").trim());
                     option.setGroup(optionObject.getBoolean("isGroup"));
                     option.setDistinct(optionObject.getBoolean("isDistinct"));
-                    option.setOaId(optionObject.optString("oaId"));
-                    option.setCustomData(optionObject.optString("customData"));
+                    option.setOaId(optionObject.optString("oaId").trim());
+                    option.setCustomData(optionObject.optString("customData").trim());
+                    option.setCreatorId(optionObject.optString("setCreatorId").trim());
                     clientWrapper.createConversation(participants, option, result);
                 } catch (JSONException e) {
                     e.printStackTrace();

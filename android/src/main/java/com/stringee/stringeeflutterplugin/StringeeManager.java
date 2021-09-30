@@ -12,7 +12,6 @@ import com.stringee.video.StringeeVideoTrack;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeManager {
