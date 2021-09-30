@@ -55,7 +55,7 @@ enum StringeeRoomEvents {
   didAddVideoTrack,
   didRemoveVideoTrack,
   didReceiveRoomMessage,
-  didReceiveVideoTrackControlNotification,
+  // didReceiveVideoTrackControlNotification,
 }
 
 enum StringeeChannelType {

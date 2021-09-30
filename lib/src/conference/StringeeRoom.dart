@@ -43,9 +43,9 @@ class StringeeRoom {
         case 'didReceiveRoomMessage':
           handleDidReceiveRoomMessage(map['body']);
           break;
-        case 'didReceiveVideoTrackControlNotification':
-          handleDidReceiveVideoTrackControlNotification(map['body']);
-          break;
+        // case 'didReceiveVideoTrackControlNotification':
+        //   handleDidReceiveVideoTrackControlNotification(map['body']);
+        //   break;
       }
     }
   }
@@ -102,19 +102,19 @@ class StringeeRoom {
     });
   }
 
-  void handleDidReceiveVideoTrackControlNotification(
-      Map<dynamic, dynamic> map) {
-    String? roomId = map['roomId'];
-    if (roomId != this._id) return;
-    Map<dynamic, dynamic> bodyMap = {
-      'videoTrack': StringeeVideoTrack(_client, map['videoTrack']),
-      'from': StringeeRoomUser(map['from'])
-    };
-    _eventStreamController.add({
-      "eventType": StringeeRoomEvents.didReceiveVideoTrackControlNotification,
-      "body": bodyMap
-    });
-  }
+  // void handleDidReceiveVideoTrackControlNotification(
+  //     Map<dynamic, dynamic> map) {
+  //   String? roomId = map['roomId'];
+  //   if (roomId != this._id) return;
+  //   Map<dynamic, dynamic> bodyMap = {
+  //     'videoTrack': StringeeVideoTrack(_client, map['videoTrack']),
+  //     'from': StringeeRoomUser(map['from'])
+  //   };
+  //   _eventStreamController.add({
+  //     "eventType": StringeeRoomEvents.didReceiveVideoTrackControlNotification,
+  //     "body": bodyMap
+  //   });
+  // }
 
   /// Publish local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> publish(StringeeVideoTrack videoTrack) async {

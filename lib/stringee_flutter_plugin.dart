@@ -7,7 +7,7 @@ export 'src/call/StringeeCall.dart';
 export 'src/call/StringeeCall2.dart';
 
 /// Chat
-export 'src/StringeeChat.dart';
+export 'src/messaging/StringeeChat.dart';
 export 'src/messaging/StringeeUser.dart';
 export 'src/messaging/StringeeConversation.dart';
 export 'src/messaging/StringeeMessage.dart';
