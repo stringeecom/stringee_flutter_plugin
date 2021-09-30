@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../StringeeClient.dart';
-import '../StringeeConstants.dart';
+import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 class StringeeCall2 {
   String? _id;
@@ -74,31 +73,37 @@ class StringeeCall2 {
         map['uuid'] == _client.uuid) {
       switch (map['event']) {
         case 'didChangeSignalingState':
-          handleSignalingStateChange(map['body']);
+          handleDidChangeSignalingState(map['body']);
           break;
         case 'didChangeMediaState':
-          handleMediaStateChange(map['body']);
+          handleDidChangeMediaState(map['body']);
           break;
         case 'didReceiveCallInfo':
-          handleCallInfoDidReceive(map['body']);
+          handleDidReceiveCallInfo(map['body']);
           break;
         case 'didHandleOnAnotherDevice':
-          handleAnotherDeviceHadHandle(map['body']);
+          handleDidHandleOnAnotherDevice(map['body']);
           break;
         case 'didReceiveLocalStream':
-          handleReceiveLocalStream(map['body']);
+          handleDidReceiveLocalStream(map['body']);
           break;
         case 'didReceiveRemoteStream':
-          handleReceiveRemoteStream(map['body']);
+          handleDidReceiveRemoteStream(map['body']);
+          break;
+        case 'didAddVideoTrack':
+          handleDidAddVideoTrack(map['body']);
+          break;
+        case 'didRemoveVideoTrack':
+          handleDidRemoveVideoTrack(map['body']);
           break;
         case 'didChangeAudioDevice':
-          handleChangeAudioDevice(map['body']);
+          handleDidChangeAudioDevice(map['body']);
           break;
       }
     }
   }
 
-  void handleSignalingStateChange(Map<dynamic, dynamic> map) {
+  void handleDidChangeSignalingState(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
@@ -110,7 +115,7 @@ class StringeeCall2 {
     });
   }
 
-  void handleMediaStateChange(Map<dynamic, dynamic> map) {
+  void handleDidChangeMediaState(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
@@ -121,7 +126,7 @@ class StringeeCall2 {
     });
   }
 
-  void handleCallInfoDidReceive(Map<dynamic, dynamic> map) {
+  void handleDidReceiveCallInfo(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
@@ -130,7 +135,7 @@ class StringeeCall2 {
         {"eventType": StringeeCall2Events.didReceiveCallInfo, "body": data});
   }
 
-  void handleAnotherDeviceHadHandle(Map<dynamic, dynamic> map) {
+  void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
     _eventStreamController.add({
@@ -139,21 +144,39 @@ class StringeeCall2 {
     });
   }
 
-  void handleReceiveLocalStream(Map<dynamic, dynamic> map) {
+  void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didReceiveLocalStream,
       "body": map['callId']
     });
   }
 
-  void handleReceiveRemoteStream(Map<dynamic, dynamic> map) {
+  void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didReceiveRemoteStream,
       "body": map['callId']
     });
   }
 
-  void handleChangeAudioDevice(Map<dynamic, dynamic> map) {
+  void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
+    StringeeVideoTrack videoTrack =
+        StringeeVideoTrack(_client, map['videoTrack']);
+    _eventStreamController.add({
+      "eventType": StringeeCall2Events.didAddVideoTrack,
+      "body": videoTrack
+    });
+  }
+
+  void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
+    StringeeVideoTrack videoTrack =
+        StringeeVideoTrack(_client, map['videoTrack']);
+    _eventStreamController.add({
+      "eventType": StringeeCall2Events.didRemoveVideoTrack,
+      "body": videoTrack
+    });
+  }
+
+  void handleDidChangeAudioDevice(Map<dynamic, dynamic> map) {
     AudioDevice selectedAudioDevice = AudioDevice.values[map['code']];
     List<dynamic> codeList = [];
     codeList.addAll(map['codeList']);
@@ -340,12 +363,8 @@ class StringeeCall2 {
     Map params = {
       'callId': this._id,
       'uuid': _client.uuid,
+      if (cameraId != null) 'cameraId': cameraId,
     };
-    if (Platform.isAndroid) {
-      if (cameraId != null) {
-        params['cameraId'] = cameraId;
-      }
-    }
     return await StringeeClient.methodChannel
         .invokeMethod('switchCamera2', params);
   }
@@ -388,6 +407,26 @@ class StringeeCall2 {
       return await StringeeClient.methodChannel
           .invokeMethod('setMirror2', params);
     }
+  }
+
+  /// Start capture screen
+  Future<Map<dynamic, dynamic>> startCapture() async {
+    final params = {
+      'callId': this._id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('startCapture', params);
+  }
+
+  /// Stop capture screen
+  Future<Map<dynamic, dynamic>> stopCapture() async {
+    final params = {
+      'callId': this._id,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel
+        .invokeMethod('stopCapture', params);
   }
 
   /// close event stream

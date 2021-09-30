@@ -14,6 +14,8 @@ import com.stringee.messaging.Message;
 import com.stringee.messaging.Message.Type;
 import com.stringee.messaging.User;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
+import com.stringee.video.StringeeVideoTrack.Options;
+import com.stringee.video.VideoDimensions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,13 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
+public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
     private static StringeeManager _manager;
     public static EventChannel.EventSink _eventSink;
     public static MethodChannel channel;
@@ -301,6 +305,15 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).setMirror((boolean) call.argument("isLocal"), (boolean) call.argument("isMirror"), result);
                 }
+            case "startCapture":
+                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                    clientWrapper.call2Wrapper(callId).startCapture(result);
+                }
+                break;
+            case "stopCapture":
+                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                    clientWrapper.call2Wrapper(callId).stopCapture(result);
+                }
                 break;
             case "createConversation":
                 try {
@@ -419,7 +432,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             break;
                     }
                     if (msgMap.containsKey("customData")) {
-                        message.setCustomData(Utils.convertMapToJson((java.util.Map) msgMap.get("customData")));
+                        message.setCustomData(Utils.convertMapToJson((Map) msgMap.get("customData")));
                     }
                     clientWrapper.conversation().sendMessage(convId, message, result);
                 } catch (JSONException e) {
@@ -515,6 +528,106 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "rejectChatRequest":
                 clientWrapper.chatRequest().rejectChatRequest((String) call.argument("convId"), result);
                 break;
+            case "video.connect":
+                clientWrapper.videoConference().connect((String) call.argument("roomToken"), result);
+                break;
+            case "video.createLocalVideoTrack":
+                try {
+                    JSONObject videoOptionsObject = Utils.convertMapToJson(call.argument("options"));
+                    Options options = new Options();
+                    options.audio(videoOptionsObject.optBoolean("audio"));
+                    options.video(videoOptionsObject.optBoolean("video"));
+                    options.screen(videoOptionsObject.optBoolean("screen"));
+                    String videoDimensions = videoOptionsObject.optString("videoDimension");
+                    switch (videoDimensions) {
+                        case "288":
+                            options.videoDimensions(VideoDimensions.CIF_VIDEO_DIMENSIONS);
+                            break;
+                        case "480":
+                            options.videoDimensions(VideoDimensions.WVGA_VIDEO_DIMENSIONS);
+                            break;
+                        case "720":
+                            options.videoDimensions(VideoDimensions.HD_720P_VIDEO_DIMENSIONS);
+                            break;
+                        case "1080":
+                            options.videoDimensions(VideoDimensions.HD_1080P_VIDEO_DIMENSIONS);
+                            break;
+                    }
+
+                    clientWrapper.videoConference().createLocalVideoTrack((String) call.argument("localId"), options, result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "video.createCaptureScreenTrack":
+                clientWrapper.videoConference().createCaptureScreenTrack((String) call.argument("localId"), result);
+                break;
+            case "video.release":
+                clientWrapper.videoConference().release((String) call.argument("roomId"), result);
+                break;
+            case "room.publish":
+                clientWrapper.videoConference().publish((String) call.argument("roomId"), (String) call.argument("localId"), result);
+                break;
+            case "room.unPublish":
+                clientWrapper.videoConference().unpublish((String) call.argument("roomId"), (String) call.argument("trackId"), result);
+                break;
+            case "room.subscribe":
+                try {
+                    JSONObject videoOptionsObject = Utils.convertMapToJson(call.argument("options"));
+                    Options options = new Options();
+                    options.audio(videoOptionsObject.optBoolean("audio"));
+                    options.video(videoOptionsObject.optBoolean("video"));
+                    options.screen(videoOptionsObject.optBoolean("screen"));
+                    String videoDimensions = videoOptionsObject.optString("videoDimension");
+                    switch (videoDimensions) {
+                        case "288":
+                            options.videoDimensions(VideoDimensions.CIF_VIDEO_DIMENSIONS);
+                            break;
+                        case "480":
+                            options.videoDimensions(VideoDimensions.WVGA_VIDEO_DIMENSIONS);
+                            break;
+                        case "720":
+                            options.videoDimensions(VideoDimensions.HD_720P_VIDEO_DIMENSIONS);
+                            break;
+                        case "1080":
+                            options.videoDimensions(VideoDimensions.HD_1080P_VIDEO_DIMENSIONS);
+                            break;
+                    }
+
+                    clientWrapper.videoConference().subscribe((String) call.argument("roomId"), (String) call.argument("trackId"), options, result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "room.unsubscribe":
+                clientWrapper.videoConference().unsubscribe((String) call.argument("roomId"), (String) call.argument("trackId"), result);
+                break;
+            case "room.leave":
+                clientWrapper.videoConference().leave((String) call.argument("roomId"), (boolean) call.argument("allClient"), result);
+                break;
+            case "room.sendMessage":
+                try {
+                    clientWrapper.videoConference().sendMessage((String) call.argument("roomId"), Utils.convertMapToJson(call.argument("msg")), result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "track.mute":
+                clientWrapper.videoConference().mute((String) call.argument("trackId"), (boolean) call.argument("mute"), result);
+                break;
+            case "track.enableVideo":
+                clientWrapper.videoConference().enableVideo((String) call.argument("trackId"), (boolean) call.argument("enable"), result);
+                break;
+            case "track.switchCamera":
+                if (call.hasArgument("cameraId")) {
+                    clientWrapper.videoConference().switchCamera((String) call.argument("trackId"), (int) call.argument("cameraId"), result);
+                } else {
+                    clientWrapper.videoConference().switchCamera((String) call.argument("trackId"), result);
+                }
+                break;
+            case "track.close":
+                clientWrapper.videoConference().close((String) call.argument("trackId"), result);
+                break;
             default:
                 result.notImplemented();
         }
@@ -527,6 +640,26 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
     @Override
     public void onCancel(Object o) {
+
+    }
+
+    @Override
+    public void onAttachedToActivity(@androidx.annotation.NonNull ActivityPluginBinding binding) {
+        _manager.setCaptureManager(ScreenCaptureManager.getInstance(binding));
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@androidx.annotation.NonNull ActivityPluginBinding binding) {
+
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
 
     }
 }

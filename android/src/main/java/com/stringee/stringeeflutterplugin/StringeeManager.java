@@ -7,10 +7,12 @@ import android.util.Log;
 
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
+import com.stringee.video.StringeeVideoTrack;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeManager {
@@ -21,8 +23,10 @@ public class StringeeManager {
     private Map<String, Call2Wrapper> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
     private Map<String, Map<String, Object>> remoteViewOption = new HashMap<>();
+    private Map<String, StringeeVideoTrack> tracksMap = new HashMap<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
+    private ScreenCaptureManager captureManager;
 
     public enum StringeeCallType {
         AppToAppOutgoing(0),
@@ -45,7 +49,8 @@ public class StringeeManager {
         ClientEvent(0),
         CallEvent(1),
         Call2Event(2),
-        ChatEvent(3);
+        ChatEvent(3),
+        RoomEvent(4);
 
         public final short value;
 
@@ -93,6 +98,10 @@ public class StringeeManager {
         return clientMap;
     }
 
+    public Map<String, CallWrapper> getCallsMap() {
+        return callsMap;
+    }
+
     public Map<String, Call2Wrapper> getCall2sMap() {
         return call2sMap;
     }
@@ -105,8 +114,8 @@ public class StringeeManager {
         return remoteViewOption;
     }
 
-    public Map<String, CallWrapper> getCallsMap() {
-        return callsMap;
+    public Map<String, StringeeVideoTrack> getTracksMap() {
+        return tracksMap;
     }
 
     public Handler getHandler() {
@@ -127,6 +136,14 @@ public class StringeeManager {
             audioManager.stop();
             audioManager = null;
         }
+    }
+
+    public ScreenCaptureManager getCaptureManager() {
+        return captureManager;
+    }
+
+    public void setCaptureManager(ScreenCaptureManager captureManager) {
+        this.captureManager = captureManager;
     }
 
     /**
