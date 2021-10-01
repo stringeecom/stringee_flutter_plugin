@@ -344,7 +344,12 @@ class StringeeConversationOption {
   String? _creatorId;
 
   StringeeConversationOption(
-      {required bool isGroup, required bool isDistinct,String? name, String? oaId, String? customData, String? creatorId}) {
+      {required bool isGroup,
+      required bool isDistinct,
+      String? name,
+      String? oaId,
+      String? customData,
+      String? creatorId}) {
     if (name != null) this._name = name;
     this._isGroup = isGroup;
     this._isDistinct = isDistinct;
@@ -423,8 +428,11 @@ class StringeeVideoTrackOptions {
 
   StringeeVideoDimensions get videoDimension => _videoDimension;
 
-  StringeeVideoTrackOptions(bool audio, bool video, bool screen,
-      {StringeeVideoDimensions? videoDimension}) {
+  StringeeVideoTrackOptions(
+      {required bool audio,
+      required bool video,
+      required bool screen,
+      StringeeVideoDimensions? videoDimension}) {
     this._audio = audio;
     this._video = video;
     this._screen = screen;

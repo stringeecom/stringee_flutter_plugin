@@ -197,8 +197,11 @@ class RoomState extends State<Room> {
       }
     });
 
-    StringeeVideoTrackOptions options =
-        StringeeVideoTrackOptions(true, true, false);
+    StringeeVideoTrackOptions options = StringeeVideoTrackOptions(
+      audio: true,
+      video: true,
+      screen: false,
+    );
     widget._video.createLocalVideoTrack(options).then((value) {
       if (value['status']) {
         _room.publish(value['body']).then((value) {
