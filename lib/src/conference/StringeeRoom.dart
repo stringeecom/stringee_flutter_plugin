@@ -167,7 +167,9 @@ class StringeeRoom {
   }
 
   /// Leave [StringeeRoom]
-  Future<Map<dynamic, dynamic>> leave(bool allClient) async {
+  Future<Map<dynamic, dynamic>> leave({
+    required bool allClient,
+  }) async {
     final params = {
       'roomId': _id,
       'allClient': allClient,

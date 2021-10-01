@@ -367,7 +367,7 @@ class RoomState extends State<Room> {
       if (result['status']) {
         _localTrack.close().then((value) {
           if (result['status']) {
-            _room.leave(false).then((value) {
+            _room.leave(allClient: false).then((value) {
               clearDataEndDismiss();
             });
           }
