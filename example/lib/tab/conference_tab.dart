@@ -47,17 +47,10 @@ class ConferenceTabState extends State<ConferenceTab> {
       }
     });
 
-    // getToken().then((value) {
-    //   setState(() {
-    //     token = value['access_token'];
-    //     roomToken = value['room_token'];
-    //   });
-
     /// Connect
     if (token.isNotEmpty) {
       client.connect(token);
     }
-    // });
   }
 
   @override
@@ -129,12 +122,6 @@ class ConferenceTabState extends State<ConferenceTab> {
   void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
     print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message']);
   }
-
-  // Future<Map<dynamic, dynamic>> getToken() async {
-  //   var response = await http.get(Uri.parse(
-  //       'https://v2.stringee.com/web-sdk-conference-samples/php/token_pro.php?userId=AndroidTest&roomId=room-vn-1-TC0F51H8BP-1589370038788'));
-  //   return json.decode(response.body);
-  // }
 
   @override
   // TODO: implement wantKeepAlive
