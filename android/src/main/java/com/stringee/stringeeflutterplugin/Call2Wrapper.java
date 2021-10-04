@@ -893,7 +893,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
             @Override
             public void run() {
                 Log.d(TAG, "didAddVideoTrack");
-                _manager.getTracksMap().put(stringeeVideoTrack.getId(), stringeeVideoTrack);
+                _manager.getTracksMap().put(stringeeVideoTrack.getId(), new VideoTrackManager(stringeeVideoTrack, true));
 
                 Map map = new HashMap();
                 map.put("nativeEventType", Call2Event.getValue());

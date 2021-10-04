@@ -22,7 +22,7 @@ public class StringeeManager {
     private Map<String, Call2Wrapper> call2sMap = new HashMap<>();
     private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
     private Map<String, Map<String, Object>> remoteViewOption = new HashMap<>();
-    private Map<String, StringeeVideoTrack> tracksMap = new HashMap<>();
+    private Map<String, VideoTrackManager> tracksMap = new HashMap<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
     private ScreenCaptureManager captureManager;
@@ -113,7 +113,7 @@ public class StringeeManager {
         return remoteViewOption;
     }
 
-    public Map<String, StringeeVideoTrack> getTracksMap() {
+    public Map<String, VideoTrackManager> getTracksMap() {
         return tracksMap;
     }
 

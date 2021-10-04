@@ -15,7 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.stringee.video.StringeeVideo.ScalingType;
-import com.stringee.video.StringeeVideoTrack;
+import com.stringee.video.StringeeVideoTrack.Listener;
+import com.stringee.video.StringeeVideoTrack.MediaState;
 
 import org.webrtc.SurfaceViewRenderer;
 
@@ -33,23 +34,18 @@ public class StringeeVideoView implements PlatformView {
         try {
             frameLayout = new FrameLayout(context);
 
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    boolean forCall = (boolean) creationParams.get("forCall");
-                    if (forCall) {
-                        String callId = (String) creationParams.get("callId");
-                        if (!(callId == null || callId.length() == 0)) {
-                            renderView(frameLayout, callId, creationParams);
-                        }
-                    } else {
-                        String trackId = (String) creationParams.get("trackId");
-                        if (!(trackId == null || trackId.length() == 0)) {
-                            renderView(context, frameLayout, trackId, creationParams);
-                        }
-                    }
+            boolean forCall = (boolean) creationParams.get("forCall");
+            if (forCall) {
+                String callId = (String) creationParams.get("callId");
+                if (!(callId == null || callId.length() == 0)) {
+                    renderView(frameLayout, callId, creationParams);
                 }
-            }, 1000);
+            } else {
+                String trackId = (String) creationParams.get("trackId");
+                if (!(trackId == null || trackId.length() == 0)) {
+                    renderView(context, frameLayout, trackId, creationParams);
+                }
+            }
 
         } catch (Exception e) {
             Log.d(TAG, "StringeeVideoView render error: " + e.getMessage());
@@ -170,30 +166,35 @@ public class StringeeVideoView implements PlatformView {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                StringeeVideoTrack videoTrack = StringeeManager.getInstance().getTracksMap().get(trackId);
+                VideoTrackManager videoTrackManager = StringeeManager.getInstance().getTracksMap().get(trackId);
 
-                if (videoTrack == null) {
+                if (videoTrackManager == null) {
                     return;
                 }
 
-                boolean isMirror = false;
-
-                ScalingType scalingType = null;
+                ScalingType scalingType;
                 if (creationParams.get("scalingType").equals("FILL")) {
                     scalingType = ScalingType.SCALE_ASPECT_FILL;
                 } else if (creationParams.get("scalingType").equals("FIT")) {
                     scalingType = ScalingType.SCALE_ASPECT_FIT;
                 } else if (creationParams.get("scalingType").equals("BALANCED")) {
                     scalingType = ScalingType.SCALE_ASPECT_BALANCED;
+                }else{
+                    scalingType = ScalingType.SCALE_ASPECT_FILL;
                 }
 
+                boolean isMirror;
                 if (creationParams.containsKey("isMirror")) {
                     isMirror = (Boolean) creationParams.get("isMirror");
+                }else{
+                    isMirror = false;
                 }
 
-                boolean isOverlay = (Boolean) creationParams.get("isOverlay");
+                boolean isOverlay;
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
                     isOverlay = true;
+                } else {
+                    isOverlay = (Boolean) creationParams.get("isOverlay");
                 }
 
                 LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -202,14 +203,29 @@ public class StringeeVideoView implements PlatformView {
                 layout.removeAllViews();
                 layout.setBackgroundColor(Color.BLACK);
 
-                SurfaceViewRenderer localView = videoTrack.getView(context);
-                if (localView.getParent() != null) {
-                    ((FrameLayout) localView.getParent()).removeView(localView);
-                }
+                videoTrackManager.setListener(new Listener() {
+                    @Override
+                    public void onMediaAvailable() {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                SurfaceViewRenderer localView = videoTrackManager.getVideoTrack().getView(context);
+                                if (localView.getParent() != null) {
+                                    ((FrameLayout) localView.getParent()).removeView(localView);
+                                }
 
-                layout.addView(localView, layoutParams);
-                videoTrack.renderView(isOverlay, scalingType);
-                localView.setMirror(isMirror);
+                                layout.addView(localView, layoutParams);
+                                videoTrackManager.getVideoTrack().renderView(isOverlay, scalingType);
+                                localView.setMirror(isMirror);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onMediaStateChange(MediaState mediaState) {
+
+                    }
+                });
             }
         });
     }

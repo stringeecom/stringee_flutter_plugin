@@ -47,7 +47,7 @@ public class RoomManager implements StringeeRoomListener {
         _stringeeRoom = stringeeVideo.connect(_clientWrapper.getClient(), roomToken, this);
     }
 
-    public void publish(final StringeeVideoTrack videoTrack,final String localId, final Result result) {
+    public void publish(final StringeeVideoTrack videoTrack, final String localId, final Result result) {
         _stringeeRoom.publish(videoTrack, new StatusListener() {
             @Override
             public void onSuccess() {
@@ -62,7 +62,7 @@ public class RoomManager implements StringeeRoomListener {
                         map.put("body", Utils.convertVideoTrackToMap(videoTrack));
                         result.success(map);
 
-                        _manager.getTracksMap().put(videoTrack.getId(), videoTrack);
+                        _manager.getTracksMap().put(videoTrack.getId(), new VideoTrackManager(videoTrack, false));
                         _manager.getTracksMap().remove(localId);
                     }
                 });
@@ -281,7 +281,7 @@ public class RoomManager implements StringeeRoomListener {
                     for (int j = 0; j < participant.getVideoTracks().size(); j++) {
                         StringeeVideoTrack videoTrack = participant.getVideoTracks().get(j);
                         videoTracks.add(Utils.convertVideoTrackToMap(videoTrack));
-                        _manager.getTracksMap().put(videoTrack.getId(), videoTrack);
+                        _manager.getTracksMap().put(videoTrack.getId(), new VideoTrackManager(videoTrack, false));
                     }
                 }
                 Map bodyMap = new HashMap();
@@ -366,7 +366,7 @@ public class RoomManager implements StringeeRoomListener {
             @Override
             public void run() {
                 Log.d(TAG, "didAddVideoTrack: " + stringeeVideoTrack.getId());
-                _manager.getTracksMap().put(stringeeVideoTrack.getId(), stringeeVideoTrack);
+                _manager.getTracksMap().put(stringeeVideoTrack.getId(), new VideoTrackManager(stringeeVideoTrack, false));
                 Map map = new HashMap();
                 map.put("nativeEventType", RoomEvent.getValue());
                 map.put("event", "didAddVideoTrack");

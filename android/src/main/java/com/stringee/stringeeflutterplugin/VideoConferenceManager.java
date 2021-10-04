@@ -78,7 +78,7 @@ public class VideoConferenceManager {
         }
 
         StringeeVideoTrack localVideoTrack = _stringeeVideo.createLocalVideoTrack(_manager.getContext(), options);
-        _manager.getTracksMap().put(localId, localVideoTrack);
+        _manager.getTracksMap().put(localId, new VideoTrackManager(localVideoTrack, false));
 
         Log.d(TAG, "createLocalVideoTrack: success");
         Map map = new HashMap();
@@ -122,7 +122,7 @@ public class VideoConferenceManager {
             _manager.getCaptureManager().getScreenCapture().startCapture(REQUEST_CODE, new CallbackListener<StringeeVideoTrack>() {
                 @Override
                 public void onSuccess(StringeeVideoTrack videoTrack) {
-                    _manager.getTracksMap().put(localId, videoTrack);
+                    _manager.getTracksMap().put(localId, new VideoTrackManager(videoTrack, false));
                     Log.d(TAG, "createCaptureScreenTrack: success");
                     Map map = new HashMap();
                     map.put("status", true);
@@ -220,8 +220,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(localId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(localId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "publish: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -231,7 +231,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        roomManager.publish(videoTrack,localId, result);
+        roomManager.publish(videoTrackManager.getVideoTrack(), localId, result);
     }
 
     /**
@@ -263,8 +263,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "unpublish: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -274,7 +274,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        roomManager.unpublish(videoTrack, result);
+        roomManager.unpublish(videoTrackManager.getVideoTrack(), result);
     }
 
     /**
@@ -307,8 +307,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "subscribe: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -318,7 +318,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        roomManager.subscribe(videoTrack, options, result);
+        roomManager.subscribe(videoTrackManager.getVideoTrack(), options, result);
     }
 
     /**
@@ -350,8 +350,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "unsubscribe: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -361,7 +361,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        roomManager.unsubscribe(videoTrack, result);
+        roomManager.unsubscribe(videoTrackManager.getVideoTrack(), result);
     }
 
     /**
@@ -446,8 +446,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "mute: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -457,7 +457,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        videoTrack.mute(mute);
+        videoTrackManager.getVideoTrack().mute(mute);
 
         Log.d(TAG, "mute: success");
         Map map = new HashMap();
@@ -485,8 +485,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "enableVideo: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -496,7 +496,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        videoTrack.enableVideo(enable);
+        videoTrackManager.getVideoTrack().enableVideo(enable);
 
         Log.d(TAG, "enableVideo: success");
         Map map = new HashMap();
@@ -523,8 +523,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "switchCamera: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -534,7 +534,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        videoTrack.switchCamera(new StatusListener() {
+        videoTrackManager.getVideoTrack().switchCamera(new StatusListener() {
             @Override
             public void onSuccess() {
                 _handler.post(new Runnable() {
@@ -586,8 +586,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "switchCamera: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -597,7 +597,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        videoTrack.switchCamera(new StatusListener() {
+        videoTrackManager.getVideoTrack().switchCamera(new StatusListener() {
             public void onSuccess() {
                 _handler.post(new Runnable() {
                     @Override
@@ -647,8 +647,8 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack videoTrack = _manager.getTracksMap().get(trackId);
-        if (videoTrack == null) {
+        VideoTrackManager videoTrackManager = _manager.getTracksMap().get(trackId);
+        if (videoTrackManager == null) {
             Log.d(TAG, "attach: false - -3 - Video track is not found");
             Map map = new HashMap();
             map.put("status", false);
@@ -658,7 +658,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        videoTrack.release();
+        videoTrackManager.getVideoTrack().release();
 
         Log.d(TAG, "mute: success");
         Map map = new HashMap();
