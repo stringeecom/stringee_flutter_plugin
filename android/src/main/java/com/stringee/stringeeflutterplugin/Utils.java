@@ -381,7 +381,7 @@ public class Utils {
     public static Map convertRoomToMap(@NonNull StringeeRoom room) {
         Map roomMap = new HashMap();
         roomMap.put("id", room.getId());
-        roomMap.put("recored", room.isRecorded());
+        roomMap.put("recorded", room.isRecorded());
         return roomMap;
     }
 

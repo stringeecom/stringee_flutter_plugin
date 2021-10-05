@@ -4,21 +4,21 @@ import '../../stringee_flutter_plugin.dart';
 
 class StringeeRoom {
   late String _id;
-  late bool _recored;
+  late bool _recorded;
   late StringeeClient _client;
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
 
   String get id => _id;
 
-  bool get recored => _recored;
+  bool get recored => _recorded;
 
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
   StringeeRoom(StringeeClient client, Map<dynamic, dynamic> info) {
     this._client = client;
     this._id = info['id'];
-    this._recored = info['recored'];
+    this._recorded = info['recorded'];
     _subscriber = client.eventStreamController.stream.listen(this._listener);
   }
 
