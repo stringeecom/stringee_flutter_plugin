@@ -11,7 +11,7 @@ class StringeeRoom {
 
   String get id => _id;
 
-  bool get recored => _recorded;
+  bool get recorded => _recorded;
 
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
