@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
-import com.stringee.video.StringeeVideoTrack;
 
 import java.util.HashMap;
 import java.util.Map;
