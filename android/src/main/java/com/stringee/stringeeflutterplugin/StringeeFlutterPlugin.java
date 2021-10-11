@@ -569,7 +569,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "room.publish":
                 clientWrapper.videoConference().publish((String) call.argument("roomId"), (String) call.argument("localId"), result);
                 break;
-            case "room.unPublish":
+            case "room.unpublish":
                 clientWrapper.videoConference().unpublish((String) call.argument("roomId"), (String) call.argument("trackId"), result);
                 break;
             case "room.subscribe":
