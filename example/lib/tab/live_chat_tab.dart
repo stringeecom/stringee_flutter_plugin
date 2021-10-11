@@ -19,6 +19,7 @@ class LiveChatTabState extends State<LiveChatTab> {
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: Column(
             children: [
               TabBar(

@@ -3,6 +3,10 @@ package com.stringee.stringeeflutterplugin;
 import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event;
 import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
@@ -33,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
 public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     private ClientWrapper _clientWrapper;
@@ -542,6 +547,129 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         result.success(map);
     }
 
+    /**
+     * Start capture screen
+     *
+     * @param result
+     */
+    public void startCapture(final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "startCapture: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            int REQUEST_CODE = (int) System.currentTimeMillis();
+
+            _manager.getCaptureManager().getActivityResult(new ActivityResultListener() {
+                @Override
+                public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+                    if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                        _manager.getCaptureManager().getScreenCapture().createCapture(data);
+                    }
+                    return false;
+                }
+            });
+
+            _call.startCaptureScreen(_manager.getCaptureManager().getScreenCapture(), REQUEST_CODE, new StatusListener() {
+                @Override
+                public void onSuccess() {
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "startCapture: success");
+                            Map map = new HashMap();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(StringeeError stringeeError) {
+                    super.onError(stringeeError);
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "startCapture: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                            Map map = new HashMap();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        }
+                    });
+                }
+            });
+
+        } else {
+            Log.d(TAG, "startCapture: false - -5 - This feature requires android api level greater than or equal to 21");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -5);
+            map.put("message", "This feature requires android api level >= 21");
+            result.success(map);
+        }
+    }
+
+    /**
+     * Stop capture screen
+     *
+     * @param result
+     */
+    public void stopCapture(final Result result) {
+        if (!_clientWrapper.isConnected()) {
+            Log.d(TAG, "stopCapture: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        _call.stopCaptureScreen(new StatusListener() {
+            @Override
+            public void onSuccess() {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "stopCapture: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "stopCapture: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+
     public SurfaceViewRenderer getLocalView() {
         return _call.getLocalView();
     }
@@ -761,12 +889,41 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
 
     @Override
     public void onVideoTrackAdded(StringeeVideoTrack stringeeVideoTrack) {
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "didAddVideoTrack");
+                _manager.getTracksMap().put(stringeeVideoTrack.getId(), new VideoTrackManager(stringeeVideoTrack, true));
 
+                Map map = new HashMap();
+                map.put("nativeEventType", Call2Event.getValue());
+                map.put("event", "didAddVideoTrack");
+                map.put("uuid", _clientWrapper.getId());
+                Map bodyMap = new HashMap();
+                bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(stringeeVideoTrack));
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
+            }
+        });
     }
 
     @Override
     public void onVideoTrackRemoved(StringeeVideoTrack stringeeVideoTrack) {
+        _handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "didRemoveVideoTrack");
 
+                Map map = new HashMap();
+                map.put("nativeEventType", Call2Event.getValue());
+                map.put("event", "didRemoveVideoTrack");
+                map.put("uuid", _clientWrapper.getId());
+                Map bodyMap = new HashMap();
+                bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(stringeeVideoTrack));
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin._eventSink.success(map);
+            }
+        });
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
 import com.stringee.messaging.ChatProfile;
 import com.stringee.messaging.ChatRequest;
@@ -17,6 +18,9 @@ import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
 import com.stringee.messaging.listeners.CallbackListener;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
+import com.stringee.video.RemoteParticipant;
+import com.stringee.video.StringeeRoom;
+import com.stringee.video.StringeeVideoTrack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -374,6 +378,46 @@ public class Utils {
         return queueMap;
     }
 
+    public static Map convertRoomToMap(@NonNull StringeeRoom room) {
+        Map roomMap = new HashMap();
+        roomMap.put("id", room.getId());
+        roomMap.put("recorded", room.isRecorded());
+        return roomMap;
+    }
+
+    public static Map convertRoomUserToMap(@NonNull RemoteParticipant participant) {
+        Map userMap = new HashMap();
+        userMap.put("id", participant.getId());
+        return userMap;
+    }
+
+    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack, String localId, String clientId) {
+        Map trackMap = new HashMap();
+        trackMap.put("id", videoTrack.getId());
+        trackMap.put("localId", localId);
+        trackMap.put("audio", videoTrack.audioEnabled());
+        trackMap.put("video", videoTrack.videoEnabled());
+        trackMap.put("screen", videoTrack.isScreenCapture());
+        trackMap.put("isLocal", videoTrack.isLocal());
+        Map userMap = new HashMap();
+        userMap.put("id", clientId);
+        trackMap.put("publisher", userMap);
+        return trackMap;
+    }
+
+    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack) {
+        Map trackMap = new HashMap();
+        trackMap.put("id", videoTrack.getId());
+        trackMap.put("audio", videoTrack.audioEnabled());
+        trackMap.put("video", videoTrack.videoEnabled());
+        trackMap.put("screen", videoTrack.isScreenCapture());
+        trackMap.put("isLocal", videoTrack.isLocal());
+        Map userMap = new HashMap();
+        userMap.put("id", videoTrack.getUserId());
+        trackMap.put("publisher", userMap);
+        return trackMap;
+    }
+
     public static List getParticipantsFromNotify(@NonNull JSONArray participantsArray) {
         List resultArray = new ArrayList();
         try {
@@ -394,7 +438,7 @@ public class Utils {
         return resultArray;
     }
 
-    public static void getConversation(@NonNull com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
+    public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
         Handler handler = new Handler(Looper.getMainLooper());
         client.getConversation(convId, new CallbackListener<Conversation>() {
             @Override
@@ -420,7 +464,7 @@ public class Utils {
         });
     }
 
-    public static void getLastMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
+    public static void getLastMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
         Handler handler = new Handler(Looper.getMainLooper());
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
@@ -469,7 +513,7 @@ public class Utils {
         });
     }
 
-    public static void getMessage(@NonNull final com.stringee.StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
+    public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
         Handler handler = new Handler(Looper.getMainLooper());
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
@@ -508,7 +552,7 @@ public class Utils {
         });
     }
 
-    public static void getChatRequest(@NonNull final com.stringee.StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
+    public static void getChatRequest(@NonNull final StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
         Handler handler = new Handler(Looper.getMainLooper());
         client.getChatRequests(new CallbackListener<List<ChatRequest>>() {
             @Override

@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.stringee.video.StringeeVideo.ScalingType;
+import com.stringee.video.StringeeVideoTrack.Listener;
+import com.stringee.video.StringeeVideoTrack.MediaState;
 
 import org.webrtc.SurfaceViewRenderer;
 
@@ -32,13 +34,19 @@ public class StringeeVideoView implements PlatformView {
         try {
             frameLayout = new FrameLayout(context);
 
-            String callId = (String) creationParams.get("callId");
-
-            if (callId == null || callId.length() == 0) {
-                return;
+            boolean forCall = (boolean) creationParams.get("forCall");
+            if (forCall) {
+                String callId = (String) creationParams.get("callId");
+                if (!(callId == null || callId.length() == 0)) {
+                    renderView(frameLayout, callId, creationParams);
+                }
+            } else {
+                String trackId = (String) creationParams.get("trackId");
+                if (!(trackId == null || trackId.length() == 0)) {
+                    renderView(context, frameLayout, trackId, creationParams);
+                }
             }
 
-            renderView(frameLayout, callId, creationParams);
         } catch (Exception e) {
             Log.d(TAG, "StringeeVideoView render error: " + e.getMessage());
         }
@@ -153,4 +161,73 @@ public class StringeeVideoView implements PlatformView {
             }
         });
     }
+
+    private void renderView(final Context context, final FrameLayout layout, final String trackId, final Map<String, Object> creationParams) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                VideoTrackManager videoTrackManager = StringeeManager.getInstance().getTracksMap().get(trackId);
+
+                if (videoTrackManager == null) {
+                    return;
+                }
+
+                ScalingType scalingType;
+                if (creationParams.get("scalingType").equals("FILL")) {
+                    scalingType = ScalingType.SCALE_ASPECT_FILL;
+                } else if (creationParams.get("scalingType").equals("FIT")) {
+                    scalingType = ScalingType.SCALE_ASPECT_FIT;
+                } else if (creationParams.get("scalingType").equals("BALANCED")) {
+                    scalingType = ScalingType.SCALE_ASPECT_BALANCED;
+                }else{
+                    scalingType = ScalingType.SCALE_ASPECT_FILL;
+                }
+
+                boolean isMirror;
+                if (creationParams.containsKey("isMirror")) {
+                    isMirror = (Boolean) creationParams.get("isMirror");
+                }else{
+                    isMirror = false;
+                }
+
+                boolean isOverlay;
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+                    isOverlay = true;
+                } else {
+                    isOverlay = (Boolean) creationParams.get("isOverlay");
+                }
+
+                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                layoutParams.gravity = Gravity.CENTER;
+
+                layout.removeAllViews();
+                layout.setBackgroundColor(Color.BLACK);
+
+                videoTrackManager.setListener(new Listener() {
+                    @Override
+                    public void onMediaAvailable() {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                SurfaceViewRenderer localView = videoTrackManager.getVideoTrack().getView(context);
+                                if (localView.getParent() != null) {
+                                    ((FrameLayout) localView.getParent()).removeView(localView);
+                                }
+
+                                layout.addView(localView, layoutParams);
+                                videoTrackManager.getVideoTrack().renderView(isOverlay, scalingType);
+                                localView.setMirror(isMirror);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onMediaStateChange(MediaState mediaState) {
+
+                    }
+                });
+            }
+        });
+    }
+
 }

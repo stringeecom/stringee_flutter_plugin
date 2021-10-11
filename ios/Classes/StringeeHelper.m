@@ -412,7 +412,8 @@
     option.distinctByParticipants = [[data objectForKey:@"isDistinct"] boolValue];
     option.oaId = (NSString *)[data objectForKey:@"oaId"];
     option.customData = (NSString *)[data objectForKey:@"customData"];
-    
+    option.creatorId = (NSString *)[data objectForKey:@"creatorId"];
+
     return option;
 }
 

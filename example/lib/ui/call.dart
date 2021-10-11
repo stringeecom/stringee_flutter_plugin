@@ -1,7 +1,9 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import 'package:stringee_flutter_plugin_example/button/circle_button.dart';
 
 class Call extends StatefulWidget {
   StringeeClient _client;
@@ -12,8 +14,6 @@ class Call extends StatefulWidget {
   String _callId;
   StringeeObjectEventType _callType;
   bool _showIncomingUi = false;
-  bool _hasLocalStream = false;
-  bool _hasRemoteStream = false;
   bool _isVideoCall = false;
 
   Call(
@@ -50,11 +50,21 @@ class Call extends StatefulWidget {
 
 class _CallState extends State<Call> {
   String status = "";
-
   bool _isSpeaker = false;
   bool _isMute = false;
   bool _isVideoEnable = false;
+  bool _sharingScreen = false;
+  bool _hasLocalStream = false;
+  bool _hasRemoteStream = false;
+
+  bool _hasLocalScreen = false;
+  StringeeVideoTrack _localScreenTrack;
+  bool _hasRemoteScreen = false;
+  StringeeVideoTrack _remoteScreenTrack;
+
   int _cameraId = 1;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -65,9 +75,9 @@ class _CallState extends State<Call> {
     _isVideoEnable = widget._isVideoCall;
 
     if (widget._callType == StringeeObjectEventType.call) {
-      _makeOrInitAnswerCall();
+      makeOrInitAnswerCall();
     } else {
-      _makeOrInitAnswerCall2();
+      makeOrInitAnswerCall2();
     }
   }
 
@@ -105,21 +115,23 @@ class _CallState extends State<Call> {
       ),
     );
 
-    Widget localView = (widget._hasLocalStream)
+    Widget localView = (_hasLocalStream)
         ? new StringeeVideoView(
             widget._callId,
             true,
             color: Colors.white,
             alignment: Alignment.topRight,
             isOverlay: true,
-            margin: EdgeInsets.only(top: 100.0, right: 25.0),
-            height: 200.0,
-            width: 150.0,
+            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
             scalingType: ScalingType.fill,
           )
-        : Placeholder();
+        : Placeholder(
+            color: Colors.transparent,
+          );
 
-    Widget remoteView = (widget._hasRemoteStream)
+    Widget remoteView = (_hasRemoteStream)
         ? new StringeeVideoView(
             widget._callId,
             false,
@@ -128,20 +140,50 @@ class _CallState extends State<Call> {
             isMirror: false,
             scalingType: ScalingType.fill,
           )
-        : Placeholder();
+        : Placeholder(
+            color: Colors.transparent,
+          );
+
+    Widget localScreen = (_hasLocalScreen)
+        ? _localScreenTrack.attach(
+            color: Colors.white,
+            alignment: Alignment.topRight,
+            isOverlay: true,
+            margin: EdgeInsets.only(top: 200.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
+            scalingType: ScalingType.fill,
+          )
+        : Placeholder(
+            color: Colors.transparent,
+          );
+
+    Widget remoteScreen = (_hasRemoteScreen)
+        ? _remoteScreenTrack.attach(
+            color: Colors.white,
+            alignment: Alignment.topRight,
+            isOverlay: true,
+            margin: EdgeInsets.only(top: 375.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
+            scalingType: ScalingType.fill,
+          )
+        : Placeholder(
+            color: Colors.transparent,
+          );
 
     Widget btnSwitch = Align(
       alignment: Alignment.topLeft,
       child: Padding(
-        padding: EdgeInsets.only(left: 50.0, top: 50.0),
-        child: new GestureDetector(
-          onTap: _toggleSwitchCamera,
-          child: Image.asset(
-            'images/switch_camera.png',
-            height: 30.0,
-            width: 30.0,
-          ),
-        ),
+        padding: EdgeInsets.only(left: 25.0, top: 25.0),
+        child: CircleButton(
+            icon: Icon(
+              Icons.switch_camera,
+              color: Colors.white,
+              size: 28,
+            ),
+            primary: Colors.transparent,
+            onPressed: toggleSwitchCamera),
       ),
     );
 
@@ -156,22 +198,22 @@ class _CallState extends State<Call> {
                   new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      new GestureDetector(
-                        onTap: _rejectCallTapped,
-                        child: Image.asset(
-                          'images/end.png',
-                          height: 75.0,
-                          width: 75.0,
-                        ),
-                      ),
-                      new GestureDetector(
-                        onTap: _acceptCallTapped,
-                        child: Image.asset(
-                          'images/answer.png',
-                          height: 75.0,
-                          width: 75.0,
-                        ),
-                      ),
+                      CircleButton(
+                          icon: Icon(
+                            Icons.call_end,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                          primary: Colors.red,
+                          onPressed: rejectCallTapped),
+                      CircleButton(
+                          icon: Icon(
+                            Icons.call,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                          primary: Colors.green,
+                          onPressed: acceptCallTapped),
                     ],
                   )
                 ]
@@ -179,65 +221,102 @@ class _CallState extends State<Call> {
                   new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      GestureDetector(
-                        onTap: _toggleSpeaker,
-                        child: Image.asset(
-                          _isSpeaker
-                              ? 'images/ic_speaker_off.png'
-                              : 'images/ic_speaker_on.png',
-                          height: 75.0,
-                          width: 75.0,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: _toggleMicro,
-                        child: Image.asset(
-                          _isMute ? 'images/ic_mute.png' : 'images/ic_mic.png',
-                          height: 75.0,
-                          width: 75.0,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: _isVideoEnable ? _toggleVideo : null,
-                        child: Image.asset(
-                          _isVideoEnable
-                              ? 'images/ic_video.png'
-                              : 'images/ic_video_off.png',
-                          height: 75.0,
-                          width: 75.0,
-                        ),
-                      ),
+                      CircleButton(
+                          icon: _isSpeaker
+                              ? Icon(
+                                  Icons.volume_off,
+                                  color: Colors.black,
+                                  size: 28,
+                                )
+                              : Icon(
+                                  Icons.volume_up,
+                                  color: Colors.white,
+                                  size: 28,
+                                ),
+                          primary: _isSpeaker ? Colors.white : Colors.white54,
+                          onPressed: toggleSpeaker),
+                      CircleButton(
+                          icon: _isMute
+                              ? Icon(
+                                  Icons.mic,
+                                  color: Colors.black,
+                                  size: 28,
+                                )
+                              : Icon(
+                                  Icons.mic_off,
+                                  color: Colors.white,
+                                  size: 28,
+                                ),
+                          primary: _isMute ? Colors.white : Colors.white54,
+                          onPressed: toggleMicro),
+                      CircleButton(
+                          icon: _isVideoEnable
+                              ? Icon(
+                                  Icons.videocam_off,
+                                  color: Colors.white,
+                                  size: 28,
+                                )
+                              : Icon(
+                                  Icons.videocam,
+                                  color: Colors.black,
+                                  size: 28,
+                                ),
+                          primary:
+                              _isVideoEnable ? Colors.white54 : Colors.white,
+                          onPressed: toggleVideo),
+                      if (widget._isVideoCall &&
+                          widget._callType == StringeeObjectEventType.call2)
+                        CircleButton(
+                            icon: _sharingScreen
+                                ? Icon(
+                                    Icons.stop_screen_share,
+                                    color: Colors.black,
+                                    size: 28,
+                                  )
+                                : Icon(
+                                    Icons.screen_share,
+                                    color: Colors.white,
+                                    size: 28,
+                                  ),
+                            primary:
+                                _sharingScreen ? Colors.white : Colors.white54,
+                            onPressed: toggleShareScreen),
+                      CircleButton(
+                          icon: Icon(
+                            Icons.call_end,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                          primary: Colors.red,
+                          onPressed: endCallTapped),
                     ],
                   ),
-                  new Container(
-                    padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                    child: new GestureDetector(
-                      onTap: _endCallTapped,
-                      child: Image.asset(
-                        'images/end.png',
-                        height: 75.0,
-                        width: 75.0,
-                      ),
-                    ),
-                  )
                 ]),
     );
 
-    return new Scaffold(
-      backgroundColor: Colors.black,
-      body: new Stack(
-        children: <Widget>[
-          remoteView,
-          localView,
-          nameCalling,
-          bottomContainer,
-          btnSwitch,
-        ],
+    return WillPopScope(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: new Stack(
+          children: <Widget>[
+            remoteView,
+            localView,
+            localScreen,
+            remoteScreen,
+            nameCalling,
+            bottomContainer,
+            btnSwitch,
+          ],
+        ),
       ),
+      onWillPop: () {
+        endCallTapped();
+        return Future.value(false);
+      },
     );
   }
 
-  Future _makeOrInitAnswerCall() async {
+  Future makeOrInitAnswerCall() async {
     if (!widget._showIncomingUi) {
       widget._stringeeCall = StringeeCall(widget._client);
     }
@@ -304,7 +383,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  Future _makeOrInitAnswerCall2() async {
+  Future makeOrInitAnswerCall2() async {
     if (!widget._showIncomingUi) {
       widget._stringeeCall2 = StringeeCall2(widget._client);
     }
@@ -330,6 +409,12 @@ class _CallState extends State<Call> {
           break;
         case StringeeCall2Events.didReceiveRemoteStream:
           handleReceiveRemoteStreamEvent(map['body']);
+          break;
+        case StringeeCall2Events.didAddVideoTrack:
+          handleAddVideoTrackEvent(map['body']);
+          break;
+        case StringeeCall2Events.didRemoveVideoTrack:
+          handleRemoveVideoTrackEvent(map['body']);
           break;
         case StringeeCall2Events.didChangeAudioDevice:
           if (Platform.isAndroid) {
@@ -370,7 +455,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  void _endCallTapped() {
+  void endCallTapped() {
     if (widget._callType == StringeeObjectEventType.call) {
       widget._stringeeCall.hangup().then((result) {
         print('_endCallTapped -- ${result['message']}');
@@ -394,7 +479,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  void _acceptCallTapped() {
+  void acceptCallTapped() {
     if (widget._callType == StringeeObjectEventType.call) {
       widget._stringeeCall.answer().then((result) {
         print('_acceptCallTapped -- ${result['message']}');
@@ -417,7 +502,7 @@ class _CallState extends State<Call> {
     });
   }
 
-  void _rejectCallTapped() {
+  void rejectCallTapped() {
     if (widget._callType == StringeeObjectEventType.call) {
       widget._stringeeCall.reject().then((result) {
         print('_rejectCallTapped -- ${result['message']}');
@@ -489,7 +574,7 @@ class _CallState extends State<Call> {
   void handleReceiveLocalStreamEvent(String callId) {
     print('handleReceiveLocalStreamEvent - $callId');
     setState(() {
-      widget._hasLocalStream = true;
+      _hasLocalStream = true;
       widget._callId = callId;
     });
   }
@@ -497,8 +582,32 @@ class _CallState extends State<Call> {
   void handleReceiveRemoteStreamEvent(String callId) {
     print('handleReceiveRemoteStreamEvent - $callId');
     setState(() {
-      widget._hasRemoteStream = true;
+      _hasRemoteStream = true;
       widget._callId = callId;
+    });
+  }
+
+  void handleAddVideoTrackEvent(StringeeVideoTrack track) {
+    print('handleAddVideoTrackEvent - ${track.id}');
+    setState(() {
+      if (track.isLocal) {
+        _hasLocalScreen = true;
+        _localScreenTrack = track;
+      } else {
+        _hasRemoteScreen = true;
+        _remoteScreenTrack = track;
+      }
+    });
+  }
+
+  void handleRemoveVideoTrackEvent(StringeeVideoTrack track) {
+    print('handleRemoveVideoTrackEvent - ${track.id}');
+    setState(() {
+      if (track.isLocal) {
+        _hasLocalScreen = false;
+      } else {
+        _hasRemoteScreen = false;
+      }
     });
   }
 
@@ -544,7 +653,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  void _toggleSwitchCamera() {
+  void toggleSwitchCamera() {
     setState(() {
       _cameraId = _cameraId == 1 ? 0 : 1;
     });
@@ -561,7 +670,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  void _toggleSpeaker() {
+  void toggleSpeaker() {
     if (widget._callType == StringeeObjectEventType.call) {
       widget._stringeeCall.setSpeakerphoneOn(!_isSpeaker).then((result) {
         bool status = result['status'];
@@ -583,7 +692,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  void _toggleMicro() {
+  void toggleMicro() {
     if (widget._callType == StringeeObjectEventType.call) {
       widget._stringeeCall.mute(!_isMute).then((result) {
         bool status = result['status'];
@@ -605,7 +714,7 @@ class _CallState extends State<Call> {
     }
   }
 
-  void _toggleVideo() {
+  void toggleVideo() {
     if (widget._callType == StringeeObjectEventType.call) {
       widget._stringeeCall.enableVideo(!_isVideoEnable).then((result) {
         bool status = result['status'];
@@ -621,6 +730,59 @@ class _CallState extends State<Call> {
         if (status) {
           setState(() {
             _isVideoEnable = !_isVideoEnable;
+          });
+        }
+      });
+    }
+  }
+
+  void createForegroundServiceNotification() {
+    flutterLocalNotificationsPlugin.initialize(InitializationSettings(
+      android: AndroidInitializationSettings('ic_launcher'),
+    ));
+
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.startForegroundService(
+          1,
+          'Screen capture',
+          'Capturing',
+          notificationDetails: AndroidNotificationDetails(
+            'Test id',
+            'Test name',
+            'Test description',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+          ),
+        );
+  }
+
+  void toggleShareScreen() {
+    if (_sharingScreen) {
+      // remove foreground service notification
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.stopForegroundService();
+
+      widget._stringeeCall2.stopCapture().then((result) {
+        bool status = result['status'];
+        print('flutter stopCapture: $status');
+        if (status) {
+          setState(() {
+            _sharingScreen = false;
+          });
+        }
+      });
+    } else {
+      createForegroundServiceNotification();
+      widget._stringeeCall2.startCapture().then((result) {
+        bool status = result['status'];
+        print('flutter startCapture: $status');
+        if (status) {
+          setState(() {
+            _sharingScreen = true;
           });
         }
       });

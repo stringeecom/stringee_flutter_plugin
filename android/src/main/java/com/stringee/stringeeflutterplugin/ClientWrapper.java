@@ -29,8 +29,10 @@ import com.stringee.messaging.listeners.LiveChatEventListerner;
 import com.stringee.messaging.listeners.UserTypingEventListener;
 import com.stringee.stringeeflutterplugin.StringeeManager.StringeeCallType;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     private ConversationManager _conversationManager;
     private MessageManager _messageManager;
     private ChatRequestManager _chatRequestManager;
+    private VideoConferenceManager _videoConferenceManager;
     private Handler _handler;
     private String _uuid;
     private static final String TAG = "StringeeSDK";
@@ -54,6 +57,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _conversationManager = new ConversationManager(this);
         _messageManager = new MessageManager(this);
         _chatRequestManager = new ChatRequestManager(this);
+        _videoConferenceManager = new VideoConferenceManager(this);
         _client = new StringeeClient(_manager.getContext());
         setListener();
     }
@@ -65,6 +69,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         _conversationManager = new ConversationManager(this);
         _messageManager = new MessageManager(this);
         _chatRequestManager = new ChatRequestManager(this);
+        _videoConferenceManager = new VideoConferenceManager(this);
         _client = new StringeeClient(_manager.getContext());
         if (baseAPIUrl != null) {
             _client.setBaseAPIUrl(baseAPIUrl);
@@ -158,6 +163,10 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         return _chatRequestManager;
     }
 
+    public VideoConferenceManager videoConference() {
+        return _videoConferenceManager;
+    }
+    
     @Override
     public void onConnectionConnected(final StringeeClient stringeeClient, final boolean b) {
         _handler.post(new Runnable() {
@@ -309,15 +318,19 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onCustomMessage: " + from + " - " + jsonObject.toString());
-                Map map = new HashMap();
-                map.put("nativeEventType", ClientEvent.getValue());
-                map.put("event", "didReceiveCustomMessage");
-                map.put("uuid", _uuid);
-                Map bodyMap = new HashMap();
-                bodyMap.put("fromUserId", from);
-                bodyMap.put("message", jsonObject.toString());
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin._eventSink.success(map);
+                try {
+                    Map map = new HashMap();
+                    map.put("nativeEventType", ClientEvent.getValue());
+                    map.put("event", "didReceiveCustomMessage");
+                    map.put("uuid", _uuid);
+                    Map bodyMap = new HashMap();
+                    bodyMap.put("fromUserId", from);
+                    bodyMap.put("message", Utils.convertJsonToMap(jsonObject));
+                    map.put("body", bodyMap);
+                    StringeeFlutterPlugin._eventSink.success(map);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -341,7 +354,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 Type objectType = stringeeChange.getObjectType();
                 bodyMap.put("objectType", objectType.getValue());
                 bodyMap.put("changeType", stringeeChange.getChangeType().getValue());
-                java.util.ArrayList objects = new java.util.ArrayList();
+                ArrayList objects = new ArrayList();
                 Map objectMap = new HashMap();
                 if (objectType == Type.CONVERSATION) {
                     objectMap = Utils.convertConversationToMap((Conversation) stringeeChange.getObject());
@@ -539,11 +552,8 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      *
      * @param result
      */
-    public void disconnect(final String uuid, final Result result) {
+    public void disconnect(final Result result) {
         _client.disconnect();
-
-        _manager.getClientMap().put(uuid, null);
-
         Log.d(TAG, "disconnect: success");
         Map map = new HashMap();
         map.put("status", true);
@@ -872,7 +882,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                         Map map = new HashMap();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getLocalConversations: success");
-                            List bodyArray = new java.util.ArrayList();
+                            List bodyArray = new ArrayList();
                             for (int i = 0; i < conversations.size(); i++) {
                                 bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
                             }
@@ -930,7 +940,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                         Map map = new HashMap();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getLastConversation: success");
-                            List bodyArray = new java.util.ArrayList();
+                            List bodyArray = new ArrayList();
                             for (int i = 0; i < conversations.size(); i++) {
                                 bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
                             }
@@ -988,7 +998,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                         Map map = new HashMap();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getConversationsBefore: success");
-                            List bodyArray = new java.util.ArrayList();
+                            List bodyArray = new ArrayList();
                             for (int i = 0; i < conversations.size(); i++) {
                                 bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
                             }
@@ -1046,7 +1056,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                         Map map = new HashMap();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getConversationsAfter: success");
-                            List bodyArray = new java.util.ArrayList();
+                            List bodyArray = new ArrayList();
                             for (int i = 0; i < conversations.size(); i++) {
                                 bodyArray.add(Utils.convertConversationToMap(conversations.get(i)));
                             }

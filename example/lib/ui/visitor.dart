@@ -315,6 +315,7 @@ class _VisitorPageState extends State<VisitorPage>
       ),
     );
     return new Scaffold(
+      resizeToAvoidBottomInset: false,
       body: new Form(
         child: connected
             ? chatWidget

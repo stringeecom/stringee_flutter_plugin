@@ -6,11 +6,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../StringeeConstants.dart';
+import 'StringeeConstants.dart';
 
 class StringeeVideoView extends StatefulWidget {
-  final String callId;
+  String callId;
+  String trackId;
   bool isLocal = true;
+
   bool isOverlay = false;
   bool isMirror = false;
   final EdgeInsetsGeometry margin;
@@ -21,6 +23,7 @@ class StringeeVideoView extends StatefulWidget {
   final double width;
   final Color color;
   final Widget child;
+  bool forCall;
 
   StringeeVideoView(
     this.callId,
@@ -38,7 +41,28 @@ class StringeeVideoView extends StatefulWidget {
     this.scalingType,
   })  : assert(margin == null || margin.isNonNegative),
         assert(padding == null || padding.isNonNegative),
-        super(key: key);
+        super(key: key) {
+    forCall = true;
+  }
+
+  StringeeVideoView.forTrack(
+    this.trackId, {
+    Key key,
+    this.isOverlay,
+    this.isMirror,
+    this.color,
+    this.height,
+    this.width,
+    this.margin,
+    this.alignment,
+    this.padding,
+    this.child,
+    this.scalingType,
+  })  : assert(margin == null || margin.isNonNegative),
+        assert(padding == null || padding.isNonNegative),
+        super(key: key) {
+    forCall = false;
+  }
 
   @override
   StringeeVideoViewState createState() => StringeeVideoViewState();
@@ -55,13 +79,22 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
   void initState() {
     super.initState();
 
-    creationParams = {
-      'callId': widget.callId,
-      'isLocal': widget.isLocal,
-      'isOverlay': widget.isOverlay,
-      'width': widget.width,
-      'height': widget.height
-    };
+    if (widget.forCall) {
+      creationParams = {
+        'callId': widget.callId,
+        'isLocal': widget.isLocal,
+        'width': widget.width,
+        'height': widget.height,
+        'forCall': widget.forCall,
+      };
+    } else {
+      creationParams = {
+        'trackId': widget.trackId,
+        'width': widget.width,
+        'height': widget.height,
+        'forCall': widget.forCall,
+      };
+    }
 
     switch (widget.scalingType) {
       case ScalingType.fill:
@@ -76,6 +109,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     }
 
     if (Platform.isAndroid) {
+      creationParams['isOverlay'] =
+          widget.isOverlay == null ? false : widget.isOverlay;
       creationParams['isMirror'] =
           widget.isMirror == null ? false : widget.isMirror;
     }
