@@ -131,14 +131,14 @@ class StringeeRoom {
   }
 
   /// Un publish local [StringeeVideoTrack]
-  Future<Map<dynamic, dynamic>> unPublish(StringeeVideoTrack videoTrack) async {
+  Future<Map<dynamic, dynamic>> unpublish(StringeeVideoTrack videoTrack) async {
     final params = {
       'roomId': _id,
       'trackId': videoTrack.id,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel
-        .invokeMethod('room.unPublish', params);
+        .invokeMethod('room.unpublish', params);
   }
 
   /// Subscribe [StringeeVideoTrack]

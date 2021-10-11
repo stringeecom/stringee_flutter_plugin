@@ -301,7 +301,7 @@ class RoomState extends State<Room> {
               AndroidFlutterLocalNotificationsPlugin>()
           ?.stopForegroundService();
 
-      _room.unPublish(_shareTrack).then((result) {
+      _room.unpublish(_shareTrack).then((result) {
         if (result['status']) {
           _shareTrack.close().then((value) {
             if (result['status']) {
@@ -363,7 +363,7 @@ class RoomState extends State<Room> {
   }
 
   void leaveRoomTapped() {
-    _room.unPublish(_localTrack).then((result) {
+    _room.unpublish(_localTrack).then((result) {
       if (result['status']) {
         _localTrack.close().then((value) {
           if (result['status']) {
