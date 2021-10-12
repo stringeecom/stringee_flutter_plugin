@@ -21,7 +21,7 @@ For help on editing plugin code, view the [documentation](https://flutter.io/dev
 - Version 1.0.0:
     + Add feature: live chat
 - Version 1.1.0:
-    + Upgrade ádk
+    + Upgrade sdk
 - Version 1.2.0:
     + Add feature: video conference in android
     + Add feature: share screen in StringeeCall2 in android
