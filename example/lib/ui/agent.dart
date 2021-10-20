@@ -109,9 +109,7 @@ class AgentPageState extends State<AgentPage>
                     _log.add('Accept chat request: msg:' + value['message']);
                   });
                   if (status) {
-                    chat
-                        .getConversationById(_chatRequest.convId)
-                        .then((value) {
+                    chat.getConversationById(_chatRequest.convId).then((value) {
                       bool status = value['status'];
                       setState(() {
                         _log.add('get conversation: msg:' + value['message']);

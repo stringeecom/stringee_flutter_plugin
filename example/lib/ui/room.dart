@@ -5,8 +5,8 @@ import 'package:stringee_flutter_plugin_example/button/circle_button.dart';
 import 'package:stringee_flutter_plugin_example/button/rounded_button.dart';
 
 class Room extends StatefulWidget {
-   StringeeVideo _video;
-   String _roomToken;
+  StringeeVideo _video;
+  String _roomToken;
 
   Room(StringeeClient client, String roomToken) {
     _video = StringeeVideo(client);
@@ -21,10 +21,10 @@ class Room extends StatefulWidget {
 }
 
 class RoomState extends State<Room> {
-   StringeeRoom _room;
-   StringeeVideoTrack _localTrack;
-   StringeeVideoTrack _shareTrack;
-   StringeeVideoView _localTrackView;
+  StringeeRoom _room;
+  StringeeVideoTrack _localTrack;
+  StringeeVideoTrack _shareTrack;
+  StringeeVideoView _localTrackView;
   bool _hasLocalView = false;
   bool _sharingScreen = false;
   bool _isMute = false;
