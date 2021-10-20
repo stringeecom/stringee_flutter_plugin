@@ -261,8 +261,12 @@ class RoomState extends State<Room> {
       if (value['status']) {
         setState(() {
           if (_trackList.length > 0) {
-            _trackList.removeAt(
-                _trackList.indexWhere((track) => track.id == removeTrack.id));
+            for (int i = 0; i < _trackList.length; i++) {
+              StringeeVideoTrack track = _trackList[i];
+              if (track.id == removeTrack.id) {
+                _trackList.removeAt(i);
+              }
+            }
           }
         });
       }
