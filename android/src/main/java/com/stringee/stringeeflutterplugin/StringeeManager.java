@@ -168,4 +168,15 @@ public class StringeeManager {
             result.success(map);
         }
     }
+
+    /**
+     * Set speaker on/off
+     *
+     * @param on
+     */
+    public void setSpeakerphoneOn(boolean on) {
+        if (audioManager != null) {
+            audioManager.setSpeakerphoneOn(on);
+        }
+    }
 }
