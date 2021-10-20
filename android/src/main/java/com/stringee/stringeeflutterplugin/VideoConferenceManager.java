@@ -107,7 +107,7 @@ public class VideoConferenceManager {
         }
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            int REQUEST_CODE = (int) System.currentTimeMillis();
+            final int REQUEST_CODE = (int) (System.currentTimeMillis() / 10000);
 
             _manager.getCaptureManager().getActivityResult(new ActivityResultListener() {
                 @Override
