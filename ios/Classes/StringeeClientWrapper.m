@@ -188,7 +188,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     }
     
     NSDictionary *data = (NSDictionary *)arguments;
-    NSString *userId = data[@"toUserId"];
+    NSString *userId = data[@"userId"];
     NSDictionary *message = data[@"message"];
     
     if (!userId || [userId isKindOfClass:[NSNull class]]) {
