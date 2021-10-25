@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -564,7 +565,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         }
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            final int REQUEST_CODE = (int) (System.currentTimeMillis() / 10000);
+            final int REQUEST_CODE = new Random().nextInt(65536);
 
             _manager.getCaptureManager().getActivityResult(new ActivityResultListener() {
                 @Override

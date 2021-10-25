@@ -15,6 +15,7 @@ import com.stringee.video.StringeeVideoTrack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
@@ -107,7 +108,7 @@ public class VideoConferenceManager {
         }
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            final int REQUEST_CODE = (int) (System.currentTimeMillis() / 10000);
+            final int REQUEST_CODE = new Random().nextInt(65536);
 
             _manager.getCaptureManager().getActivityResult(new ActivityResultListener() {
                 @Override
