@@ -236,7 +236,7 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     public void sendMessage(final JSONObject msg, final Result result) {
-        _stringeeRoom.sendMessge(msg, new StatusListener() {
+        _stringeeRoom.sendMessage(msg, new StatusListener() {
             @Override
             public void onSuccess() {
                 _handler.post(new Runnable() {

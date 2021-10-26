@@ -326,7 +326,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     option.setDistinct(optionObject.getBoolean("isDistinct"));
                     option.setOaId(optionObject.optString("oaId").trim());
                     option.setCustomData(optionObject.optString("customData").trim());
-                    option.setCreatorId(optionObject.optString("setCreatorId").trim());
+                    option.setCreatorId(optionObject.optString("creatorId").trim());
                     clientWrapper.createConversation(participants, option, result);
                 } catch (JSONException e) {
                     e.printStackTrace();
