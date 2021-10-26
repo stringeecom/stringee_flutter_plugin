@@ -24,8 +24,8 @@ import com.stringee.messaging.StringeeChange;
 import com.stringee.messaging.StringeeObject.Type;
 import com.stringee.messaging.User;
 import com.stringee.messaging.listeners.CallbackListener;
-import com.stringee.messaging.listeners.ChangeEventListenter;
-import com.stringee.messaging.listeners.LiveChatEventListerner;
+import com.stringee.messaging.listeners.ChangeEventListener;
+import com.stringee.messaging.listeners.LiveChatEventListener;
 import com.stringee.messaging.listeners.UserTypingEventListener;
 import com.stringee.stringeeflutterplugin.StringeeManager.StringeeCallType;
 
@@ -39,7 +39,7 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class ClientWrapper implements StringeeConnectionListener, ChangeEventListenter, LiveChatEventListerner, UserTypingEventListener {
+public class ClientWrapper implements StringeeConnectionListener, ChangeEventListener, LiveChatEventListener, UserTypingEventListener {
     private StringeeClient _client;
     private StringeeManager _manager;
     private ConversationManager _conversationManager;
@@ -79,8 +79,8 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
 
     private void setListener() {
         _client.setConnectionListener(this);
-        _client.setChangeEventListenter(this);
-        _client.setLiveChatEventListerner(this);
+        _client.setChangeEventListener(this);
+        _client.setLiveChatEventListener(this);
         _client.setUserTypingEventListener(this);
     }
 
