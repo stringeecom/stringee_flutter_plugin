@@ -189,7 +189,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *userId = data[@"userId"];
-    NSDictionary *message = data[@"message"];
+    NSDictionary *message = data[@"msg"];
     
     if (!userId || [userId isKindOfClass:[NSNull class]]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"UserId is invalid."});
