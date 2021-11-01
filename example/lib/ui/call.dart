@@ -569,6 +569,11 @@ class _CallState extends State<Call> {
 
   void handleHandleOnAnotherDeviceEvent(StringeeSignalingState state) {
     print('handleHandleOnAnotherDeviceEvent - $state');
+    if (state == StringeeSignalingState.answered ||
+        state == StringeeSignalingState.ended ||
+        state == StringeeSignalingState.busy) {
+      clearDataEndDismiss();
+    }
   }
 
   void handleReceiveLocalStreamEvent(String callId) {
