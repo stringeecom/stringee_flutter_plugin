@@ -13,8 +13,14 @@ export 'src/messaging/StringeeConversation.dart';
 export 'src/messaging/StringeeMessage.dart';
 export 'src/messaging/StringeeChatRequest.dart';
 
-/// conference
+/// Conference
 export 'src/conference/StringeeRoom.dart';
 export 'src/conference/StringeeVideo.dart';
 export 'src/conference/StringeeVideoTrack.dart';
 export 'src/conference/StringeeRoomUser.dart';
+
+/// notification
+export 'src/notification/NotificationChannel.dart';
+export 'src/notification/NotificationAction.dart';
+export 'src/notification/Notification.dart';
+export 'src/notification/StringeeNotification.dart';
