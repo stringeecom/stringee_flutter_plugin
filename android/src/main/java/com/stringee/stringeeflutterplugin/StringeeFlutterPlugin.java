@@ -30,16 +30,18 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
+    public static EventSink _eventSink;
+    public static MethodChannel _channel;
     private static StringeeManager _manager;
-    public static EventChannel.EventSink _eventSink;
-    public static MethodChannel channel;
     private static Context _context;
+    private StringeeNotification stringeeNotification;
 
     private static final String TAG = "StringeeSDK";
 
@@ -50,11 +52,13 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         _manager.setContext(binding.getApplicationContext());
         _context = binding.getApplicationContext();
 
-        channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
-        channel.setMethodCallHandler(this);
+        _channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
+        _channel.setMethodCallHandler(this);
 
         EventChannel eventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel");
         eventChannel.setStreamHandler(this);
+
+        stringeeNotification = StringeeNotification.getInstance(binding.getBinaryMessenger());
 
         binding
                 .getPlatformViewRegistry()
@@ -635,7 +639,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     }
 
     @Override
-    public void onListen(Object o, EventChannel.EventSink eventSink) {
+    public void onListen(Object o, EventSink eventSink) {
         _eventSink = eventSink;
     }
 
