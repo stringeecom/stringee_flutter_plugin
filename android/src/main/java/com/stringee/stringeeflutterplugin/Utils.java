@@ -440,7 +440,7 @@ public class Utils {
 
     public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
         Handler handler = new Handler(Looper.getMainLooper());
-        client.getConversation(convId, new CallbackListener<Conversation>() {
+        client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 handler.post(new Runnable() {

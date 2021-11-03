@@ -782,7 +782,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        _client.getConversation(convId, new CallbackListener<Conversation>() {
+        _client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 _handler.post(new Runnable() {
