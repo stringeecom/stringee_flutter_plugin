@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:stringee_flutter_plugin/src/notification/NotificationChannel.dart';
@@ -34,57 +33,24 @@ class StringeeNotification {
     return instance;
   }
 
-  Future<NotificationChannel?> createChannel(
-    String channelId,
-    String channelName,
-    String description, {
-    NotificationImportance? importance,
-    bool? enableLights,
-    bool? enableVibration,
-    Int64List? vibrationPattern,
-    bool? lockscreenVisibility,
-    bool? playSound,
-    String? soundSource,
-    NotificationRingtoneType? defaultRingtoneType,
-  }) async {
-    NotificationChannel notificationChannel = new NotificationChannel(
-      channelId,
-      channelName,
-      description,
-      importance: importance,
-      enableLights: enableLights,
-      enableVibration: enableVibration,
-      vibrationPattern: vibrationPattern,
-      lockscreenVisibility: lockscreenVisibility,
-      playSound: playSound,
-      soundSource: soundSource,
-      defaultRingtoneType: defaultRingtoneType,
-    );
-    Map<String, dynamic> params = notificationChannel.toJson();
-    Map<dynamic, dynamic> result =
-        await methodChannel.invokeMethod('createChannel', params);
-    if (result['status']) {
-      return notificationChannel;
-    } else {
-      return null;
-    }
+  Future<Map<dynamic, dynamic>> createChannel(
+      NotificationChannel notificationChannel) async {
+    return await methodChannel.invokeMethod(
+        'createChannel', notificationChannel.toJson());
   }
 
-  Future<void> showNotification(
-      NotificationChannel channel, Notification notification) async {
-    Map<String, dynamic> params = {
-      'channel': channel.toJson(),
-      'notification': notification.toJson(),
-    };
-    await methodChannel.invokeMethod('showNotification', params);
+  Future<Map<dynamic, dynamic>> showNotification(
+      NotificationAndroid notification) async {
+    return await methodChannel.invokeMethod(
+        'showNotification', notification.toJson());
   }
 
-  Future<void> cancel(String notificationId) async {
-    await methodChannel.invokeMethod('cancel', notificationId);
+  Future<Map<dynamic, dynamic>> cancel(String notificationId) async {
+    return await methodChannel.invokeMethod('cancel', notificationId);
   }
 
   Future<void> startForegroundService(
-      NotificationChannel channel, Notification notification) async {
+      NotificationChannel channel, NotificationAndroid notification) async {
     Map<String, dynamic> params = {
       'channel': channel.toJson(),
       'notification': notification.toJson(),

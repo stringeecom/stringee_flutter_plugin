@@ -611,7 +611,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
             });
 
         } else {
-            Log.d(TAG, "startCapture: false - -5 - This feature requires android api level greater than or equal to 21");
+            Log.d(TAG, "startCapture: false - -5 - This feature requires android api level >= 21");
             Map map = new HashMap();
             map.put("status", false);
             map.put("code", -5);

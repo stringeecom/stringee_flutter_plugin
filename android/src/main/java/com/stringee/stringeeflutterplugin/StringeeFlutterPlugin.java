@@ -1,6 +1,5 @@
 package com.stringee.stringeeflutterplugin;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -14,6 +13,7 @@ import com.stringee.messaging.Message;
 import com.stringee.messaging.Message.Type;
 import com.stringee.messaging.User;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
+import com.stringee.stringeeflutterplugin.notification.StringeeNotification;
 import com.stringee.video.StringeeVideoTrack.Options;
 import com.stringee.video.VideoDimensions;
 
@@ -36,12 +36,10 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
+public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware, io.flutter.plugin.common.PluginRegistry.NewIntentListener {
     public static EventSink _eventSink;
     public static MethodChannel _channel;
-    private static StringeeManager _manager;
-    private static Context _context;
-    private StringeeNotification stringeeNotification;
+    private StringeeManager _manager;
 
     private static final String TAG = "StringeeSDK";
 
@@ -50,7 +48,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         _manager = StringeeManager.getInstance();
         _manager.setHandler(new Handler(Looper.getMainLooper()));
         _manager.setContext(binding.getApplicationContext());
-        _context = binding.getApplicationContext();
 
         _channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
         _channel.setMethodCallHandler(this);
@@ -58,7 +55,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         EventChannel eventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel");
         eventChannel.setStreamHandler(this);
 
-        stringeeNotification = StringeeNotification.getInstance(binding.getBinaryMessenger());
+        StringeeNotification.getInstance(binding);
 
         binding
                 .getPlatformViewRegistry()
@@ -666,5 +663,11 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     @Override
     public void onDetachedFromActivity() {
 
+    }
+
+    @Override
+    public boolean onNewIntent(android.content.Intent intent) {
+        _manager.getContext().startActivity(Utils.getLaunchIntent(_manager.getContext()));
+        return false;
     }
 }

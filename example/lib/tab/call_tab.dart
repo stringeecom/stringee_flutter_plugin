@@ -116,8 +116,27 @@ class CallTabState extends State<CallTab> {
                                   width: 175.0,
                                   child: new ElevatedButton(
                                     onPressed: () {
-                                      callTapped(
-                                          false, StringeeObjectEventType.call);
+                                      NotificationChannel channel =
+                                          new NotificationChannel(
+                                        'channelId2',
+                                        'channelName',
+                                        'description',
+                                            autoReset: true,
+                                            importance: NotificationImportance.High,
+                                      );
+                                      StringeeNotification.instance
+                                          .createChannel(channel);
+
+                                      var notification =
+                                          new NotificationAndroid(
+                                              123456, channel.channelId,
+                                          priority: NotificationPriority.High,
+                                          category: NotificationCategory.Call,
+                                          fullScreenIntent: true);
+                                      StringeeNotification.instance
+                                          .showNotification(notification);
+                                      // callTapped(
+                                      //     false, StringeeObjectEventType.call);
                                     },
                                     child: Text('CALL'),
                                   ),

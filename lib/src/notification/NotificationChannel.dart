@@ -1,49 +1,34 @@
-import 'dart:typed_data';
-
-enum NotificationImportance {
-  None,
-  Min,
-  Low,
-  Default,
-  High,
-  Max,
-}
-
-enum NotificationRingtoneType {
-  Notification,
-  Ringtone,
-  Alarm,
-}
+import '../../stringee_flutter_plugin.dart';
 
 class NotificationChannel {
   late String channelId;
   late String channelName;
   late String description;
   NotificationImportance importance = NotificationImportance.Default;
-  bool? enableLights;
-  bool? enableVibration;
-  Int64List? vibrationPattern;
-  bool? lockscreenVisibility;
-  bool? playSound;
-  String? soundSource;
-  NotificationRingtoneType? defaultRingtoneType;
+  bool? enableLights = true;
+  bool? enableVibration = true;
+  List<int>? vibrationPattern = [];
+  NotificationLockScreenVisibility lockscreenVisibility =
+      NotificationLockScreenVisibility.Private;
+  bool? playSound = true;
+  NotificationSound? notificationSound = NotificationSound.system();
+  bool autoReset = false;
+  bool bypassDnd = false;
 
   NotificationChannel(
-    String channelId,
-    String channelName,
-    String description, {
+    this.channelId,
+    this.channelName,
+    this.description, {
     NotificationImportance? importance,
     bool? enableLights,
     bool? enableVibration,
-    Int64List? vibrationPattern,
-    bool? lockscreenVisibility,
+    List<int>? vibrationPattern,
+    NotificationLockScreenVisibility? lockscreenVisibility,
     bool? playSound,
-    String? soundSource,
-    NotificationRingtoneType? defaultRingtoneType,
+    NotificationSound? notificationSound,
+    bool? autoReset,
+    bool? bypassDnd,
   }) {
-    this.channelId = channelId;
-    this.channelName = channelName;
-    this.description = description;
     if (importance != null) this.importance = importance;
     if (enableLights != null) this.enableLights = enableLights;
     if (enableVibration != null) this.enableVibration = enableVibration;
@@ -51,9 +36,9 @@ class NotificationChannel {
     if (lockscreenVisibility != null)
       this.lockscreenVisibility = lockscreenVisibility;
     if (playSound != null) this.playSound = playSound;
-    if (soundSource != null) this.soundSource = soundSource;
-    if (defaultRingtoneType != null)
-      this.defaultRingtoneType = defaultRingtoneType;
+    if (notificationSound != null) this.notificationSound = notificationSound;
+    if (autoReset != null) this.autoReset = autoReset;
+    if (bypassDnd != null) this.bypassDnd = bypassDnd;
   }
 
   Map<String, dynamic> toJson() {
@@ -62,15 +47,14 @@ class NotificationChannel {
     params['channelName'] = channelName.trim();
     params['description'] = description.trim();
     params['importance'] = importance.index;
+    params['autoReset'] = autoReset;
+    params['lockscreenVisibility'] = lockscreenVisibility.value;
+    params['bypassDnd'] = bypassDnd;
+    params['notificationSound'] = notificationSound!.toJson();
     if (enableLights != null) params['enableLights'] = enableLights;
     if (enableVibration != null) params['enableVibration'] = enableVibration;
     if (vibrationPattern != null) params['vibrationPattern'] = vibrationPattern;
-    if (lockscreenVisibility != null)
-      params['lockscreenVisibility'] = lockscreenVisibility;
     if (playSound != null) params['playSound'] = playSound;
-    if (soundSource != null) params['enableLights'] = soundSource;
-    if (defaultRingtoneType != null)
-      params['enableLights'] = defaultRingtoneType!.index;
     return params;
   }
 }

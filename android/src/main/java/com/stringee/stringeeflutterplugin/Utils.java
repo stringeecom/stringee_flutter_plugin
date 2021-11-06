@@ -1,5 +1,8 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -18,6 +21,9 @@ import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
 import com.stringee.messaging.listeners.CallbackListener;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
+import com.stringee.stringeeflutterplugin.notification.ChannelInfo;
+import com.stringee.stringeeflutterplugin.notification.NotificationAction;
+import com.stringee.stringeeflutterplugin.notification.NotificationInfo;
 import com.stringee.video.RemoteParticipant;
 import com.stringee.video.StringeeRoom;
 import com.stringee.video.StringeeVideoTrack;
@@ -587,5 +593,120 @@ public class Utils {
                 });
             }
         });
+    }
+
+    public static ChannelInfo getChannelInfo(Context context, Map channelMap) {
+        ChannelInfo channelInfo = new ChannelInfo();
+        channelInfo.setChannelId((String) channelMap.get("channelId"));
+        channelInfo.setChannelName((String) channelMap.get("channelName"));
+        channelInfo.setDescription((String) channelMap.get("description"));
+        channelInfo.setImportance((Integer) channelMap.get("importance"));
+        channelInfo.setEnableLights((Boolean) channelMap.get("enableLights"));
+        channelInfo.setEnableVibration((Boolean) channelMap.get("enableVibration"));
+        List vibrationPatternList = (List) channelMap.get("vibrationPattern");
+        long[] vibrationPattern = new long[vibrationPatternList.size()];
+        for (int i = 0; i < vibrationPatternList.size(); i++) {
+            vibrationPattern[i] = ((Integer) vibrationPatternList.get(i)).longValue();
+        }
+        channelInfo.setVibrationPattern(vibrationPattern);
+        channelInfo.setLockscreenVisibility((Integer) channelMap.get("lockscreenVisibility"));
+        boolean playSound = (Boolean) channelMap.get("playSound");
+        channelInfo.setPlaySound(playSound);
+        if (playSound) {
+            Map notificationSound = (Map) channelMap.get("notificationSound");
+            channelInfo.setSoundSource((String) notificationSound.get("source"));
+            channelInfo.setSourceType((Integer) notificationSound.get("sourceType"));
+            channelInfo.setRingtoneType((Integer) notificationSound.get("ringtoneType"));
+        }
+        channelInfo.setAutoReset((Boolean) channelMap.get("autoReset"));
+        channelInfo.setBypassDnd((Boolean) channelMap.get("bypassDnd"));
+        return channelInfo;
+    }
+
+    public static NotificationInfo getNotificationInfo(Context context, Map notiMap) {
+        NotificationInfo notiInfo = new NotificationInfo();
+        notiInfo.setId((Integer) notiMap.get("id"));
+        notiInfo.setChannelId((String) notiMap.get("channelId"));
+        notiInfo.setContentTitle((String) notiMap.get("contentTitle"));
+        notiInfo.setContentText((String) notiMap.get("contentText"));
+        notiInfo.setSubText((String) notiMap.get("subText"));
+        notiInfo.setContentInfo((String) notiMap.get("contentInfo"));
+        notiInfo.setNumber((Integer) notiMap.get("number"));
+        notiInfo.setAutoCancel((Boolean) notiMap.get("autoCancel"));
+        notiInfo.setWhen((Integer) notiMap.get("showWhen"));
+        if (notiInfo.getWhen() > 0) {
+            notiInfo.setShowWhen(true);
+        }
+        Map iconMap = (Map) notiMap.get("icon");
+        if (iconMap != null) {
+            notiInfo.setIconSource((String) iconMap.get("source"));
+            notiInfo.setSourceFrom((Integer) iconMap.get("sourceFrom"));
+        }
+        boolean playSound = (Boolean) notiMap.get("playSound");
+        notiInfo.setPlaySound(playSound);
+        if (playSound) {
+            Map notificationSound = (Map) notiMap.get("notificationSound");
+            notiInfo.setSoundSource((String) notificationSound.get("source"));
+            notiInfo.setSourceType((Integer) notificationSound.get("sourceType"));
+            notiInfo.setRingtoneType((Integer) notificationSound.get("ringtoneType"));
+        }
+        notiInfo.setCategory((String) notiMap.get("category"));
+        notiInfo.setFullScreenIntent((Boolean) notiMap.get("fullScreenIntent"));
+        List vibrationPatternList = (List) notiMap.get("vibrationPattern");
+        long[] vibrationPattern = new long[vibrationPatternList.size()];
+        for (int i = 0; i < vibrationPatternList.size(); i++) {
+            vibrationPattern[i] = ((Integer) vibrationPatternList.get(i)).longValue();
+        }
+        notiInfo.setVibrationPattern(vibrationPattern);
+        notiInfo.setOnGoing((Boolean) notiMap.get("onGoing"));
+        notiInfo.setOnlyAlertOnce((Boolean) notiMap.get("onlyAlertOnce"));
+        notiInfo.setTimeoutAfter((Integer) notiMap.get("timeoutAfter"));
+        if (notiInfo.getTimeoutAfter() > 0) {
+            notiInfo.setTimeoutAfter(true);
+        }
+        notiInfo.setPriority((Integer) notiMap.get("priority"));
+        List actionsMapList = (List) notiMap.get("actions");
+
+        if (actionsMapList.size() > 0) {
+            List<NotificationAction> actions = new ArrayList<>();
+            for (int i = 0; i < actionsMapList.size(); i++) {
+                Map actionMap = (Map) actionsMapList.get(i);
+                NotificationAction action = new NotificationAction();
+                action.setId((Integer) actionMap.get("id"));
+                Map actionIconMap = (Map) notiMap.get("icon");
+                if(actionIconMap!= null){
+                    action.setIcon((String) actionIconMap.get("source"));
+                    action.setSourceFrom((Integer) actionIconMap.get("sourceFrom"));
+                }
+                action.setTitle((String) actionMap.get("title"));
+                action.setIsOpenApp((Boolean) actionMap.get("isOpenApp"));
+                actions.add(action);
+            }
+            notiInfo.setActions(actions);
+        }
+        return notiInfo;
+    }
+
+    public static boolean isResourceAvailable(Context context, String source, String sourceFrom) {
+        int id = context.getResources().getIdentifier(source, sourceFrom, context.getPackageName());
+        return id != 0;
+    }
+
+    public static int getIconResourceId(Context context, String source, int sourceFrom) {
+        if (sourceFrom == 0) {
+            return context.getResources().getIdentifier(source, "drawable", context.getPackageName());
+        } else {
+            return context.getResources().getIdentifier(source, "mipmap", context.getPackageName());
+        }
+    }
+
+    public static int getDefaultIconResourceId(Context context) {
+        return context.getResources().getIdentifier("ic_launcher", "mipmap", context.getPackageName());
+    }
+
+    public static Intent getLaunchIntent(Context context) {
+        String packageName = context.getPackageName();
+        PackageManager packageManager = context.getPackageManager();
+        return packageManager.getLaunchIntentForPackage(packageName);
     }
 }
