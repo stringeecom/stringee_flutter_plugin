@@ -1,8 +1,9 @@
 package com.stringee.stringeeflutterplugin.notification;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class NotificationInfo {
+public class NotificationInfo implements Serializable {
     private int id;
     private String channelId;
     private String contentTitle;

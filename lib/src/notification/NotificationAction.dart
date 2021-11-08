@@ -2,29 +2,17 @@ import 'package:stringee_flutter_plugin/src/notification/NotificationIcon.dart';
 
 import '../../stringee_flutter_plugin.dart';
 
-typedef CallBack = void Function();
-
 class NotificationAction {
-  late int id;
+  late String id;
   NotificationIcon? icon;
-  CallBack onPressed;
-  String? title;
-  bool? isOpenApp = true;
+  String title;
 
-  NotificationAction(
-    this.title,
-    this.onPressed, {
+  NotificationAction({
+    required this.id,
+    required this.title,
     NotificationIcon? icon,
-    bool? isOpenApp,
   }) {
-    id = new DateTime.now().millisecond;
-    StringeeNotification().actionMap[id] = this;
     if (icon != null) this.icon = icon;
-    if (isOpenApp != null) this.isOpenApp = isOpenApp;
-  }
-
-  void press() {
-    onPressed();
   }
 
   Map<String, dynamic> toJson() {
@@ -32,7 +20,6 @@ class NotificationAction {
     params['id'] = id;
     if (icon != null) params['icon'] = icon!.toJson();
     params['title'] = title;
-    params['isOpenApp'] = isOpenApp;
     return params;
   }
 }

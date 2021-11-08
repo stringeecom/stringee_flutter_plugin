@@ -54,5 +54,8 @@
             android:exported="false"
             android:foregroundServiceType="mediaProjection"
             android:stopWithTask="false" />
+        <service
+            android:name="com.stringee.stringeeflutterplugin.notification.StringeeForegroundService"
+            android:exported="false" />
     </application>
 </manifest>

@@ -1,17 +1,16 @@
 package com.stringee.stringeeflutterplugin.notification;
 
 public class NotificationAction {
-    private int id;
+    private String id;
     private String icon;
     private int sourceFrom;
     private String title;
-    private boolean isOpenApp;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -37,13 +36,5 @@ public class NotificationAction {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public boolean isOpenApp() {
-        return isOpenApp;
-    }
-
-    public void setIsOpenApp(boolean isOpenApp) {
-        this.isOpenApp = isOpenApp;
     }
 }

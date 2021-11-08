@@ -595,7 +595,7 @@ public class Utils {
         });
     }
 
-    public static ChannelInfo getChannelInfo(Context context, Map channelMap) {
+    public static ChannelInfo getChannelInfo(Map channelMap) {
         ChannelInfo channelInfo = new ChannelInfo();
         channelInfo.setChannelId((String) channelMap.get("channelId"));
         channelInfo.setChannelName((String) channelMap.get("channelName"));
@@ -623,7 +623,7 @@ public class Utils {
         return channelInfo;
     }
 
-    public static NotificationInfo getNotificationInfo(Context context, Map notiMap) {
+    public static NotificationInfo getNotificationInfo(Map notiMap) {
         NotificationInfo notiInfo = new NotificationInfo();
         notiInfo.setId((Integer) notiMap.get("id"));
         notiInfo.setChannelId((String) notiMap.get("channelId"));
@@ -672,14 +672,13 @@ public class Utils {
             for (int i = 0; i < actionsMapList.size(); i++) {
                 Map actionMap = (Map) actionsMapList.get(i);
                 NotificationAction action = new NotificationAction();
-                action.setId((Integer) actionMap.get("id"));
+                action.setId((String) actionMap.get("id"));
                 Map actionIconMap = (Map) notiMap.get("icon");
                 if(actionIconMap!= null){
                     action.setIcon((String) actionIconMap.get("source"));
                     action.setSourceFrom((Integer) actionIconMap.get("sourceFrom"));
                 }
                 action.setTitle((String) actionMap.get("title"));
-                action.setIsOpenApp((Boolean) actionMap.get("isOpenApp"));
                 actions.add(action);
             }
             notiInfo.setActions(actions);
