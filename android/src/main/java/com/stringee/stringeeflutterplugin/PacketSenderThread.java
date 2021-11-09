@@ -1,6 +1,4 @@
-package com.stringee.stringeeflutterplugin.notification;
-
-import com.stringee.stringeeflutterplugin.StringeeManager;
+package com.stringee.stringeeflutterplugin;
 
 import java.util.HashMap;
 import java.util.Map;

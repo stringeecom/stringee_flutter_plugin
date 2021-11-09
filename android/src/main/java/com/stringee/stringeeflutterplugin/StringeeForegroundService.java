@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.notification;
+package com.stringee.stringeeflutterplugin;
 
 import android.app.Notification;
 import android.app.Service;
@@ -7,8 +7,6 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-
-import com.stringee.stringeeflutterplugin.StringeeManager;
 
 import java.util.HashMap;
 import java.util.Map;

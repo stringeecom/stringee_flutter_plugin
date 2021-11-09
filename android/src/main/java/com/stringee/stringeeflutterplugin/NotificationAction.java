@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.notification;
+package com.stringee.stringeeflutterplugin;
 
 public class NotificationAction {
     private String id;

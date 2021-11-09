@@ -1,8 +1,7 @@
-package com.stringee.stringeeflutterplugin.notification;
+package com.stringee.stringeeflutterplugin;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.net.Uri;
 
 public class ChannelInfo {
     private String channelId;

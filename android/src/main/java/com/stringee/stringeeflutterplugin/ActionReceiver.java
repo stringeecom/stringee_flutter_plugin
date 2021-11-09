@@ -1,13 +1,10 @@
-package com.stringee.stringeeflutterplugin.notification;
+package com.stringee.stringeeflutterplugin;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ActionReceiver extends BroadcastReceiver {
 
@@ -20,7 +17,6 @@ public class ActionReceiver extends BroadcastReceiver {
                 @Override
                 public void run() {
                     PacketSenderThread.getInstance().send(actionId);
-
                 }
             });
         }

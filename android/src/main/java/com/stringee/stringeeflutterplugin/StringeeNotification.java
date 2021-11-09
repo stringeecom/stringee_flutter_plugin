@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.notification;
+package com.stringee.stringeeflutterplugin;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -17,9 +17,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-
-import com.stringee.stringeeflutterplugin.StringeeManager;
-import com.stringee.stringeeflutterplugin.Utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,15 +48,9 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
     public static final String STRINGEE_STOP_FOREGROUND_SERVICE = "con.stringee.flutter.foregroundservice.stop";
     private static final String TAG = "StringeeSDK";
 
-    public StringeeNotification(FlutterPluginBinding binding) {
+    public StringeeNotification() {
         _manager = StringeeManager.getInstance();
-
-        _channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel.notification");
-        _channel.setMethodCallHandler(this);
-
-        EventChannel eventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel.notification");
-        eventChannel.setStreamHandler(this);
-
+        
         senderThread = PacketSenderThread.getInstance();
 
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
@@ -69,9 +60,9 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         }
     }
 
-    public static synchronized StringeeNotification getInstance(FlutterPluginBinding binding) {
+    public static synchronized StringeeNotification getInstance() {
         if (_instance == null) {
-            _instance = new StringeeNotification(binding);
+            _instance = new StringeeNotification();
         }
         return _instance;
     }

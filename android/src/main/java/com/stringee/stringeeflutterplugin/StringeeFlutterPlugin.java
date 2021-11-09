@@ -15,8 +15,6 @@ import com.stringee.messaging.Message;
 import com.stringee.messaging.Message.Type;
 import com.stringee.messaging.User;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
-import com.stringee.stringeeflutterplugin.notification.ActionReceiver;
-import com.stringee.stringeeflutterplugin.notification.StringeeNotification;
 import com.stringee.video.StringeeVideoTrack.Options;
 import com.stringee.video.VideoDimensions;
 
@@ -59,7 +57,13 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         EventChannel eventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel");
         eventChannel.setStreamHandler(this);
 
-        StringeeNotification.getInstance(binding);
+        StringeeNotification.getInstance();
+
+        StringeeNotification._channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel.notification");
+        StringeeNotification._channel.setMethodCallHandler(StringeeNotification.getInstance());
+
+        EventChannel notiEventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel.notification");
+        notiEventChannel.setStreamHandler(StringeeNotification.getInstance());
 
         binding
                 .getPlatformViewRegistry()
@@ -664,9 +668,9 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     }
 
     private void sendActionEvent(Intent intent, Activity activity) {
-        if(intent!= null){
+        if (intent != null) {
             String intentAction = intent.getAction();
-            if (intentAction!= null){
+            if (intentAction != null) {
                 if (intentAction.equals(StringeeNotification.STRINGEE_NOTIFICATION_ACTION)) {
                     Intent intent1 = new Intent(activity, ActionReceiver.class);
                     intent1.putExtra(StringeeNotification.STRINGEE_NOTIFICATION_ACTION_ID, intent.getStringExtra(StringeeNotification.STRINGEE_NOTIFICATION_ACTION_ID));

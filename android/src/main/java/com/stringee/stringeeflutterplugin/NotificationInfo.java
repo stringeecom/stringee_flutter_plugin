@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.notification;
+package com.stringee.stringeeflutterplugin;
 
 import java.io.Serializable;
 import java.util.List;
