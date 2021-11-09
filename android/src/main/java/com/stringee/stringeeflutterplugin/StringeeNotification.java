@@ -188,7 +188,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
 
         Intent intent = Utils.getLaunchIntent(_manager.getContext());
         intent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + notiInfo.getId());
-        intent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, notiInfo.getId());
+        intent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, String.valueOf(notiInfo.getId()));
         PendingIntent pendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(pendingIntent);
@@ -353,7 +353,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
 
         Intent contentIntent = Utils.getLaunchIntent(_manager.getContext());
         contentIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + notiInfo.getId());
-        contentIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, notiInfo.getId());
+        contentIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, String.valueOf(notiInfo.getId()));
         PendingIntent pendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(pendingIntent);
