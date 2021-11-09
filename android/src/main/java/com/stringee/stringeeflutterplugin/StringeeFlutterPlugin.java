@@ -671,7 +671,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         if (intent != null) {
             String intentAction = intent.getAction();
             if (intentAction != null) {
-                if (intentAction.equals(StringeeNotification.STRINGEE_NOTIFICATION_ACTION)) {
+                if (intentAction.startsWith(StringeeNotification.STRINGEE_NOTIFICATION_ACTION)) {
                     Intent intent1 = new Intent(activity, ActionReceiver.class);
                     intent1.putExtra(StringeeNotification.STRINGEE_NOTIFICATION_ACTION_ID, intent.getStringExtra(StringeeNotification.STRINGEE_NOTIFICATION_ACTION_ID));
                     activity.sendBroadcast(intent1);

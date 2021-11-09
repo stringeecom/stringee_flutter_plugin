@@ -125,7 +125,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         channel = _notificationManager.getNotificationChannel(channelInfo.getChannelId());
         if (channel != null && channel.getImportance() != channelInfo.getImportance()) {
             _notificationManager.deleteNotificationChannel(channelInfo.getChannelId());
-        }else {
+        } else {
             channel = new NotificationChannel(channelInfo.getChannelId(), channelInfo.getChannelName(), channelInfo.getImportance());
         }
         channel.setDescription(channelInfo.getDescription());
@@ -303,12 +303,10 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 } else {
                     iconResourceId = Utils.getDefaultIconResourceId(_manager.getContext());
                 }
-                Intent actionIntent;
-                PendingIntent actionPendingIntent;
-                actionIntent = Utils.getLaunchIntent(_manager.getContext());
-                actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION);
+                Intent actionIntent = Utils.getLaunchIntent(_manager.getContext());
+                actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + action.getId());
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
-                actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, android.app.PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 builder.addAction(iconResourceId, action.getTitle(), actionPendingIntent);
             }
@@ -473,7 +471,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 actionIntent = Utils.getLaunchIntent(_manager.getContext());
                 actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION);
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
-                actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, android.app.PendingIntent.FLAG_UPDATE_CURRENT);
+                actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 builder.addAction(iconResourceId, action.getTitle(), actionPendingIntent);
             }

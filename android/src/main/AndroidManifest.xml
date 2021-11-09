@@ -6,7 +6,7 @@
 
     <application>
         <receiver
-            android:name=".notification.ActionReceiver"
+            android:name=".ActionReceiver"
             android:exported="false" />
     </application>
 </manifest>
