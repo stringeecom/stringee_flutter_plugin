@@ -25,7 +25,6 @@ class NotificationChannel {
     NotificationLockScreenVisibility? lockscreenVisibility,
     bool? playSound,
     NotificationSound? notificationSound,
-    bool? autoReset,
     bool? bypassDnd,
   }) {
     if (importance != null) this.importance = importance;
