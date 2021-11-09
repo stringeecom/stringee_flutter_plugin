@@ -468,12 +468,11 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 } else {
                     iconResourceId = Utils.getDefaultIconResourceId(_manager.getContext());
                 }
-                Intent actionIntent;
-                PendingIntent actionPendingIntent;
-                actionIntent = Utils.getLaunchIntent(_manager.getContext());
+                Intent actionIntent = Utils.getLaunchIntent(_manager.getContext());
+                actionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION);
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
-                actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 builder.addAction(iconResourceId, action.getTitle(), actionPendingIntent);
             }
