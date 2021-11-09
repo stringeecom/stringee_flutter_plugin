@@ -620,7 +620,6 @@ public class Utils {
             channelInfo.setSourceType((Integer) notificationSound.get("sourceType"));
             channelInfo.setRingtoneType((Integer) notificationSound.get("ringtoneType"));
         }
-        channelInfo.setAutoReset((Boolean) channelMap.get("autoReset"));
         channelInfo.setBypassDnd((Boolean) channelMap.get("bypassDnd"));
         return channelInfo;
     }

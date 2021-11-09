@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodCall;
@@ -50,7 +49,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
 
     public StringeeNotification() {
         _manager = StringeeManager.getInstance();
-        
+
         senderThread = PacketSenderThread.getInstance();
 
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
@@ -123,13 +122,12 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
     @RequiresApi(api = VERSION_CODES.O)
     private void createChannel(ChannelInfo channelInfo, Result result) {
         NotificationChannel channel;
-        if (channelInfo.isAutoReset()) {
-            channel = _notificationManager.getNotificationChannel(channelInfo.getChannelId());
-            if (channel != null && channel.getImportance() != channelInfo.getImportance()) {
-                _notificationManager.deleteNotificationChannel(channelInfo.getChannelId());
-            }
+        channel = _notificationManager.getNotificationChannel(channelInfo.getChannelId());
+        if (channel != null && channel.getImportance() != channelInfo.getImportance()) {
+            _notificationManager.deleteNotificationChannel(channelInfo.getChannelId());
+        }else {
+            channel = new NotificationChannel(channelInfo.getChannelId(), channelInfo.getChannelName(), channelInfo.getImportance());
         }
-        channel = new NotificationChannel(channelInfo.getChannelId(), channelInfo.getChannelName(), channelInfo.getImportance());
         channel.setDescription(channelInfo.getDescription());
         channel.enableLights(channelInfo.isEnableLights());
         channel.enableVibration(channelInfo.isEnableVibration());
@@ -144,7 +142,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         }
         channel.setLockscreenVisibility(channelInfo.getLockscreenVisibility());
         if (channelInfo.isPlaySound()) {
-            AudioAttributes audioAttributes = new Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
+            AudioAttributes audioAttributes = new Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
             int sourceType = channelInfo.getSourceType();
             switch (sourceType) {
                 case 0:

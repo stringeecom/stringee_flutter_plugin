@@ -12,7 +12,6 @@ class NotificationChannel {
       NotificationLockScreenVisibility.Private;
   bool? playSound = true;
   NotificationSound? notificationSound = NotificationSound.system();
-  bool autoReset = false;
   bool bypassDnd = false;
 
   NotificationChannel(
@@ -37,7 +36,6 @@ class NotificationChannel {
       this.lockscreenVisibility = lockscreenVisibility;
     if (playSound != null) this.playSound = playSound;
     if (notificationSound != null) this.notificationSound = notificationSound;
-    if (autoReset != null) this.autoReset = autoReset;
     if (bypassDnd != null) this.bypassDnd = bypassDnd;
   }
 
@@ -47,7 +45,6 @@ class NotificationChannel {
     params['channelName'] = channelName.trim();
     params['description'] = description.trim();
     params['importance'] = importance.index;
-    params['autoReset'] = autoReset;
     params['lockscreenVisibility'] = lockscreenVisibility.value;
     params['bypassDnd'] = bypassDnd;
     params['notificationSound'] = notificationSound!.toJson();

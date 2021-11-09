@@ -16,7 +16,6 @@ public class ChannelInfo {
     private String soundSource;
     private int sourceType;
     private int ringtoneType;
-    private boolean autoReset;
     private boolean bypassDnd;
 
     public String getChannelId() {
@@ -135,14 +134,6 @@ public class ChannelInfo {
 
     public void setSourceType(int sourceType) {
         this.sourceType = sourceType;
-    }
-
-    public boolean isAutoReset() {
-        return autoReset;
-    }
-
-    public void setAutoReset(boolean autoReset) {
-        this.autoReset = autoReset;
     }
 
     public boolean isBypassDnd() {
