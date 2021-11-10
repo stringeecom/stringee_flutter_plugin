@@ -6,6 +6,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.AudioAttributes.Builder;
 import android.media.RingtoneManager;
@@ -41,7 +43,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
     public static final String STRINGEE_NOTIFICATION_ACTION_ID = "com.stringee.flutter.notification.action.id";
     public static final String STRINGEE_START_FOREGROUND_SERVICE = "con.stringee.flutter.foregroundservice.start";
     public static final String STRINGEE_STOP_FOREGROUND_SERVICE = "con.stringee.flutter.foregroundservice.stop";
-    
+
     private static final String TAG = "StringeeSDK";
 
     public StringeeNotification() {
@@ -231,6 +233,21 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
             builder.setSmallIcon(Utils.getDefaultIconResourceId(stringeeManager.getContext()));
         }
 
+        if (notiInfo.getLargeIconSource() != null) {
+            if (Utils.isResourceAvailable(stringeeManager.getContext(), notiInfo.getLargeIconSource(), notiInfo.getLargeSourceFrom() == 0 ? "drawable" : "mipmap")) {
+                Bitmap largeIconBitmap = BitmapFactory.decodeResource(stringeeManager.getContext().getResources(), Utils.getIconResourceId(stringeeManager.getContext(), notiInfo.getLargeIconSource(), notiInfo.getLargeSourceFrom()));
+                builder.setLargeIcon(largeIconBitmap);
+            } else {
+                Log.d(TAG, "showNotification: false - -3 - No large icon resource found");
+                Map map = new HashMap();
+                map.put("status", false);
+                map.put("code", -3);
+                map.put("message", "No large icon resource found");
+                result.success(map);
+                return;
+            }
+        }
+
         if (notiInfo.isPlaySound()) {
             int sourceType = notiInfo.getSourceType();
             switch (sourceType) {
@@ -262,7 +279,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
 
         if (notiInfo.isFullScreenIntent()) {
             builder.setFullScreenIntent(pendingIntent, true);
-        }else{
+        } else {
             builder.setContentIntent(pendingIntent);
         }
 

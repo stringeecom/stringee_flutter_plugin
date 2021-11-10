@@ -16,6 +16,8 @@ public class NotificationInfo implements Serializable {
     private int when;
     private String iconSource;
     private int sourceFrom;
+    private String largeIconSource;
+    private int largeSourceFrom;
     private boolean playSound;
     private String soundSource;
     private int sourceType;
@@ -124,6 +126,22 @@ public class NotificationInfo implements Serializable {
 
     public void setSourceFrom(int sourceFrom) {
         this.sourceFrom = sourceFrom;
+    }
+
+    public String getLargeIconSource() {
+        return largeIconSource;
+    }
+
+    public void setLargeIconSource(String largeIconSource) {
+        this.largeIconSource = largeIconSource;
+    }
+
+    public int getLargeSourceFrom() {
+        return largeSourceFrom;
+    }
+
+    public void setLargeSourceFrom(int largeSourceFrom) {
+        this.largeSourceFrom = largeSourceFrom;
     }
 
     public boolean isPlaySound() {

@@ -13,6 +13,7 @@ class NotificationAndroid {
   bool? autoCancel = true;
   int? showWhen = 0;
   NotificationIcon? icon;
+  NotificationIcon? largeIcon;
   bool? playSound = true;
   NotificationSound? notificationSound = NotificationSound.system();
   NotificationCategory? category;
@@ -35,6 +36,7 @@ class NotificationAndroid {
     bool? autoCancel,
     int? showWhen,
     NotificationIcon? icon,
+    NotificationIcon? largeIcon,
     bool? playSound,
     NotificationSound? notificationSound,
     NotificationCategory? category,
@@ -54,6 +56,7 @@ class NotificationAndroid {
     if (autoCancel != null) this.autoCancel = autoCancel;
     if (showWhen != null) this.showWhen = showWhen;
     if (icon != null) this.icon = icon;
+    if (largeIcon != null) this.largeIcon = largeIcon;
     if (playSound != null) this.playSound = playSound;
     if (notificationSound != null) this.notificationSound = notificationSound;
     if (category != null) this.category = category;
@@ -89,6 +92,7 @@ class NotificationAndroid {
     if (subText != null) params['subText'] = subText!.trim();
     if (contentInfo != null) params['contentInfo'] = contentInfo!.trim();
     if (icon != null) params['icon'] = icon!.toJson();
+    if (largeIcon != null) params['largeIcon'] = largeIcon!.toJson();
     if (category != null) params['category'] = category.value;
     return params;
   }

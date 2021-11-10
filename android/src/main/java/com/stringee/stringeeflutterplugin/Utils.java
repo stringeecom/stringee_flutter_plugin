@@ -638,6 +638,11 @@ public class Utils {
             notiInfo.setIconSource((String) iconMap.get("source"));
             notiInfo.setSourceFrom((Integer) iconMap.get("sourceFrom"));
         }
+        Map largeIconMap = (Map) notiMap.get("largeIcon");
+        if (largeIconMap != null) {
+            notiInfo.setLargeIconSource((String) largeIconMap.get("source"));
+            notiInfo.setLargeSourceFrom((Integer) largeIconMap.get("sourceFrom"));
+        }
         boolean playSound = (Boolean) notiMap.get("playSound");
         notiInfo.setPlaySound(playSound);
         if (playSound) {
