@@ -20,12 +20,7 @@ import com.stringee.messaging.Queue;
 import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
 import com.stringee.messaging.listeners.CallbackListener;
-import com.stringee.stringeeflutterplugin.CallWrapper;
-import com.stringee.stringeeflutterplugin.StringeeManager;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
-import com.stringee.stringeeflutterplugin.ChannelInfo;
-import com.stringee.stringeeflutterplugin.NotificationAction;
-import com.stringee.stringeeflutterplugin.NotificationInfo;
 import com.stringee.video.RemoteParticipant;
 import com.stringee.video.StringeeRoom;
 import com.stringee.video.StringeeVideoTrack;
@@ -675,7 +670,7 @@ public class Utils {
                 NotificationAction action = new NotificationAction();
                 action.setId((String) actionMap.get("id"));
                 Map actionIconMap = (Map) notiMap.get("icon");
-                if(actionIconMap!= null){
+                if (actionIconMap != null) {
                     action.setIcon((String) actionIconMap.get("source"));
                     action.setSourceFrom((Integer) actionIconMap.get("sourceFrom"));
                 }
