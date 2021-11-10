@@ -14,7 +14,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeManager {
-    private static StringeeManager stringeeManager;
+    private static StringeeManager instance;
     private Context context;
     private Map<String, ClientWrapper> clientMap = new HashMap<>();
     private Map<String, CallWrapper> callsMap = new HashMap<>();
@@ -77,11 +77,11 @@ public class StringeeManager {
     }
 
     public static synchronized StringeeManager getInstance() {
-        if (stringeeManager == null) {
-            stringeeManager = new StringeeManager();
+        if (instance == null) {
+            instance = new StringeeManager();
         }
 
-        return stringeeManager;
+        return instance;
     }
 
     public Context getContext() {

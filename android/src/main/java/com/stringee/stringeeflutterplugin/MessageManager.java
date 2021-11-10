@@ -14,16 +14,14 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class MessageManager {
-    private ClientWrapper _clientWrapper;
-    private StringeeManager _manager;
-    private Handler _handler;
+    private ClientWrapper clientWrapper;
+    private Handler handler;
 
     private static final String TAG = "StringeeSDK";
 
     public MessageManager(ClientWrapper clientWrapper) {
-        _manager = StringeeManager.getInstance();
-        _handler = _manager.getHandler();
-        _clientWrapper = clientWrapper;
+        handler = StringeeManager.getInstance().getHandler();
+        this.clientWrapper = clientWrapper;
     }
 
     /**
@@ -36,7 +34,7 @@ public class MessageManager {
     public void edit(String convId, String msgId, final String content, final Result result) {
         Map map = new HashMap();
 
-        if (!_clientWrapper.isConnected()) {
+        if (!clientWrapper.isConnected()) {
             Log.d(TAG, "edit: false - -1 - StringeeClient is disconnected");
             map.put("status", false);
             map.put("code", -1);
@@ -63,13 +61,13 @@ public class MessageManager {
             return;
         }
 
-        Utils.getMessage(_clientWrapper.getClient(), convId, new String[]{msgId}, new CallbackListener<Message>() {
+        Utils.getMessage(clientWrapper.getClient(), convId, new String[]{msgId}, new CallbackListener<Message>() {
             @Override
             public void onSuccess(Message message) {
-                message.edit(_clientWrapper.getClient(), content, new StatusListener() {
+                message.edit(clientWrapper.getClient(), content, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "edit: success");
@@ -85,7 +83,7 @@ public class MessageManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "edit: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
@@ -103,7 +101,7 @@ public class MessageManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "edit: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
@@ -127,7 +125,7 @@ public class MessageManager {
      */
     public void pinOrUnPin(String convId, String msgId, final boolean pinOrUnPin, final Result result) {
         Map map = new HashMap();
-        if (!_clientWrapper.isConnected()) {
+        if (!clientWrapper.isConnected()) {
             Log.d(TAG, "pinOrUnPin: false - -1 - StringeeClient is disconnected");
             map.put("status", false);
             map.put("code", -1);
@@ -154,13 +152,13 @@ public class MessageManager {
             return;
         }
 
-        Utils.getMessage(_clientWrapper.getClient(), convId, new String[]{msgId}, new CallbackListener<Message>() {
+        Utils.getMessage(clientWrapper.getClient(), convId, new String[]{msgId}, new CallbackListener<Message>() {
             @Override
             public void onSuccess(Message message) {
-                message.pinOrUnpin(_clientWrapper.getClient(), pinOrUnPin, new StatusListener() {
+                message.pinOrUnpin(clientWrapper.getClient(), pinOrUnPin, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "pinOrUnPin: success");
@@ -176,7 +174,7 @@ public class MessageManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "pinOrUnPin: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
@@ -194,7 +192,7 @@ public class MessageManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "pinOrUnPin: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());

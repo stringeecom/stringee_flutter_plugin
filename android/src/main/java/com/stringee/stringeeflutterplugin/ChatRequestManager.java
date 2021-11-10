@@ -15,15 +15,14 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ChatRequestManager {
-    private ClientWrapper _clientWrapper;
-    private StringeeManager _manager;
-    private Handler _handler;
+    private ClientWrapper clientWrapper;
+    private Handler handler;
+    
     private static final String TAG = "StringeeSDK";
 
     public ChatRequestManager(ClientWrapper clientWrapper) {
-        _manager = StringeeManager.getInstance();
-        _handler = _manager.getHandler();
-        _clientWrapper = clientWrapper;
+        handler = StringeeManager.getInstance().getHandler();
+        this.clientWrapper = clientWrapper;
     }
 
     /**
@@ -33,7 +32,7 @@ public class ChatRequestManager {
      * @param result
      */
     public void acceptChatRequest(String convId, final Result result) {
-        if (!_clientWrapper.isConnected()) {
+        if (!clientWrapper.isConnected()) {
             Log.d(TAG, "acceptChatRequest: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
             map.put("status", false);
@@ -53,13 +52,13 @@ public class ChatRequestManager {
             return;
         }
 
-        Utils.getChatRequest(_clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
+        Utils.getChatRequest(clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
             @Override
             public void onSuccess(ChatRequest chatRequest) {
-                chatRequest.accept(_clientWrapper.getClient(), new CallbackListener<Conversation>() {
+                chatRequest.accept(clientWrapper.getClient(), new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "acceptChatRequest: success");
@@ -75,7 +74,7 @@ public class ChatRequestManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
@@ -93,7 +92,7 @@ public class ChatRequestManager {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
@@ -115,7 +114,7 @@ public class ChatRequestManager {
      * @param result
      */
     public void rejectChatRequest(String convId, final Result result) {
-        if (!_clientWrapper.isConnected()) {
+        if (!clientWrapper.isConnected()) {
             Log.d(TAG, "rejectChatRequest: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
             map.put("status", false);
@@ -135,13 +134,13 @@ public class ChatRequestManager {
             return;
         }
 
-        Utils.getChatRequest(_clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
+        Utils.getChatRequest(clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
             @Override
             public void onSuccess(ChatRequest chatRequest) {
-                chatRequest.reject(_clientWrapper.getClient(), new StatusListener() {
+                chatRequest.reject(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "rejectChatRequest: success");
@@ -157,7 +156,7 @@ public class ChatRequestManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        _handler.post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 Log.d(TAG, "rejectChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
@@ -175,7 +174,7 @@ public class ChatRequestManager {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                _handler.post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "rejectChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());

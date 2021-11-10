@@ -25,18 +25,14 @@ import java.util.Map;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeNotification implements MethodCallHandler, EventChannel.StreamHandler {
-    private static StringeeNotification _instance;
+    private static StringeeNotification instance;
 
-    public static EventSink _eventSink;
-    public static MethodChannel _channel;
-
-    private StringeeManager _manager;
-    private NotificationManager _notificationManager;
+    private StringeeManager stringeeManager;
+    private NotificationManager notificationManager;
     private PacketSenderThread senderThread;
     public static Result startForegroundServiceResult;
     public static Result stopForegroundServiceResult;
@@ -45,32 +41,32 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
     public static final String STRINGEE_NOTIFICATION_ACTION_ID = "com.stringee.flutter.notification.action.id";
     public static final String STRINGEE_START_FOREGROUND_SERVICE = "con.stringee.flutter.foregroundservice.start";
     public static final String STRINGEE_STOP_FOREGROUND_SERVICE = "con.stringee.flutter.foregroundservice.stop";
+    
     private static final String TAG = "StringeeSDK";
 
     public StringeeNotification() {
-        _manager = StringeeManager.getInstance();
+        stringeeManager = StringeeManager.getInstance();
 
         senderThread = PacketSenderThread.getInstance();
 
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            _notificationManager = _manager.getContext().getSystemService(NotificationManager.class);
+            notificationManager = stringeeManager.getContext().getSystemService(NotificationManager.class);
         } else {
-            _notificationManager = (NotificationManager) _manager.getContext().getSystemService(NOTIFICATION_SERVICE);
+            notificationManager = (NotificationManager) stringeeManager.getContext().getSystemService(NOTIFICATION_SERVICE);
         }
     }
 
     public static synchronized StringeeNotification getInstance() {
-        if (_instance == null) {
-            _instance = new StringeeNotification();
+        if (instance == null) {
+            instance = new StringeeNotification();
         }
-        return _instance;
+        return instance;
     }
 
 
     @Override
     public void onListen(Object arguments, EventSink events) {
-        _eventSink = events;
-        senderThread.setEventSink(_eventSink);
+        senderThread.setEventSink(events);
         if (!senderThread.isRunning()) {
             senderThread.start();
         }
@@ -122,9 +118,9 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
     @RequiresApi(api = VERSION_CODES.O)
     private void createChannel(ChannelInfo channelInfo, Result result) {
         NotificationChannel channel;
-        channel = _notificationManager.getNotificationChannel(channelInfo.getChannelId());
+        channel = notificationManager.getNotificationChannel(channelInfo.getChannelId());
         if (channel != null && channel.getImportance() != channelInfo.getImportance()) {
-            _notificationManager.deleteNotificationChannel(channelInfo.getChannelId());
+            notificationManager.deleteNotificationChannel(channelInfo.getChannelId());
         } else {
             channel = new NotificationChannel(channelInfo.getChannelId(), channelInfo.getChannelName(), channelInfo.getImportance());
         }
@@ -146,8 +142,8 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
             int sourceType = channelInfo.getSourceType();
             switch (sourceType) {
                 case 0:
-                    if (Utils.isResourceAvailable(_manager.getContext(), channelInfo.getSoundSource(), "raw")) {
-                        channel.setSound((Uri.parse("android.resource://" + _manager.getContext().getPackageName() + "/" + channelInfo.getSoundSource())), audioAttributes);
+                    if (Utils.isResourceAvailable(stringeeManager.getContext(), channelInfo.getSoundSource(), "raw")) {
+                        channel.setSound((Uri.parse("android.resource://" + stringeeManager.getContext().getPackageName() + "/" + channelInfo.getSoundSource())), audioAttributes);
                     } else {
                         Log.d(TAG, "createChannel: false - -3 - No resource found");
                         Map map = new HashMap();
@@ -167,7 +163,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
             }
         }
         channel.setBypassDnd(channelInfo.isBypassDnd());
-        _notificationManager.createNotificationChannel(channel);
+        notificationManager.createNotificationChannel(channel);
 
         Log.d(TAG, "createChannel: success");
         Map map = new HashMap();
@@ -184,13 +180,13 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
      * @param result
      */
     private void showNotification(NotificationInfo notiInfo, Result result) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(_manager.getContext(), notiInfo.getChannelId());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(stringeeManager.getContext(), notiInfo.getChannelId());
 
-        Intent intent = Utils.getLaunchIntent(_manager.getContext());
-        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = Utils.getLaunchIntent(stringeeManager.getContext());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (notiInfo.getContentTitle() != null) {
             builder.setContentTitle(notiInfo.getContentTitle());
@@ -220,8 +216,8 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         }
 
         if (notiInfo.getIconSource() != null) {
-            if (Utils.isResourceAvailable(_manager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
-                builder.setSmallIcon(Utils.getIconResourceId(_manager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom()));
+            if (Utils.isResourceAvailable(stringeeManager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
+                builder.setSmallIcon(Utils.getIconResourceId(stringeeManager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom()));
             } else {
                 Log.d(TAG, "showNotification: false - -3 - No icon resource found");
                 Map map = new HashMap();
@@ -232,15 +228,15 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 return;
             }
         } else {
-            builder.setSmallIcon(Utils.getDefaultIconResourceId(_manager.getContext()));
+            builder.setSmallIcon(Utils.getDefaultIconResourceId(stringeeManager.getContext()));
         }
 
         if (notiInfo.isPlaySound()) {
             int sourceType = notiInfo.getSourceType();
             switch (sourceType) {
                 case 0:
-                    if (Utils.isResourceAvailable(_manager.getContext(), notiInfo.getSoundSource(), "raw")) {
-                        builder.setSound((Uri.parse("android.resource://" + _manager.getContext().getPackageName() + "/" + notiInfo.getSoundSource())));
+                    if (Utils.isResourceAvailable(stringeeManager.getContext(), notiInfo.getSoundSource(), "raw")) {
+                        builder.setSound((Uri.parse("android.resource://" + stringeeManager.getContext().getPackageName() + "/" + notiInfo.getSoundSource())));
                     } else {
                         Log.d(TAG, "showNotification: false - -3 - No sound resource found");
                         Map map = new HashMap();
@@ -293,8 +289,8 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 NotificationAction action = actions.get(i);
                 int iconResourceId;
                 if (action.getIcon() != null) {
-                    if (Utils.isResourceAvailable(_manager.getContext(), action.getIcon(), action.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
-                        iconResourceId = Utils.getIconResourceId(_manager.getContext(), action.getIcon(), action.getSourceFrom());
+                    if (Utils.isResourceAvailable(stringeeManager.getContext(), action.getIcon(), action.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
+                        iconResourceId = Utils.getIconResourceId(stringeeManager.getContext(), action.getIcon(), action.getSourceFrom());
                     } else {
                         Log.d(TAG, "showNotification: false - -3 - No action icon resource found");
                         Map map = new HashMap();
@@ -305,18 +301,18 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                         return;
                     }
                 } else {
-                    iconResourceId = Utils.getDefaultIconResourceId(_manager.getContext());
+                    iconResourceId = Utils.getDefaultIconResourceId(stringeeManager.getContext());
                 }
-                Intent actionIntent = Utils.getLaunchIntent(_manager.getContext());
+                Intent actionIntent = Utils.getLaunchIntent(stringeeManager.getContext());
                 actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + action.getId());
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
-                PendingIntent actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent actionPendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 builder.addAction(iconResourceId, action.getTitle(), actionPendingIntent);
             }
         }
 
-        _notificationManager.notify(notiInfo.getId(), builder.build());
+        notificationManager.notify(notiInfo.getId(), builder.build());
 
         Log.d(TAG, "showNotification: success");
         Map map = new HashMap();
@@ -333,7 +329,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
      * @param result
      */
     private void cancel(int notificationId, Result result) {
-        _notificationManager.cancel(notificationId);
+        notificationManager.cancel(notificationId);
 
         Log.d(TAG, "cancel: success");
         Map map = new HashMap();
@@ -351,12 +347,13 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
      */
     private void startForegroundService(NotificationInfo notiInfo, Result result) {
         startForegroundServiceResult = result;
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(_manager.getContext(), notiInfo.getChannelId());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(stringeeManager.getContext(), notiInfo.getChannelId());
 
-        Intent contentIntent = Utils.getLaunchIntent(_manager.getContext());
-        contentIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + notiInfo.getId());
-        contentIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, String.valueOf(notiInfo.getId()));
-        PendingIntent pendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent contentIntent = Utils.getLaunchIntent(stringeeManager.getContext());
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(pendingIntent);
         if (notiInfo.getContentTitle() != null) {
@@ -387,8 +384,8 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         }
 
         if (notiInfo.getIconSource() != null) {
-            if (Utils.isResourceAvailable(_manager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
-                builder.setSmallIcon(Utils.getIconResourceId(_manager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom()));
+            if (Utils.isResourceAvailable(stringeeManager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
+                builder.setSmallIcon(Utils.getIconResourceId(stringeeManager.getContext(), notiInfo.getIconSource(), notiInfo.getSourceFrom()));
             } else {
                 Log.d(TAG, "showNotification: false - -3 - No icon resource found");
                 Map map = new HashMap();
@@ -399,15 +396,15 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 return;
             }
         } else {
-            builder.setSmallIcon(Utils.getDefaultIconResourceId(_manager.getContext()));
+            builder.setSmallIcon(Utils.getDefaultIconResourceId(stringeeManager.getContext()));
         }
 
         if (notiInfo.isPlaySound()) {
             int sourceType = notiInfo.getSourceType();
             switch (sourceType) {
                 case 0:
-                    if (Utils.isResourceAvailable(_manager.getContext(), notiInfo.getSoundSource(), "raw")) {
-                        builder.setSound((Uri.parse("android.resource://" + _manager.getContext().getPackageName() + "/" + notiInfo.getSoundSource())));
+                    if (Utils.isResourceAvailable(stringeeManager.getContext(), notiInfo.getSoundSource(), "raw")) {
+                        builder.setSound((Uri.parse("android.resource://" + stringeeManager.getContext().getPackageName() + "/" + notiInfo.getSoundSource())));
                     } else {
                         Log.d(TAG, "showNotification: false - -3 - No sound resource found");
                         Map map = new HashMap();
@@ -458,8 +455,8 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 NotificationAction action = actions.get(i);
                 int iconResourceId;
                 if (action.getIcon() != null) {
-                    if (Utils.isResourceAvailable(_manager.getContext(), action.getIcon(), action.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
-                        iconResourceId = Utils.getIconResourceId(_manager.getContext(), action.getIcon(), action.getSourceFrom());
+                    if (Utils.isResourceAvailable(stringeeManager.getContext(), action.getIcon(), action.getSourceFrom() == 0 ? "drawable" : "mipmap")) {
+                        iconResourceId = Utils.getIconResourceId(stringeeManager.getContext(), action.getIcon(), action.getSourceFrom());
                     } else {
                         Log.d(TAG, "showNotification: false - -3 - No action icon resource found");
                         Map map = new HashMap();
@@ -470,24 +467,24 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                         return;
                     }
                 } else {
-                    iconResourceId = Utils.getDefaultIconResourceId(_manager.getContext());
+                    iconResourceId = Utils.getDefaultIconResourceId(stringeeManager.getContext());
                 }
-                Intent actionIntent = Utils.getLaunchIntent(_manager.getContext());
+                Intent actionIntent = Utils.getLaunchIntent(stringeeManager.getContext());
                 actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + action.getId());
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
-                PendingIntent actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent actionPendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 builder.addAction(iconResourceId, action.getTitle(), actionPendingIntent);
             }
         }
 
-        Intent intent = new Intent(_manager.getContext(), StringeeForegroundService.class);
+        Intent intent = new Intent(stringeeManager.getContext(), StringeeForegroundService.class);
         intent.setAction(STRINGEE_START_FOREGROUND_SERVICE);
         intent.putExtra("notification", builder.build());
         intent.putExtra("id", notiInfo.getId());
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            _manager.getContext().startForegroundService(intent);
+            stringeeManager.getContext().startForegroundService(intent);
         } else {
-            _manager.getContext().startService(intent);
+            stringeeManager.getContext().startService(intent);
         }
     }
 
@@ -498,12 +495,12 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
      */
     private void stopForegroundService(Result result) {
         stopForegroundServiceResult = result;
-        Intent intent = new Intent(_manager.getContext(), StringeeForegroundService.class);
+        Intent intent = new Intent(stringeeManager.getContext(), StringeeForegroundService.class);
         intent.setAction(STRINGEE_STOP_FOREGROUND_SERVICE);
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            _manager.getContext().startForegroundService(intent);
+            stringeeManager.getContext().startForegroundService(intent);
         } else {
-            _manager.getContext().startService(intent);
+            stringeeManager.getContext().startService(intent);
         }
     }
 }

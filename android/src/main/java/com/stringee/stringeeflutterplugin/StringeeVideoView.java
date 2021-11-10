@@ -3,8 +3,6 @@ package com.stringee.stringeeflutterplugin;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -28,7 +26,6 @@ import io.flutter.plugin.platform.PlatformView;
 public class StringeeVideoView implements PlatformView {
     private FrameLayout frameLayout;
     private static final String TAG = "Stringee sdk";
-    private Handler handler = new Handler(Looper.getMainLooper());
 
     StringeeVideoView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams) {
         try {
@@ -63,7 +60,7 @@ public class StringeeVideoView implements PlatformView {
     }
 
     private void renderView(final FrameLayout layout, final String callId, final Map<String, Object> creationParams) {
-        handler.post(new Runnable() {
+        StringeeManager.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 CallWrapper call = StringeeManager.getInstance().getCallsMap().get(callId);
@@ -163,7 +160,7 @@ public class StringeeVideoView implements PlatformView {
     }
 
     private void renderView(final Context context, final FrameLayout layout, final String trackId, final Map<String, Object> creationParams) {
-        handler.post(new Runnable() {
+        StringeeManager.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {
                 VideoTrackManager videoTrackManager = StringeeManager.getInstance().getTracksMap().get(trackId);
@@ -179,14 +176,14 @@ public class StringeeVideoView implements PlatformView {
                     scalingType = ScalingType.SCALE_ASPECT_FIT;
                 } else if (creationParams.get("scalingType").equals("BALANCED")) {
                     scalingType = ScalingType.SCALE_ASPECT_BALANCED;
-                }else{
+                } else {
                     scalingType = ScalingType.SCALE_ASPECT_FILL;
                 }
 
                 boolean isMirror;
                 if (creationParams.containsKey("isMirror")) {
                     isMirror = (Boolean) creationParams.get("isMirror");
-                }else{
+                } else {
                     isMirror = false;
                 }
 
@@ -206,7 +203,7 @@ public class StringeeVideoView implements PlatformView {
                 videoTrackManager.setListener(new Listener() {
                     @Override
                     public void onMediaAvailable() {
-                        handler.post(new Runnable() {
+                        StringeeManager.getInstance().getHandler().post(new Runnable() {
                             @Override
                             public void run() {
                                 SurfaceViewRenderer localView = videoTrackManager.getVideoTrack().getView(context);

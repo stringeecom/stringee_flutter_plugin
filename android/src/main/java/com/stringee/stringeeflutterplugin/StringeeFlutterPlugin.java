@@ -39,35 +39,32 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener;
 
 public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
-    public static EventSink _eventSink;
-    public static MethodChannel _channel;
-    private StringeeManager _manager;
+    public static EventSink eventSink;
+    private StringeeManager stringeeManager;
 
     private static final String TAG = "StringeeSDK";
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        _manager = StringeeManager.getInstance();
-        _manager.setHandler(new Handler(Looper.getMainLooper()));
-        _manager.setContext(binding.getApplicationContext());
+        stringeeManager = StringeeManager.getInstance();
+        stringeeManager.setHandler(new Handler(Looper.getMainLooper()));
+        stringeeManager.setContext(binding.getApplicationContext());
 
-        StringeeNotification.getInstance();
+        StringeeNotification stringeeNotification = StringeeNotification.getInstance();
 
-        StringeeNotification._channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel.notification");
-        StringeeNotification._channel.setMethodCallHandler(StringeeNotification.getInstance());
+        MethodChannel stringeeNotificationChannel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel.notification");
+        stringeeNotificationChannel.setMethodCallHandler(stringeeNotification);
 
-        EventChannel notiEventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel.notification");
-        notiEventChannel.setStreamHandler(StringeeNotification.getInstance());
+        EventChannel stringeeNotificationEventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel.notification");
+        stringeeNotificationEventChannel.setStreamHandler(stringeeNotification);
 
-        _channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
-        _channel.setMethodCallHandler(this);
+        MethodChannel channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
+        channel.setMethodCallHandler(this);
 
         EventChannel eventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel");
         eventChannel.setStreamHandler(this);
 
-        binding
-                .getPlatformViewRegistry()
-                .registerViewFactory("stringeeVideoView", new StringeeVideoViewFactory());
+        binding.getPlatformViewRegistry().registerViewFactory("stringeeVideoView", new StringeeVideoViewFactory());
     }
 
     @Override
@@ -91,11 +88,11 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             } else {
                 clientWrapper = new ClientWrapper(uuid);
             }
-            _manager.getClientMap().put(uuid, clientWrapper);
+            stringeeManager.getClientMap().put(uuid, clientWrapper);
             return;
         }
 
-        ClientWrapper clientWrapper = _manager.getClientMap().get(uuid);
+        ClientWrapper clientWrapper = stringeeManager.getClientMap().get(uuid);
         Map map = new HashMap();
         if (clientWrapper == null) {
             Log.d(TAG, call.method + ": false - -100 - Wrapper is not found");
@@ -222,7 +219,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "setSpeakerphoneOn":
             case "setSpeakerphoneOn2":
-                _manager.setSpeakerphoneOn((Boolean) call.argument("speaker"), result);
+                stringeeManager.setSpeakerphoneOn((Boolean) call.argument("speaker"), result);
                 break;
             case "switchCamera":
                 if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
@@ -645,7 +642,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
     @Override
     public void onListen(Object o, EventSink eventSink) {
-        _eventSink = eventSink;
+        StringeeFlutterPlugin.eventSink = eventSink;
     }
 
     @Override
@@ -656,7 +653,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-        _manager.setCaptureManager(ScreenCaptureManager.getInstance(binding));
+        stringeeManager.setCaptureManager(ScreenCaptureManager.getInstance(binding));
         sendActionEvent(binding.getActivity().getIntent(), binding.getActivity());
         binding.addOnNewIntentListener(new NewIntentListener() {
             @Override
@@ -672,9 +669,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             String intentAction = intent.getAction();
             if (intentAction != null) {
                 if (intentAction.startsWith(StringeeNotification.STRINGEE_NOTIFICATION_ACTION)) {
-//                    Intent intent1 = new Intent(activity, ActionReceiver.class);
-//                    intent1.putExtra(StringeeNotification.STRINGEE_NOTIFICATION_ACTION_ID, intent.getStringExtra(StringeeNotification.STRINGEE_NOTIFICATION_ACTION_ID));
-//                    activity.sendBroadcast(intent1);
                     PacketSenderThread.getInstance().send(intent.getStringExtra(StringeeNotification.STRINGEE_NOTIFICATION_ACTION_ID));
                 }
             }

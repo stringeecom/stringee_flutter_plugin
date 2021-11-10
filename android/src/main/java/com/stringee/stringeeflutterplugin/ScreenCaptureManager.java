@@ -12,13 +12,10 @@ import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
 public class ScreenCaptureManager {
     private static ScreenCaptureManager instance;
-    private ActivityPluginBinding binding;
     private StringeeScreenCapture screenCapture;
     private ActivityResultListener listener;
 
     private ScreenCaptureManager(ActivityPluginBinding binding) {
-        this.binding = binding;
-
         binding.addActivityResultListener(new ActivityResultListener() {
             @Override
             public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
