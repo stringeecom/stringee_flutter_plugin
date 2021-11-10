@@ -51,12 +51,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         _manager.setHandler(new Handler(Looper.getMainLooper()));
         _manager.setContext(binding.getApplicationContext());
 
-        _channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
-        _channel.setMethodCallHandler(this);
-
-        EventChannel eventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel");
-        eventChannel.setStreamHandler(this);
-
         StringeeNotification.getInstance();
 
         StringeeNotification._channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel.notification");
@@ -64,6 +58,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
         EventChannel notiEventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel.notification");
         notiEventChannel.setStreamHandler(StringeeNotification.getInstance());
+
+        _channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
+        _channel.setMethodCallHandler(this);
+
+        EventChannel eventChannel = new EventChannel(binding.getBinaryMessenger(), "com.stringee.flutter.eventchannel");
+        eventChannel.setStreamHandler(this);
 
         binding
                 .getPlatformViewRegistry()
