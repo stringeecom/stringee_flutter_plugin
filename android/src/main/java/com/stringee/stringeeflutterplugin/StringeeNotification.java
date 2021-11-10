@@ -310,9 +310,6 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                 Intent actionIntent = Utils.getLaunchIntent(_manager.getContext());
                 actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + action.getId());
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
-                actionIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                actionIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                actionIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                 PendingIntent actionPendingIntent = PendingIntent.getActivity(_manager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 builder.addAction(iconResourceId, action.getTitle(), actionPendingIntent);
