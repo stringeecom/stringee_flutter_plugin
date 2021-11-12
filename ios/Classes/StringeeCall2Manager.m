@@ -313,6 +313,7 @@
     _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState) }});
     if (signalingState == SignalingStateBusy || signalingState == SignalingStateEnded) {
         [[StringeeManager instance].call2s removeObjectForKey:stringeeCall2.callId];
+        [[StringeeManager instance].call2VideoTracks removeObjectForKey:stringeeCall2.callId];
     }
 }
 
@@ -321,6 +322,12 @@
 }
 
 - (void)didReceiveRemoteStream2:(StringeeCall2 *)stringeeCall2 {
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+}
+
+- (void)didAddTrack2:(StringeeCall2 *)stringeeCall2 track:(StringeeVideoTrack *)track {
+    [[StringeeManager instance].call2VideoTracks setObject:track forKey:stringeeCall2.callId];
+
     _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
 }
 

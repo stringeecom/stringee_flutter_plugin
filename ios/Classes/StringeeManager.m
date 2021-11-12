@@ -25,6 +25,7 @@ static StringeeManager *stringeeManager = nil;
     if (self) {
         self.calls = [[NSMutableDictionary alloc] init];
         self.call2s = [[NSMutableDictionary alloc] init];
+        self.call2VideoTracks = [[NSMutableDictionary alloc] init];
     }
     return self;
 }

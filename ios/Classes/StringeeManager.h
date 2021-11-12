@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) NSMutableDictionary *calls;
 @property (nonatomic) NSMutableDictionary *call2s;
+@property (nonatomic) NSMutableDictionary *call2VideoTracks;
 
 + (StringeeManager *)instance;
 
