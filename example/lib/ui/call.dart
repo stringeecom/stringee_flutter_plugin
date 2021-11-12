@@ -586,7 +586,6 @@ class _CallState extends State<Call> {
 
   void handleReceiveRemoteStreamEvent(String callId) {
     print('handleReceiveRemoteStreamEvent - $callId');
-
     if (_hasRemoteStream) {
       setState(() {
         _hasRemoteStream = false;
@@ -600,27 +599,12 @@ class _CallState extends State<Call> {
         });
       });
 
-      // updateRemoteViewInVideoWaitingCase(callId);
     } else {
       setState(() {
         _hasRemoteStream = true;
         widget._callId = callId;
       });
     }
-
-    // setState(() {
-    //   _hasRemoteStream = true;
-    //   widget._callId = callId;
-    // });
-  }
-
-  void updateRemoteViewInVideoWaitingCase(String callId) async {
-    await Future.delayed(const Duration(milliseconds: 2000));
-
-    setState(() {
-      _hasRemoteStream = true;
-      widget._callId = callId;
-    });
   }
 
   void handleAddVideoTrackEvent(StringeeVideoTrack track) {
