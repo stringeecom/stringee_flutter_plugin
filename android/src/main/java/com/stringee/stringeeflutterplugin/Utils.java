@@ -258,7 +258,7 @@ public class Utils {
                     Map fileMap = new HashMap();
                     fileMap.put("filePath", message.getFilePath());
                     fileMap.put("fileUrl", message.getFileUrl());
-                    fileMap.put("filename", message.getFileName());
+                    fileMap.put("fileName", message.getFileName());
                     fileMap.put("fileLength", message.getFileLength());
                     contentMap.put("file", fileMap);
                     break;

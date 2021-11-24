@@ -13,6 +13,7 @@ import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +150,7 @@ public class ConversationManager {
                             public void run() {
                                 Log.d(TAG, "addParticipants: success");
                                 Map map1 = new HashMap();
-                                java.util.List participantsArray = new java.util.ArrayList();
+                                List participantsArray = new ArrayList();
                                 for (int j = 0; j < users.size(); j++) {
                                     participantsArray.add(Utils.convertUserToMap(users.get(j)));
                                 }
@@ -236,7 +237,7 @@ public class ConversationManager {
                             public void run() {
                                 Log.d(TAG, "removeParticipants: success");
                                 Map map = new HashMap();
-                                java.util.List participantsArray = new java.util.ArrayList();
+                                List participantsArray = new ArrayList();
                                 for (int j = 0; j < users.size(); j++) {
                                     participantsArray.add(Utils.convertUserToMap(users.get(j)));
                                 }
@@ -403,7 +404,7 @@ public class ConversationManager {
                             public void run() {
                                 Log.d(TAG, "getMessages: success");
                                 Map map = new HashMap();
-                                java.util.List msgArray = new java.util.ArrayList();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
@@ -479,7 +480,7 @@ public class ConversationManager {
                             public void run() {
                                 Log.d(TAG, "getLocalMessages: success");
                                 Map map = new HashMap();
-                                java.util.List msgArray = new java.util.ArrayList();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
@@ -567,7 +568,7 @@ public class ConversationManager {
                             public void run() {
                                 Log.d(TAG, "getLastMessages: success");
                                 Map map = new HashMap();
-                                java.util.List msgArray = new java.util.ArrayList();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
@@ -656,7 +657,7 @@ public class ConversationManager {
                             public void run() {
                                 Log.d(TAG, "getMessagesAfter: success");
                                 Map map = new HashMap();
-                                java.util.List msgArray = new java.util.ArrayList();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
@@ -745,7 +746,7 @@ public class ConversationManager {
                             public void run() {
                                 Log.d(TAG, "getMessagesBefore: success");
                                 Map map = new HashMap();
-                                java.util.List msgArray = new java.util.ArrayList();
+                                List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
