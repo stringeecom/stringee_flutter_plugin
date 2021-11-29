@@ -16,6 +16,7 @@ import com.stringee.messaging.ChatProfile;
 import com.stringee.messaging.ChatRequest;
 import com.stringee.messaging.Conversation;
 import com.stringee.messaging.Message;
+import com.stringee.messaging.Message.Type;
 import com.stringee.messaging.Queue;
 import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
@@ -193,7 +194,7 @@ public class Utils {
                 String lastMsg = conversation.getLastMsg();
                 if (!TextUtils.isEmpty(lastMsg)) {
                     JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
-                    conversationMap.put("text", convertJsonToMap(lastMsgMap));
+                    conversationMap.put("text", convertLastMessageToMap(lastMsgMap, conversation.getLastMsgType()));
                 }
             }
             conversationMap.put("pinnedMsgId", conversation.getPinnedMsgId());
@@ -210,6 +211,94 @@ public class Utils {
             e.printStackTrace();
         }
         return conversationMap;
+    }
+
+    public static Map convertLastMessageToMap(@NonNull JSONObject msgObj, Type type) {
+        Map msgMap = new HashMap();
+        try {
+            if (msgObj.has("metadata")) {
+                msgMap.put("metadata", Utils.convertJsonToMap(msgObj.optJSONObject("metadata")));
+            }
+            switch (type) {
+                case TEXT:
+                case LINK:
+                    msgMap.put("text", msgObj.optString("text"));
+                    break;
+                case PHOTO:
+                    JSONObject photoObj = msgObj.optJSONObject("photo");
+                    Map photoMap = new HashMap();
+                    photoMap.put("filePath", photoObj.optString("filePath"));
+                    photoMap.put("fileUrl", photoObj.optString("fileUrl"));
+                    photoMap.put("thumbnail", photoObj.optString("thumbnail"));
+                    photoMap.put("ratio", ((Integer) photoObj.optInt("ratio")).floatValue());
+                    msgMap.put("photo", photoMap);
+                    break;
+                case VIDEO:
+                    JSONObject videoObj = msgObj.optJSONObject("video");
+                    Map videoMap = new HashMap();
+                    videoMap.put("filePath", videoObj.optString("filePath"));
+                    videoMap.put("fileUrl", videoObj.optString("fileUrl"));
+                    videoMap.put("thumbnail", videoObj.optString("thumbnail"));
+                    videoMap.put("ratio", ((Integer) videoObj.optInt("ratio")).floatValue());
+                    videoMap.put("duration", (double) videoObj.optInt("duration"));
+                    msgMap.put("video", videoMap);
+                    break;
+                case AUDIO:
+                    JSONObject audioObj = msgObj.optJSONObject("audio");
+                    Map audioMap = new HashMap();
+                    audioMap.put("filePath", audioObj.optString("filePath"));
+                    audioMap.put("fileUrl", audioObj.optString("fileUrl"));
+                    audioMap.put("duration", (double) audioObj.optInt("duration"));
+                    msgMap.put("audio", audioMap);
+                    break;
+                case FILE:
+                    JSONObject fileObj = msgObj.optJSONObject("file");
+                    Map fileMap = new HashMap();
+                    fileMap.put("filePath", fileObj.optString("filePath"));
+                    fileMap.put("fileUrl", fileObj.optString("fileUrl"));
+                    fileMap.put("fileName", fileObj.optString("fileName"));
+                    fileMap.put("fileLength", fileObj.optLong("length"));
+                    msgMap.put("file", fileMap);
+                    break;
+                case CREATE_CONVERSATION:
+                case RENAME_CONVERSATION:
+                    msgMap.put("groupName", msgObj.optString("groupName"));
+                    msgMap.put("creator", msgObj.optString("creator"));
+                    JSONArray participantsArray = msgObj.getJSONArray("participants");
+                    List participants = new ArrayList();
+                    for (int i = 0; i < participantsArray.length(); i++) {
+                        participants.add(participantsArray.get(i));
+                    }
+                    msgMap.put("participants", participants);
+                    break;
+                case LOCATION:
+                    JSONObject locationObj = msgObj.optJSONObject("location");
+                    Map locationMap = new HashMap();
+                    locationMap.put("lat", (double) locationObj.optInt("lat"));
+                    locationMap.put("lon", (double) locationObj.optInt("lon"));
+                    msgMap.put("location", locationMap);
+                    break;
+                case CONTACT:
+                    JSONObject contactObj = msgObj.optJSONObject("contact");
+                    Map contactMap = new HashMap();
+                    contactMap.put("vcard", contactObj.optString("vcard"));
+                    msgMap.put("contact", contactMap);
+                    break;
+                case STICKER:
+                    JSONObject stickerObj = msgObj.optJSONObject("sticker");
+                    Map stickerMap = new HashMap();
+                    stickerMap.put("name", stickerObj.optString("name"));
+                    stickerMap.put("category", stickerObj.optString("category"));
+                    msgMap.put("sticker", stickerMap);
+                    break;
+                case NOTIFICATION:
+                    msgMap = convertNotifyContentToMap(msgObj);
+                    break;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return msgMap;
     }
 
     public static Map convertMessageToMap(@NonNull Message message) {
@@ -244,14 +333,14 @@ public class Utils {
                     videoMap.put("fileUrl", message.getFileUrl());
                     videoMap.put("thumbnail", message.getThumbnailUrl());
                     videoMap.put("ratio", message.getImageRatio());
-                    videoMap.put("duration", message.getDuration());
+                    videoMap.put("duration", (double) message.getDuration());
                     contentMap.put("video", videoMap);
                     break;
                 case AUDIO:
                     Map audioMap = new HashMap();
                     audioMap.put("filePath", message.getFilePath());
                     audioMap.put("fileUrl", message.getFileUrl());
-                    audioMap.put("duration", message.getDuration());
+                    audioMap.put("duration", (double) message.getDuration());
                     contentMap.put("audio", audioMap);
                     break;
                 case FILE:

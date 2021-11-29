@@ -409,7 +409,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             break;
                         case VIDEO:
                             message.setFileUrl((String) msgMap.get("filePath"));
-                            message.setDuration((Integer) msgMap.get("duration"));
+                            message.setDuration(((Double) msgMap.get("duration")).intValue());
                             if (msgMap.containsKey("thumbnail"))
                                 message.setThumbnailUrl((String) msgMap.get("thumbnail"));
                             if (msgMap.containsKey("ratio"))
@@ -417,14 +417,13 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             break;
                         case AUDIO:
                             message.setFileUrl((String) msgMap.get("filePath"));
-                            message.setDuration((Integer) msgMap.get("duration"));
+                            message.setDuration(((Double) msgMap.get("duration")).intValue());
                             break;
                         case FILE:
                             message.setFileUrl((String) msgMap.get("filePath"));
                             if (msgMap.containsKey("filename"))
                                 message.setFileName((String) msgMap.get("filename"));
                             if (msgMap.containsKey("length"))
-//                                message.setFileLength((Long) msgMap.get("length"));
                             message.setFileLength(((Integer) msgMap.get("length")).longValue());
                             break;
                         case LOCATION:
