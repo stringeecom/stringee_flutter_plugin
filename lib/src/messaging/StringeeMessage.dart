@@ -1,5 +1,5 @@
 import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
-import 'dart:convert';
+
 import '../StringeeClient.dart';
 import '../StringeeConstants.dart';
 
@@ -29,7 +29,7 @@ class StringeeMessage {
   int? _fileLength;
 
   /// Audio + Video
-  int? _duration;
+  double? _duration;
   double? _ratio;
 
   String? _vcard;
@@ -91,7 +91,7 @@ class StringeeMessage {
   StringeeMessage.typeVideo(
     StringeeClient client,
     String filePath,
-    int duration, {
+    double duration, {
     String? thumbnail,
     double? ratio,
     Map<dynamic, dynamic>? customData,
@@ -116,7 +116,7 @@ class StringeeMessage {
   StringeeMessage.typeAudio(
     StringeeClient client,
     String filePath,
-    int duration, {
+    double duration, {
     Map<dynamic, dynamic>? customData,
   })  : assert(filePath.trim().isNotEmpty),
         assert(duration > 0) {
@@ -225,7 +225,7 @@ class StringeeMessage {
 
   double? get ratio => _ratio;
 
-  int? get duration => _duration;
+  double? get duration => _duration;
 
   int? get fileLength => _fileLength;
 
@@ -405,7 +405,9 @@ class StringeeMessage {
     this._senderId = senderId;
     this._createdAt = createdAt;
     this._sequence = sequence;
-    if (msgInfor.containsKey('metadata') && msgInfor['metadata'] != null && msgInfor['metadata'].toString().isNotEmpty) {
+    if (msgInfor.containsKey('metadata') &&
+        msgInfor['metadata'] != null &&
+        msgInfor['metadata'].toString().isNotEmpty) {
       this._customData = msgInfor['metadata'];
     }
     this._state = msgState;
@@ -479,26 +481,26 @@ class StringeeMessage {
         switch (notifyType) {
           case MsgNotifyType.addParticipants:
             StringeeUser user =
-                new StringeeUser.fromJsonNotify(msgInfor['addedInfo']);
+                new StringeeUser.fromJson(msgInfor['addedInfo']);
             this._notiContent!['addedby'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
               StringeeUser user =
-                  StringeeUser.fromJsonNotify(participantArray[i]);
+                  StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
             this._notiContent!["participants"] = participants;
             break;
           case MsgNotifyType.removeParticipants:
             StringeeUser user =
-                new StringeeUser.fromJsonNotify(msgInfor['removedInfo']);
+                new StringeeUser.fromJson(msgInfor['removedInfo']);
             this._notiContent!['removedBy'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
               StringeeUser user =
-                  StringeeUser.fromJsonNotify(participantArray[i]);
+                  StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
             this._notiContent!["participants"] = participants;
