@@ -445,13 +445,13 @@ class StringeeMessage {
         this._fileUrl = videoMap['fileUrl'];
         this._thumbnail = videoMap['thumbnail'];
         this._ratio = videoMap['ratio'].toDouble();
-        this._duration = videoMap['duration'];
+        this._duration = videoMap['duration'].toDouble();
         break;
       case MsgType.audio:
         Map<dynamic, dynamic> audioMap = msgInfor['audio'];
         this._filePath = audioMap['filePath'];
         this._fileUrl = audioMap['fileUrl'];
-        this._duration = audioMap['duration'];
+        this._duration = audioMap['duration'].toDouble();
         break;
       case MsgType.file:
         Map<dynamic, dynamic> fileMap = msgInfor['file'];
