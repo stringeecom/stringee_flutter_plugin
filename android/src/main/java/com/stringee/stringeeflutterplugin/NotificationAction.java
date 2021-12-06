@@ -5,6 +5,7 @@ public class NotificationAction {
     private String icon;
     private int sourceFrom;
     private String title;
+    private boolean recreateTask;
 
     public String getId() {
         return id;
@@ -36,5 +37,13 @@ public class NotificationAction {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isRecreateTask() {
+        return recreateTask;
+    }
+
+    public void setRecreateTask(boolean recreateTask) {
+        this.recreateTask = recreateTask;
     }
 }

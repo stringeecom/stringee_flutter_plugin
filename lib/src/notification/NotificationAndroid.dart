@@ -24,6 +24,7 @@ class NotificationAndroid {
   int? timeoutAfter = 0;
   NotificationPriority? priority = NotificationPriority.Default;
   List<NotificationAction>? actions = [];
+  bool? recreateTask = false;
 
   NotificationAndroid(
     this.id,
@@ -47,6 +48,7 @@ class NotificationAndroid {
     int? timeoutAfter,
     NotificationPriority? priority,
     List<NotificationAction>? actions,
+    bool? recreateTask,
   }) {
     if (contentTitle != null) this.contentTitle = contentTitle;
     if (contentText != null) this.contentText = contentText;
@@ -67,6 +69,7 @@ class NotificationAndroid {
     if (timeoutAfter != null) this.timeoutAfter = timeoutAfter;
     if (priority != null) this.priority = priority;
     if (actions != null) this.actions = actions;
+    if (recreateTask != null) this.recreateTask = recreateTask;
   }
 
   Map<String, dynamic> toJson() {
@@ -87,6 +90,7 @@ class NotificationAndroid {
         ? actions!.map((action) => action.toJson()).toList()
         : actions;
     params['notificationSound'] = notificationSound!.toJson();
+    params['recreateTask'] = recreateTask;
     if (contentTitle != null) params['contentTitle'] = contentTitle!.trim();
     if (contentText != null) params['contentText'] = contentText!.trim();
     if (subText != null) params['subText'] = subText!.trim();

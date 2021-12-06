@@ -31,6 +31,7 @@ public class NotificationInfo implements Serializable {
     private int timeoutAfter;
     private int priority;
     private List<NotificationAction> actions;
+    private boolean recreateTask;
 
     public int getId() {
         return id;
@@ -246,5 +247,13 @@ public class NotificationInfo implements Serializable {
 
     public void setActions(java.util.List<NotificationAction> actions) {
         this.actions = actions;
+    }
+
+    public boolean isRecreateTask() {
+        return recreateTask;
+    }
+
+    public void setRecreateTask(boolean recreateTask) {
+        this.recreateTask = recreateTask;
     }
 }

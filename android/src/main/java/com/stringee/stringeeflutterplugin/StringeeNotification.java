@@ -185,9 +185,10 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         NotificationCompat.Builder builder = new NotificationCompat.Builder(stringeeManager.getContext(), notiInfo.getChannelId());
 
         Intent intent = Utils.getLaunchIntent(stringeeManager.getContext());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (notiInfo.isRecreateTask()) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | android.content.Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        }
+
         PendingIntent pendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (notiInfo.getContentTitle() != null) {
@@ -321,6 +322,9 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                     iconResourceId = Utils.getDefaultIconResourceId(stringeeManager.getContext());
                 }
                 Intent actionIntent = Utils.getLaunchIntent(stringeeManager.getContext());
+                if (action.isRecreateTask()) {
+                    actionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
                 actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + action.getId());
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
                 PendingIntent actionPendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -367,9 +371,11 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         NotificationCompat.Builder builder = new NotificationCompat.Builder(stringeeManager.getContext(), notiInfo.getChannelId());
 
         Intent contentIntent = Utils.getLaunchIntent(stringeeManager.getContext());
-        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        contentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (notiInfo.isRecreateTask()) {
+            contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            contentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(pendingIntent);
@@ -487,6 +493,11 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
                     iconResourceId = Utils.getDefaultIconResourceId(stringeeManager.getContext());
                 }
                 Intent actionIntent = Utils.getLaunchIntent(stringeeManager.getContext());
+                if (action.isRecreateTask()) {
+                    actionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    actionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    actionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                }
                 actionIntent.setAction(STRINGEE_NOTIFICATION_ACTION + "." + action.getId());
                 actionIntent.putExtra(STRINGEE_NOTIFICATION_ACTION_ID, action.getId());
                 PendingIntent actionPendingIntent = PendingIntent.getActivity(stringeeManager.getContext(), notiInfo.getId(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);

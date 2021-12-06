@@ -755,6 +755,7 @@ public class Utils {
             notiInfo.setTimeoutAfter(true);
         }
         notiInfo.setPriority((Integer) notiMap.get("priority"));
+        notiInfo.setRecreateTask((Boolean) notiMap.get("recreateTask"));
         List actionsMapList = (List) notiMap.get("actions");
 
         if (actionsMapList.size() > 0) {
@@ -769,6 +770,7 @@ public class Utils {
                     action.setSourceFrom((Integer) actionIconMap.get("sourceFrom"));
                 }
                 action.setTitle((String) actionMap.get("title"));
+                action.setRecreateTask((Boolean) actionMap.get("recreateTask"));
                 actions.add(action);
             }
             notiInfo.setActions(actions);
