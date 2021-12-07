@@ -222,7 +222,7 @@ public class Utils {
             switch (type) {
                 case TEXT:
                 case LINK:
-                    msgMap.put("text", msgObj.optString("text"));
+                    msgMap.put("text", msgObj.optString("content"));
                     break;
                 case PHOTO:
                     JSONObject photoObj = msgObj.optJSONObject("photo");
