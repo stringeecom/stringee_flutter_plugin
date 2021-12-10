@@ -308,21 +308,25 @@ class StringeeMessage {
         this._filePath = photoMap['filePath'];
         this._fileUrl = photoMap['fileUrl'];
         this._thumbnail = photoMap['thumbnail'];
-        this._ratio = photoMap['ratio'].toDouble();
+        this._ratio =
+            photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
         break;
       case MsgType.video:
         Map<dynamic, dynamic> videoMap = msgInfor['content']['video'];
         this._filePath = videoMap['filePath'];
         this._fileUrl = videoMap['fileUrl'];
         this._thumbnail = videoMap['thumbnail'];
-        this._ratio = videoMap['ratio'].toDouble();
-        this._duration = videoMap['duration'];
+        this._ratio =
+            videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
+        this._duration =
+            videoMap['duration'] == null ? 0 : videoMap['duration'].toDouble();
         break;
       case MsgType.audio:
         Map<dynamic, dynamic> audioMap = msgInfor['content']['audio'];
         this._filePath = audioMap['filePath'];
         this._fileUrl = audioMap['fileUrl'];
-        this._duration = audioMap['duration'];
+        this._duration =
+            audioMap['duration'] == null ? 0 : audioMap['duration'].toDouble();
         break;
       case MsgType.file:
         Map<dynamic, dynamic> fileMap = msgInfor['content']['file'];
@@ -437,21 +441,25 @@ class StringeeMessage {
         this._filePath = photoMap['filePath'];
         this._fileUrl = photoMap['fileUrl'];
         this._thumbnail = photoMap['thumbnail'];
-        this._ratio = photoMap['ratio'].toDouble();
+        this._ratio =
+            photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
         break;
       case MsgType.video:
         Map<dynamic, dynamic> videoMap = msgInfor['video'];
         this._filePath = videoMap['filePath'];
         this._fileUrl = videoMap['fileUrl'];
         this._thumbnail = videoMap['thumbnail'];
-        this._ratio = videoMap['ratio'].toDouble();
-        this._duration = videoMap['duration'].toDouble();
+        this._ratio =
+            videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
+        this._duration =
+            videoMap['duration'] == null ? 0 : videoMap['duration'].toDouble();
         break;
       case MsgType.audio:
         Map<dynamic, dynamic> audioMap = msgInfor['audio'];
         this._filePath = audioMap['filePath'];
         this._fileUrl = audioMap['fileUrl'];
-        this._duration = audioMap['duration'].toDouble();
+        this._duration =
+            audioMap['duration'] == null ? 0 : audioMap['duration'].toDouble();
         break;
       case MsgType.file:
         Map<dynamic, dynamic> fileMap = msgInfor['file'];
