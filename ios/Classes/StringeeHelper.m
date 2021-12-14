@@ -285,8 +285,8 @@
             content = @{
                         @"file": @{
                                 @"filePath": fileUrl,
-                                @"filename": fileName,
-                                @"length": @(fileLength),
+                                @"fileName": fileName,
+                                @"fileLength": @(fileLength),
                                 }
                         };
         }
