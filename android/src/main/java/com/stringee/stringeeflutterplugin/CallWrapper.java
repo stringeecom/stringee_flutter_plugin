@@ -42,22 +42,25 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
     private boolean isResumeVideo = false;
+    private boolean isIncomingCall = false;
 
     private static final String TAG = "StringeeSDK";
 
     public CallWrapper(ClientWrapper clientWrapper, StringeeCall call) {
         this.clientWrapper = clientWrapper;
         this.call = call;
-        stringeeManager = StringeeManager.getInstance();
-        handler = stringeeManager.getHandler();
+        this.stringeeManager = StringeeManager.getInstance();
+        this.handler = stringeeManager.getHandler();
+        this.isIncomingCall = true;
     }
 
     public CallWrapper(ClientWrapper client, StringeeCall call, Result result) {
-        clientWrapper = client;
+        this.clientWrapper = client;
         this.call = call;
-        makeCallResult = result;
-        stringeeManager = StringeeManager.getInstance();
-        handler = stringeeManager.getHandler();
+        this.makeCallResult = result;
+        this.stringeeManager = StringeeManager.getInstance();
+        this.handler = stringeeManager.getHandler();
+        this.isIncomingCall = false;
     }
 
     public void prepareCall() {
@@ -644,16 +647,31 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                     }
                 }
 
-                Log.d(TAG, "onSignalingStateChange: " + signalingState);
-                Map map = new HashMap();
-                map.put("nativeEventType", CallEvent.getValue());
-                map.put("event", "didChangeSignalingState");
-                map.put("uuid", clientWrapper.getId());
-                Map bodyMap = new HashMap();
-                bodyMap.put("callId", stringeeCall.getCallId());
-                bodyMap.put("code", signalingState.getValue());
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin.eventSink.success(map);
+                if (isIncomingCall) {
+                    if (signalingState != SignalingState.ANSWERED) {
+                        Log.d(TAG, "onSignalingStateChange: " + signalingState);
+                        Map map = new HashMap();
+                        map.put("nativeEventType", CallEvent.getValue());
+                        map.put("event", "didChangeSignalingState");
+                        map.put("uuid", clientWrapper.getId());
+                        Map bodyMap = new HashMap();
+                        bodyMap.put("callId", stringeeCall.getCallId());
+                        bodyMap.put("code", signalingState.getValue());
+                        map.put("body", bodyMap);
+                        StringeeFlutterPlugin.eventSink.success(map);
+                    }
+                } else {
+                    Log.d(TAG, "onSignalingStateChange: " + signalingState);
+                    Map map = new HashMap();
+                    map.put("nativeEventType", CallEvent.getValue());
+                    map.put("event", "didChangeSignalingState");
+                    map.put("uuid", clientWrapper.getId());
+                    Map bodyMap = new HashMap();
+                    bodyMap.put("callId", stringeeCall.getCallId());
+                    bodyMap.put("code", signalingState.getValue());
+                    map.put("body", bodyMap);
+                    StringeeFlutterPlugin.eventSink.success(map);
+                }
             }
         });
     }
