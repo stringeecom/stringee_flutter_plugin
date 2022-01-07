@@ -125,8 +125,10 @@ class StringeeRoom {
     };
     Map<dynamic, dynamic> result =
         await StringeeClient.methodChannel.invokeMethod('room.publish', params);
-    videoTrack = StringeeVideoTrack(_client, result['body']);
-    result['body'] = videoTrack;
+    if (result['status']) {
+      videoTrack = StringeeVideoTrack(_client, result['body']);
+      result['body'] = videoTrack;
+    }
     return result;
   }
 
