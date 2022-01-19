@@ -35,8 +35,8 @@ class StringeeUser {
   }
 
   StringeeUser.fromJson(Map<dynamic, dynamic> json) {
-    this._userId = json['userId'];
-    this._name = json['name'];
+    this._userId = json['user'];
+    this._name = json['displayName'];
     this._avatarUrl = json['avatarUrl'];
     if (json.containsKey('role')) {
       String? role = json['role'];

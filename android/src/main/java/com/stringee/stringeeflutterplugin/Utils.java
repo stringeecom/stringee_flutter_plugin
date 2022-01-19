@@ -150,7 +150,7 @@ public class Utils {
                 if (role == UserRole.Admin.getValue()) {
                     user.setRole(Role.ADMIN);
                 } else if (role == UserRole.Admin.getValue()) {
-                    user.setRole(com.stringee.messaging.User.Role.MEMBER);
+                    user.setRole(Role.MEMBER);
                 }
             }
             list.add(user);
@@ -397,8 +397,8 @@ public class Utils {
 
     public static Map convertUserToMap(@NonNull User user) {
         Map userMap = new HashMap();
-        userMap.put("userId", user.getUserId());
-        userMap.put("name", user.getName());
+        userMap.put("user", user.getUserId());
+        userMap.put("displayName", user.getName());
         userMap.put("avatarUrl", user.getAvatarUrl());
         userMap.put("role", user.getRole().getValue());
         return userMap;

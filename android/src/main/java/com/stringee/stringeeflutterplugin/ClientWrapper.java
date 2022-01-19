@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.stringee.StringeeClient;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall2;
 import com.stringee.common.SocketAddress;
@@ -39,38 +40,38 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ClientWrapper implements StringeeConnectionListener, ChangeEventListener, LiveChatEventListener, UserTypingEventListener {
-    private com.stringee.StringeeClient client;
-    private com.stringee.stringeeflutterplugin.StringeeManager stringeeManager;
-    private com.stringee.stringeeflutterplugin.ConversationManager conversationManager;
-    private com.stringee.stringeeflutterplugin.MessageManager messageManager;
-    private com.stringee.stringeeflutterplugin.ChatRequestManager chatRequestManager;
-    private com.stringee.stringeeflutterplugin.VideoConferenceManager videoConferenceManager;
+    private StringeeClient client;
+    private StringeeManager stringeeManager;
+    private ConversationManager conversationManager;
+    private MessageManager messageManager;
+    private ChatRequestManager chatRequestManager;
+    private VideoConferenceManager videoConferenceManager;
     private Handler handler;
     private String uuid;
-    
+
     private static final String TAG = "StringeeSDK";
 
     public ClientWrapper(final String uuid) {
-        stringeeManager = com.stringee.stringeeflutterplugin.StringeeManager.getInstance();
+        stringeeManager = StringeeManager.getInstance();
         handler = stringeeManager.getHandler();
         this.uuid = uuid;
-        conversationManager = new com.stringee.stringeeflutterplugin.ConversationManager(this);
-        messageManager = new com.stringee.stringeeflutterplugin.MessageManager(this);
-        chatRequestManager = new com.stringee.stringeeflutterplugin.ChatRequestManager(this);
-        videoConferenceManager = new com.stringee.stringeeflutterplugin.VideoConferenceManager(this);
-        client = new com.stringee.StringeeClient(stringeeManager.getContext());
+        conversationManager = new ConversationManager(this);
+        messageManager = new MessageManager(this);
+        chatRequestManager = new ChatRequestManager(this);
+        videoConferenceManager = new VideoConferenceManager(this);
+        client = new StringeeClient(stringeeManager.getContext());
         setListener();
     }
 
     public ClientWrapper(final String uuid, final String baseAPIUrl) {
-        stringeeManager = com.stringee.stringeeflutterplugin.StringeeManager.getInstance();
+        stringeeManager = StringeeManager.getInstance();
         handler = stringeeManager.getHandler();
         this.uuid = uuid;
-        conversationManager = new com.stringee.stringeeflutterplugin.ConversationManager(this);
-        messageManager = new com.stringee.stringeeflutterplugin.MessageManager(this);
-        chatRequestManager = new com.stringee.stringeeflutterplugin.ChatRequestManager(this);
-        videoConferenceManager = new com.stringee.stringeeflutterplugin.VideoConferenceManager(this);
-        client = new com.stringee.StringeeClient(stringeeManager.getContext());
+        conversationManager = new ConversationManager(this);
+        messageManager = new MessageManager(this);
+        chatRequestManager = new ChatRequestManager(this);
+        videoConferenceManager = new VideoConferenceManager(this);
+        client = new StringeeClient(stringeeManager.getContext());
         if (baseAPIUrl != null) {
             client.setBaseAPIUrl(baseAPIUrl);
         }
@@ -84,7 +85,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         client.setUserTypingEventListener(this);
     }
 
-    public com.stringee.StringeeClient getClient() {
+    public StringeeClient getClient() {
         return client;
     }
 
@@ -92,7 +93,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         return uuid;
     }
 
-    public com.stringee.stringeeflutterplugin.CallWrapper callWrapper(final String callId) {
+    public CallWrapper callWrapper(final String callId) {
         return stringeeManager.getCallsMap().get(callId);
     }
 
@@ -106,7 +107,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param videoResolution
      * @param result
      */
-    public com.stringee.stringeeflutterplugin.CallWrapper callWrapper(final String from, final String to, final boolean isVideoCall, final String customData, final String videoResolution, final Result result) {
+    public CallWrapper callWrapper(final String from, final String to, final boolean isVideoCall, final String customData, final String videoResolution, final Result result) {
         StringeeCall call = new StringeeCall(client, from, to);
         call.setVideoCall(isVideoCall);
         if (customData != null) {
@@ -121,12 +122,12 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 call.setQuality(StringeeConstant.QUALITY_FULLHD);
             }
         }
-        com.stringee.stringeeflutterplugin.CallWrapper callWrapper = new com.stringee.stringeeflutterplugin.CallWrapper(this, call, result);
+        CallWrapper callWrapper = new CallWrapper(this, call, result);
         stringeeManager.getCallsMap().put(call.getCallId(), callWrapper);
         return callWrapper;
     }
 
-    public com.stringee.stringeeflutterplugin.Call2Wrapper call2Wrapper(final String callId) {
+    public Call2Wrapper call2Wrapper(final String callId) {
         return stringeeManager.getCall2sMap().get(callId);
     }
 
@@ -139,36 +140,36 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param customData
      * @param result
      */
-    public com.stringee.stringeeflutterplugin.Call2Wrapper call2Wrapper(final String from, final String to, final boolean isVideoCall, final String customData, final Result result) {
+    public Call2Wrapper call2Wrapper(final String from, final String to, final boolean isVideoCall, final String customData, final Result result) {
         StringeeCall2 call = new StringeeCall2(client, from, to);
         call.setVideoCall(isVideoCall);
         if (customData != null) {
             call.setCustom(customData);
         }
 
-        com.stringee.stringeeflutterplugin.Call2Wrapper call2Wrapper = new com.stringee.stringeeflutterplugin.Call2Wrapper(this, call, result);
+        Call2Wrapper call2Wrapper = new Call2Wrapper(this, call, result);
         stringeeManager.getCall2sMap().put(call.getCallId(), call2Wrapper);
         return call2Wrapper;
     }
 
-    public com.stringee.stringeeflutterplugin.ConversationManager conversation() {
+    public ConversationManager conversation() {
         return conversationManager;
     }
 
-    public com.stringee.stringeeflutterplugin.MessageManager message() {
+    public MessageManager message() {
         return messageManager;
     }
 
-    public com.stringee.stringeeflutterplugin.ChatRequestManager chatRequest() {
+    public ChatRequestManager chatRequest() {
         return chatRequestManager;
     }
 
-    public com.stringee.stringeeflutterplugin.VideoConferenceManager videoConference() {
+    public VideoConferenceManager videoConference() {
         return videoConferenceManager;
     }
-    
+
     @Override
-    public void onConnectionConnected(final com.stringee.StringeeClient stringeeClient, final boolean b) {
+    public void onConnectionConnected(final StringeeClient stringeeClient, final boolean b) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -182,13 +183,13 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
                 bodyMap.put("isReconnecting", b);
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
 
     @Override
-    public void onConnectionDisconnected(final com.stringee.StringeeClient stringeeClient, final boolean b) {
+    public void onConnectionDisconnected(final StringeeClient stringeeClient, final boolean b) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -202,7 +203,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 bodyMap.put("projectId", String.valueOf(stringeeClient.getProjectId()));
                 bodyMap.put("isReconnecting", b);
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -213,7 +214,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onIncomingCall: " + stringeeCall.getCallId());
-                stringeeManager.getCallsMap().put(stringeeCall.getCallId(), new com.stringee.stringeeflutterplugin.CallWrapper(ClientWrapper.this, stringeeCall));
+                stringeeManager.getCallsMap().put(stringeeCall.getCallId(), new CallWrapper(ClientWrapper.this, stringeeCall));
                 Map map = new HashMap();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "incomingCall");
@@ -238,7 +239,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
                 callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
                 map.put("body", callInfoMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -249,7 +250,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onIncomingCall2: " + stringeeCall2.getCallId());
-                stringeeManager.getCall2sMap().put(stringeeCall2.getCallId(), new com.stringee.stringeeflutterplugin.Call2Wrapper(ClientWrapper.this, stringeeCall2));
+                stringeeManager.getCall2sMap().put(stringeeCall2.getCallId(), new Call2Wrapper(ClientWrapper.this, stringeeCall2));
                 Map map = new HashMap();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "incomingCall2");
@@ -269,13 +270,13 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 callInfoMap.put("isVideoCall", stringeeCall2.isVideoCall());
                 callInfoMap.put("customDataFromYourServer", stringeeCall2.getCustomDataFromYourServer());
                 map.put("body", callInfoMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
 
     @Override
-    public void onConnectionError(final com.stringee.StringeeClient stringeeClient, final StringeeError stringeeError) {
+    public void onConnectionError(final StringeeClient stringeeClient, final StringeeError stringeeError) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -289,13 +290,13 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 bodyMap.put("code", stringeeError.getCode());
                 bodyMap.put("message", stringeeError.getMessage());
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
 
     @Override
-    public void onRequestNewToken(final com.stringee.StringeeClient stringeeClient) {
+    public void onRequestNewToken(final StringeeClient stringeeClient) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -307,7 +308,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 Map bodyMap = new HashMap();
                 bodyMap.put("userId", stringeeClient.getUserId());
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -327,7 +328,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     bodyMap.put("fromUserId", from);
                     bodyMap.put("message", Utils.convertJsonToMap(jsonObject));
                     map.put("body", bodyMap);
-                    com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                    StringeeFlutterPlugin.eventSink.success(map);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -364,7 +365,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 objects.add(objectMap);
                 bodyMap.put("objects", objects);
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -380,7 +381,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 map.put("event", "didReceiveChatRequest");
                 map.put("uuid", uuid);
                 map.put("body", Utils.convertChatRequestToMap(chatRequest));
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -396,7 +397,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 map.put("event", "didReceiveTransferChatRequest");
                 map.put("uuid", uuid);
                 map.put("body", Utils.convertChatRequestToMap(chatRequest));
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -412,7 +413,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 map.put("event", "timeoutAnswerChat");
                 map.put("uuid", uuid);
                 map.put("body", Utils.convertChatRequestToMap(chatRequest));
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -433,7 +434,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 bodyMap.put("customerId", user.getUserId());
                 bodyMap.put("customerName", user.getName());
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -452,7 +453,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 bodyMap.put("convId", conversation.getId());
                 bodyMap.put("endedby", user.getUserId());
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -478,7 +479,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     }
                 }
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
@@ -504,7 +505,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     }
                 }
                 map.put("body", bodyMap);
-                com.stringee.stringeeflutterplugin.StringeeFlutterPlugin.eventSink.success(map);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }
