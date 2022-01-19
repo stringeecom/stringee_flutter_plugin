@@ -17,7 +17,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class ChatRequestManager {
     private ClientWrapper clientWrapper;
     private Handler handler;
-    
+
     private static final String TAG = "StringeeSDK";
 
     public ChatRequestManager(ClientWrapper clientWrapper) {

@@ -32,7 +32,7 @@ public class RoomManager implements StringeeRoomListener {
     private Handler handler;
     private StringeeRoom _stringeeRoom;
     private Result _connectRoomResult;
-    
+
     private static final String TAG = "StringeeSDK";
 
     public RoomManager(ClientWrapper clientWrapper, VideoConferenceManager videoConferenceManager) {

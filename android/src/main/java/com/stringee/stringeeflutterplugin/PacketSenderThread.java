@@ -6,10 +6,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import io.flutter.plugin.common.EventChannel.EventSink;
 
-/**
- * @author Alex
- */
-
 public class PacketSenderThread extends Thread {
     private static PacketSenderThread instance;
     private final LinkedBlockingQueue packetQueue = new LinkedBlockingQueue();

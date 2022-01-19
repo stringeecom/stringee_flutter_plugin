@@ -40,7 +40,7 @@ import java.util.Set;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
-public class Call2Wrapper implements StringeeCall2.StringeeCallListener{
+public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     private ClientWrapper clientWrapper;
     private StringeeCall2 call2;
     private StringeeManager stringeeManager;

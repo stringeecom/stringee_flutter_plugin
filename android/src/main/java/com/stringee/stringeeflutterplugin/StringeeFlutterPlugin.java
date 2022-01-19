@@ -424,7 +424,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             if (msgMap.containsKey("filename"))
                                 message.setFileName((String) msgMap.get("filename"));
                             if (msgMap.containsKey("length"))
-                            message.setFileLength(((Integer) msgMap.get("length")).longValue());
+                                message.setFileLength(((Integer) msgMap.get("length")).longValue());
                             break;
                         case LOCATION:
                             message.setLatitude((Double) msgMap.get("lat"));
