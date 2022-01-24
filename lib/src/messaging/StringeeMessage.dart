@@ -489,26 +489,26 @@ class StringeeMessage {
         switch (notifyType) {
           case MsgNotifyType.addParticipants:
             StringeeUser user =
-                new StringeeUser.fromJsonNotify(msgInfor['addedInfo']);
+                new StringeeUser.fromJson(msgInfor['addedInfo']);
             this._notiContent!['addedby'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
               StringeeUser user =
-                  StringeeUser.fromJsonNotify(participantArray[i]);
+                  StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
             this._notiContent!["participants"] = participants;
             break;
           case MsgNotifyType.removeParticipants:
             StringeeUser user =
-                new StringeeUser.fromJsonNotify(msgInfor['removedInfo']);
+                new StringeeUser.fromJson(msgInfor['removedInfo']);
             this._notiContent!['removedBy'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
               StringeeUser user =
-                  StringeeUser.fromJsonNotify(participantArray[i]);
+                  StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
             this._notiContent!["participants"] = participants;

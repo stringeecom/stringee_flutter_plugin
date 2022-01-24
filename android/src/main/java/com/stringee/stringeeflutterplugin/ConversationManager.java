@@ -23,7 +23,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class ConversationManager {
     private ClientWrapper clientWrapper;
     private Handler handler;
-    
+
     private static final String TAG = "StringeeSDK";
 
     public ConversationManager(ClientWrapper clientWrapper) {
@@ -1396,7 +1396,7 @@ public class ConversationManager {
         Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                conversation.beginTyping(clientWrapper.getClient(),  new StatusListener() {
+                conversation.beginTyping(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
                         handler.post(new Runnable() {
@@ -1478,7 +1478,7 @@ public class ConversationManager {
         Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                conversation.endTyping(clientWrapper.getClient(),  new StatusListener() {
+                conversation.endTyping(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
                         handler.post(new Runnable() {

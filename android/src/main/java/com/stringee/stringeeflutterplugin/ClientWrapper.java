@@ -48,7 +48,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     private VideoConferenceManager videoConferenceManager;
     private Handler handler;
     private String uuid;
-    
+
     private static final String TAG = "StringeeSDK";
 
     public ClientWrapper(final String uuid) {
@@ -167,7 +167,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public VideoConferenceManager videoConference() {
         return videoConferenceManager;
     }
-    
+
     @Override
     public void onConnectionConnected(final StringeeClient stringeeClient, final boolean b) {
         handler.post(new Runnable() {

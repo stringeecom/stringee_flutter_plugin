@@ -26,7 +26,7 @@ public class VideoConferenceManager {
     private Handler handler;
     private StringeeVideo stringeeVideo;
     private Map<String, RoomManager> roomsMap = new HashMap<>();
-    
+
     private static final String TAG = "StringeeSDK";
 
     public VideoConferenceManager(ClientWrapper clientWrapper) {

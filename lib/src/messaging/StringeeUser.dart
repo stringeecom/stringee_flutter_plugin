@@ -35,26 +35,6 @@ class StringeeUser {
   }
 
   StringeeUser.fromJson(Map<dynamic, dynamic> json) {
-    this._userId = json['userId'];
-    this._name = json['name'];
-    this._avatarUrl = json['avatarUrl'];
-    if (json.containsKey('role')) {
-      String? role = json['role'];
-      switch (role) {
-        case 'member':
-          this._role = UserRole.member;
-          break;
-        case 'admin':
-          this._role = UserRole.admin;
-          break;
-        default:
-          this._role = UserRole.member;
-          break;
-      }
-    }
-  }
-
-  StringeeUser.fromJsonNotify(Map<dynamic, dynamic> json) {
     this._userId = json['user'];
     this._name = json['displayName'];
     this._avatarUrl = json['avatarUrl'];
