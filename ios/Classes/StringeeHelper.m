@@ -13,14 +13,14 @@
     if (!call) {
         return [NSNull null];
     }
-    
+
     id callId = call.callId ? call.callId :[NSNull null];
     id from = call.from ? call.from : [NSNull null];
     id to = call.to ? call.to : [NSNull null];
     id fromAlias = call.fromAlias ? call.fromAlias : [NSNull null];
     id toAlias = call.toAlias ? call.toAlias : [NSNull null];
     id customDataFromYourServer = call.customDataFromYourServer ? call.customDataFromYourServer : [NSNull null];
-    
+
     int calltype = 0;
     if (call.callType == CallTypeCallIn) {
         // Phone-to-app
@@ -35,7 +35,7 @@
         // App-to-app-outgoing-call
         calltype = 0;
     }
-    
+
     NSMutableDictionary *data = [NSMutableDictionary new];
     [data setObject:callId forKey:@"callId"];
     [data setObject:@(call.serial) forKey:@"serial"];
@@ -46,7 +46,7 @@
     [data setObject:@(calltype) forKey:@"callType"];
     [data setObject:@(call.isVideoCall) forKey:@"isVideoCall"];
     [data setObject:customDataFromYourServer forKey:@"customDataFromYourServer"];
-    
+
     return data;
 }
 
@@ -54,14 +54,14 @@
     if (!call) {
         return [NSNull null];
     }
-    
+
     id callId = call.callId ? call.callId :[NSNull null];
     id from = call.from ? call.from : [NSNull null];
     id to = call.to ? call.to : [NSNull null];
     id fromAlias = call.fromAlias ? call.fromAlias : [NSNull null];
     id toAlias = call.toAlias ? call.toAlias : [NSNull null];
     id customDataFromYourServer = call.customDataFromYourServer ? call.customDataFromYourServer : [NSNull null];
-    
+
     int calltype = 0;
     if (call.callType == CallTypeCallIn) {
         // Phone-to-app
@@ -76,7 +76,7 @@
         // App-to-app-outgoing-call
         calltype = 0;
     }
-    
+
     NSMutableDictionary *data = [NSMutableDictionary new];
     [data setObject:callId forKey:@"callId"];
     [data setObject:@(call.serial) forKey:@"serial"];
@@ -87,21 +87,21 @@
     [data setObject:@(calltype) forKey:@"callType"];
     [data setObject:@(call.isVideoCall) forKey:@"isVideoCall"];
     [data setObject:customDataFromYourServer forKey:@"customDataFromYourServer"];
-    
+
     return data;
 }
 
 + (id)Identity:(StringeeIdentity *)identity {
     if (!identity) return [NSNull null];
-    
+
     NSString *userId = identity.userId.length ? identity.userId : @"";
     NSString *name = identity.displayName.length ? identity.displayName : @"";
     NSString *avatar = identity.avatarUrl.length ? identity.avatarUrl : @"";
     NSString *role = identity.role == StringeeRoleAdmin ? @"admin" : @"member";
 
     return @{
-             @"userId": userId,
-             @"name": name,
+             @"user": userId,
+             @"displayName": name,
              @"avatarUrl": avatar,
              @"role": role
              };
@@ -173,7 +173,7 @@
 
 + (id)Message:(StringeeMessage *)message {
     if (!message) return [NSNull null];
-    
+
     NSString *localId = message.localIdentifier.length ? message.localIdentifier : @"";
     NSString *identifier = message.identifier.length ? message.identifier : @"";
     NSString *conversationId = message.convId.length ? message.convId : @"";
@@ -190,7 +190,7 @@
     } else {
         customData = [NSNull null];
     }
-    
+
     NSString *thumbnailPath = @"";
     NSString *thumbnailUrl = @"";
     NSString *filePath = @"";
@@ -202,9 +202,9 @@
     NSUInteger fileLength = 0;
     NSString *fileName = @"";
     NSString *contact = @"";
-    
+
     NSDictionary *content;
-    
+
     switch (message.type) {
         case StringeeMessageTypeText:
             content = @{@"content": message.content};
@@ -229,7 +229,7 @@
             filePath = photoMsg.filePath.length ? photoMsg.filePath : @"";
             fileUrl = photoMsg.fileUrl.length ? photoMsg.fileUrl : @"";
             ratio = photoMsg.ratio;
-            
+
             content = @{
                         @"photo": @{
                                     @"filePath": fileUrl,
@@ -248,7 +248,7 @@
             fileUrl = videoMsg.fileUrl.length ? videoMsg.fileUrl : @"";
             ratio = videoMsg.ratio;
             duration = videoMsg.duration;
-            
+
             content = @{
                         @"video": @{
                                     @"filePath": fileUrl,
@@ -265,7 +265,7 @@
             filePath = audioMsg.filePath.length ? audioMsg.filePath : @"";
             fileUrl = audioMsg.fileUrl.length ? audioMsg.fileUrl : @"";
             duration = audioMsg.duration;
-            
+
             content = @{
                         @"audio": @{
                                 @"filePath": fileUrl,
@@ -281,7 +281,7 @@
             fileUrl = fileMsg.fileUrl.length ? fileMsg.fileUrl : @"";
             fileName = fileMsg.filename.length ? fileMsg.filename : @"";
             fileLength = fileMsg.length;
-            
+
             content = @{
                         @"file": @{
                                 @"filePath": fileUrl,
@@ -296,7 +296,7 @@
             StringeeLocationMessage *locationMsg = (StringeeLocationMessage *)message;
             latitude = locationMsg.latitude;
             longitude = locationMsg.longitude;
-            
+
             content = @{
                         @"location": @{
                                 @"lat": @(latitude),
@@ -309,7 +309,7 @@
         {
             StringeeContactMessage *contactMsg = (StringeeContactMessage *)message;
             NSString *vcard = contactMsg.vcard.length ? contactMsg.vcard : @"";
-            
+
             content = @{
                         @"contact": @{
                                 @"vcard": vcard
@@ -317,13 +317,13 @@
                         };
         }
             break;
-            
+
         default:
             content = @{};
             break;
     }
-    
-    
+
+
     return @{
              @"localId": localId,
              @"id": identifier,
@@ -468,13 +468,13 @@
     if (!str || !str.length) {
         return [NSNull null];
     }
-    
+
     NSError *jsonError;
     NSData *objectData = [str dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
                                                          options:NSJSONReadingMutableContainers
                                                            error:&jsonError];
-    
+
     if (jsonError) {
         return [NSNull null];
     } else {
@@ -486,13 +486,13 @@
     if (!str || !str.length) {
         return [NSNull null];
     }
-    
+
     NSError *jsonError;
     NSData *objectData = [str dataUsingEncoding:NSUTF8StringEncoding];
     NSArray *json = [NSJSONSerialization JSONObjectWithData:objectData
                                                          options:NSJSONReadingMutableContainers
                                                            error:&jsonError];
-    
+
     if (jsonError) {
         return [NSNull null];
     } else {
@@ -504,7 +504,7 @@
     if (value == nil || ![value isKindOfClass:[NSString class]] || value.length == 0) {
         return false;
     }
-    
+
     return true;
 }
 
@@ -527,7 +527,7 @@
         part.userId = userId;
         [parts addObject:part];
     }
-    
+
     return parts;
 }
 
@@ -539,13 +539,13 @@
         StringeeServerAddress *serverAddr = [[StringeeServerAddress alloc] initWithHost:host port:port];
         [serverAddresses addObject:serverAddr];
     }
-    
+
     return serverAddresses;
 }
 
 + (id)ChatProfile:(StringeeChatProfile *)profile {
     if (!profile) return [NSNull null];
-    
+
     NSString *identifier = profile.identifier != nil ? profile.identifier : @"";
     NSString *background = profile.background != nil ? profile.background : @"";
     NSString *hour = profile.hour != nil ? profile.hour : @"";
@@ -554,7 +554,7 @@
     NSString *popup_answer_url = profile.popup_answer_url != nil ? profile.popup_answer_url : @"";
     NSString *portal = profile.portal != nil ? profile.portal : @"";
     NSArray *queues = [StringeeHelper Queues:profile.queues];
-    
+
     return @{
              @"id": identifier,
              @"background": background,
@@ -574,7 +574,7 @@
 
 + (id)StringeeQueue:(StringeeQueue *)queue {
     if (!queue) return [NSNull null];
-    
+
     NSString *identifier = queue.identifier != nil ? queue.identifier : @"";
     NSString *name = queue.name != nil ? queue.name : @"";
 
@@ -597,11 +597,11 @@
 
 + (id)StringeeChatRequest:(StringeeChatRequest *)request {
     if (!request) return [NSNull null];
-    
+
     NSString *convId = request.convId != nil ? request.convId : @"";
     NSString *customerId = request.customerId != nil ? request.customerId : @"";
     NSString *customerName = request.customerName != nil ? request.customerName : @"";
-    
+
     return @{
              @"convId": convId,
              @"customerId": customerId,
