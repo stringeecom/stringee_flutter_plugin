@@ -36,7 +36,9 @@ public class VideoTrackManager implements Listener {
             @Override
             public void run() {
                 mediaAvailable = true;
-                listener.onMediaAvailable();
+                if (listener != null) {
+                    listener.onMediaAvailable();
+                }
             }
         });
     }

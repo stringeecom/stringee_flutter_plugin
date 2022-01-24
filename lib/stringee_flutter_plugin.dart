@@ -7,10 +7,11 @@ export 'src/call/StringeeCall.dart';
 export 'src/call/StringeeCall2.dart';
 
 /// Conference
-export 'src/conference/StringeeRoom.dart';
+export 'src/conference/StringeeVideoRoom.dart';
 export 'src/conference/StringeeRoomUser.dart';
 export 'src/conference/StringeeVideo.dart';
 export 'src/conference/StringeeVideoTrack.dart';
+export 'src/conference/StringeeVideoTrackInfo.dart';
 
 /// Chat
 export 'src/messaging/StringeeChat.dart';

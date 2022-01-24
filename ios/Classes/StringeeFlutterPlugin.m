@@ -275,6 +275,44 @@
         [wrapper.chatManager rejectChatRequest:data result:result];
     }
     
+    // Conference
+    else if ([call.method isEqualToString:@"video.joinRoom"]) {
+        [wrapper.conferenceManager joinRoom:data result:result];
+    }
+    else if ([call.method isEqualToString:@"video.createLocalVideoTrack"]) {
+        [wrapper.conferenceManager createLocalVideoTrack:data result:result];
+    }
+    else if ([call.method isEqualToString:@"room.publish"]) {
+        [wrapper.conferenceManager publish:data result:result];
+    }
+    else if ([call.method isEqualToString:@"room.unpublish"]) {
+        [wrapper.conferenceManager unpublish:data result:result];
+    }
+    else if ([call.method isEqualToString:@"room.subscribe"]) {
+        [wrapper.conferenceManager subscribe:data result:result];
+    }
+    else if ([call.method isEqualToString:@"room.unsubscribe"]) {
+        [wrapper.conferenceManager unsubscribe:data result:result];
+    }
+    else if ([call.method isEqualToString:@"room.leave"]) {
+        [wrapper.conferenceManager leave:data result:result];
+    }
+    else if ([call.method isEqualToString:@"room.sendMessage"]) {
+        [wrapper.conferenceManager sendMessage:data result:result];
+    }
+    else if ([call.method isEqualToString:@"track.mute"]) {
+        [wrapper.conferenceManager mute:data result:result];
+    }
+    else if ([call.method isEqualToString:@"track.enableVideo"]) {
+        [wrapper.conferenceManager enableVideo:data result:result];
+    }
+    else if ([call.method isEqualToString:@"track.switchCamera"]) {
+        [wrapper.conferenceManager switchCamera:data result:result];
+    }
+    else if ([call.method isEqualToString:@"track.close"]) {
+        [wrapper.conferenceManager close:data result:result];
+    }
+
     else {
         result(FlutterMethodNotImplemented);
     }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../stringee_flutter_plugin.dart';
+import 'StringeeVideoTrackInfo.dart';
 
 class StringeeVideo {
   late StringeeClient _client;
@@ -9,8 +10,8 @@ class StringeeVideo {
     _client = client;
   }
 
-  /// Connect to [StringeeRoom]
-  Future<Map<dynamic, dynamic>> connect(String roomToken) async {
+  /// Connect to [StringeeVideoRoom]
+  Future<Map<dynamic, dynamic>> joinRoom(String roomToken) async {
     if (roomToken.isEmpty) return await reportInvalidValue('roomToken');
     final params = {
       'roomToken': roomToken,
@@ -18,19 +19,19 @@ class StringeeVideo {
     };
 
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
-        .invokeMethod('video.connect', params);
+        .invokeMethod('video.joinRoom', params);
 
     if (result['status']) {
-      StringeeRoom room = StringeeRoom(_client, result['body']['room']);
+      StringeeVideoRoom room = StringeeVideoRoom(_client, result['body']['room']);
       result['body']['room'] = room;
 
-      List<StringeeVideoTrack> videoTrackList = [];
-      List<dynamic> tracksData = result['body']['videoTracks'];
+      List<StringeeVideoTrackInfo> videoTrackList = [];
+      List<dynamic> tracksData = result['body']['videoTrackInfos'];
       if (tracksData.length > 0)
         videoTrackList = tracksData
-            .map((info) => StringeeVideoTrack(_client, info))
+            .map((info) => StringeeVideoTrackInfo(info))
             .toList();
-      result['body']['videoTracks'] = videoTrackList;
+      result['body']['videoTrackInfos'] = videoTrackList;
 
       List<StringeeRoomUser> userList = [];
       List<dynamic> usersData = result['body']['users'];
@@ -43,11 +44,8 @@ class StringeeVideo {
 
   /// Create local [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> createLocalVideoTrack(
-      StringeeVideoTrackOptions options) async {
-    String localId = Platform.operatingSystem +
-        DateTime.now().millisecondsSinceEpoch.toString();
+      StringeeVideoTrackOption options) async {
     final params = {
-      'localId': localId,
       'options': options.toJson(),
       'uuid': _client.uuid,
     };
@@ -57,7 +55,7 @@ class StringeeVideo {
 
     if (result['status']) {
       StringeeVideoTrack videoTrack =
-      StringeeVideoTrack.local(_client, result['body']);
+      StringeeVideoTrack(_client, result['body']);
       result['body'] = videoTrack;
     }
     return result;
@@ -65,10 +63,7 @@ class StringeeVideo {
 
   /// Create capture screen [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> createCaptureScreenTrack() async {
-    String localId = Platform.operatingSystem +
-        DateTime.now().millisecondsSinceEpoch.toString();
     final params = {
-      'localId': localId,
       'uuid': _client.uuid,
     };
 
@@ -77,19 +72,19 @@ class StringeeVideo {
 
     if (result['status']) {
       StringeeVideoTrack videoTrack =
-      StringeeVideoTrack.local(_client, result['body']);
+      StringeeVideoTrack(_client, result['body']);
       result['body'] = videoTrack;
     }
     return result;
   }
 
   /// Release all [StringeeVideoTrack] in [StringeeRoom]
-  Future<Map<dynamic, dynamic>> release(StringeeRoom room) async {
-    final params = {
-      'roomId': room.id,
-      'uuid': _client.uuid,
-    };
-    return await StringeeClient.methodChannel
-        .invokeMethod('video.release', params);
-  }
+  // Future<Map<dynamic, dynamic>> release(StringeeRoom room) async {
+  //   final params = {
+  //     'roomId': room.id,
+  //     'uuid': _client.uuid,
+  //   };
+  //   return await StringeeClient.methodChannel
+  //       .invokeMethod('video.release', params);
+  // }
 }

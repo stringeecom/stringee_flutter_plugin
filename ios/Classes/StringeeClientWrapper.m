@@ -36,14 +36,16 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         _convManager = [[StringeeConversationManager alloc] initWithIdentifier:identifier];
         _msgManager = [[StringeeMessageManager alloc] initWithIdentifier:identifier];
         _chatManager = [[StringeeChatManager alloc] initWithIdentifier:identifier];
-
+        _conferenceManager = [[StringeeVideoConferenceManager alloc] initWithIdentifier:identifier];
+        
         _eventSink = eventSink;
         [_callManager setEventSink:_eventSink];
         [_call2Manager setEventSink:_eventSink];
         [_convManager setEventSink:_eventSink];
         [_msgManager setEventSink:_eventSink];
         [_chatManager setEventSink:_eventSink];
-        
+        [_conferenceManager setEventSink:_eventSink];
+
         // Fix cho phan live-chat
         _firstConnectTime = true;
         _client = [[StringeeClient alloc] init];
@@ -64,6 +66,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     [_convManager setEventSink:_eventSink];
     [_msgManager setEventSink:_eventSink];
     [_chatManager setEventSink:_eventSink];
+    [_conferenceManager setEventSink:_eventSink];
 }
 
 + (void)setEventSinkForAllInstances:(FlutterEventSink)eventSink {
@@ -127,7 +130,8 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         [_convManager setClient:_client];
         [_msgManager setClient:_client];
         [_chatManager setClient:_client];
-        
+        [_conferenceManager setClient:_client];
+
         _firstConnectTime = false;
     }
     

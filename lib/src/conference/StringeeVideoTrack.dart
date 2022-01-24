@@ -37,18 +37,6 @@ class StringeeVideoTrack {
   ) {
     this._client = client;
     this._id = info['id'];
-    this._audioEnable = info['audio'];
-    this._videoEnable = info['video'];
-    this._isScreenCapture = info['screen'];
-    this._isLocal = info['isLocal'];
-    this._publisher = StringeeRoomUser(info['publisher']);
-  }
-
-  StringeeVideoTrack.local(
-    StringeeClient client,
-    Map<dynamic, dynamic> info,
-  ) {
-    this._client = client;
     this._localId = info['localId'];
     this._audioEnable = info['audio'];
     this._videoEnable = info['video'];
@@ -57,10 +45,28 @@ class StringeeVideoTrack {
     this._publisher = StringeeRoomUser(info['publisher']);
   }
 
+  // StringeeVideoTrack.local(
+  //   StringeeClient client,
+  //   Map<dynamic, dynamic> info,
+  // ) {
+  //   this._client = client;
+  //   this._localId = info['localId'];
+  //   this._audioEnable = info['audio'];
+  //   this._videoEnable = info['video'];
+  //   this._isScreenCapture = info['screen'];
+  //   this._isLocal = info['isLocal'];
+  //   this._publisher = StringeeRoomUser(info['publisher']);
+  // }
+
+  StringeeVideoTrackInfo getInfo() {
+    StringeeVideoTrackInfo info = StringeeVideoTrackInfo.fromTrack(this);
+    return info;
+  }
+
   /// Mute
   Future<Map<dynamic, dynamic>> mute(bool mute) async {
     final params = {
-      'trackId': _id,
+      'localId': _localId,
       'uuid': _client.uuid,
       'mute': mute,
     };
@@ -71,7 +77,7 @@ class StringeeVideoTrack {
   /// Enable video
   Future<Map<dynamic, dynamic>> enableVideo(bool enable) async {
     final params = {
-      'trackId': _id,
+      'localId': _localId,
       'uuid': _client.uuid,
       'enable': enable,
     };
@@ -82,7 +88,7 @@ class StringeeVideoTrack {
   /// Switch camera
   Future<Map<dynamic, dynamic>> switchCamera({int? cameraId}) async {
     final params = {
-      'trackId': _id,
+      'localId': _localId,
       'uuid': _client.uuid,
       if (cameraId != null) 'cameraId': cameraId,
     };

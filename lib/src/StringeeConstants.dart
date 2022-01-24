@@ -55,6 +55,7 @@ enum StringeeRoomEvents {
   didAddVideoTrack,
   didRemoveVideoTrack,
   didReceiveRoomMessage,
+  trackReadyToPlay
   // didReceiveVideoTrackControlNotification,
 }
 
@@ -413,7 +414,7 @@ class StringeeServerAddress {
 }
 
 ///Class represents server address
-class StringeeVideoTrackOptions {
+class StringeeVideoTrackOption {
   late bool _audio;
   late bool _video;
   late bool _screen;
@@ -428,7 +429,7 @@ class StringeeVideoTrackOptions {
 
   StringeeVideoDimensions get videoDimension => _videoDimension;
 
-  StringeeVideoTrackOptions(
+  StringeeVideoTrackOption(
       {required bool audio,
       required bool video,
       required bool screen,

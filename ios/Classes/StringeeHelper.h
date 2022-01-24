@@ -49,12 +49,21 @@ static NSString *STEConversationEnded                = @"conversationEnded";
 static NSString *STEUserBeginTyping                  = @"userBeginTyping";
 static NSString *STEUserEndTyping                    = @"userEndTyping";
 
+// Room (Video Conference)
+static NSString *STEDidJoinRoom            = @"didJoinRoom";
+static NSString *STEDidLeaveRoom           = @"didLeaveRoom";
+static NSString *STEDidAddVideoTrack       = @"didAddVideoTrack";
+static NSString *STEDidRemoveVideoTrack    = @"didRemoveVideoTrack";
+static NSString *STEDidReceiveRoomMessage  = @"didReceiveRoomMessage";
+static NSString *STETrackReadyToPlay       = @"trackReadyToPlay";
+
 
 typedef NS_ENUM(NSInteger, StringeeNativeEventType) {
     StringeeNativeEventTypeClient  = 0,
     StringeeNativeEventTypeCall    = 1,
     StringeeNativeEventTypeCall2   = 2,
     StringeeNativeEventTypeChat    = 3,
+    StringeeNativeEventTypeRoom    = 4
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -91,6 +100,24 @@ NS_ASSUME_NONNULL_BEGIN
 + (id)ChatProfile:(StringeeChatProfile *)profile;
 
 + (id)StringeeChatRequest:(StringeeChatRequest *)request;
+
++ (BOOL)validString:(NSString *)value;
+
+// MARK: - Stringee Video Conference
+
++ (id)StringeeVideoRoom:(StringeeVideoRoom *)room;
+
++ (id)StringeeVideoTrackInfo:(StringeeVideoTrackInfo *)trackInfo;
+
++ (NSArray *)StringeeVideoTrackInfos:(NSArray<StringeeVideoTrackInfo *> *)trackInfos;
+
++ (id)StringeeRoomUserInfo:(StringeeRoomUserInfo *)userInfo;
+
++ (NSArray *)StringeeRoomUserInfos:(NSArray<StringeeRoomUserInfo *> *)userInfos;
+
++ (StringeeVideoTrackOption *)parseVideoTrackOptionWithData:(NSDictionary *)data;
+
++ (id)StringeeVideoTrack:(StringeeVideoTrack *)track;
 
 @end
 

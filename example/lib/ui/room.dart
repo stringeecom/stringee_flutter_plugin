@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
@@ -21,16 +23,20 @@ class Room extends StatefulWidget {
 }
 
 class RoomState extends State<Room> {
-  late StringeeRoom _room;
+  late StringeeVideoRoom _room;
   late StringeeVideoTrack _localTrack;
-  late StringeeVideoTrack _shareTrack;
   late StringeeVideoView _localTrackView;
+  List<StringeeVideoTrack> _remoteTracks = [];
+  List<StringeeVideoView> _remoteTrackViews = [];
+
+  late StringeeVideoTrack _shareTrack;
+
   bool _hasLocalView = false;
   bool _sharingScreen = false;
   bool _isMute = false;
   bool _isVideoEnable = true;
   int _cameraId = 1;
-  List<StringeeVideoTrack> _trackList = [];
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -39,10 +45,10 @@ class RoomState extends State<Room> {
     // TODO: implement initState
     super.initState();
 
-    widget._video.connect(widget._roomToken).then((value) {
+    widget._video.joinRoom(widget._roomToken).then((value) {
       if (value['status']) {
         _room = value['body']['room'];
-        initRoom(value['body']['videoTracks'], value['body']['users']);
+        initRoom(value['body']['videoTrackInfos'], value['body']['users']);
       }
     });
   }
@@ -120,7 +126,7 @@ class RoomState extends State<Room> {
       alignment: Alignment.topRight,
       child: Container(
         margin: EdgeInsets.only(
-          top: 20.0,
+          top: 40.0,
           right: 20.0,
         ),
         child: RoundedButton(
@@ -142,14 +148,15 @@ class RoomState extends State<Room> {
         margin: EdgeInsets.only(bottom: 100.0),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: _trackList.length,
+          itemCount: _remoteTrackViews.length,
           itemBuilder: (context, index) {
-            return _trackList[index].attach(
-              isOverlay: true,
-              height: 200.0,
-              width: 150.0,
-              scalingType: ScalingType.fit,
-            );
+            // return _trackList[index].attach(
+            //   isOverlay: true,
+            //   height: 200.0,
+            //   width: 150.0,
+            //   scalingType: ScalingType.fit,
+            // );
+            return _remoteTrackViews[index];
           },
         ),
       ),
@@ -171,7 +178,7 @@ class RoomState extends State<Room> {
         });
   }
 
-  void initRoom(List<StringeeVideoTrack> videoTrackList,
+  void initRoom(List<StringeeVideoTrackInfo> videoTrackInfos,
       List<StringeeRoomUser> userList) {
     _room.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
@@ -192,12 +199,15 @@ class RoomState extends State<Room> {
         case StringeeRoomEvents.didReceiveRoomMessage:
           handleReceiveRoomMessageEvent(map['body']);
           break;
+        case StringeeRoomEvents.trackReadyToPlay:
+          handleTrackReadyToPlayEvent(map['body']);
+          break;
         default:
           break;
       }
     });
 
-    StringeeVideoTrackOptions options = StringeeVideoTrackOptions(
+    StringeeVideoTrackOption options = StringeeVideoTrackOption(
       audio: true,
       video: true,
       screen: false,
@@ -207,29 +217,30 @@ class RoomState extends State<Room> {
         _room.publish(value['body']).then((value) {
           if (value['status']) {
             setState(() {
-              _hasLocalView = true;
+              // _hasLocalView = true;
               _localTrack = value['body'];
-              _localTrackView = _localTrack.attach(
-                alignment: Alignment.center,
-                scalingType: ScalingType.fit,
-              );
+              // _localTrackView = _localTrack.attach(
+              //   alignment: Alignment.center,
+              //   scalingType: ScalingType.fit,
+              // );
             });
           }
         });
       }
     });
 
-    if (videoTrackList.length > 0) {
-      videoTrackList.forEach((track) {
-        StringeeVideoTrackOptions options = StringeeVideoTrackOptions(
-          audio: track.audioEnable,
-          video: track.videoEnable,
-          screen: track.isScreenCapture,
+    if (videoTrackInfos.length > 0) {
+      videoTrackInfos.forEach((trackInfo) {
+        StringeeVideoTrackOption options = StringeeVideoTrackOption(
+          audio: trackInfo.audioEnable,
+          video: trackInfo.videoEnable,
+          screen: trackInfo.isScreenCapture,
         );
-        _room.subscribe(track, options).then((value) {
+        _room.subscribe(trackInfo, options).then((value) {
           if (value['status']) {
             setState(() {
-              _trackList.add(track);
+              StringeeVideoTrack videoTrack = value['body'];
+              _remoteTracks.add(videoTrack);
             });
           }
         });
@@ -241,30 +252,31 @@ class RoomState extends State<Room> {
 
   void handleLeaveRoomEvent(StringeeRoomUser leaveUser) {}
 
-  void handleAddVideoTrackEvent(StringeeVideoTrack addTrack) {
-    StringeeVideoTrackOptions options = StringeeVideoTrackOptions(
-      audio: addTrack.audioEnable,
-      video: addTrack.videoEnable,
-      screen: addTrack.isScreenCapture,
+  void handleAddVideoTrackEvent(StringeeVideoTrackInfo trackInfo) {
+    StringeeVideoTrackOption options = StringeeVideoTrackOption(
+      audio: trackInfo.audioEnable,
+      video: trackInfo.videoEnable,
+      screen: trackInfo.isScreenCapture,
     );
-    _room.subscribe(addTrack, options).then((value) {
+    _room.subscribe(trackInfo, options).then((value) {
       if (value['status']) {
         setState(() {
-          _trackList.add(addTrack);
+          StringeeVideoTrack videoTrack = value['body'];
+          _remoteTracks.add(videoTrack);
         });
       }
     });
   }
 
-  void handleRemoveVideoTrackEvent(StringeeVideoTrack removeTrack) {
-    _room.unsubscribe(removeTrack).then((value) {
+  void handleRemoveVideoTrackEvent(StringeeVideoTrackInfo trackInfo) {
+    _room.unsubscribe(trackInfo).then((value) {
       if (value['status']) {
         setState(() {
-          if (_trackList.length > 0) {
-            for (int i = 0; i < _trackList.length; i++) {
-              StringeeVideoTrack track = _trackList[i];
-              if (track.id == removeTrack.id) {
-                _trackList.removeAt(i);
+          if (_remoteTracks.length > 0) {
+            for (int i = 0; i < _remoteTracks.length; i++) {
+              StringeeVideoTrack track = _remoteTracks[i];
+              if (track.id == trackInfo.id) {
+                _remoteTracks.removeAt(i);
               }
             }
           }
@@ -274,6 +286,30 @@ class RoomState extends State<Room> {
   }
 
   void handleReceiveRoomMessageEvent(Map<dynamic, dynamic> bodyMap) {}
+
+  void handleTrackReadyToPlayEvent(StringeeVideoTrack track) {
+    print("handleTrackReadyToPlayEvent");
+    if (track.isLocal) {
+      setState(() {
+        _hasLocalView = true;
+        _localTrackView = track.attach(
+          alignment: Alignment.center,
+          scalingType: ScalingType.fit,
+        );
+      });
+    } else {
+      StringeeVideoView videoView = track.attach(
+        isOverlay: true,
+        height: 200.0,
+        width: 150.0,
+        scalingType: ScalingType.fit,
+      );
+
+      setState(() {
+        _remoteTrackViews.add(videoView);
+      });
+    }
+  }
 
   void createForegroundServiceNotification() {
     flutterLocalNotificationsPlugin.initialize(InitializationSettings(
@@ -298,39 +334,41 @@ class RoomState extends State<Room> {
   }
 
   void toggleShareScreen() {
-    if (_sharingScreen) {
-      // remove foreground service notification
-      flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.stopForegroundService();
+    if (Platform.isAndroid) {
+      if (_sharingScreen) {
+        // remove foreground service notification
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+            ?.stopForegroundService();
 
-      _room.unpublish(_shareTrack).then((result) {
-        if (result['status']) {
-          _shareTrack.close().then((value) {
-            if (result['status']) {
-              setState(() {
-                _sharingScreen = false;
-              });
-            }
-          });
-        }
-      });
-    } else {
-      createForegroundServiceNotification();
-      widget._video.createCaptureScreenTrack().then((result) {
-        if (result['status']) {
-          _room.publish(result['body']).then((result) {
-            if (result['status']) {
-              setState(() {
-                _sharingScreen = true;
-                _shareTrack = result['body'];
-                _trackList.add(_shareTrack);
-              });
-            }
-          });
-        }
-      });
+        _room.unpublish(_shareTrack).then((result) {
+          if (result['status']) {
+            _shareTrack.close().then((value) {
+              if (result['status']) {
+                setState(() {
+                  _sharingScreen = false;
+                });
+              }
+            });
+          }
+        });
+      } else {
+        createForegroundServiceNotification();
+        widget._video.createCaptureScreenTrack().then((result) {
+          if (result['status']) {
+            _room.publish(result['body']).then((result) {
+              if (result['status']) {
+                setState(() {
+                  _sharingScreen = true;
+                  _shareTrack = result['body'];
+                  // _trackList.add(_shareTrack);
+                });
+              }
+            });
+          }
+        });
+      }
     }
   }
 
@@ -367,17 +405,25 @@ class RoomState extends State<Room> {
   }
 
   void leaveRoomTapped() {
-    _room.unpublish(_localTrack).then((result) {
-      if (result['status']) {
-        _localTrack.close().then((value) {
-          if (result['status']) {
-            _room.leave(allClient: false).then((value) {
-              clearDataEndDismiss();
-            });
-          }
-        });
-      }
+    // Sửa chỉ cần gọi hàm leave thôi
+    print("========== leaveRoomTapped");
+
+    _room.leave(allClient: true).then((value) {
+      print("========== Leave room: " + value.toString());
+      clearDataEndDismiss();
     });
+
+    // _room.unpublish(_localTrack).then((result) {
+    //   if (result['status']) {
+    //     _localTrack.close().then((value) {
+    //       if (result['status']) {
+    //         _room.leave(allClient: false).then((value) {
+    //           clearDataEndDismiss();
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   void clearDataEndDismiss() {

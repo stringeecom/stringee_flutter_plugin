@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import '../../stringee_flutter_plugin.dart';
+import 'StringeeVideoTrackInfo.dart';
 
-class StringeeRoom {
+class StringeeVideoRoom {
   late String _id;
   late bool _recorded;
   late StringeeClient _client;
@@ -15,7 +16,7 @@ class StringeeRoom {
 
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
-  StringeeRoom(StringeeClient client, Map<dynamic, dynamic> info) {
+  StringeeVideoRoom(StringeeClient client, Map<dynamic, dynamic> info) {
     this._client = client;
     this._id = info['id'];
     this._recorded = info['recorded'];
@@ -42,6 +43,9 @@ class StringeeRoom {
           break;
         case 'didReceiveRoomMessage':
           handleDidReceiveRoomMessage(map['body']);
+          break;
+        case 'trackReadyToPlay':
+          handleTrackReadyToPlay(map['body']);
           break;
         // case 'didReceiveVideoTrackControlNotification':
         //   handleDidReceiveVideoTrackControlNotification(map['body']);
@@ -75,7 +79,7 @@ class StringeeRoom {
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didAddVideoTrack,
-      "body": StringeeVideoTrack(_client, map['videoTrack'])
+      "body": StringeeVideoTrackInfo(map['videoTrackInfo'])
     });
   }
 
@@ -85,7 +89,7 @@ class StringeeRoom {
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didRemoveVideoTrack,
-      "body": StringeeVideoTrack(_client, map['videoTrack'])
+      "body": StringeeVideoTrackInfo(map['videoTrackInfo'])
     });
   }
 
@@ -99,6 +103,16 @@ class StringeeRoom {
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didReceiveRoomMessage,
       "body": bodyMap
+    });
+  }
+
+  void handleTrackReadyToPlay(Map<dynamic, dynamic> map) {
+    String? roomId = map['roomId'];
+    if (roomId != this._id) return;
+
+    _eventStreamController.add({
+      "eventType": StringeeRoomEvents.trackReadyToPlay,
+      "body": StringeeVideoTrack(_client, map['track'])
     });
   }
 
@@ -143,32 +157,38 @@ class StringeeRoom {
         .invokeMethod('room.unpublish', params);
   }
 
-  /// Subscribe [StringeeVideoTrack]
+  /// Subscribe [StringeeVideoTrackInfo]
   Future<Map<dynamic, dynamic>> subscribe(
-      StringeeVideoTrack videoTrack, StringeeVideoTrackOptions options) async {
+      StringeeVideoTrackInfo trackInfo, StringeeVideoTrackOption option) async {
     final params = {
       'roomId': _id,
-      'trackId': videoTrack.id,
-      'options': options.toJson(),
+      'trackId': trackInfo.id,
+      'options': option.toJson(),
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
+    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('room.subscribe', params);
+    if (result['status']) {
+      StringeeVideoTrack videoTrack = StringeeVideoTrack(_client, result['body']);
+      result['body'] = videoTrack;
+    }
+
+    return result;
   }
 
   /// Un subscribe [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> unsubscribe(
-      StringeeVideoTrack videoTrack) async {
+      StringeeVideoTrackInfo trackInfo) async {
     final params = {
       'roomId': _id,
-      'trackId': videoTrack.id,
+      'trackId': trackInfo.id,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel
         .invokeMethod('room.unsubscribe', params);
   }
 
-  /// Leave [StringeeRoom]
+  /// Leave [StringeeVideoRoom]
   Future<Map<dynamic, dynamic>> leave({
     required bool allClient,
   }) async {
@@ -181,7 +201,7 @@ class StringeeRoom {
         .invokeMethod('room.leave', params);
   }
 
-  /// Send a message to [StringeeRoom]
+  /// Send a message to [StringeeVideoRoom]
   Future<Map<dynamic, dynamic>> sendMessage(Map<dynamic, dynamic> msg) async {
     final params = {
       'roomId': _id,

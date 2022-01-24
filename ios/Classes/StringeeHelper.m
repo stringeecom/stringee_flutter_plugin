@@ -360,6 +360,108 @@
     return response;
 }
 
+
+// MARK: - Stringee Video Conference
+
++ (id)StringeeVideoRoom:(StringeeVideoRoom *)room {
+    if (!room) return [NSNull null];
+
+    NSString *roomId = room.roomId.length ? room.roomId : @"";
+    
+    return @{
+             @"id": roomId,
+             @"recorded": @(room.record)
+             };
+}
+
++ (id)StringeeVideoTrackInfo:(StringeeVideoTrackInfo *)trackInfo {
+    if (!trackInfo) return [NSNull null];
+
+    NSString *serverId = trackInfo.serverId.length ? trackInfo.serverId : @"";
+    id publisher = [StringeeHelper StringeeRoomUserInfo:trackInfo.publisher];
+    
+    return @{
+             @"id": serverId,
+             @"audio": @(trackInfo.audio),
+             @"video": @(trackInfo.video),
+             @"screen": @(trackInfo.screen),
+             @"publisher": publisher
+             };
+}
+
++ (NSArray *)StringeeVideoTrackInfos:(NSArray<StringeeVideoTrackInfo *> *)trackInfos {
+    if (!trackInfos) {
+        return @[];
+    }
+    
+    NSMutableArray *response = [NSMutableArray array];
+    for (StringeeVideoTrackInfo *trackInfo in trackInfos) {
+        [response addObject:[self StringeeVideoTrackInfo:trackInfo]];
+    }
+    return response;
+}
+
++ (id)StringeeRoomUserInfo:(StringeeRoomUserInfo *)userInfo {
+    if (!userInfo) return [NSNull null];
+    
+    NSString *userId = userInfo.userId.length ? userInfo.userId : @"";
+
+    return @{
+             @"id": userId,
+             };
+}
+
++ (NSArray *)StringeeRoomUserInfos:(NSArray<StringeeRoomUserInfo *> *)userInfos {
+    if (!userInfos) {
+        return @[];
+    }
+    
+    NSMutableArray *response = [NSMutableArray array];
+    for (StringeeRoomUserInfo *userInfo in userInfos) {
+        [response addObject:[self StringeeRoomUserInfo:userInfo]];
+    }
+    return response;
+}
+
++ (StringeeVideoTrackOption *)parseVideoTrackOptionWithData:(NSDictionary *)data {
+    StringeeVideoTrackOption *option = [[StringeeVideoTrackOption alloc] init];
+    option.audio = [[data objectForKey:@"audio"] boolValue];
+    option.video = [[data objectForKey:@"video"] boolValue];
+    option.screen = [[data objectForKey:@"screen"] boolValue];
+    
+    NSString *strVideoDimension = (NSString *)[data objectForKey:@"videoDimension"];
+    if ([strVideoDimension isEqualToString:@"480"]) {
+        option.videoDimension = StringeeVideoDimension480p;
+    } else if ([strVideoDimension isEqualToString:@"720"]) {
+        option.videoDimension = StringeeVideoDimension720p;
+    } else if ([strVideoDimension isEqualToString:@"1080"]) {
+        option.videoDimension = StringeeVideoDimension1080p;
+    } else {
+        option.videoDimension = StringeeVideoDimension288p;
+    }
+    
+    return option;
+}
+
++ (id)StringeeVideoTrack:(StringeeVideoTrack *)track {
+    if (!track) return [NSNull null];
+
+    NSString *serverId = track.serverId.length ? track.serverId : @"";
+    NSString *localId = track.localId.length ? track.localId : @"";
+
+    id publisher = [StringeeHelper StringeeRoomUserInfo:track.publisher];
+    
+    return @{
+             @"id": serverId,
+             @"localId": localId,
+             @"publisher": publisher,
+             @"audio": @(track.audio),
+             @"video": @(track.video),
+             @"screen": @(track.screen),
+             @"isLocal": @(track.isLocal)
+             };
+}
+
 // MARK: - Utils
 
 + (id)StringToDictionary:(NSString *)str {
@@ -398,7 +500,7 @@
     }
 }
 
-+ (BOOL)isValid:(NSString *)value {
++ (BOOL)validString:(NSString *)value {
     if (value == nil || ![value isKindOfClass:[NSString class]] || value.length == 0) {
         return false;
     }
