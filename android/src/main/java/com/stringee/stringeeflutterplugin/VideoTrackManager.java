@@ -1,16 +1,28 @@
 package com.stringee.stringeeflutterplugin;
 
+import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.RoomEvent;
+
+import android.util.Log;
+
 import com.stringee.video.StringeeVideoTrack;
 import com.stringee.video.StringeeVideoTrack.Listener;
 import com.stringee.video.StringeeVideoTrack.MediaState;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class VideoTrackManager implements Listener {
+    private ClientWrapper clientWrapper;
+    private String localId;
     private StringeeVideoTrack videoTrack;
     private boolean mediaAvailable = false;
     private Listener listener;
+    private static final String TAG = "StringeeSDK";
 
-    public VideoTrackManager(StringeeVideoTrack videoTrack, boolean forCall) {
+    public VideoTrackManager(ClientWrapper clientWrapper, StringeeVideoTrack videoTrack, String localId, boolean forCall) {
+        this.clientWrapper = clientWrapper;
         this.videoTrack = videoTrack;
+        this.localId = localId;
         videoTrack.setListener(this);
         if (forCall) {
             mediaAvailable = true;
@@ -30,6 +42,14 @@ public class VideoTrackManager implements Listener {
         return videoTrack;
     }
 
+    public String getLocalId() {
+        return localId;
+    }
+
+    public VideoTrackManager getThis() {
+        return this;
+    }
+
     @Override
     public void onMediaAvailable() {
         StringeeManager.getInstance().getHandler().post(new Runnable() {
@@ -39,6 +59,17 @@ public class VideoTrackManager implements Listener {
                 if (listener != null) {
                     listener.onMediaAvailable();
                 }
+
+                Log.d(TAG, "trackReadyToPlay: " + videoTrack.getId());
+                Map map = new HashMap();
+                map.put("nativeEventType", RoomEvent.getValue());
+                map.put("event", "trackReadyToPlay");
+                map.put("uuid", clientWrapper.getId());
+                Map bodyMap = new HashMap();
+                bodyMap.put("roomId", videoTrack.getRoomId());
+                bodyMap.put("track", Utils.convertVideoTrackToMap(getThis()));
+                map.put("body", bodyMap);
+                StringeeFlutterPlugin.eventSink.success(map);
             }
         });
     }

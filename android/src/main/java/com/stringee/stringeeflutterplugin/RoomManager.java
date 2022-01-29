@@ -42,16 +42,13 @@ public class RoomManager implements StringeeRoomListener {
         handler = stringeeManager.getHandler();
     }
 
-    public StringeeRoom getStringeeRoom() {
-        return _stringeeRoom;
-    }
-
     public void connect(final StringeeVideo stringeeVideo, final String roomToken, final Result result) {
         _connectRoomResult = result;
         _stringeeRoom = stringeeVideo.connect(clientWrapper.getClient(), roomToken, this);
     }
 
-    public void publish(final StringeeVideoTrack videoTrack, final String localId, final Result result) {
+    public void publish(final VideoTrackManager trackManager, final Result result) {
+        StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
         _stringeeRoom.publish(videoTrack, new StatusListener() {
             @Override
             public void onSuccess() {
@@ -63,11 +60,8 @@ public class RoomManager implements StringeeRoomListener {
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
-                        map.put("body", Utils.convertVideoTrackToMap(videoTrack));
+                        map.put("body", Utils.convertVideoTrackToMap(trackManager));
                         result.success(map);
-
-                        stringeeManager.getTracksMap().put(videoTrack.getId(), new VideoTrackManager(videoTrack, false));
-                        stringeeManager.getTracksMap().remove(localId);
                     }
                 });
             }
@@ -97,6 +91,7 @@ public class RoomManager implements StringeeRoomListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        videoTrack.release();
                         Log.d(TAG, "unpublish: success");
                         Map map = new HashMap();
                         map.put("status", true);
@@ -125,8 +120,8 @@ public class RoomManager implements StringeeRoomListener {
         });
     }
 
-    public void subscribe(final StringeeVideoTrack videoTrack, final StringeeVideoTrack.Options options, final Result result) {
-        _stringeeRoom.subscribe(videoTrack, options, new StatusListener() {
+    public void subscribe(final VideoTrackManager trackManager, final StringeeVideoTrack.Options options, final Result result) {
+        _stringeeRoom.subscribe(trackManager.getVideoTrack(), options, new StatusListener() {
             @Override
             public void onSuccess() {
                 handler.post(new Runnable() {
@@ -137,6 +132,7 @@ public class RoomManager implements StringeeRoomListener {
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
+                        map.put("body", Utils.convertVideoTrackToMap(trackManager));
                         result.success(map);
                     }
                 });
@@ -183,18 +179,12 @@ public class RoomManager implements StringeeRoomListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "unsubscribe: success");
+                        Log.d(TAG, "unsubscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
                         result.success(map);
-//                        Log.d(TAG, "unsubscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-//                        Map map = new HashMap();
-//                        map.put("status", false);
-//                        map.put("code", stringeeError.getCode());
-//                        map.put("message", stringeeError.getMessage());
-//                        result.success(map);
                     }
                 });
             }
@@ -208,6 +198,7 @@ public class RoomManager implements StringeeRoomListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        videoConferenceManager.getStringeeVideo().release(_stringeeRoom);
                         Log.d(TAG, "leave: success");
                         Map map = new HashMap();
                         map.put("status", true);
@@ -284,13 +275,14 @@ public class RoomManager implements StringeeRoomListener {
                     users.add(Utils.convertRoomUserToMap(participant));
                     for (int j = 0; j < participant.getVideoTracks().size(); j++) {
                         StringeeVideoTrack videoTrack = participant.getVideoTracks().get(j);
-                        videoTracks.add(Utils.convertVideoTrackToMap(videoTrack));
-                        stringeeManager.getTracksMap().put(videoTrack.getId(), new VideoTrackManager(videoTrack, false));
+                        VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, videoTrack, "", false);
+                        stringeeManager.getTracksMap().put(videoTrack.getId(), videoTrackManager);
+                        videoTracks.add(Utils.convertVideoTrackInfoToMap(videoTrackManager));
                     }
                 }
                 Map bodyMap = new HashMap();
                 bodyMap.put("room", Utils.convertRoomToMap(stringeeRoom));
-                bodyMap.put("videoTracks", videoTracks);
+                bodyMap.put("videoTrackInfos", videoTracks);
                 bodyMap.put("users", users);
 
                 Log.d(TAG, "Room connect: success");
@@ -391,14 +383,15 @@ public class RoomManager implements StringeeRoomListener {
             @Override
             public void run() {
                 Log.d(TAG, "didAddVideoTrack: " + stringeeVideoTrack.getId());
-                stringeeManager.getTracksMap().put(stringeeVideoTrack.getId(), new VideoTrackManager(stringeeVideoTrack, false));
+                VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, stringeeVideoTrack, "", false);
+                stringeeManager.getTracksMap().put(stringeeVideoTrack.getId(), videoTrackManager);
                 Map map = new HashMap();
                 map.put("nativeEventType", RoomEvent.getValue());
                 map.put("event", "didAddVideoTrack");
                 map.put("uuid", clientWrapper.getId());
                 Map bodyMap = new HashMap();
                 bodyMap.put("roomId", stringeeRoom.getId());
-                bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(stringeeVideoTrack));
+                bodyMap.put("videoTrackInfo", Utils.convertVideoTrackInfoToMap(videoTrackManager));
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin.eventSink.success(map);
             }
@@ -410,16 +403,18 @@ public class RoomManager implements StringeeRoomListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "didRemoveVideoTrack: " + stringeeVideoTrack.getId());
-                Map map = new HashMap();
-                map.put("nativeEventType", RoomEvent.getValue());
-                map.put("event", "didRemoveVideoTrack");
-                map.put("uuid", clientWrapper.getId());
-                Map bodyMap = new HashMap();
-                bodyMap.put("roomId", stringeeRoom.getId());
-                bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(stringeeVideoTrack));
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin.eventSink.success(map);
+                if (!stringeeVideoTrack.isLocal()) {
+                    Log.d(TAG, "didRemoveVideoTrack: " + stringeeVideoTrack.getId());
+                    Map map = new HashMap();
+                    map.put("nativeEventType", RoomEvent.getValue());
+                    map.put("event", "didRemoveVideoTrack");
+                    map.put("uuid", clientWrapper.getId());
+                    Map bodyMap = new HashMap();
+                    bodyMap.put("roomId", stringeeRoom.getId());
+                    bodyMap.put("videoTrackInfo", Utils.convertVideoTrackInfoToMap(stringeeManager.getTracksMap().get(stringeeVideoTrack.getId())));
+                    map.put("body", bodyMap);
+                    StringeeFlutterPlugin.eventSink.success(map);
+                }
             }
         });
     }
@@ -450,21 +445,21 @@ public class RoomManager implements StringeeRoomListener {
 
     @Override
     public void onVideoTrackNotification(RemoteParticipant remoteParticipant, StringeeVideoTrack stringeeVideoTrack) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "didReceiveVideoTrackControlNotification: " + remoteParticipant.getId());
-                Map map = new HashMap();
-                map.put("nativeEventType", RoomEvent.getValue());
-                map.put("event", "didReceiveVideoTrackControlNotification");
-                map.put("uuid", clientWrapper.getId());
-                Map bodyMap = new HashMap();
-                bodyMap.put("roomId", _stringeeRoom.getId());
-                bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(stringeeVideoTrack));
-                bodyMap.put("from", Utils.convertRoomUserToMap(remoteParticipant));
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin.eventSink.success(map);
-            }
-        });
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.d(TAG, "didReceiveVideoTrackControlNotification: " + remoteParticipant.getId());
+//                Map map = new HashMap();
+//                map.put("nativeEventType", RoomEvent.getValue());
+//                map.put("event", "didReceiveVideoTrackControlNotification");
+//                map.put("uuid", clientWrapper.getId());
+//                Map bodyMap = new HashMap();
+//                bodyMap.put("roomId", _stringeeRoom.getId());
+//                bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(stringeeVideoTrack));
+//                bodyMap.put("from", Utils.convertRoomUserToMap(remoteParticipant));
+//                map.put("body", bodyMap);
+//                StringeeFlutterPlugin.eventSink.success(map);
+//            }
+//        });
     }
 }

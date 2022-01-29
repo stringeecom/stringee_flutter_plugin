@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
@@ -483,10 +484,11 @@ public class Utils {
         return userMap;
     }
 
-    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack, String localId, String clientId) {
+    public static Map convertLocalVideoTrackToMap(@NonNull VideoTrackManager trackManager, String clientId) {
+        StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
         Map trackMap = new HashMap();
-        trackMap.put("id", videoTrack.getId());
-        trackMap.put("localId", localId);
+        trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
+        trackMap.put("localId", trackManager.getLocalId());
         trackMap.put("audio", videoTrack.audioEnabled());
         trackMap.put("video", videoTrack.videoEnabled());
         trackMap.put("screen", videoTrack.isScreenCapture());
@@ -497,9 +499,11 @@ public class Utils {
         return trackMap;
     }
 
-    public static Map convertVideoTrackToMap(@NonNull StringeeVideoTrack videoTrack) {
+    public static Map convertVideoTrackToMap(@NonNull VideoTrackManager trackManager) {
+        StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
         Map trackMap = new HashMap();
-        trackMap.put("id", videoTrack.getId());
+        trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
+        trackMap.put("localId", trackManager.getLocalId());
         trackMap.put("audio", videoTrack.audioEnabled());
         trackMap.put("video", videoTrack.videoEnabled());
         trackMap.put("screen", videoTrack.isScreenCapture());
@@ -508,6 +512,24 @@ public class Utils {
         userMap.put("id", videoTrack.getUserId());
         trackMap.put("publisher", userMap);
         return trackMap;
+    }
+
+    public static Map convertVideoTrackInfoToMap(@NonNull VideoTrackManager trackManager) {
+        StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
+        Map trackMap = new HashMap();
+        trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
+        trackMap.put("localId", trackManager.getLocalId());
+        trackMap.put("audio", videoTrack.audioEnabled());
+        trackMap.put("video", videoTrack.videoEnabled());
+        trackMap.put("screen", videoTrack.isScreenCapture());
+        Map userMap = new HashMap();
+        userMap.put("id", videoTrack.getUserId());
+        trackMap.put("publisher", userMap);
+        return trackMap;
+    }
+
+    public static String createLocalId() {
+        return "android-" + UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
     }
 
     public static List getParticipantsFromNotify(@NonNull JSONArray participantsArray) {

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import '../../stringee_flutter_plugin.dart';
-import 'StringeeVideoTrackInfo.dart';
 
 class StringeeVideoRoom {
   late String _id;
@@ -150,7 +149,7 @@ class StringeeVideoRoom {
   Future<Map<dynamic, dynamic>> unpublish(StringeeVideoTrack videoTrack) async {
     final params = {
       'roomId': _id,
-      'trackId': videoTrack.id,
+      'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
     return await StringeeClient.methodChannel
@@ -169,7 +168,8 @@ class StringeeVideoRoom {
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('room.subscribe', params);
     if (result['status']) {
-      StringeeVideoTrack videoTrack = StringeeVideoTrack(_client, result['body']);
+      StringeeVideoTrack videoTrack =
+          StringeeVideoTrack(_client, result['body']);
       result['body'] = videoTrack;
     }
 

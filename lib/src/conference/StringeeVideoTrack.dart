@@ -45,19 +45,6 @@ class StringeeVideoTrack {
     this._publisher = StringeeRoomUser(info['publisher']);
   }
 
-  // StringeeVideoTrack.local(
-  //   StringeeClient client,
-  //   Map<dynamic, dynamic> info,
-  // ) {
-  //   this._client = client;
-  //   this._localId = info['localId'];
-  //   this._audioEnable = info['audio'];
-  //   this._videoEnable = info['video'];
-  //   this._isScreenCapture = info['screen'];
-  //   this._isLocal = info['isLocal'];
-  //   this._publisher = StringeeRoomUser(info['publisher']);
-  // }
-
   StringeeVideoTrackInfo getInfo() {
     StringeeVideoTrackInfo info = StringeeVideoTrackInfo.fromTrack(this);
     return info;
@@ -111,7 +98,7 @@ class StringeeVideoTrack {
     ScalingType? scalingType,
   }) {
     StringeeVideoView videoView = StringeeVideoView.forTrack(
-      _id,
+      _isLocal ? _localId : _id,
       color: color,
       height: height,
       isOverlay: isOverlay,
@@ -124,15 +111,5 @@ class StringeeVideoTrack {
       scalingType: scalingType,
     );
     return videoView;
-  }
-
-  /// Close track
-  Future<Map<dynamic, dynamic>> close() async {
-    final params = {
-      'trackId': _id,
-      'uuid': _client.uuid,
-    };
-    return await StringeeClient.methodChannel
-        .invokeMethod('track.close', params);
   }
 }
