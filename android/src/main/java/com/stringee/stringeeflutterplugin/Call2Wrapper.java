@@ -916,7 +916,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 if (stringeeVideoTrack.isLocal()) {
                     shareId = Utils.createLocalId();
                 }
-                VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, stringeeVideoTrack, stringeeVideoTrack.isLocal() ? shareId : "", false);
+                VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, stringeeVideoTrack, stringeeVideoTrack.isLocal() ? shareId : "", true);
                 stringeeManager.getTracksMap().put(stringeeVideoTrack.isLocal() ? shareId : stringeeVideoTrack.getId(), videoTrackManager);
 
                 Map map = new HashMap();
