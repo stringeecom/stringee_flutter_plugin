@@ -14,8 +14,8 @@ class ConferenceTab extends StatefulWidget {
 
 class ConferenceTabState extends State<ConferenceTab> {
   String myUserId = 'Not connected...';
-  String token = "eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2NDI3MzkxNTgiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNzQyNzM5MTU4LCJ1c2VySWQiOiJ1c2VyMSJ9.L6yQsh53Riv29pADP3wqQKjDAJCtYnMLD_csz289p-c";
-  String roomToken = "eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2NDI3MzkxNTgiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNzQyNzM5MTU4LCJyb29tSWQiOiJyb29tLXZuLTEtVEMwRjUxSDhCUC0xNTg5MzcwMDM4Nzg4IiwicGVybWlzc2lvbnMiOnsicHVibGlzaCI6dHJ1ZSwic3Vic2NyaWJlIjp0cnVlLCJjb250cm9sX3Jvb20iOnRydWUsInJlY29yZCI6dHJ1ZX19.ML0dQSac6H9xPGRa9iUwfIccf-rvTmwBCbWgO6fibug";
+  String token = "";
+  String roomToken = "";
 
   @override
   void initState() {
