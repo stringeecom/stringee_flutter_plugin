@@ -22,11 +22,11 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (_rooms == nil) {
         _rooms = [NSMutableDictionary new];
     }
-    
+
     if (_localTracks == nil) {
         _localTracks = [NSMutableDictionary new];
     }
-    
+
     if (_remoteTracks == nil) {
         _remoteTracks = [NSMutableDictionary new];
     }
@@ -64,14 +64,14 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     [StringeeVideo joinRoom:_client roomToken:roomToken completion:^(BOOL status, int code, NSString * _Nonnull message, StringeeVideoRoom * _Nonnull room, NSArray<StringeeVideoTrackInfo *> * _Nonnull tracks, NSArray<StringeeRoomUserInfo *> * _Nonnull users) {
         // Cache room
         if (room != nil) {
             room.delegate = self;
             [StringeeVideoConferenceManager addRoom:room];
         }
-        
+
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: @{@"room": [StringeeHelper StringeeVideoRoom:room], @"videoTrackInfos": [StringeeHelper StringeeVideoTrackInfos:tracks], @"users": [StringeeHelper StringeeRoomUserInfos:users]}});
     }];
 }
@@ -88,9 +88,9 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoTrackOption *parsedOption = [StringeeHelper parseVideoTrackOptionWithData:options];
-    
+
     StringeeVideoTrack *localTrack = [StringeeVideo createLocalVideoTrack:_client options:parsedOption delegate:self];
     [StringeeVideoConferenceManager addTrack:localTrack];
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success", STEBody: [StringeeHelper StringeeVideoTrack:localTrack]});
@@ -111,24 +111,24 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoRoom *room = [StringeeVideoConferenceManager getRoom:roomId];
     if (room == nil) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Room not found"});
         return;
     }
-    
+
     StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:localTrackId];
     if (track == nil) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Track not found"});
         return;
     }
-    
+
     if (!track.isLocal) {
         result(@{STEStatus : @(NO), STECode : @(-5), STEMessage: @"Can not publish remote track"});
         return;
     }
-    
+
     [room publish:track completion:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper StringeeVideoTrack:track]});
     }];
@@ -147,24 +147,24 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoRoom *room = [StringeeVideoConferenceManager getRoom:roomId];
     if (room == nil) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Room not found"});
         return;
     }
-    
+
     StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:trackId];
     if (track == nil) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Track not found"});
         return;
     }
-    
+
     if (!track.isLocal) {
         result(@{STEStatus : @(NO), STECode : @(-5), STEMessage: @"Can not unpublish remote track"});
         return;
     }
-    
+
     [room unpublish:track completion:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -185,7 +185,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         return;
     }
     StringeeVideoTrackOption *parsedOption = [StringeeHelper parseVideoTrackOptionWithData:options];
-    
+
     StringeeVideoRoom *room = [StringeeVideoConferenceManager getRoom:roomId];
     if (room == nil) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Room not found"});
@@ -212,13 +212,13 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoRoom *room = [StringeeVideoConferenceManager getRoom:roomId];
     if (room == nil) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Room not found"});
         return;
     }
-    
+
     StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:trackId];
     if (track == nil) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Track not found"});
@@ -246,7 +246,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoRoom *room = [StringeeVideoConferenceManager getRoom:roomId];
     if (room == nil) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Room not found"});
@@ -257,7 +257,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         // Sau khi leave thi xoa het data da cache
         [StringeeVideoConferenceManager removeRoom:room.roomId];
         [StringeeVideoConferenceManager removeAllTracksForRoom:room.roomId];
-            
+
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
 }
@@ -275,7 +275,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoRoom *room = [StringeeVideoConferenceManager getRoom:roomId];
     if (room == nil) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Room not found"});
@@ -292,12 +292,12 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
 - (void)mute:(NSDictionary *)data result:(FlutterResult)result {
     NSString *localTrackId = [data objectForKey:@"localId"];
     BOOL mute = [[data objectForKey:@"mute"] boolValue];
-    
+
     if (![StringeeHelper validString:localTrackId]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:localTrackId];
     if (track == nil) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Track not found"});
@@ -313,12 +313,12 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
 - (void)enableVideo:(NSDictionary *)data result:(FlutterResult)result {
     NSString *localTrackId = [data objectForKey:@"localId"];
     BOOL enable = [[data objectForKey:@"enable"] boolValue];
-    
+
     if (![StringeeHelper validString:localTrackId]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:localTrackId];
     if (track == nil) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Track not found"});
@@ -333,12 +333,12 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
 
 - (void)switchCamera:(NSDictionary *)data result:(FlutterResult)result {
     NSString *localTrackId = [data objectForKey:@"localId"];
-    
+
     if (![StringeeHelper validString:localTrackId]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:localTrackId];
     if (track == nil) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Track not found"});
@@ -353,12 +353,12 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
 
 - (void)close:(NSDictionary *)data result:(FlutterResult)result {
     NSString *localTrackId = [data objectForKey:@"localId"];
-    
+
     if (![StringeeHelper validString:localTrackId]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
         return;
     }
-    
+
     StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:localTrackId];
     if (track == nil) {
         result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"Track not found"});
@@ -404,7 +404,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (room == nil || room.roomId == nil || room.roomId.length == 0) {
         return;
     }
-    
+
     [_rooms setObject:room forKey:room.roomId];
 }
 
@@ -412,7 +412,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (![StringeeHelper validString:roomId]) {
         return nil;
     }
-    
+
     return [_rooms objectForKey:roomId];
 }
 
@@ -420,7 +420,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (![StringeeHelper validString:roomId]) {
         return;
     }
-    
+
     [_rooms removeObjectForKey:roomId];
 }
 
@@ -428,7 +428,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (track == nil) {
         return;
     }
-    
+
     if ([StringeeHelper validString:track.serverId]) {
         [_remoteTracks setObject:track forKey:track.serverId];
     } else if ([StringeeHelper validString:track.localId]) {
@@ -441,12 +441,12 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (![StringeeHelper validString:trackId]) {
         return nil;
     }
-    
+
     StringeeVideoTrack *track = [_remoteTracks objectForKey:trackId];
     if (track != nil) {
         return track;
     }
-    
+
     return [_localTracks objectForKey:trackId];
 }
 
@@ -454,7 +454,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (![StringeeHelper validString:trackId]) {
         return;
     }
-    
+
     [_localTracks removeObjectForKey:trackId];
     [_remoteTracks removeObjectForKey:trackId];
 }
@@ -463,7 +463,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     if (![StringeeHelper validString:roomId]) {
         return;
     }
-    
+
     NSMutableArray *localKeys = [NSMutableArray new];
     for (StringeeVideoTrack *track in _localTracks.allValues) {
         if ([track.room.roomId isEqualToString:roomId]) {
@@ -474,7 +474,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
         }
     }
     [_localTracks removeObjectsForKeys:localKeys];
-    
+
     NSMutableArray *remoteKeys = [NSMutableArray new];
     for (StringeeVideoTrack *track in _remoteTracks.allValues) {
         if ([track.room.roomId isEqualToString:roomId]) {
