@@ -535,7 +535,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "rejectChatRequest":
                 clientWrapper.chatRequest().rejectChatRequest((String) call.argument("convId"), result);
                 break;
-            case "video.connect":
+            case "video.joinRoom":
                 clientWrapper.videoConference().connect((String) call.argument("roomToken"), result);
                 break;
             case "video.createLocalVideoTrack":
@@ -561,22 +561,19 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             break;
                     }
 
-                    clientWrapper.videoConference().createLocalVideoTrack((String) call.argument("localId"), options, result);
+                    clientWrapper.videoConference().createLocalVideoTrack(options, result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
             case "video.createCaptureScreenTrack":
-                clientWrapper.videoConference().createCaptureScreenTrack((String) call.argument("localId"), result);
-                break;
-            case "video.release":
-                clientWrapper.videoConference().release((String) call.argument("roomId"), result);
+                clientWrapper.videoConference().createCaptureScreenTrack(result);
                 break;
             case "room.publish":
                 clientWrapper.videoConference().publish((String) call.argument("roomId"), (String) call.argument("localId"), result);
                 break;
             case "room.unpublish":
-                clientWrapper.videoConference().unpublish((String) call.argument("roomId"), (String) call.argument("trackId"), result);
+                clientWrapper.videoConference().unpublish((String) call.argument("roomId"), (String) call.argument("localId"), result);
                 break;
             case "room.subscribe":
                 try {
@@ -620,20 +617,17 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 }
                 break;
             case "track.mute":
-                clientWrapper.videoConference().mute((String) call.argument("trackId"), (boolean) call.argument("mute"), result);
+                clientWrapper.videoConference().mute((String) call.argument("localId"), (boolean) call.argument("mute"), result);
                 break;
             case "track.enableVideo":
-                clientWrapper.videoConference().enableVideo((String) call.argument("trackId"), (boolean) call.argument("enable"), result);
+                clientWrapper.videoConference().enableVideo((String) call.argument("localId"), (boolean) call.argument("enable"), result);
                 break;
             case "track.switchCamera":
                 if (call.hasArgument("cameraId")) {
-                    clientWrapper.videoConference().switchCamera((String) call.argument("trackId"), (int) call.argument("cameraId"), result);
+                    clientWrapper.videoConference().switchCamera((String) call.argument("localId"), (int) call.argument("cameraId"), result);
                 } else {
-                    clientWrapper.videoConference().switchCamera((String) call.argument("trackId"), result);
+                    clientWrapper.videoConference().switchCamera((String) call.argument("localId"), result);
                 }
-                break;
-            case "track.close":
-                clientWrapper.videoConference().close((String) call.argument("trackId"), result);
                 break;
             default:
                 result.notImplemented();

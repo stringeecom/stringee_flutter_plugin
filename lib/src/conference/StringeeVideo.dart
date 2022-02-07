@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import '../../stringee_flutter_plugin.dart';
-import 'StringeeVideoTrackInfo.dart';
 
 class StringeeVideo {
   late StringeeClient _client;
@@ -22,15 +21,15 @@ class StringeeVideo {
         .invokeMethod('video.joinRoom', params);
 
     if (result['status']) {
-      StringeeVideoRoom room = StringeeVideoRoom(_client, result['body']['room']);
+      StringeeVideoRoom room =
+          StringeeVideoRoom(_client, result['body']['room']);
       result['body']['room'] = room;
 
       List<StringeeVideoTrackInfo> videoTrackList = [];
       List<dynamic> tracksData = result['body']['videoTrackInfos'];
       if (tracksData.length > 0)
-        videoTrackList = tracksData
-            .map((info) => StringeeVideoTrackInfo(info))
-            .toList();
+        videoTrackList =
+            tracksData.map((info) => StringeeVideoTrackInfo(info)).toList();
       result['body']['videoTrackInfos'] = videoTrackList;
 
       List<StringeeRoomUser> userList = [];
@@ -55,7 +54,7 @@ class StringeeVideo {
 
     if (result['status']) {
       StringeeVideoTrack videoTrack =
-      StringeeVideoTrack(_client, result['body']);
+          StringeeVideoTrack(_client, result['body']);
       result['body'] = videoTrack;
     }
     return result;
@@ -63,28 +62,27 @@ class StringeeVideo {
 
   /// Create capture screen [StringeeVideoTrack]
   Future<Map<dynamic, dynamic>> createCaptureScreenTrack() async {
-    final params = {
-      'uuid': _client.uuid,
-    };
+    if (Platform.isAndroid) {
+      final params = {
+        'uuid': _client.uuid,
+      };
 
-    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
-        .invokeMethod('video.createCaptureScreenTrack', params);
+      Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+          .invokeMethod('video.createCaptureScreenTrack', params);
 
-    if (result['status']) {
-      StringeeVideoTrack videoTrack =
-      StringeeVideoTrack(_client, result['body']);
-      result['body'] = videoTrack;
+      if (result['status']) {
+        StringeeVideoTrack videoTrack =
+            StringeeVideoTrack(_client, result['body']);
+        result['body'] = videoTrack;
+      }
+      return result;
+    } else {
+      Map<dynamic, dynamic> result = {
+        'status': false,
+        'code': -1,
+        'message': 'This function is only available in Android',
+      };
+      return result;
     }
-    return result;
   }
-
-  /// Release all [StringeeVideoTrack] in [StringeeRoom]
-  // Future<Map<dynamic, dynamic>> release(StringeeRoom room) async {
-  //   final params = {
-  //     'roomId': room.id,
-  //     'uuid': _client.uuid,
-  //   };
-  //   return await StringeeClient.methodChannel
-  //       .invokeMethod('video.release', params);
-  // }
 }

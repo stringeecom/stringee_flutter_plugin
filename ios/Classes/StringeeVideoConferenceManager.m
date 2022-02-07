@@ -141,7 +141,7 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
     }
 
     NSString *roomId = [data objectForKey:@"roomId"];
-    NSString *trackId = [data objectForKey:@"trackId"];
+    NSString *trackId = [data objectForKey:@"localId"];
 
     if (![StringeeHelper validString:roomId] || ![StringeeHelper validString:trackId]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameter invalid"});
