@@ -107,7 +107,7 @@ class StringeeVideoRoom {
 
   void handleTrackReadyToPlay(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
-    if (roomId != this._id) return;
+    if (roomId != null && roomId != this._id) return;
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.trackReadyToPlay,

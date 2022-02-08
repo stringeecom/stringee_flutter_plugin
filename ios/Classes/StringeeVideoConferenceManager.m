@@ -394,8 +394,8 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
 // MARK: - Stringee Video Track Delegate
 
 - (void)ready:(StringeeVideoTrack *)track {
-    NSLog(@"====== Track ready, localId: %@, serverId: %@", track.localId, track.serverId);
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STETrackReadyToPlay, STEBody : @{ @"roomId" : track.room.roomId, @"track": [StringeeHelper StringeeVideoTrack:track] }});
+    id roomId = track.room.roomId != nil ? track.room.roomId : [NSNull null];
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STETrackReadyToPlay, STEBody : @{ @"roomId" : roomId, @"track": [StringeeHelper StringeeVideoTrack:track] }});
 }
 
 // MARK: - Utils

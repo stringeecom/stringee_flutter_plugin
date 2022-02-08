@@ -26,8 +26,8 @@ class RoomState extends State<Room> {
   late StringeeVideoRoom _room;
   late StringeeVideoTrack _localTrack;
   late StringeeVideoView _localTrackView;
-  List<StringeeVideoTrack> _remoteTracks = [];
-  List<StringeeVideoView> _remoteTrackViews = [];
+  Map<String, StringeeVideoTrack> _remoteTracks = {};
+  Map<String, StringeeVideoView> _remoteTrackViews = {};
 
   late StringeeVideoTrack _shareTrack;
 
@@ -150,15 +150,9 @@ class RoomState extends State<Room> {
         margin: EdgeInsets.only(bottom: 100.0),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: _remoteTrackViews.length,
+          itemCount: _remoteTrackViews.values.length,
           itemBuilder: (context, index) {
-            // return _trackList[index].attach(
-            //   isOverlay: true,
-            //   height: 200.0,
-            //   width: 150.0,
-            //   scalingType: ScalingType.fit,
-            // );
-            return _remoteTrackViews[index];
+            return _remoteTrackViews.values.elementAt(index);
           },
         ),
       ),
@@ -237,7 +231,7 @@ class RoomState extends State<Room> {
           if (value['status']) {
             setState(() {
               StringeeVideoTrack videoTrack = value['body'];
-              _remoteTracks.add(videoTrack);
+              _remoteTracks[videoTrack.id] = videoTrack;
             });
           }
         });
@@ -259,7 +253,7 @@ class RoomState extends State<Room> {
       if (value['status']) {
         setState(() {
           StringeeVideoTrack videoTrack = value['body'];
-          _remoteTracks.add(videoTrack);
+          _remoteTracks[videoTrack.id] = videoTrack;
         });
       }
     });
@@ -267,15 +261,17 @@ class RoomState extends State<Room> {
 
   void handleRemoveVideoTrackEvent(StringeeVideoTrackInfo trackInfo) {
     setState(() {
-      if (_remoteTracks.length > 0) {
-        for (int i = 0; i < _remoteTracks.length; i++) {
-          StringeeVideoTrack track = _remoteTracks[i];
-          if (track.id == trackInfo.id) {
-            _remoteTracks.removeAt(i);
-            _remoteTrackViews.removeAt(i);
-          }
-        }
-      }
+      // if (_remoteTracks.length > 0) {
+      //   for (int i = 0; i < _remoteTracks.length; i++) {
+      //     StringeeVideoTrack track = _remoteTracks[i];
+      //     if (track.id == trackInfo.id) {
+      //       _remoteTracks.removeAt(i);
+      //       _remoteTrackViews.removeAt(i);
+      //     }
+      //   }
+      // }
+      _remoteTracks.remove(trackInfo.id);
+      _remoteTrackViews.remove(trackInfo.id);
     });
   }
 
@@ -293,7 +289,7 @@ class RoomState extends State<Room> {
         );
 
         setState(() {
-          _remoteTrackViews.add(videoView);
+          _remoteTrackViews[videoView.trackId!] = videoView;
         });
       } else {
         setState(() {
@@ -313,7 +309,7 @@ class RoomState extends State<Room> {
       );
 
       setState(() {
-        _remoteTrackViews.add(videoView);
+        _remoteTrackViews[videoView.trackId!] = videoView;
       });
     }
   }
@@ -353,15 +349,16 @@ class RoomState extends State<Room> {
           if (result['status']) {
             setState(() {
               _sharingScreen = false;
-              if (_remoteTracks.length > 0) {
-                for (int i = 0; i < _remoteTracks.length; i++) {
-                  StringeeVideoTrack track = _remoteTracks[i];
-                  if (track.localId == _shareTrack.localId) {
-                    _remoteTracks.removeAt(i);
-                    _remoteTrackViews.removeAt(i);
-                  }
-                }
-              }
+              _remoteTrackViews.remove(_shareTrack.localId);
+              // if (_remoteTracks.length > 0) {
+              //   for (int i = 0; i < _remoteTracks.length; i++) {
+              //     StringeeVideoTrack track = _remoteTracks[i];
+              //     if (track.localId == _shareTrack.localId) {
+              //       _remoteTracks.removeAt(i);
+              //       _remoteTrackViews.removeAt(i);
+              //     }
+              //   }
+              // }
             });
           }
         });
@@ -374,7 +371,7 @@ class RoomState extends State<Room> {
                 setState(() {
                   _sharingScreen = true;
                   _shareTrack = result['body'];
-                  _remoteTracks.add(_shareTrack);
+                  // _remoteTracks.add(_shareTrack);
                 });
               }
             });
