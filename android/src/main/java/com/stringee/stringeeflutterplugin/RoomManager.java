@@ -15,6 +15,7 @@ import com.stringee.video.StringeeRoom;
 import com.stringee.video.StringeeVideo;
 import com.stringee.video.StringeeVideoTrack;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -436,7 +437,7 @@ public class RoomManager implements StringeeRoomListener {
                     bodyMap.put("from", Utils.convertRoomUserToMap(remoteParticipant));
                     map.put("body", bodyMap);
                     StringeeFlutterPlugin.eventSink.success(map);
-                } catch (org.json.JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }

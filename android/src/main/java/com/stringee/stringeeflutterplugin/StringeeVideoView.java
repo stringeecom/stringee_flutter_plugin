@@ -206,14 +206,14 @@ public class StringeeVideoView implements PlatformView {
                         StringeeManager.getInstance().getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                SurfaceViewRenderer localView = videoTrackManager.getVideoTrack().getView(context);
-                                if (localView.getParent() != null) {
-                                    ((FrameLayout) localView.getParent()).removeView(localView);
+                                SurfaceViewRenderer trackView = videoTrackManager.getVideoTrack().getView(context);
+                                if (trackView.getParent() != null) {
+                                    ((FrameLayout) trackView.getParent()).removeView(trackView);
                                 }
 
-                                layout.addView(localView, layoutParams);
+                                layout.addView(trackView, layoutParams);
                                 videoTrackManager.getVideoTrack().renderView(isOverlay, scalingType);
-                                localView.setMirror(isMirror);
+                                trackView.setMirror(isMirror);
                             }
                         });
                     }

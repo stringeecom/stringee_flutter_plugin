@@ -16,6 +16,7 @@ public class VideoTrackManager implements Listener {
     private String localId;
     private StringeeVideoTrack videoTrack;
     private boolean mediaAvailable = false;
+    private boolean forCall = false;
     private Listener listener;
     private static final String TAG = "StringeeSDK";
 
@@ -23,6 +24,7 @@ public class VideoTrackManager implements Listener {
         this.clientWrapper = clientWrapper;
         this.videoTrack = videoTrack;
         this.localId = localId;
+        this.forCall = forCall;
         videoTrack.setListener(this);
         if (forCall) {
             mediaAvailable = true;
@@ -60,16 +62,18 @@ public class VideoTrackManager implements Listener {
                     listener.onMediaAvailable();
                 }
 
-                Log.d(TAG, "trackReadyToPlay: " + videoTrack.getId());
-                Map map = new HashMap();
-                map.put("nativeEventType", RoomEvent.getValue());
-                map.put("event", "trackReadyToPlay");
-                map.put("uuid", clientWrapper.getId());
-                Map bodyMap = new HashMap();
-                bodyMap.put("roomId", videoTrack.getRoomId());
-                bodyMap.put("track", Utils.convertVideoTrackToMap(getThis()));
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin.eventSink.success(map);
+                Log.d(TAG, "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId()));
+                if (!forCall) {
+                    Map map = new HashMap();
+                    map.put("nativeEventType", RoomEvent.getValue());
+                    map.put("event", "trackReadyToPlay");
+                    map.put("uuid", clientWrapper.getId());
+                    Map bodyMap = new HashMap();
+                    bodyMap.put("roomId", videoTrack.getRoomId());
+                    bodyMap.put("track", Utils.convertVideoTrackToMap(getThis()));
+                    map.put("body", bodyMap);
+                    StringeeFlutterPlugin.eventSink.success(map);
+                }
             }
         });
     }
