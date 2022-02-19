@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import '../stringee_flutter_plugin.dart';
+
 /// Events for StringeeClient
 enum StringeeClientEvents {
   didConnect,
@@ -498,5 +500,31 @@ class GUIDGen {
     final StringBuffer buffer = new StringBuffer();
     buffer.writeAll(uuid);
     return buffer.toString();
+  }
+}
+
+class SortUtils {
+  static List<StringeeConversation> sortConversation(
+      List<StringeeConversation> conversations, bool isAscending) {
+    if (isAscending) {
+      conversations.sort((conversation1, conversation2) =>
+          conversation1.updatedAt!.compareTo(conversation2.updatedAt!));
+    } else {
+      conversations.sort((conversation1, conversation2) =>
+          conversation2.updatedAt!.compareTo(conversation1.updatedAt!));
+    }
+    return conversations;
+  }
+
+  static List<StringeeMessage> sortMessage(
+      List<StringeeMessage> messages, bool isAscending) {
+    if (isAscending) {
+      messages.sort((message1, message2) =>
+          message1.sequence!.compareTo(message2.sequence!));
+    } else {
+      messages.sort((message1, message2) =>
+          message2.sequence!.compareTo(message1.sequence!));
+    }
+    return messages;
   }
 }

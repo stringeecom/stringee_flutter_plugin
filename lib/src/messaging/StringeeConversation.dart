@@ -213,11 +213,13 @@ class StringeeConversation {
 
     return await StringeeClient.methodChannel
         .invokeMethod('sendMessage', params);
-    // return await StringeeClient.methodChannel.invokeMethod('sendMessage', json.encode(message));
   }
 
   /// Get [List] of [StringeeMessage] of [StringeeConversation] by [msgIds]
-  Future<Map<dynamic, dynamic>> getMessages(List<String> msgIds) async {
+  Future<Map<dynamic, dynamic>> getMessages(
+    List<String> msgIds, {
+    bool? isAscending,
+  }) async {
     if (msgIds.length == 0) return await reportInvalidValue('msgIds');
     final params = {'convId': this._id, 'msgIds': msgIds, 'uuid': _client.uuid};
     Map<dynamic, dynamic> result =
@@ -229,13 +231,21 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
+      if (isAscending == null) {
+        messages = SortUtils.sortMessage(messages, true);
+      } else {
+        messages = SortUtils.sortMessage(messages, isAscending);
+      }
       result['body'] = messages;
     }
     return result;
   }
 
   /// Get [count] of local [StringeeMessage] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> getLocalMessages(int count) async {
+  Future<Map<dynamic, dynamic>> getLocalMessages(
+    int count, {
+    bool? isAscending,
+  }) async {
     if (count <= 0) return await reportInvalidValue('count');
     final params = {'convId': this._id, 'count': count, 'uuid': _client.uuid};
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
@@ -247,13 +257,21 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
+      if (isAscending == null) {
+        messages = SortUtils.sortMessage(messages, true);
+      } else {
+        messages = SortUtils.sortMessage(messages, isAscending);
+      }
       result['body'] = messages;
     }
     return result;
   }
 
   /// Get [count] of lastest [StringeeMessage] of [StringeeConversation]
-  Future<Map<dynamic, dynamic>> getLastMessages(int count) async {
+  Future<Map<dynamic, dynamic>> getLastMessages(
+    int count, {
+    bool? isAscending,
+  }) async {
     if (count <= 0) return await reportInvalidValue('count');
     final params = {'convId': this._id, 'count': count, 'uuid': _client.uuid};
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
@@ -265,6 +283,11 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
+      if (isAscending == null) {
+        messages = SortUtils.sortMessage(messages, true);
+      } else {
+        messages = SortUtils.sortMessage(messages, isAscending);
+      }
       result['body'] = messages;
     }
     return result;
@@ -272,7 +295,10 @@ class StringeeConversation {
 
   /// Get [count] of [StringeeMessage] after [StringeeMessage.sequence] of [StringeeConversation]
   Future<Map<dynamic, dynamic>> getMessagesAfter(
-      int count, int sequence) async {
+    int count,
+    int sequence, {
+    bool? isAscending,
+  }) async {
     if (count <= 0) return await reportInvalidValue('count');
     if (sequence < 0) return await reportInvalidValue('sequence');
     final params = {
@@ -290,6 +316,11 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
+      if (isAscending == null) {
+        messages = SortUtils.sortMessage(messages, true);
+      } else {
+        messages = SortUtils.sortMessage(messages, isAscending);
+      }
       result['body'] = messages;
     }
     return result;
@@ -297,7 +328,10 @@ class StringeeConversation {
 
   /// Get [count] of [StringeeMessage] before [StringeeMessage.sequence] of [StringeeConversation]
   Future<Map<dynamic, dynamic>> getMessagesBefore(
-      int count, int sequence) async {
+    int count,
+    int sequence, {
+    bool? isAscending,
+  }) async {
     if (count <= 0) return await reportInvalidValue('count');
     if (sequence < 0) return await reportInvalidValue('sequence');
     final params = {
@@ -314,6 +348,11 @@ class StringeeConversation {
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
+      }
+      if (isAscending == null) {
+        messages = SortUtils.sortMessage(messages, true);
+      } else {
+        messages = SortUtils.sortMessage(messages, isAscending);
       }
       result['body'] = messages;
     }

@@ -1,7 +1,5 @@
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
-import 'StringeeRoomUser.dart';
-
 class StringeeVideoTrackInfo {
   late String _id;
   late bool _audioEnable;
