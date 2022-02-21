@@ -182,10 +182,8 @@ class StringeeChat {
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
       }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
+      if (isAscending != null && isAscending) {
+        conversations.reversed;
       }
       result['body'] = conversations;
     }
@@ -214,10 +212,8 @@ class StringeeChat {
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
       }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
+      if (isAscending != null && isAscending) {
+        conversations.reversed;
       }
       result['body'] = conversations;
     }
@@ -247,10 +243,8 @@ class StringeeChat {
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
       }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
+      if (isAscending != null && isAscending) {
+        conversations.reversed;
       }
       result['body'] = conversations;
     }
@@ -280,10 +274,8 @@ class StringeeChat {
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
       }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
+      if (isAscending != null && isAscending) {
+        conversations.reversed;
       }
       result['body'] = conversations;
     }

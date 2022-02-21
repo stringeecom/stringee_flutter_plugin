@@ -216,10 +216,7 @@ class StringeeConversation {
   }
 
   /// Get [List] of [StringeeMessage] of [StringeeConversation] by [msgIds]
-  Future<Map<dynamic, dynamic>> getMessages(
-    List<String> msgIds, {
-    bool? isAscending,
-  }) async {
+  Future<Map<dynamic, dynamic>> getMessages(List<String> msgIds) async {
     if (msgIds.length == 0) return await reportInvalidValue('msgIds');
     final params = {'convId': this._id, 'msgIds': msgIds, 'uuid': _client.uuid};
     Map<dynamic, dynamic> result =
@@ -230,11 +227,6 @@ class StringeeConversation {
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
-      }
-      if (isAscending == null) {
-        messages = SortUtils.sortMessage(messages, true);
-      } else {
-        messages = SortUtils.sortMessage(messages, isAscending);
       }
       result['body'] = messages;
     }
@@ -257,10 +249,8 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
-      if (isAscending == null) {
-        messages = SortUtils.sortMessage(messages, true);
-      } else {
-        messages = SortUtils.sortMessage(messages, isAscending);
+      if (isAscending != null && !isAscending) {
+        messages.reversed;
       }
       result['body'] = messages;
     }
@@ -283,10 +273,8 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
-      if (isAscending == null) {
-        messages = SortUtils.sortMessage(messages, true);
-      } else {
-        messages = SortUtils.sortMessage(messages, isAscending);
+      if (isAscending != null && !isAscending) {
+        messages.reversed;
       }
       result['body'] = messages;
     }
@@ -316,10 +304,8 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
-      if (isAscending == null) {
-        messages = SortUtils.sortMessage(messages, true);
-      } else {
-        messages = SortUtils.sortMessage(messages, isAscending);
+      if (isAscending != null && !isAscending) {
+        messages.reversed;
       }
       result['body'] = messages;
     }
@@ -349,10 +335,8 @@ class StringeeConversation {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
       }
-      if (isAscending == null) {
-        messages = SortUtils.sortMessage(messages, true);
-      } else {
-        messages = SortUtils.sortMessage(messages, isAscending);
+      if (isAscending != null && !isAscending) {
+        messages.reversed;
       }
       result['body'] = messages;
     }
