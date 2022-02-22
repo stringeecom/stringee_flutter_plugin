@@ -3,6 +3,8 @@ import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/ui/room.dart';
 
 StringeeClient client = new StringeeClient();
+String user1 = "eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2NDQyODY4MTkiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNzQ0Mjg2ODE5LCJ1c2VySWQiOiJ1c2VyMSJ9.OMsDSJvQ2sloRwzQ2yEkssb3sT6_r2JjpKjbnzbxQF4";
+String user2 = "eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2NDQyODcwODkiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNzQ0Mjg3MDg5LCJ1c2VySWQiOiJ1c2VyMiJ9.aVgg6cBM_KHabPKV1OYPGYZF3vxK7dRaR9iMqBw3dI8";
 
 class ConferenceTab extends StatefulWidget {
   @override
@@ -14,8 +16,8 @@ class ConferenceTab extends StatefulWidget {
 
 class ConferenceTabState extends State<ConferenceTab> {
   String myUserId = 'Not connected...';
-  String token = '';
-  String roomToken = '';
+  String token = user2;
+  String roomToken = "eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2NDQyODgyNDUiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNzQ0Mjg4MjQ1LCJyb29tSWQiOiJyb29tLXZuLTEtVEMwRjUxSDhCUC0xNTg5MzcwMDM4Nzg4IiwicGVybWlzc2lvbnMiOnsicHVibGlzaCI6dHJ1ZSwic3Vic2NyaWJlIjp0cnVlLCJjb250cm9sX3Jvb20iOnRydWUsInJlY29yZCI6dHJ1ZX19.V42yZYwWvDfzWPUAz7qXtxFGkni-OUUJUvzXK9S_Zwg";
 
   @override
   void initState() {

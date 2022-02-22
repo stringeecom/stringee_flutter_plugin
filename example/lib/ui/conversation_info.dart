@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
@@ -188,7 +189,9 @@ class ConversationInforState extends State<ConversationInfor> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
                           onPressed: () {
                             widget._conversation.delete().then((value) {
                               print(value.toString());
@@ -207,7 +210,9 @@ class ConversationInforState extends State<ConversationInfor> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
                           onPressed: () {
                             widget._conversation
                                 .addParticipants(users)
@@ -236,7 +241,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation
                                   .removeParticipants(users)
@@ -257,7 +264,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation
                                   .sendMessage(msg)
@@ -287,7 +296,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation.getMessages([
                                 'msg-vn-1-MWE3BG0IJE-1610578358918',
@@ -313,7 +324,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation
                                   .getLocalMessages(3)
@@ -347,21 +360,20 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation
                                   .getLastMessages(50)
                                   .then((value) {
-                                // print(value.toString());
+                                print(value.toString());
                                 setState(() {
                                   _log.add('Get last Messages: msg:' +
                                       value['message']);
                                   if (value['status']) {
                                     _messages.clear();
                                     _messages.addAll(value['body']);
-                                    for (int i = 0; i < _messages.length; i++) {
-                                      print(_messages[i].createdAt);
-                                    }
                                   }
                                 });
                               });
@@ -375,7 +387,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation
                                   .getMessagesAfter(50, 4)
@@ -409,7 +423,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation
                                   .getMessagesBefore(50, 4)
@@ -434,7 +450,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               String newConvName =
                                   widget._conversation.name! + ' NEW NAME';
@@ -466,10 +484,12 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation
-                                  .setRole('user1', UserRole.admin)
+                                  .setRole('id1', UserRole.member)
                                   .then((value) {
                                 print(value.toString());
                                 setState(() {
@@ -486,7 +506,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation.deleteMessages(
                                   ['msgid1', 'msgid2']).then((value) {
@@ -515,7 +537,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation.revokeMessages(
                                   ['msgid1', 'msgid2'], true).then((value) {
@@ -535,7 +559,9 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               widget._conversation.markAsRead().then((value) {
                                 print(value.toString());
@@ -587,7 +613,9 @@ class ConversationInforState extends State<ConversationInfor> {
               textAlign: TextAlign.center,
             ),
           ),
-          new TextButton(
+          new FlatButton(
+            color: Colors.grey[300],
+            textColor: Colors.black,
             onPressed: () {
               message.pinOrUnPin(false).then((value) {
                 print(value.toString());

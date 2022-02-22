@@ -15,10 +15,7 @@ class ChatTab extends StatefulWidget {
 
 class ChatTabState extends State<ChatTab> {
   String myUserId = 'Not connected...';
-
-  // String token = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2NDUxNzkyNTMiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjQ3NzcxMjUzLCJ1c2VySWQiOiJ1c2VyMSJ9.resle_A9sXLDrCiy1XhFUq6Qk6nj7xUe6WN8-peeSNg';
-  String token =
-      'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2NDUxODI0OTciLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjQ3Nzc0NDk3LCJ1c2VySWQiOiJ1c2VyMiJ9.FZnwlx62TmXUVP_de9zqh76TDZTWiE-i9mymbfx8ePE';
+  String token = '';
 
   List<String> _log = [];
   List<StringeeConversation> _conversations = [];
@@ -206,7 +203,9 @@ class ChatTabState extends State<ChatTab> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
                           onPressed: () {
                             List<StringeeUser> participants = [];
                             StringeeUser user1 =
@@ -246,7 +245,9 @@ class ChatTabState extends State<ChatTab> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: new RaisedButton(
+                          color: Colors.grey[300],
+                          textColor: Colors.black,
                           onPressed: () {
                             chat.getConversationById('convid').then((value) {
                               print("Flutter - getConversationById - result: " +
@@ -279,7 +280,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               chat.getConversationByUserId('id2').then((value) {
                                 print(
@@ -304,7 +307,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               chat.getTotalUnread().then((value) {
                                 print(value.toString());
@@ -332,7 +337,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               chat.getLocalConversations().then((value) {
                                 print(
@@ -357,7 +364,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               chat.getLastConversation(50).then((value) {
                                 print(
@@ -391,7 +400,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               chat
                                   .getConversationsBefore(2, 1602215811388)
@@ -418,7 +429,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               chat
                                   .getConversationsAfter(2, 1602215811388)
@@ -454,7 +467,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               chat.clearDb().then((value) {
                                 setState(() {
@@ -472,7 +487,9 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
                             onPressed: () {
                               setState(() {
                                 _conversations.clear();
