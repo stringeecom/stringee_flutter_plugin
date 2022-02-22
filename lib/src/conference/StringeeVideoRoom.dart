@@ -56,7 +56,6 @@ class StringeeVideoRoom {
   void handleDidJoinRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
-
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didJoinRoom,
       "body": StringeeRoomUser(map['user'])
@@ -96,7 +95,6 @@ class StringeeVideoRoom {
   void handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
-
     Map<dynamic, dynamic> bodyMap = {
       'msg': map['msg'],
       'from': StringeeRoomUser(map['from'])

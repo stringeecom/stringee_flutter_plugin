@@ -81,9 +81,7 @@ class StringeeChat {
   }
 
   /// Create live-chat [StringeeConversation]
-  Future<Map<dynamic, dynamic>> createLiveChatConversation(
-    String queueId,
-  ) async {
+  Future<Map<dynamic, dynamic>> createLiveChatConversation(String queueId) async {
     if (queueId.trim().isEmpty) return await reportInvalidValue('queueId');
 
     final params = {
@@ -165,10 +163,7 @@ class StringeeChat {
   }
 
   /// Get local [StringeeConversation]
-  Future<Map<dynamic, dynamic>> getLocalConversations({
-    String? oaId,
-    bool? isAscending,
-  }) async {
+  Future<Map<dynamic, dynamic>> getLocalConversations({String? oaId}) async {
     final params = {
       if (oaId != null) 'oaId': oaId,
       'uuid': _client.uuid,
@@ -182,11 +177,6 @@ class StringeeChat {
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
       }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
-      }
       result['body'] = conversations;
     }
     return result;
@@ -196,7 +186,6 @@ class StringeeChat {
   Future<Map<dynamic, dynamic>> getLastConversation(
     int count, {
     String? oaId,
-    bool? isAscending,
   }) async {
     if (count <= 0) return await reportInvalidValue('count');
 
@@ -214,11 +203,6 @@ class StringeeChat {
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
       }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
-      }
       result['body'] = conversations;
     }
     return result;
@@ -229,7 +213,6 @@ class StringeeChat {
     int count,
     int datetime, {
     String? oaId,
-    bool? isAscending,
   }) async {
     if (count <= 0) return await reportInvalidValue('count');
     if (datetime <= 0) return await reportInvalidValue('datetime');
@@ -247,11 +230,6 @@ class StringeeChat {
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
       }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
-      }
       result['body'] = conversations;
     }
     return result;
@@ -262,7 +240,6 @@ class StringeeChat {
     int count,
     int datetime, {
     String? oaId,
-    bool? isAscending,
   }) async {
     if (count <= 0) return await reportInvalidValue('count');
     if (datetime <= 0) return await reportInvalidValue('datetime');
@@ -279,11 +256,6 @@ class StringeeChat {
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
-      }
-      if (isAscending == null) {
-        conversations = SortUtils.sortConversation(conversations, true);
-      } else {
-        conversations = SortUtils.sortConversation(conversations, isAscending);
       }
       result['body'] = conversations;
     }
