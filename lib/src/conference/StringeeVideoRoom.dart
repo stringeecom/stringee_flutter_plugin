@@ -56,6 +56,7 @@ class StringeeVideoRoom {
   void handleDidJoinRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
+
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didJoinRoom,
       "body": StringeeRoomUser(map['user'])

@@ -1,7 +1,5 @@
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
-import 'StringeeRoomUser.dart';
-
 class StringeeVideoTrackInfo {
   late String _id;
   late bool _audioEnable;
@@ -10,9 +8,13 @@ class StringeeVideoTrackInfo {
   late StringeeRoomUser _publisher;
 
   String get id => _id;
+
   bool get audioEnable => _audioEnable;
+
   bool get videoEnable => _videoEnable;
+
   bool get isScreenCapture => _isScreenCapture;
+
   StringeeRoomUser get publisher => _publisher;
 
   StringeeVideoTrackInfo(Map<dynamic, dynamic> info) {

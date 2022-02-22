@@ -189,9 +189,7 @@ class ConversationInforState extends State<ConversationInfor> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
+                        child: new ElevatedButton(
                           onPressed: () {
                             widget._conversation.delete().then((value) {
                               print(value.toString());
@@ -210,9 +208,7 @@ class ConversationInforState extends State<ConversationInfor> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
+                        child: new ElevatedButton(
                           onPressed: () {
                             widget._conversation
                                 .addParticipants(users)
@@ -241,9 +237,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .removeParticipants(users)
@@ -264,9 +258,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .sendMessage(msg)
@@ -296,9 +288,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation.getMessages([
                                 'msg-vn-1-MWE3BG0IJE-1610578358918',
@@ -324,9 +314,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getLocalMessages(3)
@@ -360,9 +348,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getLastMessages(50)
@@ -387,9 +373,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getMessagesAfter(50, 4)
@@ -423,9 +407,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getMessagesBefore(50, 4)
@@ -450,9 +432,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               String newConvName =
                                   widget._conversation.name! + ' NEW NAME';
@@ -484,9 +464,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .setRole('id1', UserRole.member)
@@ -506,9 +484,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation.deleteMessages(
                                   ['msgid1', 'msgid2']).then((value) {
@@ -537,9 +513,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation.revokeMessages(
                                   ['msgid1', 'msgid2'], true).then((value) {
@@ -559,9 +533,7 @@ class ConversationInforState extends State<ConversationInfor> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation.markAsRead().then((value) {
                                 print(value.toString());

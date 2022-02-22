@@ -203,9 +203,7 @@ class ChatTabState extends State<ChatTab> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
+                        child: new ElevatedButton(
                           onPressed: () {
                             List<StringeeUser> participants = [];
                             StringeeUser user1 =
@@ -245,9 +243,7 @@ class ChatTabState extends State<ChatTab> {
                       new Container(
                         height: 40.0,
                         width: 175.0,
-                        child: new RaisedButton(
-                          color: Colors.grey[300],
-                          textColor: Colors.black,
+                        child: new ElevatedButton(
                           onPressed: () {
                             chat.getConversationById('convid').then((value) {
                               print("Flutter - getConversationById - result: " +
@@ -280,9 +276,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               chat.getConversationByUserId('id2').then((value) {
                                 print(
@@ -307,9 +301,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               chat.getTotalUnread().then((value) {
                                 print(value.toString());
@@ -337,9 +329,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               chat.getLocalConversations().then((value) {
                                 print(
@@ -364,9 +354,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               chat.getLastConversation(50).then((value) {
                                 print(
@@ -400,9 +388,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               chat
                                   .getConversationsBefore(2, 1602215811388)
@@ -429,9 +415,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               chat
                                   .getConversationsAfter(2, 1602215811388)
@@ -467,9 +451,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               chat.clearDb().then((value) {
                                 setState(() {
@@ -487,9 +469,7 @@ class ChatTabState extends State<ChatTab> {
                         new Container(
                           height: 40.0,
                           width: 175.0,
-                          child: new RaisedButton(
-                            color: Colors.grey[300],
-                            textColor: Colors.black,
+                          child: new ElevatedButton(
                             onPressed: () {
                               setState(() {
                                 _conversations.clear();

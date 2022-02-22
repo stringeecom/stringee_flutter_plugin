@@ -261,15 +261,6 @@ class RoomState extends State<Room> {
 
   void handleRemoveVideoTrackEvent(StringeeVideoTrackInfo trackInfo) {
     setState(() {
-      // if (_remoteTracks.length > 0) {
-      //   for (int i = 0; i < _remoteTracks.length; i++) {
-      //     StringeeVideoTrack track = _remoteTracks[i];
-      //     if (track.id == trackInfo.id) {
-      //       _remoteTracks.removeAt(i);
-      //       _remoteTrackViews.removeAt(i);
-      //     }
-      //   }
-      // }
       _remoteTracks.remove(trackInfo.id);
       _remoteTrackViews.remove(trackInfo.id);
     });
@@ -349,16 +340,8 @@ class RoomState extends State<Room> {
           if (result['status']) {
             setState(() {
               _sharingScreen = false;
+              _remoteTracks.remove(_shareTrack.localId);
               _remoteTrackViews.remove(_shareTrack.localId);
-              // if (_remoteTracks.length > 0) {
-              //   for (int i = 0; i < _remoteTracks.length; i++) {
-              //     StringeeVideoTrack track = _remoteTracks[i];
-              //     if (track.localId == _shareTrack.localId) {
-              //       _remoteTracks.removeAt(i);
-              //       _remoteTrackViews.removeAt(i);
-              //     }
-              //   }
-              // }
             });
           }
         });
@@ -371,7 +354,7 @@ class RoomState extends State<Room> {
                 setState(() {
                   _sharingScreen = true;
                   _shareTrack = result['body'];
-                  // _remoteTracks.add(_shareTrack);
+                  _remoteTracks[_shareTrack.localId] = _shareTrack;
                 });
               }
             });
