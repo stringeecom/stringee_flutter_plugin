@@ -939,14 +939,19 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 Log.d(TAG, "didRemoveVideoTrack");
                 VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(stringeeVideoTrack.isLocal() ? shareId : stringeeVideoTrack.getId());
 
-                Map map = new HashMap();
-                map.put("nativeEventType", Call2Event.getValue());
-                map.put("event", "didRemoveVideoTrack");
-                map.put("uuid", clientWrapper.getId());
-                Map bodyMap = new HashMap();
-                bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(videoTrackManager));
-                map.put("body", bodyMap);
-                StringeeFlutterPlugin.eventSink.success(map);
+                if (videoTrackManager!= null){
+                    StringeeVideoTrack videoTrack = videoTrackManager.getVideoTrack();
+                    if(videoTrack!= null){
+                        Map map = new HashMap();
+                        map.put("nativeEventType", Call2Event.getValue());
+                        map.put("event", "didRemoveVideoTrack");
+                        map.put("uuid", clientWrapper.getId());
+                        Map bodyMap = new HashMap();
+                        bodyMap.put("videoTrack", Utils.convertVideoTrackToMap(videoTrackManager));
+                        map.put("body", bodyMap);
+                        StringeeFlutterPlugin.eventSink.success(map);
+                    }
+                }
             }
         });
     }
