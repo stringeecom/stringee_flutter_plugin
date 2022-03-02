@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:stringee_flutter_plugin/src/notification/NotificationChannel.dart';
@@ -34,30 +35,62 @@ class StringeeNotification {
   /// Create notification channel in android API >= 26
   Future<Map<dynamic, dynamic>> createChannel(
       NotificationChannel notificationChannel) async {
-    return await methodChannel.invokeMethod(
-        'createChannel', notificationChannel.toJson());
+    if (Platform.isIOS) {
+      final params = {
+        'status': false,
+        "code": '-4',
+        "message": "This function work only for Android",
+      };
+      return params;
+    } else {
+      return await methodChannel.invokeMethod(
+          'createChannel', notificationChannel.toJson());
+    }
   }
 
   /// Show notification
   Future<Map<dynamic, dynamic>> showNotification(
       NotificationAndroid notification) async {
-    return await methodChannel.invokeMethod(
-        'showNotification', notification.toJson());
+    if (Platform.isIOS) {
+      final params = {
+        'status': false,
+        "code": '-4',
+        "message": "This function work only for Android",
+      };
+      return params;
+    } else {
+      return await methodChannel.invokeMethod(
+          'showNotification', notification.toJson());
+    }
   }
 
   /// Cancel notification
   Future<Map<dynamic, dynamic>> cancel(int notificationId) async {
-    return await methodChannel.invokeMethod('cancel', notificationId);
+
+    if (Platform.isIOS) {
+      final params = {
+        'status': false,
+        "code": '-4',
+        "message": "This function work only for Android",
+      };
+      return params;
+    } else {
+      return await methodChannel.invokeMethod('cancel', notificationId);
+    }
   }
 
   /// Start foreground service
   Future<void> startForegroundService(NotificationAndroid notification) async {
-    await methodChannel.invokeMethod(
-        'startForegroundService', notification.toJson());
+    if (Platform.isAndroid) {
+      await methodChannel.invokeMethod(
+          'startForegroundService', notification.toJson());
+    }
   }
 
   /// Stop foreground service
   Future<void> stopForegroundService() async {
-    await methodChannel.invokeMethod('stopForegroundService');
+    if (Platform.isAndroid) {
+      await methodChannel.invokeMethod('stopForegroundService');
+    }
   }
 }
