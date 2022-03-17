@@ -1,7 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
 import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event;
-import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.CallEvent;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -87,7 +86,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                             codeList.add(audioDeviceList.get(i).ordinal());
                         }
                         Map map = new HashMap();
-                        map.put("nativeEventType", CallEvent.getValue());
+                        map.put("nativeEventType", Call2Event.getValue());
                         map.put("event", "didChangeAudioDevice");
                         map.put("uuid", clientWrapper.getId());
                         Map bodyMap = new HashMap();
@@ -939,9 +938,9 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 Log.d(TAG, "didRemoveVideoTrack");
                 VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(stringeeVideoTrack.isLocal() ? shareId : stringeeVideoTrack.getId());
 
-                if (videoTrackManager!= null){
+                if (videoTrackManager != null) {
                     StringeeVideoTrack videoTrack = videoTrackManager.getVideoTrack();
-                    if(videoTrack!= null){
+                    if (videoTrack != null) {
                         Map map = new HashMap();
                         map.put("nativeEventType", Call2Event.getValue());
                         map.put("event", "didRemoveVideoTrack");
