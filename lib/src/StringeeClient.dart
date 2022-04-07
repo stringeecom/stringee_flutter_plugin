@@ -157,6 +157,32 @@ class StringeeClient {
     return await methodChannel.invokeMethod('registerPush', params);
   }
 
+  /// Register push from Stringee by [deviceToken] and delete another [deviceToken] of other package by [packageNames]
+  Future<Map<dynamic, dynamic>> registerPushAndDeleteOthers(
+    String deviceToken,
+    List<String> packageNames, {
+    bool? isProduction,
+    bool? isVoip,
+  }) async {
+    if (deviceToken.trim().isEmpty)
+      return await reportInvalidValue('deviceToken');
+    if (packageNames.length == 0)
+      return await reportInvalidValue('packageNames');
+    Map<dynamic, dynamic> params = {
+      'deviceToken': deviceToken.trim(),
+      'packageNames': packageNames,
+      'uuid': _uuid
+    };
+    if (Platform.isIOS) {
+      bool paramIsProduction = isProduction != null ? isProduction : false;
+      bool paramsIsVoip = isVoip != null ? isVoip : true;
+      params['isProduction'] = paramIsProduction;
+      params['isVoip'] = paramsIsVoip;
+    }
+    return await methodChannel.invokeMethod(
+        'registerPushAndDeleteOthers', params);
+  }
+
   /// Unregister push from Stringee by [deviceToken[
   Future<Map<dynamic, dynamic>> unregisterPush(String deviceToken) async {
     if (deviceToken.trim().isEmpty)
