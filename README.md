@@ -7,10 +7,13 @@ A new Flutter plugin.
 For help getting started with Flutter, view our online
 [documentation](https://flutter.io/).
 
-For help on editing plugin code, view the [documentation](https://flutter.io/developing-packages/#edit-plugin-package).
+For help on editing plugin code, view
+the [documentation](https://flutter.io/developing-packages/#edit-plugin-package).
 
 ## Release Notes
+
 ### Flutter v1
+
 - Version 1.0.0-no-null-safety:
     + Add feature: live chat
 - Version 1.1.0-no-null-safety:
@@ -18,6 +21,7 @@ For help on editing plugin code, view the [documentation](https://flutter.io/dev
     + Add feature: share screen in StringeeCall2 in android
 
 ### Flutter v2
+
 - Version 1.0.0:
     + Add feature: live chat
 - Version 1.1.0:
@@ -27,3 +31,5 @@ For help on editing plugin code, view the [documentation](https://flutter.io/dev
     + Add feature: share screen in StringeeCall2 in android
 - Version 1.2.1:
     + Fix bug: fix StringeeVideoView in android
+- Version 1.2.2:
+    + Add feature: Allow to remove device token by package name  
