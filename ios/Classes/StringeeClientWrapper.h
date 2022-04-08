@@ -45,6 +45,8 @@
 
 - (void)registerPush:(id)arguments result:(FlutterResult)result;
 
+- (void)registerPushAndDeleteOthers:(id)arguments result:(FlutterResult)result;
+
 - (void)unregisterPush:(id)arguments result:(FlutterResult)result;
 
 - (void)sendCustomMessage:(id)arguments result:(FlutterResult)result;

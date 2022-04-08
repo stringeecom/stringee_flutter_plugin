@@ -167,6 +167,27 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     }];
 }
 
+- (void)registerPushAndDeleteOthers:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+    
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *deviceToken = data[@"deviceToken"];
+    BOOL isProduction = [data[@"isProduction"] boolValue];
+    BOOL isVoip = [data[@"isVoip"] boolValue];
+    NSArray *packageNames = [data objectForKey:@"packageNames"];
+        
+    if (!deviceToken || [deviceToken isKindOfClass:[NSNull class]] || packageNames == nil || packageNames.count == 0) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Info is invalid."});
+    }
+    
+    [_client registerPushForDeviceToken:deviceToken isProduction:isProduction isVoip:isVoip deleteOthers:true packageNames:packageNames completionHandler:^(BOOL status, int code, NSString *message) {
+        result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
+    }];
+}
+
 - (void)unregisterPush:(id)arguments result:(FlutterResult)result {
     if (!_client || !_client.hasConnected) {
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});

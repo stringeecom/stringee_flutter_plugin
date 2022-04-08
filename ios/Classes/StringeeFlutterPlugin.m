@@ -81,6 +81,9 @@
     else if ([call.method isEqualToString:@"registerPush"]) {
         [wrapper registerPush:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"registerPushAndDeleteOthers"]) {
+        [wrapper registerPushAndDeleteOthers:call.arguments result:result];
+    }
     else if ([call.method isEqualToString:@"unregisterPush"]) {
         [wrapper unregisterPush:call.arguments result:result];
     }
