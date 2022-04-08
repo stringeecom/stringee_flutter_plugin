@@ -145,6 +145,9 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "registerPush":
                 clientWrapper.registerPush((String) call.argument("deviceToken"), result);
                 break;
+            case "registerPushAndDeleteOthers":
+                clientWrapper.registerPushAndDeleteOthers((String) call.argument("deviceToken"), (List<String>) call.argument("packageNames"), result);
+                break;
             case "unregisterPush":
                 clientWrapper.unregisterPush((String) call.argument("deviceToken"), result);
                 break;
@@ -173,47 +176,47 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.callWrapper(from, to, isVideoCall, callCustomData, resolution, result).makeCall();
                 break;
             case "initAnswer":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).initAnswer(result);
                 }
                 break;
             case "answer":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).answer(result);
                 }
                 break;
             case "hangup":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).hangup(result);
                 }
                 break;
             case "reject":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).reject(result);
                 }
                 break;
             case "sendDtmf":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).sendDTMF((String) call.argument("dtmf"), result);
                 }
                 break;
             case "sendCallInfo":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).sendCallInfo((Map) call.argument("callInfo"), result);
                 }
                 break;
             case "getCallStats":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).getCallStats(result);
                 }
                 break;
             case "mute":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).mute((Boolean) call.argument("mute"), result);
                 }
                 break;
             case "enableVideo":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).enableVideo((Boolean) call.argument("enableVideo"), result);
                 }
                 break;
@@ -222,7 +225,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 stringeeManager.setSpeakerphoneOn((Boolean) call.argument("speaker"), result);
                 break;
             case "switchCamera":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     if (call.hasArgument("cameraId")) {
                         clientWrapper.callWrapper(callId).switchCamera((int) call.argument("cameraId"), result);
                     } else {
@@ -231,12 +234,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 }
                 break;
             case "resumeVideo":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).resumeVideo(result);
                 }
                 break;
             case "setMirror":
-                if (Utils.isCallWrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).setMirror((boolean) call.argument("isLocal"), (boolean) call.argument("isMirror"), result);
                 }
                 break;

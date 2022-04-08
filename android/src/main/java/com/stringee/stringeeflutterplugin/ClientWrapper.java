@@ -17,6 +17,7 @@ import com.stringee.listener.StatusListener;
 import com.stringee.listener.StringeeConnectionListener;
 import com.stringee.messaging.ChatProfile;
 import com.stringee.messaging.ChatRequest;
+import com.stringee.messaging.ChatRequest.State;
 import com.stringee.messaging.Conversation;
 import com.stringee.messaging.ConversationOptions;
 import com.stringee.messaging.Message;
@@ -403,6 +404,11 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     }
 
     @Override
+    public void onHandleOnAnotherDevice(ChatRequest chatRequest, State state) {
+
+    }
+
+    @Override
     public void onTimeoutAnswerChat(ChatRequest chatRequest) {
         handler.post(new Runnable() {
             @Override
@@ -581,6 +587,56 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         }
 
         client.registerPushToken(registrationToken, new StatusListener() {
+            @Override
+            public void onSuccess() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "registerPush: success");
+                        Map map = new HashMap();
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        result.success(map);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError error) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "registerPush: false - " + error.getCode() + " - " + error.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", error.getCode());
+                        map.put("message", error.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Register push notification and delete another token of other packages
+     *
+     * @param registrationToken
+     * @param result
+     */
+    public void registerPushAndDeleteOthers(final String registrationToken, final List<String> packageNames, final Result result) {
+        if (!isConnected()) {
+            Log.d(TAG, "registerPush: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        client.registerPushTokenAndDeleteOthers(registrationToken, packageNames, new StatusListener() {
             @Override
             public void onSuccess() {
                 handler.post(new Runnable() {

@@ -42,7 +42,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class Utils {
     private static final String TAG = "StringeeSDK";
 
-    public static boolean isCallWrapperAvaiable(String methodName, String callId, Result result) {
+    public static boolean isCallWrapperAvailable(String methodName, String callId, Result result) {
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, methodName + ": false - -2 - callId is invalid");
             Map map = new HashMap();
