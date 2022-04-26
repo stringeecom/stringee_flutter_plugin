@@ -12,24 +12,25 @@ class StringeeVideoView extends StatefulWidget {
   late final String? callId;
   late final String? trackId;
   bool isLocal = true;
-  bool? isOverlay = false;
-  bool? isMirror = false;
+  final bool? isOverlay;
+  final bool? isMirror;
   final EdgeInsetsGeometry? margin;
   final AlignmentGeometry? alignment;
   final EdgeInsetsGeometry? padding;
-  ScalingType? scalingType = ScalingType.fill;
+  final ScalingType? scalingType;
   final double? height;
   final double? width;
   final Color? color;
   final Widget? child;
   late final bool forCall;
+  final BorderRadius? borderRadius;
 
   StringeeVideoView(
     this.callId,
     this.isLocal, {
     Key? key,
-    this.isOverlay,
-    this.isMirror,
+    this.isOverlay = false,
+    this.isMirror = false,
     this.color,
     this.height,
     this.width,
@@ -37,7 +38,8 @@ class StringeeVideoView extends StatefulWidget {
     this.alignment,
     this.padding,
     this.child,
-    this.scalingType,
+    this.scalingType = ScalingType.fill,
+    this.borderRadius,
   })  : assert(margin == null || margin.isNonNegative),
         assert(padding == null || padding.isNonNegative),
         super(key: key) {
@@ -47,8 +49,8 @@ class StringeeVideoView extends StatefulWidget {
   StringeeVideoView.forTrack(
     this.trackId, {
     Key? key,
-    this.isOverlay,
-    this.isMirror,
+    this.isOverlay = false,
+    this.isMirror = false,
     this.color,
     this.height,
     this.width,
@@ -56,7 +58,8 @@ class StringeeVideoView extends StatefulWidget {
     this.alignment,
     this.padding,
     this.child,
-    this.scalingType,
+    this.scalingType = ScalingType.fill,
+    this.borderRadius,
   })  : assert(margin == null || margin.isNonNegative),
         assert(padding == null || padding.isNonNegative),
         super(key: key) {
@@ -164,19 +167,33 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> childrenWidget = <Widget>[];
-    childrenWidget.add(createVideoView(context));
+    Widget? nativeWidget;
 
+    /// Border native widget
+    if (widget.borderRadius != null) {
+      nativeWidget = new ClipRRect(
+        borderRadius: widget.borderRadius,
+        child: createVideoView(context),
+      );
+    } else {
+      nativeWidget = createVideoView(context);
+    }
+
+    List<Widget> childrenWidget = <Widget>[nativeWidget];
+
+    /// Add native widget to Container for custom widget attributes
     Widget current = Container(
       height: widget.height,
       width: widget.width,
-      color: widget.color,
       margin: widget.margin,
+      decoration:
+          BoxDecoration(color: widget.color, borderRadius: widget.borderRadius),
       child: Stack(
         children: childrenWidget,
       ),
     );
 
+    /// Modify child widget
     if (widget.child != null) {
       Widget? child = widget.child;
 
@@ -187,6 +204,7 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
       childrenWidget.add(child!);
     }
 
+    /// Set alignment for widget
     if (widget.alignment != null) {
       current = Align(alignment: widget.alignment!, child: current);
     }
