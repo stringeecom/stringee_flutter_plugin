@@ -86,7 +86,6 @@ class StringeeVideoTrack {
   /// Attach view
   StringeeVideoView attach({
     Key? key,
-    Color? color,
     bool? isOverlay,
     bool? isMirror,
     double? height,
@@ -99,7 +98,6 @@ class StringeeVideoTrack {
   }) {
     StringeeVideoView videoView = StringeeVideoView.forTrack(
       _isLocal ? _localId : _id,
-      color: color,
       height: height,
       isOverlay: isOverlay,
       isMirror: isMirror,

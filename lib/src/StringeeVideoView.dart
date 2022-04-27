@@ -2,9 +2,9 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 import 'StringeeConstants.dart';
 
@@ -20,7 +20,6 @@ class StringeeVideoView extends StatefulWidget {
   final ScalingType? scalingType;
   final double? height;
   final double? width;
-  final Color? color;
   final Widget? child;
   late final bool forCall;
   final BorderRadius? borderRadius;
@@ -31,7 +30,6 @@ class StringeeVideoView extends StatefulWidget {
     Key? key,
     this.isOverlay = false,
     this.isMirror = false,
-    this.color,
     this.height,
     this.width,
     this.margin,
@@ -51,7 +49,6 @@ class StringeeVideoView extends StatefulWidget {
     Key? key,
     this.isOverlay = false,
     this.isMirror = false,
-    this.color,
     this.height,
     this.width,
     this.margin,
@@ -167,36 +164,22 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
 
   @override
   Widget build(BuildContext context) {
-    Widget? nativeWidget;
+    List<Widget> childrenWidget = <Widget>[createVideoView(context)];
 
-    /// Border native widget
-    if (widget.borderRadius != null) {
-      nativeWidget = new ClipRRect(
-        borderRadius: widget.borderRadius,
-        child: createVideoView(context),
-      );
-    } else {
-      nativeWidget = createVideoView(context);
-    }
-
-    List<Widget> childrenWidget = <Widget>[nativeWidget];
-
-    /// Add native widget to Container for custom widget attributes
+    /// Create Container with height and width
     Widget current = Container(
       height: widget.height,
       width: widget.width,
-      margin: widget.margin,
-      decoration:
-          BoxDecoration(color: widget.color, borderRadius: widget.borderRadius),
       child: Stack(
         children: childrenWidget,
       ),
     );
 
-    /// Modify child widget
+    /// Add child widget
     if (widget.child != null) {
       Widget? child = widget.child;
 
+      /// Set child widget padding
       if (widget.padding != null) {
         child = Padding(padding: widget.padding!, child: child);
       }
@@ -204,7 +187,21 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
       childrenWidget.add(child!);
     }
 
-    /// Set alignment for widget
+    /// Set border
+    if (widget.borderRadius != null) {
+      current = new ClipRRect(
+        clipBehavior: Clip.hardEdge,
+        borderRadius: widget.borderRadius,
+        child: current,
+      );
+    }
+
+    /// Set margin
+    if (widget.margin != null) {
+      current = Padding(padding: widget.margin!, child: current);
+    }
+
+    /// Set alignment
     if (widget.alignment != null) {
       current = Align(alignment: widget.alignment!, child: current);
     }
