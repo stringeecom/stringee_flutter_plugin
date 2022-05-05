@@ -68,11 +68,12 @@ class StringeeChat {
 
   /// Update user info
   Future<Map<dynamic, dynamic>> updateUserInfo(
-      String name, String email, String avatar) async {
+      {String? name, String? email, String? avatar, String? phone}) async {
     final params = {
-      'name': name.trim(),
-      'email': email.trim(),
-      'avatar': avatar.trim(),
+      if (name != null) 'name': name.trim(),
+      if (email != null) 'email': email.trim(),
+      if (avatar != null) 'avatar': avatar.trim(),
+      if (phone != null) 'phone': phone.trim(),
       'uuid': _client.uuid
     };
 
@@ -81,7 +82,8 @@ class StringeeChat {
   }
 
   /// Create live-chat [StringeeConversation]
-  Future<Map<dynamic, dynamic>> createLiveChatConversation(String queueId) async {
+  Future<Map<dynamic, dynamic>> createLiveChatConversation(
+      String queueId) async {
     if (queueId.trim().isEmpty) return await reportInvalidValue('queueId');
 
     final params = {

@@ -1351,7 +1351,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param avatar
      * @param result
      */
-    public void updateUserInfo(String name, String email, String avatar, final Result result) {
+    public void updateUserInfo(String name, String email, String avatar, String phone, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "updateUserInfo: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -1362,7 +1362,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.updateUser(name, email, avatar, new StatusListener() {
+        client.updateUser(name, email, avatar, phone, new StatusListener() {
             @Override
             public void onSuccess() {
                 handler.post(new Runnable() {

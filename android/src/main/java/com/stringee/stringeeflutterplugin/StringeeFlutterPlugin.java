@@ -508,7 +508,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.getLiveChatToken((String) call.argument("key"), (String) call.argument("name"), (String) call.argument("email"), result);
                 break;
             case "updateUserInfo":
-                clientWrapper.updateUserInfo((String) call.argument("name"), (String) call.argument("email"), (String) call.argument("avatar"), result);
+                clientWrapper.updateUserInfo((String) call.argument("name"), (String) call.argument("email"), (String) call.argument("avatar"), (String) call.argument("phone"), result);
                 break;
             case "createLiveChatConversation":
                 String customData = null;
