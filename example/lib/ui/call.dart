@@ -73,7 +73,7 @@ class _CallState extends State<Call> {
 
     _isSpeaker = widget._isVideoCall;
     _isVideoEnable = widget._isVideoCall;
-
+    
     if (widget._callType == StringeeObjectEventType.call) {
       makeOrInitAnswerCall();
     } else {

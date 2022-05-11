@@ -12,3 +12,4 @@ class StringeeRoomUser {
     return '{id: $_id}';
   }
 }
+

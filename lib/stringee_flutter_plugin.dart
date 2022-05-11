@@ -28,3 +28,4 @@ export 'src/notification/NotificationIcon.dart';
 export 'src/notification/NotificationSound.dart';
 export 'src/notification/StringeeNotification.dart';
 export 'src/notification/StringeeNotificationEnums.dart';
+
