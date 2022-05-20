@@ -41,23 +41,23 @@
         return;
     }
     NSDictionary *data = (NSDictionary *)arguments;
-    
+
     NSString *from = data[@"from"];
     NSString *to = data[@"to"];
     NSNumber *isVideoCall = data[@"isVideoCall"];
     NSString *customData = data[@"customData"];
     NSString *videoQuality = data[@"videoQuality"];
-    
+
     StringeeCall2 *outgoingCall = [[StringeeCall2 alloc] initWithStringeeClient:_client from:from to:to];
     outgoingCall.delegate = self;
     outgoingCall.isVideoCall = [isVideoCall boolValue];
-    
+
     if (customData && ![customData isKindOfClass:[NSNull class]]) {
         if ([customData isKindOfClass:[NSString class]] && customData.length) {
             outgoingCall.customData = customData;
         }
     }
-    
+
     if (videoQuality && ![videoQuality isKindOfClass:[NSNull class]]) {
         if ([videoQuality isEqualToString:@"NORMAL"]) {
             outgoingCall.videoResolution = VideoResolution_Normal;
@@ -67,13 +67,13 @@
             outgoingCall.videoResolution = VideoResolution_HD;
         }
     }
-    
-    
+
+
     [outgoingCall makeCallWithCompletionHandler:^(BOOL status, int code, NSString *message, NSString *data) {
         if (status) {
             [[StringeeManager instance].call2s setObject:outgoingCall forKey:outgoingCall.callId];
         }
-        
+
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, @"callInfo" : [StringeeHelper StringeeCall2:outgoingCall]});
     }];
 }
@@ -83,22 +83,22 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = data[@"callId"];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Init answer call failed. The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Init answer call failed. The call is not found."});
         return;
     }
-    
+
     [call initAnswerCall];
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Init answer call successfully."});
 }
@@ -106,19 +106,19 @@
 - (void)answer:(id)arguments result:(FlutterResult)result {
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = data[@"callId"];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Answer call failed. The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Answer call failed. The call is not found."});
         return;
     }
-    
+
     [call answerCallWithCompletionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -127,19 +127,19 @@
 - (void)hangup:(id)arguments result:(FlutterResult)result {
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = data[@"callId"];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Hangup call failed. The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Hangup call failed. The call is not found."});
         return;
     }
-    
+
     [call hangupWithCompletionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -148,19 +148,19 @@
 - (void)reject:(id)arguments result:(FlutterResult)result {
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = data[@"callId"];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Reject call failed. The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Reject call failed. The call is not found."});
         return;
     }
-    
+
     [call rejectWithCompletionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -171,23 +171,23 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = [data objectForKey:@"callId"];
     BOOL mute = [[data objectForKey:@"mute"] boolValue];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found."});
         return;
     }
-    
+
     [call mute:mute];
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success."});
 }
@@ -197,23 +197,23 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = [data objectForKey:@"callId"];
     BOOL speaker = [[data objectForKey:@"speaker"] boolValue];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found."});
         return;
     }
-    
+
     [[StringeeAudioManager instance] setLoudspeaker:speaker];
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success."});
 }
@@ -223,22 +223,22 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = [data objectForKey:@"callId"];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found."});
         return;
     }
-    
+
     [call switchCamera];
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success."});
 }
@@ -248,23 +248,23 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = [data objectForKey:@"callId"];
     BOOL enableVideo = [[data objectForKey:@"enableVideo"] boolValue];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found."});
         return;
     }
-    
+
     [call enableLocalVideo:enableVideo];
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success."});
 }
@@ -274,22 +274,22 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *callId = data[@"callId"];
-    
+
     if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
         return;
     }
-    
+
     StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
-    
+
     if (!call) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found."});
         return;
     }
-    
+
     [call stats:false completionHandler:^(NSDictionary<NSString *,NSString *> *values) {
         id dic;
         if (values != nil) {
@@ -336,3 +336,4 @@
 }
 
 @end
+

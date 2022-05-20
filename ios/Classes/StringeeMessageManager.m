@@ -48,28 +48,28 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected.", STEBody: [NSNull null]});
         return;
     }
-    
+
 //    NSLog(@"==== sendMessage: %@", arguments);
 //    NSDictionary *data = [StringeeHelper StringToDictionary:arguments];
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSDictionary *customData = [data objectForKey:@"customData"];
     int type = [[data objectForKey:@"type"] intValue];
-    
+
     if (convId == nil || convId.length == 0 || data == nil) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
         return;
     }
-    
+
     __weak StringeeMessageManager *weakSelf = self;
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         StringeeMessageManager *strongSelf = weakSelf;
-        
+
         if (!conversation || strongSelf == nil) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Conversation is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         StringeeMessage *msgToSend;
         switch (type) {
             case StringeeMessageTypeText:
@@ -82,29 +82,29 @@
                 msgToSend = [[StringeeTextMessage alloc] initWithText:text metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypePhoto:
             {
                 NSString *filePath = data[@"filePath"];
                 NSString *thumbnail = data[@"thumbnail"] != nil ? data[@"thumbnail"] : @"";
                 NSNumber *ratio = data[@"ratio"] != nil ? data[@"ratio"] : @(1);
-                
+
                 if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
                     result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
                     return;
                 }
-                
+
                 msgToSend = [[StringeePhotoMessage alloc] initWithFileUrl:filePath thumbnailUrl:thumbnail ratio:ratio.floatValue metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypeVideo:
             {
                 NSString *filePath = data[@"filePath"];
                 NSString *thumbnail = data[@"thumbnail"] != nil ? data[@"thumbnail"] : @"";
                 NSNumber *ratio = data[@"ratio"] != nil ? data[@"ratio"] : @(1);
                 NSNumber *duration = data[@"duration"] != nil ? data[@"duration"] : @(0);
-                
+
                 if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
                     result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
                     return;
@@ -112,12 +112,12 @@
                 msgToSend = [[StringeeVideoMessage alloc] initWithFileUrl:filePath thumbnailUrl:thumbnail ratio:ratio.floatValue duration:duration.doubleValue metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypeAudio:
             {
                 NSString *filePath = data[@"filePath"];
                 NSNumber *duration = data[@"duration"] != nil ? data[@"duration"] : @(0);
-                
+
                 if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
                     result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
                     return;
@@ -125,13 +125,13 @@
                 msgToSend = [[StringeeAudioMessage alloc] initWithFileUrl:filePath duration:duration.doubleValue metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypeFile:
             {
                 NSString *filePath = data[@"filePath"];
                 NSString *filename = data[@"filename"] != nil ? data[@"filename"] : @"";
                 NSNumber *length = data[@"length"] != nil ? data[@"length"] : @(0);
-                
+
                 if (![filePath isKindOfClass:[NSString class]] || !filePath.length) {
                     result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
                     return;
@@ -139,7 +139,7 @@
                 msgToSend = [[StringeeFileMessage alloc] initWithFileUrl:filePath fileName:filename length:length.longLongValue metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypeLink:
             {
                 NSString *text = data[@"text"];
@@ -150,12 +150,12 @@
                 msgToSend = [[StringeeTextMessage alloc] initWithLink:text metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypeLocation:
             {
                 NSNumber *lat = data[@"lat"];
                 NSNumber *lon = data[@"lon"];
-                
+
                 if (!lat || !lon) {
                     result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
                     return;
@@ -163,7 +163,7 @@
                 msgToSend = [[StringeeLocationMessage alloc] initWithlatitude:lat.doubleValue longitude:lon.doubleValue metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypeContact:
             {
                 NSString *vcard = data[@"vcard"];
@@ -174,12 +174,12 @@
                 msgToSend = [[StringeeContactMessage alloc] initWithVcard:vcard metadata:customData];
             }
                 break;
-                
+
             case StringeeMessageTypeSticker:
             {
                 NSString *category = data[@"stickerCategory"];
                 NSString *name = data[@"stickerName"];
-                
+
                 if (![category isKindOfClass:[NSString class]] || !category.length || ![name isKindOfClass:[NSString class]] || !name.length) {
                     result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
                     return;
@@ -187,15 +187,15 @@
                 msgToSend = [[StringeeStickerMessage alloc] initWithCategory:category name:name metadata:customData];
             }
                 break;
-                
+
             default:
                 result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid", STEBody: [NSNull null]});
                 return;
         }
-        
+
         // Luu lại các tin nhắn gửi đi đến khi trạng thái được cập nhật read
         [strongSelf.trackedMessages setObject:msgToSend forKey:msgToSend.localIdentifier];
-        
+
         NSError *error;
         [conversation sendMessageWithoutPretreatment:msgToSend error:&error];
         if (error) {
@@ -211,7 +211,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== getMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -221,13 +221,13 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         [conversation getMessageWithIds:msgIds completion:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *msgs) {
             result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:msgs]});
         }];
@@ -239,7 +239,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== getLocalMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -249,13 +249,13 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         [conversation getLocalMessagesWithCount:count completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:messages]});
         }];
@@ -267,7 +267,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== getLastMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -277,13 +277,13 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         [conversation getLastMessagesWithCount:count loadDeletedMessage:false loadDeletedMessageContent:false completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:messages]});
         }];
@@ -295,7 +295,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== getMessagesAfter: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -306,13 +306,13 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         [conversation getMessagesAfter:seq withCount:count loadDeletedMessage:false loadDeletedMessageContent:false completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:messages]});
         }];
@@ -324,7 +324,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== getMessagesBefore: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -335,13 +335,13 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         [conversation getMessagesBefore:seq withCount:count loadDeletedMessage:false loadDeletedMessageContent:false completionHandler:^(BOOL status, int code, NSString *message, NSArray<StringeeMessage *> *messages) {
             result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [StringeeHelper Messages:messages]});
         }];
@@ -353,7 +353,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== deleteMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -363,13 +363,13 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Object is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         [conversation deleteMessageWithMessageIds:msgIds withCompletionHandler:^(BOOL status, int code, NSString *message) {
             result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
         }];
@@ -381,7 +381,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== revokeMessages: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -392,18 +392,18 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Conversation is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         dispatch_group_t group = dispatch_group_create();
         __block BOOL returnStatus = true;
         __block int returnCode = 0;
         __block NSString *returnMessage = @"Success";
-        
+
         for (NSString *msgId in msgIds) {
             if (msgId.length == 0) {
                 continue;
@@ -413,7 +413,7 @@
                 if (msg == nil) {
                     return;
                 }
-                
+
                 dispatch_group_async(group,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
                     [conversation revokeMessage:msg deleted:isDeleted completion:^(BOOL status, int code, NSString *message) {
                         if (!status) {
@@ -425,7 +425,7 @@
                 });
             }];
         }
-        
+
         dispatch_group_notify(group,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
             result(@{STEStatus : @(returnStatus), STECode : @(returnCode), STEMessage: returnMessage, STEBody: [NSNull null]});
         });
@@ -437,7 +437,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
     NSString *msgId = [data objectForKey:@"msgId"];
@@ -447,13 +447,13 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Conversation is not found", STEBody: [NSNull null]});
             return;
         }
-        
+
         [conversation getMessageWithId:msgId completion:^(BOOL status, int code, NSString *message, StringeeMessage *msg) {
             if (!msg) {
                 result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Message is not found", STEBody: [NSNull null]});
@@ -472,7 +472,7 @@
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
 //    NSLog(@"==== pinOrUnPin: %@", arguments);
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *convId = [data objectForKey:@"convId"];
@@ -483,19 +483,19 @@
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Parameters are invalid"});
         return;
     }
-        
+
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Conversation is not found", STEBody: [NSNull null]});
             return;
         }
-                
+
         [conversation getMessageWithId:msgId completion:^(BOOL status, int code, NSString *message, StringeeMessage *msg) {
             if (!msg) {
                 result(@{STEStatus : @(false), STECode : @(-3), STEMessage: @"Message is not found", STEBody: [NSNull null]});
                 return;
             }
-            
+
             [conversation pinMessage:msg isPin:pinOrUnPin completion:^(BOOL status, int code, NSString *message) {
                 result(@{STEStatus : @(status), STECode : @(code), STEMessage: message, STEBody: [NSNull null]});
             }];
@@ -504,3 +504,4 @@
 }
 
 @end
+

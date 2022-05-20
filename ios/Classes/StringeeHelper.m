@@ -367,7 +367,7 @@
     if (!room) return [NSNull null];
 
     NSString *roomId = room.roomId.length ? room.roomId : @"";
-    
+
     return @{
              @"id": roomId,
              @"recorded": @(room.record)
@@ -379,7 +379,7 @@
 
     NSString *serverId = trackInfo.serverId.length ? trackInfo.serverId : @"";
     id publisher = [StringeeHelper StringeeRoomUserInfo:trackInfo.publisher];
-    
+
     return @{
              @"id": serverId,
              @"audio": @(trackInfo.audio),
@@ -393,7 +393,7 @@
     if (!trackInfos) {
         return @[];
     }
-    
+
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeVideoTrackInfo *trackInfo in trackInfos) {
         [response addObject:[self StringeeVideoTrackInfo:trackInfo]];
@@ -403,7 +403,7 @@
 
 + (id)StringeeRoomUserInfo:(StringeeRoomUserInfo *)userInfo {
     if (!userInfo) return [NSNull null];
-    
+
     NSString *userId = userInfo.userId.length ? userInfo.userId : @"";
 
     return @{
@@ -415,7 +415,7 @@
     if (!userInfos) {
         return @[];
     }
-    
+
     NSMutableArray *response = [NSMutableArray array];
     for (StringeeRoomUserInfo *userInfo in userInfos) {
         [response addObject:[self StringeeRoomUserInfo:userInfo]];
@@ -428,7 +428,7 @@
     option.audio = [[data objectForKey:@"audio"] boolValue];
     option.video = [[data objectForKey:@"video"] boolValue];
     option.screen = [[data objectForKey:@"screen"] boolValue];
-    
+
     NSString *strVideoDimension = (NSString *)[data objectForKey:@"videoDimension"];
     if ([strVideoDimension isEqualToString:@"480"]) {
         option.videoDimension = StringeeVideoDimension480p;
@@ -439,7 +439,7 @@
     } else {
         option.videoDimension = StringeeVideoDimension288p;
     }
-    
+
     return option;
 }
 
@@ -450,7 +450,7 @@
     NSString *localId = track.localId.length ? track.localId : @"";
 
     id publisher = [StringeeHelper StringeeRoomUserInfo:track.publisher];
-    
+
     return @{
              @"id": serverId,
              @"localId": localId,
@@ -612,3 +612,4 @@
 }
 
 @end
+
