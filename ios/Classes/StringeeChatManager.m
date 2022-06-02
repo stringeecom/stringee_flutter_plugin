@@ -82,8 +82,9 @@
     NSString *name = [data objectForKey:@"name"] != nil ? [data objectForKey:@"name"] : @"";
     NSString *email = [data objectForKey:@"email"] != nil ? [data objectForKey:@"email"] : @"";
     NSString *avatar = [data objectForKey:@"avatar"] != nil ? [data objectForKey:@"avatar"] : @"";
+    NSString *phone = [data objectForKey:@"phone"] != nil ? [data objectForKey:@"phone"] : @"";
 
-    [_client updateUserInfoWithUsername:name email:email avatar:avatar completion:^(BOOL status, int code, NSString *message) {
+    [_client updateUserInfoWithUsername:name email:email avatar:avatar phone:phone completion:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
 }

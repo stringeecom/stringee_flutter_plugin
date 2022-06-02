@@ -73,7 +73,7 @@ class _CallState extends State<Call> {
 
     _isSpeaker = widget._isVideoCall;
     _isVideoEnable = widget._isVideoCall;
-    
+
     if (widget._callType == StringeeObjectEventType.call) {
       makeOrInitAnswerCall();
     } else {
@@ -119,13 +119,13 @@ class _CallState extends State<Call> {
         ? new StringeeVideoView(
             widget._callId,
             true,
-            color: Colors.white,
             alignment: Alignment.topRight,
             isOverlay: true,
             margin: EdgeInsets.only(top: 25.0, right: 25.0),
             height: 150.0,
             width: 100.0,
             scalingType: ScalingType.fill,
+            borderRadius: BorderRadius.circular(10)
           )
         : Placeholder(
             color: Colors.transparent,
@@ -135,7 +135,6 @@ class _CallState extends State<Call> {
         ? new StringeeVideoView(
             widget._callId,
             false,
-            color: Colors.blue,
             isOverlay: false,
             isMirror: false,
             scalingType: ScalingType.fill,
@@ -146,7 +145,6 @@ class _CallState extends State<Call> {
 
     Widget localScreen = (_hasLocalScreen)
         ? _localScreenTrack.attach(
-            color: Colors.white,
             alignment: Alignment.topRight,
             isOverlay: true,
             margin: EdgeInsets.only(top: 200.0, right: 25.0),
@@ -160,7 +158,6 @@ class _CallState extends State<Call> {
 
     Widget remoteScreen = (_hasRemoteScreen)
         ? _remoteScreenTrack.attach(
-            color: Colors.white,
             alignment: Alignment.topRight,
             isOverlay: true,
             margin: EdgeInsets.only(top: 375.0, right: 25.0),
