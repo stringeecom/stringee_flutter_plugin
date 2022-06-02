@@ -435,3 +435,4 @@ class StringeeCall2 {
     _eventStreamController.close();
   }
 }
+

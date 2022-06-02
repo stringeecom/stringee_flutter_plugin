@@ -30,14 +30,14 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         [StringeeClientWrapper initialize];
         self.identifier = identifier;
         [clients setValue:self forKey:identifier];
-        
+
         _callManager = [[StringeeCallManager alloc] initWithIdentifier:identifier];
         _call2Manager = [[StringeeCall2Manager alloc] initWithIdentifier:identifier];
         _convManager = [[StringeeConversationManager alloc] initWithIdentifier:identifier];
         _msgManager = [[StringeeMessageManager alloc] initWithIdentifier:identifier];
         _chatManager = [[StringeeChatManager alloc] initWithIdentifier:identifier];
         _conferenceManager = [[StringeeVideoConferenceManager alloc] initWithIdentifier:identifier];
-        
+
         _eventSink = eventSink;
         [_callManager setEventSink:_eventSink];
         [_call2Manager setEventSink:_eventSink];
@@ -84,7 +84,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     if (identifier == nil || identifier.length == 0) {
         return nil;
     }
-    
+
     return [clients objectForKey: identifier];
 }
 
@@ -92,20 +92,20 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 
 - (void)connect:(id)arguments result:(FlutterResult)result {
     NSDictionary *data = (NSDictionary *)arguments;
-    
+
     if (![data isKindOfClass:[NSDictionary class]]) {
         result(nil);
         return;
     }
-    
+
     if (isConnecting) {
         result(nil);
         return;
     }
     isConnecting = YES;
-    
+
     NSString *token = [data objectForKey:@"token"];
-    
+
     if (!_client || _firstConnectTime) {
         id strServerAddressesData = [data objectForKey:@"serverAddresses"];
         if (strServerAddressesData != nil && strServerAddressesData != [NSNull null]) {
@@ -120,7 +120,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
             _client = [[StringeeClient alloc] initWithConnectionDelegate:self];
         }
         _client.incomingCallDelegate = self;
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleObjectChangeNotification:) name:StringeeClientObjectsDidChangeNotification object:_client];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNewMessageNotification:) name:StringeeClientNewMessageNotification object:_client];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleUserTypingNotification:) name:StringeeChatUserTypingNotification object:_client];
@@ -134,7 +134,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 
         _firstConnectTime = false;
     }
-    
+
     [_client connectWithAccessToken:token];
     result(nil);
 }
@@ -152,16 +152,16 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *deviceToken = data[@"deviceToken"];
     BOOL isProduction = [data[@"isProduction"] boolValue];
     BOOL isVoip = [data[@"isVoip"] boolValue];
-    
+
     if (!deviceToken || [deviceToken isKindOfClass:[NSNull class]]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Info is invalid."});
     }
-    
+
     [_client registerPushForDeviceToken:deviceToken isProduction:isProduction isVoip:isVoip completionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -172,17 +172,17 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *deviceToken = data[@"deviceToken"];
     BOOL isProduction = [data[@"isProduction"] boolValue];
     BOOL isVoip = [data[@"isVoip"] boolValue];
     NSArray *packageNames = [data objectForKey:@"packageNames"];
-        
+
     if (!deviceToken || [deviceToken isKindOfClass:[NSNull class]] || packageNames == nil || packageNames.count == 0) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Info is invalid."});
     }
-    
+
     [_client registerPushForDeviceToken:deviceToken isProduction:isProduction isVoip:isVoip deleteOthers:true packageNames:packageNames completionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -193,14 +193,14 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *deviceToken = data[@"deviceToken"];
-        
+
     if (!deviceToken || [deviceToken isKindOfClass:[NSNull class]]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Info is invalid."});
     }
-    
+
     [_client unregisterPushForDeviceToken:deviceToken completionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -211,19 +211,19 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
         return;
     }
-    
+
     NSDictionary *data = (NSDictionary *)arguments;
     NSString *userId = data[@"userId"];
     NSDictionary *message = data[@"msg"];
-    
+
     if (!userId || [userId isKindOfClass:[NSNull class]]) {
         result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"UserId is invalid."});
     }
-    
+
     if (!message || [message isKindOfClass:[NSNull class]] || ![message isKindOfClass:[NSDictionary class]]) {
         result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Message is invalid."});
     }
-    
+
     [_client sendCustomMessage:message toUserId:userId completionHandler:^(BOOL status, int code, NSString *message) {
         result(@{STEStatus : @(status), STECode : @(code), STEMessage: message});
     }];
@@ -335,18 +335,18 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 - (void)handleNewMessageNotification:(NSNotification *)notification {
     NSDictionary *userInfo = [notification userInfo];
     if (!userInfo) return;
-    
+
     NSString *convId = [userInfo objectForKey:StringeeClientNewMessageConversationIDKey];
     if (convId == nil || convId.length == 0) {
         return;
     }
-    
+
     // Lấy về conversation
     [_client getConversationWithConversationId:convId completionHandler:^(BOOL status, int code, NSString *message, StringeeConversation *conversation) {
         if (!conversation) {
             return;
         }
-        
+
         self->_eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
     }];
 }
@@ -354,7 +354,7 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 - (void)handleUserTypingNotification:(NSNotification *)notification {
     NSDictionary *userInfo = [notification userInfo];
     if (!userInfo) return;
-    
+
     NSString *convId = [userInfo objectForKey:@"convId"] != nil ? [userInfo objectForKey:@"convId"] : @"";
     NSString *userId = [userInfo objectForKey:@"userId"] != nil ? [userInfo objectForKey:@"userId"] : @"";
     NSString *displayName = [userInfo objectForKey:@"displayName"] != nil ? [userInfo objectForKey:@"displayName"] : @"";
@@ -375,3 +375,4 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 }
 
 @end
+
