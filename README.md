@@ -33,3 +33,5 @@ the [documentation](https://flutter.io/developing-packages/#edit-plugin-package)
     + Fix bug: fix StringeeVideoView in android
 - Version 1.2.2:
     + Add feature: Allow to remove device token by package name  
+- Version 1.2.3:
+    + Allow to update phone number when updating user info
