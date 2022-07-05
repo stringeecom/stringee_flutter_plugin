@@ -521,38 +521,41 @@ class StringeeMessage {
         break;
       case MsgType.notification:
         this._notiContent = new Map<dynamic, dynamic>();
-        MsgNotifyType notifyType = (msgInfor['type'] as int?).notifyType;
-        this._notiContent!['type'] = notifyType;
-        switch (notifyType) {
-          case MsgNotifyType.addParticipants:
-            StringeeUser user =
-                new StringeeUser.fromJson(msgInfor['addedInfo']);
-            this._notiContent!['addedby'] = user;
-            List<StringeeUser> participants = [];
-            List<dynamic> participantArray = msgInfor['participants'];
-            for (int i = 0; i < participantArray.length; i++) {
-              StringeeUser user = StringeeUser.fromJson(participantArray[i]);
-              participants.add(user);
-            }
-            this._notiContent!["participants"] = participants;
-            break;
-          case MsgNotifyType.removeParticipants:
-            StringeeUser user =
-                new StringeeUser.fromJson(msgInfor['removedInfo']);
-            this._notiContent!['removedBy'] = user;
-            List<StringeeUser> participants = [];
-            List<dynamic> participantArray = msgInfor['participants'];
-            for (int i = 0; i < participantArray.length; i++) {
-              StringeeUser user = StringeeUser.fromJson(participantArray[i]);
-              participants.add(user);
-            }
-            this._notiContent!["participants"] = participants;
-            break;
-          case MsgNotifyType.changeGroupName:
-            this._notiContent!['groupName'] = msgInfor['groupName'];
-            break;
+        int notiType = msgInfor['type'];
+        if (notiType != 0) {
+          MsgNotifyType notifyType = notiType.notifyType;
+          this._notiContent!['type'] = notifyType;
+          switch (notifyType) {
+            case MsgNotifyType.addParticipants:
+              StringeeUser user =
+                  new StringeeUser.fromJson(msgInfor['addedInfo']);
+              this._notiContent!['addedby'] = user;
+              List<StringeeUser> participants = [];
+              List<dynamic> participantArray = msgInfor['participants'];
+              for (int i = 0; i < participantArray.length; i++) {
+                StringeeUser user = StringeeUser.fromJson(participantArray[i]);
+                participants.add(user);
+              }
+              this._notiContent!["participants"] = participants;
+              break;
+            case MsgNotifyType.removeParticipants:
+              StringeeUser user =
+                  new StringeeUser.fromJson(msgInfor['removedInfo']);
+              this._notiContent!['removedBy'] = user;
+              List<StringeeUser> participants = [];
+              List<dynamic> participantArray = msgInfor['participants'];
+              for (int i = 0; i < participantArray.length; i++) {
+                StringeeUser user = StringeeUser.fromJson(participantArray[i]);
+                participants.add(user);
+              }
+              this._notiContent!["participants"] = participants;
+              break;
+            case MsgNotifyType.changeGroupName:
+              this._notiContent!['groupName'] = msgInfor['groupName'];
+              break;
+          }
+          break;
         }
-        break;
     }
     this._text = text;
   }

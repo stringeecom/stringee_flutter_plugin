@@ -430,7 +430,7 @@ public class Utils {
     public static Map convertNotifyContentToMap(@NonNull JSONObject notifyObject) {
         Map contentMap = new HashMap();
         try {
-            int type = notifyObject.getInt("type");
+            int type = notifyObject.optInt("type");
             contentMap.put("type", type);
             switch (type) {
                 case 1:
