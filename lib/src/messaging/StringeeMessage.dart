@@ -284,70 +284,88 @@ class StringeeMessage {
     switch (this._type) {
       case MsgType.text:
       case MsgType.link:
-        text = msgInfor['content']['content'];
+        if (msgInfor['content'].containsKey('content')) {
+          text = msgInfor['content']['content'];
+        }
         break;
       case MsgType.createConversation:
       case MsgType.renameConversation:
         String? groupName = msgInfor['content']['groupName'];
         String? creator = msgInfor['content']['creator'];
-
         List<StringeeUser> participants = [];
         List<dynamic> participantArray = msgInfor['content']['participants'];
-        for (int i = 0; i < participantArray.length; i++) {
-          StringeeUser user = StringeeUser(userId: participantArray[i]);
-          participants.add(user);
+        if (participantArray.length > 0) {
+          for (int i = 0; i < participantArray.length; i++) {
+            StringeeUser user = StringeeUser(userId: participantArray[i]);
+            participants.add(user);
+          }
         }
-
         this._notiContent = new Map<dynamic, dynamic>();
         this._notiContent!["groupName"] = groupName;
         this._notiContent!["creator"] = creator;
         this._notiContent!["participants"] = participants;
         break;
       case MsgType.photo:
-        Map<dynamic, dynamic> photoMap = msgInfor['content']['photo'];
-        this._filePath = photoMap['filePath'];
-        this._fileUrl = photoMap['fileUrl'];
-        this._thumbnail = photoMap['thumbnail'];
-        this._ratio =
-            photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
+        if (msgInfor['content'].containsKey('photo')) {
+          Map<dynamic, dynamic> photoMap = msgInfor['content']['photo'];
+          this._filePath = photoMap['filePath'];
+          this._fileUrl = photoMap['fileUrl'];
+          this._thumbnail = photoMap['thumbnail'];
+          this._ratio =
+              photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
+        }
         break;
       case MsgType.video:
-        Map<dynamic, dynamic> videoMap = msgInfor['content']['video'];
-        this._filePath = videoMap['filePath'];
-        this._fileUrl = videoMap['fileUrl'];
-        this._thumbnail = videoMap['thumbnail'];
-        this._ratio =
-            videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
-        this._duration =
-            videoMap['duration'] == null ? 0 : videoMap['duration'].toDouble();
+        if (msgInfor['content'].containsKey('video')) {
+          Map<dynamic, dynamic> videoMap = msgInfor['content']['video'];
+          this._filePath = videoMap['filePath'];
+          this._fileUrl = videoMap['fileUrl'];
+          this._thumbnail = videoMap['thumbnail'];
+          this._ratio =
+              videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
+          this._duration = videoMap['duration'] == null
+              ? 0
+              : videoMap['duration'].toDouble();
+        }
         break;
       case MsgType.audio:
-        Map<dynamic, dynamic> audioMap = msgInfor['content']['audio'];
-        this._filePath = audioMap['filePath'];
-        this._fileUrl = audioMap['fileUrl'];
-        this._duration =
-            audioMap['duration'] == null ? 0 : audioMap['duration'].toDouble();
+        if (msgInfor['content'].containsKey('audio')) {
+          Map<dynamic, dynamic> audioMap = msgInfor['content']['audio'];
+          this._filePath = audioMap['filePath'];
+          this._fileUrl = audioMap['fileUrl'];
+          this._duration = audioMap['duration'] == null
+              ? 0
+              : audioMap['duration'].toDouble();
+        }
         break;
       case MsgType.file:
-        Map<dynamic, dynamic> fileMap = msgInfor['content']['file'];
-        this._filePath = fileMap['filePath'];
-        this._fileUrl = fileMap['fileUrl'];
-        this._fileName = fileMap['fileName'];
-        this._fileLength = fileMap['fileLength'];
+        if (msgInfor['content'].containsKey('file')) {
+          Map<dynamic, dynamic> fileMap = msgInfor['content']['file'];
+          this._filePath = fileMap['filePath'];
+          this._fileUrl = fileMap['fileUrl'];
+          this._fileName = fileMap['fileName'];
+          this._fileLength = fileMap['fileLength'];
+        }
         break;
       case MsgType.location:
-        Map<dynamic, dynamic> locationMap = msgInfor['content']['location'];
-        this._latitude = locationMap['lat'];
-        this._longitude = locationMap['lon'];
+        if (msgInfor['content'].containsKey('location')) {
+          Map<dynamic, dynamic> locationMap = msgInfor['content']['location'];
+          this._latitude = locationMap['lat'];
+          this._longitude = locationMap['lon'];
+        }
         break;
       case MsgType.contact:
-        Map<dynamic, dynamic> contactMap = msgInfor['content']['contact'];
-        this._vcard = contactMap['vcard'];
+        if (msgInfor['content'].containsKey('contact')) {
+          Map<dynamic, dynamic> contactMap = msgInfor['content']['contact'];
+          this._vcard = contactMap['vcard'];
+        }
         break;
       case MsgType.sticker:
-        Map<dynamic, dynamic> stickerMap = msgInfor['content']['sticker'];
-        this._stickerName = stickerMap['name'];
-        this._stickerCategory = stickerMap['category'];
+        if (msgInfor['content'].containsKey('sticker')) {
+          Map<dynamic, dynamic> stickerMap = msgInfor['content']['sticker'];
+          this._stickerName = stickerMap['name'];
+          this._stickerCategory = stickerMap['category'];
+        }
         break;
       case MsgType.notification:
         Map<dynamic, dynamic> notifyMap = msgInfor['content'];
@@ -420,67 +438,86 @@ class StringeeMessage {
     switch (this._type) {
       case MsgType.text:
       case MsgType.link:
-        text = msgInfor['text'];
+        if (msgInfor.containsKey('text')) {
+          text = msgInfor['text'];
+        }
         break;
       case MsgType.createConversation:
       case MsgType.renameConversation:
         List<StringeeUser> participants = [];
         List<dynamic> participantArray = msgInfor['participants'];
-        for (int i = 0; i < participantArray.length; i++) {
-          StringeeUser user = StringeeUser(userId: participantArray[i]);
-          participants.add(user);
+        if (participantArray.length > 0) {
+          for (int i = 0; i < participantArray.length; i++) {
+            StringeeUser user = StringeeUser(userId: participantArray[i]);
+            participants.add(user);
+          }
         }
-
         this._notiContent = new Map<dynamic, dynamic>();
         this._notiContent!["groupName"] = msgInfor['groupName'];
         this._notiContent!["creator"] = msgInfor['creator'];
         this._notiContent!["participants"] = participants;
         break;
       case MsgType.photo:
-        Map<dynamic, dynamic> photoMap = msgInfor['photo'];
-        this._filePath = photoMap['filePath'];
-        this._fileUrl = photoMap['fileUrl'];
-        this._thumbnail = photoMap['thumbnail'];
-        this._ratio =
-            photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
+        if (msgInfor.containsKey('photo')) {
+          Map<dynamic, dynamic> photoMap = msgInfor['photo'];
+          this._filePath = photoMap['filePath'];
+          this._fileUrl = photoMap['fileUrl'];
+          this._thumbnail = photoMap['thumbnail'];
+          this._ratio =
+              photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
+        }
         break;
       case MsgType.video:
-        Map<dynamic, dynamic> videoMap = msgInfor['video'];
-        this._filePath = videoMap['filePath'];
-        this._fileUrl = videoMap['fileUrl'];
-        this._thumbnail = videoMap['thumbnail'];
-        this._ratio =
-            videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
-        this._duration =
-            videoMap['duration'] == null ? 0 : videoMap['duration'].toDouble();
+        if (msgInfor.containsKey('video')) {
+          Map<dynamic, dynamic> videoMap = msgInfor['video'];
+          this._filePath = videoMap['filePath'];
+          this._fileUrl = videoMap['fileUrl'];
+          this._thumbnail = videoMap['thumbnail'];
+          this._ratio =
+              videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
+          this._duration = videoMap['duration'] == null
+              ? 0
+              : videoMap['duration'].toDouble();
+        }
         break;
       case MsgType.audio:
-        Map<dynamic, dynamic> audioMap = msgInfor['audio'];
-        this._filePath = audioMap['filePath'];
-        this._fileUrl = audioMap['fileUrl'];
-        this._duration =
-            audioMap['duration'] == null ? 0 : audioMap['duration'].toDouble();
+        if (msgInfor.containsKey('audio')) {
+          Map<dynamic, dynamic> audioMap = msgInfor['audio'];
+          this._filePath = audioMap['filePath'];
+          this._fileUrl = audioMap['fileUrl'];
+          this._duration = audioMap['duration'] == null
+              ? 0
+              : audioMap['duration'].toDouble();
+        }
         break;
       case MsgType.file:
-        Map<dynamic, dynamic> fileMap = msgInfor['file'];
-        this._filePath = fileMap['filePath'];
-        this._fileUrl = fileMap['fileUrl'];
-        this._fileName = fileMap['fileName'];
-        this._fileLength = fileMap['fileLength'];
+        if (msgInfor.containsKey('file')) {
+          Map<dynamic, dynamic> fileMap = msgInfor['file'];
+          this._filePath = fileMap['filePath'];
+          this._fileUrl = fileMap['fileUrl'];
+          this._fileName = fileMap['fileName'];
+          this._fileLength = fileMap['fileLength'];
+        }
         break;
       case MsgType.location:
-        Map<dynamic, dynamic> locationMap = msgInfor['location'];
-        this._latitude = locationMap['lat'];
-        this._longitude = locationMap['lon'];
+        if (msgInfor.containsKey('location')) {
+          Map<dynamic, dynamic> locationMap = msgInfor['location'];
+          this._latitude = locationMap['lat'];
+          this._longitude = locationMap['lon'];
+        }
         break;
       case MsgType.contact:
-        Map<dynamic, dynamic> contactMap = msgInfor['contact'];
-        this._vcard = contactMap['vcard'];
+        if (msgInfor.containsKey('contact')) {
+          Map<dynamic, dynamic> contactMap = msgInfor['contact'];
+          this._vcard = contactMap['vcard'];
+        }
         break;
       case MsgType.sticker:
-        Map<dynamic, dynamic> stickerMap = msgInfor['sticker'];
-        this._stickerName = stickerMap['name'];
-        this._stickerCategory = stickerMap['category'];
+        if (msgInfor.containsKey('sticker')) {
+          Map<dynamic, dynamic> stickerMap = msgInfor['sticker'];
+          this._stickerName = stickerMap['name'];
+          this._stickerCategory = stickerMap['category'];
+        }
         break;
       case MsgType.notification:
         this._notiContent = new Map<dynamic, dynamic>();
@@ -494,8 +531,7 @@ class StringeeMessage {
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
-              StringeeUser user =
-                  StringeeUser.fromJson(participantArray[i]);
+              StringeeUser user = StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
             this._notiContent!["participants"] = participants;
@@ -507,8 +543,7 @@ class StringeeMessage {
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
-              StringeeUser user =
-                  StringeeUser.fromJson(participantArray[i]);
+              StringeeUser user = StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
             this._notiContent!["participants"] = participants;
