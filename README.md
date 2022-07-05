@@ -35,3 +35,5 @@ the [documentation](https://flutter.io/developing-packages/#edit-plugin-package)
     + Add feature: Allow to remove device token by package name  
 - Version 1.2.3:
     + Allow to update phone number when updating user info
+- Version 1.2.4:
+    + Bug fixed: Crash when convert message from android native
