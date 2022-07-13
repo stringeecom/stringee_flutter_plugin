@@ -62,7 +62,6 @@ class _CallState extends State<Call> {
   bool _hasRemoteScreen = false;
   late StringeeVideoTrack _remoteScreenTrack;
 
-  int _cameraId = 1;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -120,12 +119,10 @@ class _CallState extends State<Call> {
             widget._callId,
             true,
             alignment: Alignment.topRight,
-            isOverlay: true,
             margin: EdgeInsets.only(top: 25.0, right: 25.0),
             height: 150.0,
             width: 100.0,
             scalingType: ScalingType.fill,
-            borderRadius: BorderRadius.circular(10)
           )
         : Placeholder(
             color: Colors.transparent,
@@ -135,7 +132,6 @@ class _CallState extends State<Call> {
         ? new StringeeVideoView(
             widget._callId,
             false,
-            isOverlay: false,
             isMirror: false,
             scalingType: ScalingType.fill,
           )
@@ -146,7 +142,6 @@ class _CallState extends State<Call> {
     Widget localScreen = (_hasLocalScreen)
         ? _localScreenTrack.attach(
             alignment: Alignment.topRight,
-            isOverlay: true,
             margin: EdgeInsets.only(top: 200.0, right: 25.0),
             height: 150.0,
             width: 100.0,
@@ -159,7 +154,6 @@ class _CallState extends State<Call> {
     Widget remoteScreen = (_hasRemoteScreen)
         ? _remoteScreenTrack.attach(
             alignment: Alignment.topRight,
-            isOverlay: true,
             margin: EdgeInsets.only(top: 375.0, right: 25.0),
             height: 150.0,
             width: 100.0,
@@ -595,7 +589,6 @@ class _CallState extends State<Call> {
           widget._callId = callId;
         });
       });
-
     } else {
       setState(() {
         _hasRemoteStream = true;
@@ -671,16 +664,13 @@ class _CallState extends State<Call> {
   }
 
   void toggleSwitchCamera() {
-    setState(() {
-      _cameraId = _cameraId == 1 ? 0 : 1;
-    });
     if (widget._callType == StringeeObjectEventType.call) {
-      widget._stringeeCall!.switchCamera(cameraId: _cameraId).then((result) {
+      widget._stringeeCall!.switchCamera().then((result) {
         bool status = result['status'];
         if (status) {}
       });
     } else if (widget._callType == StringeeObjectEventType.call2) {
-      widget._stringeeCall2!.switchCamera(cameraId: _cameraId).then((result) {
+      widget._stringeeCall2!.switchCamera().then((result) {
         bool status = result['status'];
         if (status) {}
       });

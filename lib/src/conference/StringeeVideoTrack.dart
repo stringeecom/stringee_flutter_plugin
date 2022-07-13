@@ -73,7 +73,7 @@ class StringeeVideoTrack {
   }
 
   /// Switch camera
-  Future<Map<dynamic, dynamic>> switchCamera({int? cameraId}) async {
+  Future<Map<dynamic, dynamic>> switchCamera({String? cameraId}) async {
     final params = {
       'localId': _localId,
       'uuid': _client.uuid,
@@ -86,7 +86,6 @@ class StringeeVideoTrack {
   /// Attach view
   StringeeVideoView attach({
     Key? key,
-    bool? isOverlay,
     bool? isMirror,
     double? height,
     double? width,
@@ -99,7 +98,6 @@ class StringeeVideoTrack {
     StringeeVideoView videoView = StringeeVideoView.forTrack(
       _isLocal ? _localId : _id,
       height: height,
-      isOverlay: isOverlay,
       isMirror: isMirror,
       width: width,
       margin: margin,

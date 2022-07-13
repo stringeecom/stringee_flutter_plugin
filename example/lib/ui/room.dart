@@ -35,7 +35,6 @@ class RoomState extends State<Room> {
   bool _sharingScreen = false;
   bool _isMute = false;
   bool _isVideoEnable = true;
-  int _cameraId = 1;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -273,7 +272,6 @@ class RoomState extends State<Room> {
     if (track.isLocal) {
       if (track.isScreenCapture) {
         StringeeVideoView videoView = track.attach(
-          isOverlay: true,
           height: 200.0,
           width: 150.0,
           scalingType: ScalingType.fit,
@@ -293,7 +291,6 @@ class RoomState extends State<Room> {
       }
     } else {
       StringeeVideoView videoView = track.attach(
-        isOverlay: true,
         height: 200.0,
         width: 150.0,
         scalingType: ScalingType.fit,
@@ -365,10 +362,7 @@ class RoomState extends State<Room> {
   }
 
   void toggleSwitchCamera() {
-    setState(() {
-      _cameraId = _cameraId == 1 ? 0 : 1;
-    });
-    _localTrack.switchCamera(cameraId: _cameraId).then((result) {
+    _localTrack.switchCamera().then((result) {
       bool status = result['status'];
       if (status) {}
     });

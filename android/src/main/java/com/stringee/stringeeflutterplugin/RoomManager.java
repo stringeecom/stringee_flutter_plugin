@@ -445,7 +445,7 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     @Override
-    public void onVideoTrackNotification(RemoteParticipant remoteParticipant, StringeeVideoTrack stringeeVideoTrack) {
+    public void onVideoTrackNotification(RemoteParticipant remoteParticipant, StringeeVideoTrack stringeeVideoTrack, StringeeVideoTrack.MediaType mediaType) {
 //        handler.post(new Runnable() {
 //            @Override
 //            public void run() {

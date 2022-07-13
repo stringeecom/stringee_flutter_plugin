@@ -544,10 +544,10 @@ public class VideoConferenceManager {
      * Switch camera
      *
      * @param localId
-     * @param cameraId
+     * @param cameraName
      * @param result
      */
-    public void switchCamera(final String localId, final int cameraId, final Result result) {
+    public void switchCamera(final String localId, final String cameraName, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "switchCamera: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -599,6 +599,6 @@ public class VideoConferenceManager {
                     }
                 });
             }
-        }, cameraId);
+        }, cameraName);
     }
 }

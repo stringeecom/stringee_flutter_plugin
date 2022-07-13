@@ -2,7 +2,6 @@ package com.stringee.stringeeflutterplugin;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -15,8 +14,7 @@ import androidx.annotation.Nullable;
 import com.stringee.video.StringeeVideo.ScalingType;
 import com.stringee.video.StringeeVideoTrack.Listener;
 import com.stringee.video.StringeeVideoTrack.MediaState;
-
-import org.webrtc.SurfaceViewRenderer;
+import com.stringee.video.TextureViewRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,11 +84,6 @@ public class StringeeVideoView implements PlatformView {
                     isMirror = (Boolean) creationParams.get("isMirror");
                 }
 
-                boolean isOverlay = (Boolean) creationParams.get("isOverlay");
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-                    isOverlay = true;
-                }
-
                 LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 layoutParams.gravity = Gravity.CENTER;
 
@@ -98,59 +91,57 @@ public class StringeeVideoView implements PlatformView {
                 layout.setBackgroundColor(Color.BLACK);
                 if (isLocal) {
                     if (call != null) {
-                        SurfaceViewRenderer localView = call.getLocalView();
+                        TextureViewRenderer localView = call.getLocalView();
                         if (localView.getParent() != null) {
                             ((FrameLayout) localView.getParent()).removeView(localView);
                         }
 
                         layout.addView(localView, layoutParams);
-                        call.renderLocalView(isOverlay, scalingType);
+                        call.renderLocalView(scalingType);
                         localView.setMirror(isMirror);
                     } else {
 
-                        SurfaceViewRenderer localView = call2.getLocalView();
+                        TextureViewRenderer localView = call2.getLocalView();
                         if (localView.getParent() != null) {
                             ((FrameLayout) localView.getParent()).removeView(localView);
                         }
 
                         layout.addView(localView, layoutParams);
-                        call2.renderLocalView(isOverlay, scalingType);
+                        call2.renderLocalView(scalingType);
                         localView.setMirror(isMirror);
                     }
 
                     //save localView option
                     Map<String, Object> localViewOptions = new HashMap<>();
                     localViewOptions.put("isMirror", isMirror);
-                    localViewOptions.put("isOverlay", isOverlay);
                     localViewOptions.put("scalingType", scalingType);
                     localViewOptions.put("layout", layout);
                     StringeeManager.getInstance().getLocalViewOptions().put(callId, localViewOptions);
 
                 } else {
                     if (call != null) {
-                        SurfaceViewRenderer remoteView = call.getRemoteView();
+                        TextureViewRenderer remoteView = call.getRemoteView();
                         if (remoteView.getParent() != null) {
                             ((FrameLayout) remoteView.getParent()).removeView(remoteView);
                         }
 
                         layout.addView(remoteView, layoutParams);
-                        call.renderRemoteView(isOverlay, scalingType);
+                        call.renderRemoteView(scalingType);
                         remoteView.setMirror(isMirror);
                     } else {
-                        SurfaceViewRenderer remoteView = call2.getRemoteView();
+                        TextureViewRenderer remoteView = call2.getRemoteView();
                         if (remoteView.getParent() != null) {
                             ((FrameLayout) remoteView.getParent()).removeView(remoteView);
                         }
 
                         layout.addView(remoteView, layoutParams);
-                        call2.renderRemoteView(isOverlay, scalingType);
+                        call2.renderRemoteView(scalingType);
                         remoteView.setMirror(isMirror);
                     }
 
                     //save remoteView option
                     Map<String, Object> remoteViewOptions = new HashMap<>();
                     remoteViewOptions.put("isMirror", isMirror);
-                    remoteViewOptions.put("isOverlay", isOverlay);
                     remoteViewOptions.put("scalingType", scalingType);
                     remoteViewOptions.put("layout", layout);
                     StringeeManager.getInstance().getRemoteViewOptions().put(callId, remoteViewOptions);
@@ -187,13 +178,6 @@ public class StringeeVideoView implements PlatformView {
                     isMirror = false;
                 }
 
-                boolean isOverlay;
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
-                    isOverlay = true;
-                } else {
-                    isOverlay = (Boolean) creationParams.get("isOverlay");
-                }
-
                 LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                 layoutParams.gravity = Gravity.CENTER;
 
@@ -206,13 +190,13 @@ public class StringeeVideoView implements PlatformView {
                         StringeeManager.getInstance().getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                SurfaceViewRenderer trackView = videoTrackManager.getVideoTrack().getView(context);
+                                TextureViewRenderer trackView = videoTrackManager.getVideoTrack().getView2(context);
                                 if (trackView.getParent() != null) {
                                     ((FrameLayout) trackView.getParent()).removeView(trackView);
                                 }
 
                                 layout.addView(trackView, layoutParams);
-                                videoTrackManager.getVideoTrack().renderView(isOverlay, scalingType);
+                                videoTrackManager.getVideoTrack().renderView2(scalingType);
                                 trackView.setMirror(isMirror);
                             }
                         });

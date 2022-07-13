@@ -227,7 +227,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "switchCamera":
                 if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     if (call.hasArgument("cameraId")) {
-                        clientWrapper.callWrapper(callId).switchCamera((int) call.argument("cameraId"), result);
+                        clientWrapper.callWrapper(callId).switchCamera((String) call.argument("cameraId"), result);
                     } else {
                         clientWrapper.callWrapper(callId).switchCamera(result);
                     }
@@ -299,7 +299,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "switchCamera2":
                 if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
                     if (call.hasArgument("cameraId")) {
-                        clientWrapper.call2Wrapper(callId).switchCamera((int) call.argument("cameraId"), result);
+                        clientWrapper.call2Wrapper(callId).switchCamera((String) call.argument("cameraId"), result);
                     } else {
                         clientWrapper.call2Wrapper(callId).switchCamera(result);
                     }
@@ -627,7 +627,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "track.switchCamera":
                 if (call.hasArgument("cameraId")) {
-                    clientWrapper.videoConference().switchCamera((String) call.argument("localId"), (int) call.argument("cameraId"), result);
+                    clientWrapper.videoConference().switchCamera((String) call.argument("localId"), (String) call.argument("cameraId"), result);
                 } else {
                     clientWrapper.videoConference().switchCamera((String) call.argument("localId"), result);
                 }

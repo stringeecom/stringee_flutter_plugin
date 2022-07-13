@@ -339,7 +339,7 @@ class StringeeCall {
   }
 
   /// Switch camera
-  Future<Map<dynamic, dynamic>> switchCamera({int? cameraId}) async {
+  Future<Map<dynamic, dynamic>> switchCamera({String? cameraId}) async {
     Map params = {
       'callId': this._id,
       'uuid': _client.uuid,

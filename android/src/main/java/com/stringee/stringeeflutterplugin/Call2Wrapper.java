@@ -24,10 +24,11 @@ import com.stringee.listener.StatusListener;
 import com.stringee.video.StringeeVideo;
 import com.stringee.video.StringeeVideo.ScalingType;
 import com.stringee.video.StringeeVideoTrack;
+import com.stringee.video.StringeeVideoTrack.MediaType;
+import com.stringee.video.TextureViewRenderer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.webrtc.SurfaceViewRenderer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,7 +122,12 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         }
 
         prepareCall();
-        call2.makeCall();
+        call2.makeCall(new StatusListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+        });
     }
 
     /**
@@ -190,13 +196,17 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
             return;
         }
 
-        call2.answer();
-        Log.d(TAG, "answer: success");
-        Map map = new HashMap();
-        map.put("status", true);
-        map.put("code", 0);
-        map.put("message", "Success");
-        result.success(map);
+        call2.answer(new StatusListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "answer: success");
+                Map map = new HashMap();
+                map.put("status", true);
+                map.put("code", 0);
+                map.put("message", "Success");
+                result.success(map);
+            }
+        });
     }
 
     /**
@@ -211,14 +221,18 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         hasRemoteStream = false;
         remoteStreamShowed = false;
 
-        call2.hangup();
-        stringeeManager.getCall2sMap().put(call2.getCallId(), null);
-        Log.d(TAG, "hangup: success");
-        Map map = new HashMap();
-        map.put("status", true);
-        map.put("code", 0);
-        map.put("message", "Success");
-        result.success(map);
+        call2.hangup(new StatusListener() {
+            @Override
+            public void onSuccess() {
+                stringeeManager.getCall2sMap().put(call2.getCallId(), null);
+                Log.d(TAG, "hangup: success");
+                Map map = new HashMap();
+                map.put("status", true);
+                map.put("code", 0);
+                map.put("message", "Success");
+                result.success(map);
+            }
+        });
     }
 
     /**
@@ -233,14 +247,18 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         hasRemoteStream = false;
         remoteStreamShowed = false;
 
-        call2.reject();
-        stringeeManager.getCall2sMap().put(call2.getCallId(), null);
-        Log.d(TAG, "hangup: success");
-        Map map = new HashMap();
-        map.put("status", true);
-        map.put("code", 0);
-        map.put("message", "Success");
-        result.success(map);
+        call2.reject(new StatusListener() {
+            @Override
+            public void onSuccess() {
+                stringeeManager.getCall2sMap().put(call2.getCallId(), null);
+                Log.d(TAG, "hangup: success");
+                Map map = new HashMap();
+                map.put("status", true);
+                map.put("code", 0);
+                map.put("message", "Success");
+                result.success(map);
+            }
+        });
     }
 
     /**
@@ -415,9 +433,9 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
      * Switch Camera
      *
      * @param result
-     * @param cameraId
+     * @param cameraName
      */
-    public void switchCamera(int cameraId, final Result result) {
+    public void switchCamera(String cameraName, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "switchCamera: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -459,7 +477,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                     }
                 });
             }
-        }, cameraId);
+        }, cameraName);
     }
 
     /**
@@ -538,9 +556,9 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         }
 
         if (isLocal) {
-            call2.getLocalView().setMirror(isMirror);
+            call2.getLocalView2().setMirror(isMirror);
         } else {
-            call2.getRemoteView().setMirror(isMirror);
+            call2.getRemoteView2().setMirror(isMirror);
         }
 
         Log.d(TAG, "setMirror: success");
@@ -674,20 +692,20 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     }
 
 
-    public SurfaceViewRenderer getLocalView() {
-        return call2.getLocalView();
+    public TextureViewRenderer getLocalView() {
+        return call2.getLocalView2();
     }
 
-    public SurfaceViewRenderer getRemoteView() {
-        return call2.getRemoteView();
+    public TextureViewRenderer getRemoteView() {
+        return call2.getRemoteView2();
     }
 
-    public void renderLocalView(boolean isOverlay, StringeeVideo.ScalingType scalingType) {
-        call2.renderLocalView(isOverlay, scalingType);
+    public void renderLocalView(ScalingType scalingType) {
+        call2.renderLocalView2(scalingType);
     }
 
-    public void renderRemoteView(boolean isOverlay, StringeeVideo.ScalingType scalingType) {
-        call2.renderRemoteView(isOverlay, scalingType);
+    public void renderRemoteView(ScalingType scalingType) {
+        call2.renderRemoteView2(scalingType);
     }
 
     @Override
@@ -840,18 +858,17 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                         Map<String, Object> localViewOptions = stringeeManager.getLocalViewOptions().get(stringeeCall.getCallId());
                         FrameLayout localView = (FrameLayout) localViewOptions.get("layout");
                         boolean isMirror = (Boolean) localViewOptions.get("isMirror");
-                        boolean isOverlay = (Boolean) localViewOptions.get("isOverlay");
                         ScalingType scalingType = (ScalingType) localViewOptions.get("scalingType");
 
                         localView.removeAllViews();
-                        if (stringeeCall.getLocalView().getParent() != null) {
-                            ((FrameLayout) stringeeCall.getLocalView().getParent()).removeView(stringeeCall.getLocalView());
+                        if (getLocalView().getParent() != null) {
+                            ((FrameLayout) getLocalView().getParent()).removeView(getLocalView());
                         }
                         LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                         layoutParams.gravity = Gravity.CENTER;
-                        localView.addView(stringeeCall.getLocalView(), layoutParams);
-                        stringeeCall.renderLocalView(isOverlay, scalingType);
-                        stringeeCall.getLocalView().setMirror(isMirror);
+                        localView.addView(getLocalView(), layoutParams);
+                        renderLocalView(scalingType);
+                        getLocalView().setMirror(isMirror);
 
                         isResumeVideo = false;
                     }
@@ -886,19 +903,18 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                     if (remoteViewOptions != null) {
                         FrameLayout remoteView = (FrameLayout) remoteViewOptions.get("layout");
                         boolean isMirror = (Boolean) remoteViewOptions.get("isMirror");
-                        boolean isOverlay = (Boolean) remoteViewOptions.get("isOverlay");
                         ScalingType scalingType = (ScalingType) remoteViewOptions.get("scalingType");
 
                         if (remoteView != null) {
                             remoteView.removeAllViews();
-                            if (stringeeCall.getRemoteView().getParent() != null) {
-                                ((FrameLayout) stringeeCall.getRemoteView().getParent()).removeView(stringeeCall.getRemoteView());
+                            if (getRemoteView().getParent() != null) {
+                                ((FrameLayout) getRemoteView().getParent()).removeView(getRemoteView());
                             }
                             LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                             layoutParams.gravity = Gravity.CENTER;
-                            remoteView.addView(stringeeCall.getRemoteView(), layoutParams);
-                            stringeeCall.renderRemoteView(isOverlay, scalingType);
-                            stringeeCall.getRemoteView().setMirror(isMirror);
+                            remoteView.addView(getRemoteView(), layoutParams);
+                            renderRemoteView(scalingType);
+                            getRemoteView().setMirror(isMirror);
                         }
                     }
                 }
@@ -976,5 +992,10 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 }
             }
         });
+    }
+
+    @Override
+    public void onTrackMediaStateChange(String s, MediaType mediaType, boolean b) {
+
     }
 }
