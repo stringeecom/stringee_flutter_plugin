@@ -37,3 +37,5 @@ the [documentation](https://flutter.io/developing-packages/#edit-plugin-package)
     + Allow to update phone number when updating user info
 - Version 1.2.4:
     + Bug fixed: Crash when convert message from android native
+- Version 1.2.5:
+    + Upgrade android sdk
