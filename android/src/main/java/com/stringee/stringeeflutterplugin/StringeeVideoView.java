@@ -58,7 +58,7 @@ public class StringeeVideoView implements PlatformView {
     }
 
     private void renderView(final FrameLayout layout, final String callId, final Map<String, Object> creationParams) {
-        StringeeManager.getInstance().getHandler().post(new Runnable() {
+        StringeeManager.getInstance().getHandler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 CallWrapper call = StringeeManager.getInstance().getCallsMap().get(callId);
@@ -147,7 +147,7 @@ public class StringeeVideoView implements PlatformView {
                     StringeeManager.getInstance().getRemoteViewOptions().put(callId, remoteViewOptions);
                 }
             }
-        });
+        },500);
     }
 
     private void renderView(final Context context, final FrameLayout layout, final String trackId, final Map<String, Object> creationParams) {

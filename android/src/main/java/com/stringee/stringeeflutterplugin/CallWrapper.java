@@ -189,14 +189,14 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         call.answer(new StatusListener() {
             @Override
             public void onSuccess() {
-                Log.d(TAG, "answer: success");
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
             }
         });
+        Log.d(TAG, "answer: success");
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
     }
 
     /**
@@ -214,15 +214,15 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         call.hangup(new StatusListener() {
             @Override
             public void onSuccess() {
-                stringeeManager.getCallsMap().put(call.getCallId(), null);
-                Log.d(TAG, "hangup: success");
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
             }
         });
+        stringeeManager.getCallsMap().put(call.getCallId(), null);
+        Log.d(TAG, "hangup: success");
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
     }
 
     /**
@@ -240,15 +240,15 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         call.reject(new StatusListener() {
             @Override
             public void onSuccess() {
-                stringeeManager.getCallsMap().put(call.getCallId(), null);
-                Log.d(TAG, "reject: success");
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
             }
         });
+        stringeeManager.getCallsMap().put(call.getCallId(), null);
+        Log.d(TAG, "reject: success");
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
     }
 
     /**
@@ -630,7 +630,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (signalingState == SignalingState.CALLING) {
+                if (signalingState == SignalingState.CALLING|| signalingState == SignalingState.RINGING) {
                     Log.d(TAG, "makeCall: success");
                     stringeeManager.getCallsMap().put(stringeeCall.getCallId(), CallWrapper.this);
                     Map map = new HashMap();

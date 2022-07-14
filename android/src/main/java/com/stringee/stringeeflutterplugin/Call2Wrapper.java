@@ -21,7 +21,6 @@ import com.stringee.common.StringeeAudioManager.AudioDevice;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
-import com.stringee.video.StringeeVideo;
 import com.stringee.video.StringeeVideo.ScalingType;
 import com.stringee.video.StringeeVideoTrack;
 import com.stringee.video.StringeeVideoTrack.MediaType;
@@ -199,14 +198,14 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         call2.answer(new StatusListener() {
             @Override
             public void onSuccess() {
-                Log.d(TAG, "answer: success");
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
             }
         });
+        Log.d(TAG, "answer: success");
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
     }
 
     /**
@@ -224,15 +223,15 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         call2.hangup(new StatusListener() {
             @Override
             public void onSuccess() {
-                stringeeManager.getCall2sMap().put(call2.getCallId(), null);
-                Log.d(TAG, "hangup: success");
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
             }
         });
+        stringeeManager.getCall2sMap().put(call2.getCallId(), null);
+        Log.d(TAG, "hangup: success");
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
     }
 
     /**
@@ -250,15 +249,15 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
         call2.reject(new StatusListener() {
             @Override
             public void onSuccess() {
-                stringeeManager.getCall2sMap().put(call2.getCallId(), null);
-                Log.d(TAG, "hangup: success");
-                Map map = new HashMap();
-                map.put("status", true);
-                map.put("code", 0);
-                map.put("message", "Success");
-                result.success(map);
             }
         });
+        stringeeManager.getCall2sMap().put(call2.getCallId(), null);
+        Log.d(TAG, "hangup: success");
+        Map map = new HashMap();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
     }
 
     /**
