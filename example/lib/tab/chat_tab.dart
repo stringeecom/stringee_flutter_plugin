@@ -15,7 +15,7 @@ class ChatTab extends StatefulWidget {
 
 class ChatTabState extends State<ChatTab> {
   String myUserId = 'Not connected...';
-  String token = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTY1NzAwNTI1MiIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTY1NzA5MTY1MiwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImNoYXRBZ2VudCI6dHJ1ZSwiZGlzcGxheU5hbWUiOiJOZ3V5XHUxZWM1biBRdWFuZyBLXHUxZWYzIEFuaCIsImF2YXRhclVybCI6Imh0dHBzOlwvXC9hcGkuc3RyaW5nZWV4LmNvbVwvQUM3RlRFTzZHVFwvSUdKU0ZWTkRXUi0xNjM4NTAxNDMwODcxLmpwZyIsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.udb-DrhcXTdkRuSjAf9GvC6i7mOecXL7F-1H7_fPVsc';
+  String token = '';
 
   List<String> _log = [];
   List<StringeeConversation> _conversations = [];
@@ -245,7 +245,7 @@ class ChatTabState extends State<ChatTab> {
                         width: 175.0,
                         child: new ElevatedButton(
                           onPressed: () {
-                            chat.getConversationById('conv-vn-1-75XFLFMX44-1639090883956').then((value) {
+                            chat.getConversationById('getConversationById').then((value) {
                               print("Flutter - getConversationById - result: " +
                                   value.toString());
 
@@ -356,7 +356,7 @@ class ChatTabState extends State<ChatTab> {
                           width: 175.0,
                           child: new ElevatedButton(
                             onPressed: () {
-                              chat.getLastConversation(1).then((value) {
+                              chat.getLastConversation(50).then((value) {
                                 print(
                                     "Flutter - getLastConversation - result: " +
                                         value.toString());

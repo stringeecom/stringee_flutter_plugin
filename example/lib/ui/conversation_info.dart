@@ -351,7 +351,7 @@ class ConversationInforState extends State<ConversationInfor> {
                           child: new ElevatedButton(
                             onPressed: () {
                               widget._conversation
-                                  .getLastMessages(5)
+                                  .getLastMessages(50)
                                   .then((value) {
                                 print(value.toString());
                                 setState(() {
@@ -486,11 +486,9 @@ class ConversationInforState extends State<ConversationInfor> {
                           width: 175.0,
                           child: new ElevatedButton(
                             onPressed: () {
-                              String msgId = _messages[_messages.length - 1].id!;
-                              widget._conversation
-                                  .deleteMessages([msgId]).then((value) {
+                              widget._conversation.deleteMessages(
+                                  ['msgid1', 'msgid2']).then((value) {
                                 print(value.toString());
-                                print('Delete message - $msgId');
                                 setState(() {
                                   _log.add('Delete messages: msg:' +
                                       value['message']);
