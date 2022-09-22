@@ -508,7 +508,27 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.getLiveChatToken((String) call.argument("key"), (String) call.argument("name"), (String) call.argument("email"), result);
                 break;
             case "updateUserInfo":
-                clientWrapper.updateUserInfo((String) call.argument("name"), (String) call.argument("email"), (String) call.argument("avatar"), (String) call.argument("phone"), result);
+                try {
+                    JSONObject userInfoObject = Utils.convertMapToJson(call.argument("userInfo"));
+                    User user = new User();
+                    user.setName(userInfoObject.optString("name"));
+                    user.setEmail(userInfoObject.optString("email"));
+                    user.setAvatarUrl(userInfoObject.optString("avatar"));
+                    user.setPhone(userInfoObject.optString("phone"));
+                    user.setLocation(userInfoObject.optString("location"));
+                    user.setBrowser(userInfoObject.optString("browser"));
+                    user.setPlatform(userInfoObject.optString("platform"));
+                    user.setDevice(userInfoObject.optString("device"));
+                    user.setIpAddress(userInfoObject.optString("ipAddress"));
+                    user.setHostName(userInfoObject.optString("hostName"));
+                    user.setUserAgent(userInfoObject.optString("userAgent"));
+                    clientWrapper.updateUserInfo(user, result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "getUserInfo":
+                clientWrapper.getUserInfo(call.argument("userIds"),result);
                 break;
             case "createLiveChatConversation":
                 String customData = null;

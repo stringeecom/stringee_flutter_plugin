@@ -150,7 +150,7 @@ public class Utils {
                 short role = (short) object.getInt("role");
                 if (role == UserRole.Admin.getValue()) {
                     user.setRole(Role.ADMIN);
-                } else if (role == UserRole.Admin.getValue()) {
+                } else if (role == UserRole.Member.getValue()) {
                     user.setRole(Role.MEMBER);
                 }
             }
@@ -424,6 +424,15 @@ public class Utils {
         userMap.put("displayName", user.getName());
         userMap.put("avatarUrl", user.getAvatarUrl());
         userMap.put("role", user.getRole().getValue());
+        userMap.put("email", user.getEmail());
+        userMap.put("phone", user.getPhone());
+        userMap.put("location", user.getLocation());
+        userMap.put("browser", user.getBrowser());
+        userMap.put("platform", user.getPlatform());
+        userMap.put("device", user.getDevice());
+        userMap.put("ipAddress", user.getIpAddress());
+        userMap.put("hostName", user.getHostName());
+        userMap.put("userAgent", user.getUserAgent());
         return userMap;
     }
 

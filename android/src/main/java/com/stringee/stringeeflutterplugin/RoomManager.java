@@ -5,8 +5,6 @@ import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventTy
 import android.os.Handler;
 import android.util.Log;
 
-import com.stringee.common.StringeeAudioManager.AudioDevice;
-import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
 import com.stringee.listener.StringeeRoomListener;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
@@ -296,26 +293,7 @@ public class RoomManager implements StringeeRoomListener {
 
                 videoConferenceManager.getRoomsMap().put(stringeeRoom.getId(), RoomManager.this);
 
-                stringeeManager.startAudioManager(stringeeManager.getContext(), new AudioManagerEvents() {
-                    @Override
-                    public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d(TAG, "onAudioDeviceChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
-                                switch (selectedAudioDevice) {
-                                    case BLUETOOTH:
-                                    case WIRED_HEADSET:
-                                        stringeeManager.setSpeakerphoneOn(false);
-                                        break;
-                                    default:
-                                        stringeeManager.setSpeakerphoneOn(true);
-                                        break;
-                                }
-                            }
-                        });
-                    }
-                });
+                stringeeManager.startAudioManager(RoomEvent.getValue(), clientWrapper.getId());
             }
         });
     }

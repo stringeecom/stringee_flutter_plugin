@@ -6,10 +6,14 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.stringee.common.StringeeAudioManager;
+import com.stringee.common.StringeeAudioManager.AudioDevice;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
@@ -25,6 +29,8 @@ public class StringeeManager {
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
     private ScreenCaptureManager captureManager;
+
+    private static final String TAG = "StringeeSDK";
 
     public enum StringeeCallType {
         AppToAppOutgoing(0),
@@ -124,9 +130,34 @@ public class StringeeManager {
         this.handler = handler;
     }
 
-    public void startAudioManager(Context context, AudioManagerEvents events) {
+    public void startAudioManager(short eventType, String clientId) {
         audioManager = StringeeAudioManager.create(context);
-        audioManager.start(events);
+        audioManager.start(new AudioManagerEvents() {
+            @Override
+            public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
+                        List<AudioDevice> audioDeviceList = new ArrayList<>();
+                        audioDeviceList.addAll(availableAudioDevices);
+                        List<Integer> codeList = new ArrayList<>();
+                        for (int i = 0; i < audioDeviceList.size(); i++) {
+                            codeList.add(audioDeviceList.get(i).ordinal());
+                        }
+                        Map map = new HashMap();
+                        map.put("nativeEventType", eventType);
+                        map.put("event", "didChangeAudioDevice");
+                        map.put("uuid", clientId);
+                        Map bodyMap = new HashMap();
+                        bodyMap.put("code", selectedAudioDevice.ordinal());
+                        bodyMap.put("codeList", codeList);
+                        map.put("body", bodyMap);
+                        StringeeFlutterPlugin.eventSink.success(map);
+                    }
+                });
+            }
+        });
     }
 
     public void stopAudioManager() {

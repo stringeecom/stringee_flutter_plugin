@@ -13,8 +13,6 @@ import com.stringee.call.StringeeCall.CallStatsListener;
 import com.stringee.call.StringeeCall.MediaState;
 import com.stringee.call.StringeeCall.SignalingState;
 import com.stringee.call.StringeeCall.StringeeCallStats;
-import com.stringee.common.StringeeAudioManager.AudioDevice;
-import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
 import com.stringee.video.StringeeVideo.ScalingType;
@@ -23,11 +21,8 @@ import com.stringee.video.TextureViewRenderer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
@@ -63,33 +58,6 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     public void prepareCall() {
-        stringeeManager.startAudioManager(stringeeManager.getContext(), new AudioManagerEvents() {
-            @Override
-            public void onAudioDeviceChanged(final AudioDevice selectedAudioDevice, final Set<AudioDevice> availableAudioDevices) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
-                        List<AudioDevice> audioDeviceList = new java.util.ArrayList<AudioDevice>();
-                        audioDeviceList.addAll(availableAudioDevices);
-                        List<Integer> codeList = new ArrayList<Integer>();
-                        for (int i = 0; i < audioDeviceList.size(); i++) {
-                            codeList.add(audioDeviceList.get(i).ordinal());
-                        }
-                        Map map = new HashMap();
-                        map.put("nativeEventType", CallEvent.getValue());
-                        map.put("event", "didChangeAudioDevice");
-                        map.put("uuid", clientWrapper.getId());
-                        Map bodyMap = new HashMap();
-                        bodyMap.put("code", selectedAudioDevice.ordinal());
-                        bodyMap.put("codeList", codeList);
-                        map.put("body", bodyMap);
-                        StringeeFlutterPlugin.eventSink.success(map);
-                    }
-                });
-            }
-        });
-
         _mediaState = null;
         hasRemoteStream = false;
         remoteStreamShowed = false;
@@ -112,6 +80,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         }
 
         prepareCall();
+        stringeeManager.startAudioManager(CallEvent.getValue(), clientWrapper.getId());
         call.makeCall(new StatusListener() {
             @Override
             public void onSuccess() {
@@ -186,6 +155,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
             return;
         }
 
+        stringeeManager.startAudioManager(CallEvent.getValue(), clientWrapper.getId());
         call.answer(new StatusListener() {
             @Override
             public void onSuccess() {
@@ -630,7 +600,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (signalingState == SignalingState.CALLING|| signalingState == SignalingState.RINGING) {
+                if (signalingState == SignalingState.CALLING || signalingState == SignalingState.RINGING) {
                     Log.d(TAG, "makeCall: success");
                     stringeeManager.getCallsMap().put(stringeeCall.getCallId(), CallWrapper.this);
                     Map map = new HashMap();

@@ -1346,12 +1346,10 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     /**
      * Update user info
      *
-     * @param name
-     * @param email
-     * @param avatar
+     * @param user
      * @param result
      */
-    public void updateUserInfo(String name, String email, String avatar, String phone, final Result result) {
+    public void updateUserInfo(final User user, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "updateUserInfo: false - -1 - StringeeClient is disconnected");
             Map map = new HashMap();
@@ -1362,7 +1360,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.updateUser(name, email, avatar, phone, new StatusListener() {
+        client.updateUser(user, new StatusListener() {
             @Override
             public void onSuccess() {
                 handler.post(new Runnable() {
@@ -1384,6 +1382,61 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "updateUserInfo: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                        Map map = new HashMap();
+                        map.put("status", false);
+                        map.put("code", stringeeError.getCode());
+                        map.put("message", stringeeError.getMessage());
+                        result.success(map);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Update user info
+     *
+     * @param userIds
+     * @param result
+     */
+    public void getUserInfo(final List<String> userIds, final Result result) {
+        if (!isConnected()) {
+            Log.d(TAG, "getUserInfo: false - -1 - StringeeClient is disconnected");
+            Map map = new HashMap();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        client.getUserInfo(userIds, new CallbackListener<List<User>>() {
+            @Override
+            public void onSuccess(List<User> users) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getUserInfo: success");
+                        Map map = new HashMap();
+                        List userArray = new ArrayList();
+                        for (int j = 0; j < users.size(); j++) {
+                            userArray.add(Utils.convertUserToMap(users.get(j)));
+                        }
+                        map.put("status", true);
+                        map.put("code", 0);
+                        map.put("message", "Success");
+                        map.put("body", userArray);
+                        result.success(map);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError stringeeError) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "getUserInfo: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                         Map map = new HashMap();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
