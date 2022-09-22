@@ -466,6 +466,63 @@ class StringeeVideoTrackOption {
   }
 }
 
+///Class represents server address
+class UserInfo {
+  String? name;
+  String? email;
+  String? avatar;
+  String? phone;
+  String? location;
+  String? browser;
+  String? platform;
+  String? device;
+  String? ipAddress;
+  String? hostName;
+  String? userAgent;
+
+  UserInfo({
+    String? name,
+    String? email,
+    String? avatar,
+    String? phone,
+    String? location,
+    String? browser,
+    String? platform,
+    String? device,
+    String? ipAddress,
+    String? hostName,
+    String? userAgent,
+  }) {
+    this.name = name;
+    this.email = email;
+    this.avatar = avatar;
+    this.phone = phone;
+    this.location = location;
+    this.browser = browser;
+    this.platform = platform;
+    this.device = device;
+    this.ipAddress = ipAddress;
+    this.hostName = hostName;
+    this.userAgent = userAgent;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> params = new Map();
+    if (name != null) params['name'] = name!.trim();
+    if (email != null) params['email'] = email!.trim();
+    if (avatar != null) params['avatar'] = avatar!.trim();
+    if (phone != null) params['phone'] = phone!.trim();
+    if (location != null) params['location'] = location!.trim();
+    if (browser != null) params['browser'] = browser!.trim();
+    if (platform != null) params['platform'] = platform!.trim();
+    if (device != null) params['device'] = device!.trim();
+    if (ipAddress != null) params['ipAddress'] = ipAddress!.trim();
+    if (hostName != null) params['hostName'] = hostName!.trim();
+    if (userAgent != null) params['userAgent'] = userAgent!.trim();
+    return params;
+  }
+}
+
 /// Dimension of [StringeeVideoTrack]
 enum StringeeVideoDimensions {
   dimesion_1080,

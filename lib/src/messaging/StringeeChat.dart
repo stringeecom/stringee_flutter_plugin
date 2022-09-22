@@ -69,16 +69,44 @@ class StringeeChat {
   /// Update user info
   Future<Map<dynamic, dynamic>> updateUserInfo(
       {String? name, String? email, String? avatar, String? phone}) async {
+    UserInfo userInfo =
+        new UserInfo(name: name, email: email, avatar: avatar, phone: phone);
+
+    return updateUserInfo2(userInfo);
+  }
+
+  /// Update user info2
+  Future<Map<dynamic, dynamic>> updateUserInfo2(UserInfo userInfo) async {
     final params = {
-      if (name != null) 'name': name.trim(),
-      if (email != null) 'email': email.trim(),
-      if (avatar != null) 'avatar': avatar.trim(),
-      if (phone != null) 'phone': phone.trim(),
-      'uuid': _client.uuid
+      'userInfo': userInfo.toJson(),
+      'uuid': _client.uuid,
     };
 
     return await StringeeClient.methodChannel
         .invokeMethod('updateUserInfo', params);
+  }
+
+  /// Get user info
+  Future<Map<dynamic, dynamic>> getUserInfo(List<String> userIds) async {
+    if (userIds.length == 0) return await reportInvalidValue('userIds');
+
+    final params = {
+      "userIds": userIds,
+      'uuid': _client.uuid,
+    };
+
+    Map<dynamic, dynamic> result =
+        await StringeeClient.methodChannel.invokeMethod('getUserInfo', params);
+
+    if (result['status']) {
+      List<dynamic> list = result['body'];
+      List<StringeeUser> users = [];
+      list.forEach((element) {
+        users.add(StringeeUser.fromJson(element));
+      });
+      result['body'] = users;
+    }
+    return result;
   }
 
   /// Create live-chat [StringeeConversation]
