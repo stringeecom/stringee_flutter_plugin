@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import 'package:stringee_flutter_plugin_example/bottom_sheet/sheet_input_one_row.dart';
+import 'package:stringee_flutter_plugin_example/bottom_sheet/sheet_update_user.dart';
 import 'package:stringee_flutter_plugin_example/ui/conversation_info.dart';
 
-StringeeClient client = new StringeeClient();
+StringeeClient client = new StringeeClient(serverAddresses: [new StringeeServerAddress('test3.stringee.com', 9879)]);
 StringeeChat chat = new StringeeChat(client);
 
 class ChatTab extends StatefulWidget {
@@ -15,7 +17,8 @@ class ChatTab extends StatefulWidget {
 
 class ChatTabState extends State<ChatTab> {
   String myUserId = 'Not connected...';
-  String token = '';
+  String token =
+      'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3ZWY1V0UkxvYUJ5YzdyRE9RVzRpVjMxZ1RqQm85V2xwLTE2NjM4MTUwMDciLCJpc3MiOiJTS3ZWY1V0UkxvYUJ5YzdyRE9RVzRpVjMxZ1RqQm85V2xwIiwiZXhwIjoxNjY2NDA3MDA3LCJ1c2VySWQiOiJ1c2VyMSJ9.OsVbiKRO85yi8QeEwX9BD9OLbMkMNAY4K9woeCyF1uY';
 
   List<String> _log = [];
   List<StringeeConversation> _conversations = [];
@@ -33,7 +36,7 @@ class ChatTabState extends State<ChatTab> {
           handleDidConnectEvent();
           break;
         case StringeeClientEvents.didDisconnect:
-          handleDiddisconnectEvent();
+          handleDidDisconnectEvent();
           break;
         case StringeeClientEvents.didFailWithError:
           handleDidFailWithErrorEvent(
@@ -73,7 +76,6 @@ class ChatTabState extends State<ChatTab> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -196,76 +198,83 @@ class ChatTabState extends State<ChatTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      new Container(
-                        height: 40.0,
-                        width: 175.0,
-                        child: new ElevatedButton(
-                          onPressed: () {
-                            List<StringeeUser> participants = [];
-                            StringeeUser user1 =
-                                StringeeUser(userId: 'id1', name: 'user1');
-                            StringeeUser user2 =
-                                StringeeUser(userId: 'id2', name: 'user2');
-                            participants.add(user1);
-                            participants.add(user2);
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new ElevatedButton(
+                            onPressed: () {
+                              List<StringeeUser> participants = [];
+                              StringeeUser user1 =
+                                  StringeeUser(userId: 'id1', name: 'user1');
+                              StringeeUser user2 =
+                                  StringeeUser(userId: 'id2', name: 'user2');
+                              participants.add(user1);
+                              participants.add(user2);
 
-                            StringeeConversationOption options =
-                                StringeeConversationOption(
-                                    name: 'name',
-                                    isGroup: true,
-                                    isDistinct: true);
+                              StringeeConversationOption options =
+                                  StringeeConversationOption(
+                                      name: 'name',
+                                      isGroup: true,
+                                      isDistinct: true);
 
-                            chat
-                                .createConversation(options, participants)
-                                .then((value) {
-                              print("Flutter - createConversation - result: " +
-                                  value.toString());
-                              setState(() {
-                                _log.add('Create conversation: msg:' +
-                                    value['message']);
-                                if (value['status']) {
-                                  _conversations.clear();
-                                  _conversations.add(value['body']);
-                                }
+                              chat
+                                  .createConversation(options, participants)
+                                  .then((value) {
+                                print(
+                                    "Flutter - createConversation - result: " +
+                                        value.toString());
+                                setState(() {
+                                  _log.add('Create conversation: msg:' +
+                                      value['message']);
+                                  if (value['status']) {
+                                    _conversations.clear();
+                                    _conversations.add(value['body']);
+                                  }
+                                });
                               });
-                            });
-                          },
-                          child: Text(
-                            'Create Conversation',
-                            textAlign: TextAlign.center,
+                            },
+                            child: Text(
+                              'Create Conversation',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
-                      ),
-                      new Container(
-                        height: 40.0,
-                        width: 175.0,
-                        child: new ElevatedButton(
-                          onPressed: () {
-                            chat.getConversationById('getConversationById').then((value) {
-                              print("Flutter - getConversationById - result: " +
-                                  value.toString());
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new ElevatedButton(
+                            onPressed: () {
+                              chat
+                                  .getConversationById('getConversationById')
+                                  .then((value) {
+                                print(
+                                    "Flutter - getConversationById - result: " +
+                                        value.toString());
 
-                              setState(() {
-                                _log.add('Get conversation by Id: msg:' +
-                                    value['message']);
-                                if (value['status']) {
-                                  _conversations.clear();
-                                  _conversations.add(value['body']);
-                                }
+                                setState(() {
+                                  _log.add('Get conversation by Id: msg:' +
+                                      value['message']);
+                                  if (value['status']) {
+                                    _conversations.clear();
+                                    _conversations.add(value['body']);
+                                  }
+                                });
                               });
-                            });
-                          },
-                          child: Text(
-                            'Get Conversation by Id',
-                            textAlign: TextAlign.center,
+                            },
+                            child: Text(
+                              'Get Conversation by Id',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 20.0),
@@ -453,6 +462,82 @@ class ChatTabState extends State<ChatTab> {
                           width: 175.0,
                           child: new ElevatedButton(
                             onPressed: () {
+                              chat.getUserInfo([client.userId!]).then((value) {
+                                if (value['status']) {
+                                  SheetUpdateUser sheet =
+                                      new SheetUpdateUser(value['body'][0]);
+                                  sheet.show(context, (userInfo) {
+                                    chat
+                                        .updateUserInfo2(userInfo)
+                                        .then((value) {
+                                      print(
+                                          "Flutter - updateUserInfo - result: " +
+                                              value.toString());
+                                      setState(() {
+                                        _log.add('Update user info: msg:' +
+                                            value['message']);
+                                      });
+                                    });
+                                  });
+                                } else {
+                                  setState(() {
+                                    _log.add('Get user info: msg: ' +
+                                        value['message']);
+                                  });
+                                }
+                              });
+                            },
+                            child: Text(
+                              'Update user info',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new ElevatedButton(
+                            onPressed: () {
+                              SheetInputOneRow sheet = new SheetInputOneRow(
+                                  'User id', 'userId1, userId2', 'Get');
+                              sheet.show(context, (value) {
+                                if (value.length != 0) {
+                                  List<String> userIds = value.split(',');
+                                  chat.getUserInfo(userIds).then((value) {
+                                    print("Flutter - getUserInfo - result: " +
+                                        value.toString());
+                                    setState(() {
+                                      _log.add('Get user info: msg: ' +
+                                          value['message'] +
+                                          ' - body: ' +
+                                          (value['status']
+                                              ? value['body'].toString()
+                                              : ''));
+                                    });
+                                  });
+                                }
+                              });
+                            },
+                            child: Text(
+                              'Get user info',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new ElevatedButton(
+                            onPressed: () {
                               chat.clearDb().then((value) {
                                 setState(() {
                                   _log.add('Clear database: msg:' +
@@ -500,7 +585,7 @@ class ChatTabState extends State<ChatTab> {
     });
   }
 
-  void handleDiddisconnectEvent() {
+  void handleDidDisconnectEvent() {
     setState(() {
       myUserId = 'Not connected';
     });

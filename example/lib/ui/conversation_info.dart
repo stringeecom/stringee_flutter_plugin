@@ -568,9 +568,7 @@ class ConversationInforState extends State<ConversationInfor> {
         title: Text('Message'),
         content: Text('msgId: ' + message.id!),
         actions: [
-          new FlatButton(
-            color: Colors.grey[300],
-            textColor: Colors.black,
+          new ElevatedButton(
             onPressed: () {
               message.edit('ok ok').then((value) {
                 print(value.toString());
@@ -585,9 +583,7 @@ class ConversationInforState extends State<ConversationInfor> {
               textAlign: TextAlign.center,
             ),
           ),
-          new FlatButton(
-            color: Colors.grey[300],
-            textColor: Colors.black,
+          new ElevatedButton(
             onPressed: () {
               message.pinOrUnPin(false).then((value) {
                 print(value.toString());
