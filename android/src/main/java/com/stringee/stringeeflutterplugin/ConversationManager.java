@@ -1145,10 +1145,10 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getLastMessage(clientWrapper.getClient(), convId, new CallbackListener<Message>() {
+        Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess(Message message) {
-                message.markAsRead(clientWrapper.getClient(), new StatusListener() {
+            public void onSuccess(Conversation conversation) {
+                conversation.markAllAsRead(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
                         handler.post(new Runnable() {
@@ -1165,7 +1165,7 @@ public class ConversationManager {
                     }
 
                     @Override
-                    public void onError(final StringeeError stringeeError) {
+                    public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         handler.post(new Runnable() {
                             @Override
@@ -1183,7 +1183,7 @@ public class ConversationManager {
             }
 
             @Override
-            public void onError(final StringeeError stringeeError) {
+            public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
                 handler.post(new Runnable() {
                     @Override

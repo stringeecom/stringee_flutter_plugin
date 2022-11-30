@@ -17,11 +17,11 @@ import com.stringee.common.StringeeAudioManager.AudioDevice;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
-import com.stringee.video.StringeeVideo.ScalingType;
 import com.stringee.video.TextureViewRenderer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.webrtc.RendererCommon.ScalingType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -558,10 +558,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "getCallStats: callBytesReceived: " + stringeeCallStats.callBytesReceived +
-                                " - callPacketsLost: " + stringeeCallStats.callPacketsLost +
-                                " - callPacketsReceived: " + stringeeCallStats.callPacketsReceived +
-                                " - timeStamp: " + stringeeCallStats.timeStamp);
+                        Log.d(TAG, "getCallStats: callBytesReceived: " + stringeeCallStats.callBytesReceived + " - callPacketsLost: " + stringeeCallStats.callPacketsLost + " - callPacketsReceived: " + stringeeCallStats.callPacketsReceived + " - timeStamp: " + stringeeCallStats.timeStamp);
                         Map map = new HashMap();
                         map.put("status", true);
                         map.put("code", 0);
@@ -630,7 +627,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (signalingState == SignalingState.CALLING|| signalingState == SignalingState.RINGING) {
+                if (signalingState == SignalingState.CALLING || signalingState == SignalingState.RINGING) {
                     Log.d(TAG, "makeCall: success");
                     stringeeManager.getCallsMap().put(stringeeCall.getCallId(), CallWrapper.this);
                     Map map = new HashMap();

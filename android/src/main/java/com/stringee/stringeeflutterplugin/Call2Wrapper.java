@@ -1,7 +1,5 @@
 package com.stringee.stringeeflutterplugin;
 
-import static com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType.Call2Event;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build.VERSION;
@@ -21,13 +19,14 @@ import com.stringee.common.StringeeAudioManager.AudioDevice;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
-import com.stringee.video.StringeeVideo.ScalingType;
+import com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType;
 import com.stringee.video.StringeeVideoTrack;
 import com.stringee.video.StringeeVideoTrack.MediaType;
 import com.stringee.video.TextureViewRenderer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.webrtc.RendererCommon.ScalingType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +85,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                             codeList.add(audioDeviceList.get(i).ordinal());
                         }
                         Map map = new HashMap();
-                        map.put("nativeEventType", Call2Event.getValue());
+                        map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                         map.put("event", "didChangeAudioDevice");
                         map.put("uuid", clientWrapper.getId());
                         Map bodyMap = new HashMap();
@@ -517,10 +516,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "getCallStats: callBytesReceived: " + stringeeCallStats.callBytesReceived +
-                                " - callPacketsLost: " + stringeeCallStats.callPacketsLost +
-                                " - callPacketsReceived: " + stringeeCallStats.callPacketsReceived +
-                                " - timeStamp: " + stringeeCallStats.timeStamp);
+                        Log.d(TAG, "getCallStats: callBytesReceived: " + stringeeCallStats.callBytesReceived + " - callPacketsLost: " + stringeeCallStats.callPacketsLost + " - callPacketsReceived: " + stringeeCallStats.callPacketsReceived + " - timeStamp: " + stringeeCallStats.timeStamp);
                         Map map = new HashMap();
                         map.put("status", true);
                         map.put("code", 0);
@@ -744,7 +740,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                     if (signalingState != SignalingState.ANSWERED) {
                         Log.d(TAG, "onSignalingStateChange2: " + signalingState);
                         Map map = new HashMap();
-                        map.put("nativeEventType", Call2Event.getValue());
+                        map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                         map.put("event", "didChangeSignalingState");
                         map.put("uuid", clientWrapper.getId());
                         Map bodyMap = new HashMap();
@@ -756,7 +752,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 } else {
                     Log.d(TAG, "onSignalingStateChange2: " + signalingState);
                     Map map = new HashMap();
-                    map.put("nativeEventType", Call2Event.getValue());
+                    map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                     map.put("event", "didChangeSignalingState");
                     map.put("uuid", clientWrapper.getId());
                     Map bodyMap = new HashMap();
@@ -794,7 +790,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
             public void run() {
                 Log.d(TAG, "onHandledOnAnotherDevice2:" + "\nsignalingState: " + signalingState + " - description: " + description);
                 Map map = new HashMap();
-                map.put("nativeEventType", Call2Event.getValue());
+                map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                 map.put("event", "didHandleOnAnotherDevice");
                 map.put("uuid", clientWrapper.getId());
                 Map bodyMap = new HashMap();
@@ -815,7 +811,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 _mediaState = mediaState;
                 Log.d(TAG, "onMediaStateChange2: " + mediaState);
                 Map map = new HashMap();
-                map.put("nativeEventType", Call2Event.getValue());
+                map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                 map.put("event", "didChangeMediaState");
                 map.put("uuid", clientWrapper.getId());
                 Map bodyMap = new HashMap();
@@ -827,7 +823,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 if (_mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed && stringeeCall.isVideoCall()) {
                     remoteStreamShowed = true;
                     Map map1 = new HashMap();
-                    map1.put("nativeEventType", Call2Event.getValue());
+                    map1.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                     map1.put("event", "didReceiveRemoteStream");
                     map1.put("uuid", clientWrapper.getId());
                     Map bodyMap1 = new HashMap();
@@ -847,7 +843,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 if (stringeeCall.isVideoCall()) {
                     Log.d(TAG, "onLocalStream2");
                     Map map = new HashMap();
-                    map.put("nativeEventType", Call2Event.getValue());
+                    map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                     map.put("event", "didReceiveLocalStream");
                     map.put("uuid", clientWrapper.getId());
                     Map bodyMap = new HashMap();
@@ -887,7 +883,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                     if (_mediaState == MediaState.CONNECTED && !remoteStreamShowed) {
                         remoteStreamShowed = true;
                         Map map = new HashMap();
-                        map.put("nativeEventType", Call2Event.getValue());
+                        map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                         map.put("event", "didReceiveRemoteStream");
                         map.put("uuid", clientWrapper.getId());
                         Map bodyMap = new HashMap();
@@ -934,7 +930,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 stringeeManager.getTracksMap().put(stringeeVideoTrack.isLocal() ? shareId : stringeeVideoTrack.getId(), videoTrackManager);
 
                 Map map = new HashMap();
-                map.put("nativeEventType", Call2Event.getValue());
+                map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                 map.put("event", "didAddVideoTrack");
                 map.put("uuid", clientWrapper.getId());
                 Map bodyMap = new HashMap();
@@ -957,7 +953,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                     StringeeVideoTrack videoTrack = videoTrackManager.getVideoTrack();
                     if (videoTrack != null) {
                         Map map = new HashMap();
-                        map.put("nativeEventType", Call2Event.getValue());
+                        map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                         map.put("event", "didRemoveVideoTrack");
                         map.put("uuid", clientWrapper.getId());
                         Map bodyMap = new HashMap();
@@ -978,7 +974,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                 try {
                     Log.d(TAG, "onCallInfo2: " + jsonObject.toString());
                     Map map = new HashMap();
-                    map.put("nativeEventType", Call2Event.getValue());
+                    map.put("nativeEventType", StringeeEventType.Call2Event.getValue());
                     map.put("event", "didReceiveCallInfo");
                     map.put("uuid", clientWrapper.getId());
                     Map bodyMap = new HashMap();

@@ -67,7 +67,7 @@ public class Utils {
         return true;
     }
 
-    public static boolean isCall2WrapperAvaiable(String methodName, String callId, Result result) {
+    public static boolean isCall2WrapperAvailable(String methodName, String callId, Result result) {
         if (callId == null || callId.isEmpty()) {
             Log.d(TAG, methodName + ": false - -2 - callId is invalid");
             Map map = new HashMap();

@@ -11,10 +11,11 @@ import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.stringee.video.StringeeVideo.ScalingType;
 import com.stringee.video.StringeeVideoTrack.Listener;
 import com.stringee.video.StringeeVideoTrack.MediaState;
 import com.stringee.video.TextureViewRenderer;
+
+import org.webrtc.RendererCommon.ScalingType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -147,7 +148,7 @@ public class StringeeVideoView implements PlatformView {
                     StringeeManager.getInstance().getRemoteViewOptions().put(callId, remoteViewOptions);
                 }
             }
-        },500);
+        }, 500);
     }
 
     private void renderView(final Context context, final FrameLayout layout, final String trackId, final Map<String, Object> creationParams) {

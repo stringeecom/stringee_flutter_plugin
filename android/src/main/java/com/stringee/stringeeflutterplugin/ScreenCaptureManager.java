@@ -1,8 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.content.Intent;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 
 import com.stringee.video.StringeeScreenCapture;
 import com.stringee.video.StringeeScreenCapture.Builder;
@@ -26,9 +24,7 @@ public class ScreenCaptureManager {
             }
         });
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            screenCapture = new Builder().buildWithActivity(binding.getActivity());
-        }
+        screenCapture = new Builder().buildWithActivity(binding.getActivity());
     }
 
     public static ScreenCaptureManager getInstance(ActivityPluginBinding binding) {

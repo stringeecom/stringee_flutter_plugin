@@ -257,47 +257,47 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.call2Wrapper(from2, to2, isVideoCall2, call2CustomData, result).makeCall();
                 break;
             case "initAnswer2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).initAnswer(result);
                 }
                 break;
             case "answer2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).answer(result);
                 }
                 break;
             case "hangup2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).hangup(result);
                 }
                 break;
             case "reject2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).reject(result);
                 }
                 break;
             case "getCallStats2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).getCallStats(result);
                 }
                 break;
             case "sendCallInfo2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).sendCallInfo((Map) call.argument("callInfo"), result);
                 }
                 break;
             case "mute2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).mute((Boolean) call.argument("mute"), result);
                 }
                 break;
             case "enableVideo2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).enableVideo((Boolean) call.argument("enableVideo"), result);
                 }
                 break;
             case "switchCamera2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     if (call.hasArgument("cameraId")) {
                         clientWrapper.call2Wrapper(callId).switchCamera((String) call.argument("cameraId"), result);
                     } else {
@@ -306,21 +306,21 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 }
                 break;
             case "resumeVideo2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).resumeVideo(result);
                 }
                 break;
             case "setMirror2":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).setMirror((boolean) call.argument("isLocal"), (boolean) call.argument("isMirror"), result);
                 }
             case "startCapture":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).startCapture(result);
                 }
                 break;
             case "stopCapture":
-                if (Utils.isCall2WrapperAvaiable(call.method, callId, result)) {
+                if (Utils.isCall2WrapperAvailable(call.method, callId, result)) {
                     clientWrapper.call2Wrapper(callId).stopCapture(result);
                 }
                 break;

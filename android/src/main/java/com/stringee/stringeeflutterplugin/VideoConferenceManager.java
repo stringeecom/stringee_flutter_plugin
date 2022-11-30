@@ -84,7 +84,12 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack localVideoTrack = stringeeVideo.createLocalVideoTrack(stringeeManager.getContext(), options);
+        StringeeVideoTrack localVideoTrack = stringeeVideo.createLocalVideoTrack(stringeeManager.getContext(), options, new StatusListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+        });
         String localId = Utils.createLocalId();
         VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, localVideoTrack, localId, false);
         stringeeManager.getTracksMap().put(localId, videoTrackManager);
