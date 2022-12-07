@@ -41,3 +41,5 @@ the [documentation](https://flutter.io/developing-packages/#edit-plugin-package)
   + Upgrade android sdk
 - Version 1.2.6:
   + Upgrade android webrtc version
+- Version 1.2.7:
+  + Bug fixed: iOS voIP socket will not wake on iOS 16
