@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  List<Widget> _childrent = [
+  List<Widget> _children = [
     CallTab(),
     ChatTab(),
     LiveChatTab(),
@@ -51,11 +52,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   requestPermissions() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.camera,
-      Permission.microphone,
-    ].request();
-    print(statuses);
+    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    deviceInfoPlugin.androidInfo.then((value) async {
+      if (value.version.sdkInt! >= 31) {
+        Map<Permission, PermissionStatus> statuses = await [
+          Permission.camera,
+          Permission.microphone,
+          Permission.bluetoothConnect,
+        ].request();
+        print(statuses);
+      } else {
+        Map<Permission, PermissionStatus> statuses = await [
+          Permission.camera,
+          Permission.microphone,
+        ].request();
+        print(statuses);
+      }
+    });
   }
 
   @override
@@ -67,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: IndexedStack(
         index: _currentIndex,
-        children: _childrent,
+        children: _children,
       ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
