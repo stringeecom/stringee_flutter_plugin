@@ -431,7 +431,9 @@
 - (void)didChangeSignalingState:(StringeeCall *)stringeeCall signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
     _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState) }});
     if (signalingState == SignalingStateBusy || signalingState == SignalingStateEnded) {
-        //[[StringeeManager instance].calls removeObjectForKey:stringeeCall.callId];
+        if ([[StringeeManager instance].calls objectForKey:stringeeCall.callId] != nil) {
+            [[StringeeManager instance].calls removeObjectForKey:stringeeCall.callId];
+        }
     }
 }
 
