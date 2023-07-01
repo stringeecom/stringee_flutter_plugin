@@ -45,3 +45,5 @@ the [documentation](https://flutter.io/developing-packages/#edit-plugin-package)
   + Bug fixed: iOS voIP socket will not wake on iOS 16
 - Version 1.2.8:
   + Bug fixed: Crash on checking exist call progress
+- Version 1.2.9:
+  + Bug fixed: Connectivity doesn't establish with DualSIM iPhones.
