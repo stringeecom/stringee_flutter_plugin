@@ -758,7 +758,7 @@ class _CallState extends State<Call> {
           notificationDetails: AndroidNotificationDetails(
             'Test id',
             'Test name',
-            'Test description',
+            channelDescription: 'Test description',
             importance: Importance.defaultImportance,
             priority: Priority.defaultPriority,
           ),

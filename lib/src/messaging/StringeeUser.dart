@@ -30,7 +30,7 @@ class StringeeUser {
     params['userId'] = _userId!.trim();
     if (_name != null) params['name'] = _name!.trim();
     if (_avatarUrl != null) params['avatarUrl'] = _avatarUrl!.trim();
-    params['role'] = _role.index;
+    params['role'] = _role.name;
     return params;
   }
 
