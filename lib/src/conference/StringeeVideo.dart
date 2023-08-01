@@ -61,28 +61,28 @@ class StringeeVideo {
   }
 
   /// Create capture screen [StringeeVideoTrack]
-  Future<Map<dynamic, dynamic>> createCaptureScreenTrack() async {
-    if (Platform.isAndroid) {
-      final params = {
-        'uuid': _client.uuid,
-      };
-
-      Map<dynamic, dynamic> result = await StringeeClient.methodChannel
-          .invokeMethod('video.createCaptureScreenTrack', params);
-
-      if (result['status']) {
-        StringeeVideoTrack videoTrack =
-            StringeeVideoTrack(_client, result['body']);
-        result['body'] = videoTrack;
-      }
-      return result;
-    } else {
-      Map<dynamic, dynamic> result = {
-        'status': false,
-        'code': -1,
-        'message': 'This function is only available in Android',
-      };
-      return result;
-    }
-  }
+  // Future<Map<dynamic, dynamic>> createCaptureScreenTrack() async {
+  //   if (Platform.isAndroid) {
+  //     final params = {
+  //       'uuid': _client.uuid,
+  //     };
+  //
+  //     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+  //         .invokeMethod('video.createCaptureScreenTrack', params);
+  //
+  //     if (result['status']) {
+  //       StringeeVideoTrack videoTrack =
+  //           StringeeVideoTrack(_client, result['body']);
+  //       result['body'] = videoTrack;
+  //     }
+  //     return result;
+  //   } else {
+  //     Map<dynamic, dynamic> result = {
+  //       'status': false,
+  //       'code': -1,
+  //       'message': 'This function is only available in Android',
+  //     };
+  //     return result;
+  //   }
+  // }
 }

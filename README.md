@@ -47,3 +47,5 @@ the [documentation](https://flutter.io/developing-packages/#edit-plugin-package)
   + Bug fixed: Crash on checking exist call progress
 - Version 1.2.9:
   + Bug fixed: Connectivity doesn't establish with DualSIM iPhones.
+- Version 1.2.10:
+  + Bug fixed: ListView does not refresh after removing item.
