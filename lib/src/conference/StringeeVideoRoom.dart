@@ -6,6 +6,7 @@ class StringeeVideoRoom {
   late String _id;
   late bool _recorded;
   late StringeeClient _client;
+  @Deprecated('')
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
 
@@ -13,7 +14,9 @@ class StringeeVideoRoom {
 
   bool get recorded => _recorded;
 
+  @Deprecated('')
   StreamController<dynamic> get eventStreamController => _eventStreamController;
+  StringeeRoomListener? _roomListener;
 
   StringeeVideoRoom(StringeeClient client, Map<dynamic, dynamic> info) {
     this._client = client;
@@ -53,33 +56,46 @@ class StringeeVideoRoom {
     }
   }
 
+  void registerEvent(StringeeRoomListener roomListener) {
+    _roomListener = roomListener;
+  }
+
   void handleDidJoinRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
 
-    _eventStreamController.add({
-      "eventType": StringeeRoomEvents.didJoinRoom,
-      "body": StringeeRoomUser(map['user'])
-    });
+    StringeeRoomUser roomUser = new StringeeRoomUser(map['user']);
+    if (_roomListener != null) {
+      _roomListener!.onJoinRoom(roomUser);
+    }
+    _eventStreamController
+        .add({"eventType": StringeeRoomEvents.didJoinRoom, "body": roomUser});
   }
 
   void handleDidLeaveRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
 
-    _eventStreamController.add({
-      "eventType": StringeeRoomEvents.didLeaveRoom,
-      "body": StringeeRoomUser(map['user'])
-    });
+    StringeeRoomUser roomUser = new StringeeRoomUser(map['user']);
+    if (_roomListener != null) {
+      _roomListener!.onLeaveRoom(roomUser);
+    }
+    _eventStreamController
+        .add({"eventType": StringeeRoomEvents.didLeaveRoom, "body": roomUser});
   }
 
   void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
 
+    StringeeVideoTrackInfo videoTrackInfo =
+        new StringeeVideoTrackInfo(map['videoTrackInfo']);
+    if (_roomListener != null) {
+      _roomListener!.onAddVideoTrack(videoTrackInfo);
+    }
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didAddVideoTrack,
-      "body": StringeeVideoTrackInfo(map['videoTrackInfo'])
+      "body": videoTrackInfo
     });
   }
 
@@ -87,19 +103,26 @@ class StringeeVideoRoom {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
 
+    StringeeVideoTrackInfo videoTrackInfo =
+        new StringeeVideoTrackInfo(map['videoTrackInfo']);
+    if (_roomListener != null) {
+      _roomListener!.onRemoveVideoTrack(videoTrackInfo);
+    }
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didRemoveVideoTrack,
-      "body": StringeeVideoTrackInfo(map['videoTrackInfo'])
+      "body": videoTrackInfo
     });
   }
 
   void handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != this._id) return;
-    Map<dynamic, dynamic> bodyMap = {
-      'msg': map['msg'],
-      'from': StringeeRoomUser(map['from'])
-    };
+    StringeeRoomUser roomUser = new StringeeRoomUser(map['from']);
+    Map<dynamic, dynamic> bodyMap = {'msg': map['msg'], 'from': roomUser};
+
+    if (_roomListener != null) {
+      _roomListener!.onReceiveRoomMessage(roomUser, map['msg']);
+    }
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didReceiveRoomMessage,
       "body": bodyMap
@@ -110,10 +133,13 @@ class StringeeVideoRoom {
     String? roomId = map['roomId'];
     if (roomId != null && roomId != this._id) return;
 
-    _eventStreamController.add({
-      "eventType": StringeeRoomEvents.trackReadyToPlay,
-      "body": StringeeVideoTrack(_client, map['track'])
-    });
+    StringeeVideoTrack videoTrack =
+        new StringeeVideoTrack(_client, map['track']);
+    if (_roomListener != null) {
+      _roomListener!.onTrackReadyToPlay(videoTrack);
+    }
+    _eventStreamController.add(
+        {"eventType": StringeeRoomEvents.trackReadyToPlay, "body": videoTrack});
   }
 
   // void handleDidReceiveVideoTrackControlNotification(

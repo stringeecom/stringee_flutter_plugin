@@ -22,10 +22,16 @@ export 'src/messaging/StringeeUser.dart';
 export 'src/notification/NotificationAction.dart';
 export 'src/notification/NotificationAndroid.dart';
 
-/// notification
+/// Notification
 export 'src/notification/NotificationChannel.dart';
 export 'src/notification/NotificationIcon.dart';
 export 'src/notification/NotificationSound.dart';
 export 'src/notification/StringeeNotification.dart';
 export 'src/notification/StringeeNotificationEnums.dart';
+
+/// Listener
+export 'src/listener/StringeeClientListener.dart';
+export 'src/listener/StringeeCallListener.dart';
+export 'src/listener/StringeeCall2Listener.dart';
+export 'src/listener/StringeeRoomListener.dart';
 

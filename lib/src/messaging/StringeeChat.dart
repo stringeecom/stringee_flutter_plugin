@@ -7,30 +7,24 @@ import 'StringeeConversation.dart';
 import 'StringeeMessage.dart';
 import 'StringeeUser.dart';
 
+@Deprecated('Using StringeeClient instead')
 class StringeeChat {
   late StringeeClient _client;
   late StreamSubscription<dynamic> _subscriber;
   StreamController<dynamic> _eventStreamController =
       StreamController.broadcast();
 
+  @Deprecated('')
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
   StringeeChat(StringeeClient client) {
     _client = client;
-    _subscriber = client.eventStreamController.stream.listen(this._listener);
-  }
-
-  void _listener(dynamic event) {
-    assert(event != null);
-    final Map<dynamic, dynamic> map = event;
-    if (map['nativeEventType'] == StringeeObjectEventType.chat.index &&
-        map['uuid'] == _client.uuid) {
-      switch (map['event']) {
-        case 'didReceiveChangeEvent':
-          _handleReceiveChangeEvent(map['body']);
-          break;
-      }
-    }
+    _client.getChatEvent(new ChatEvent((objectChange) {
+      _eventStreamController.add({
+        "eventType": StringeeChatEvents.didReceiveObjectChange,
+        "body": objectChange
+      });
+    }));
   }
 
   /// ====================== BEGIN LIVE CHAT =======================
@@ -289,38 +283,14 @@ class StringeeChat {
         .invokeMethod('joinOaConversation', params);
   }
 
-  void _handleReceiveChangeEvent(Map<dynamic, dynamic> map) {
-    ChangeType changeType = ChangeType.values[map['changeType']];
-    ObjectType objectType = ObjectType.values[map['objectType']];
-    List<dynamic>? objectDatas = map['objects'];
-    List<dynamic> objects = [];
-
-    switch (objectType) {
-      case ObjectType.conversation:
-        for (int i = 0; i < objectDatas!.length; i++) {
-          StringeeConversation conv =
-              new StringeeConversation.fromJson(objectDatas[i], _client);
-          objects.add(conv);
-        }
-        break;
-      case ObjectType.message:
-        for (int i = 0; i < objectDatas!.length; i++) {
-          StringeeMessage msg =
-              new StringeeMessage.fromJson(objectDatas[i], _client);
-          objects.add(msg);
-        }
-        break;
-    }
-    StringeeObjectChange stringeeChange =
-        new StringeeObjectChange(changeType, objectType, objects);
-    _eventStreamController.add({
-      "eventType": StringeeChatEvents.didReceiveObjectChange,
-      "body": stringeeChange
-    });
-  }
-
   void destroy() {
     _subscriber.cancel();
     _eventStreamController.close();
   }
+}
+
+class ChatEvent {
+  void Function(StringeeObjectChange objectChange) onChangeEvent;
+
+  ChatEvent(this.onChangeEvent);
 }

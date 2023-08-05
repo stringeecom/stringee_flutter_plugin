@@ -14,9 +14,11 @@ class StringeeCall2 {
   StringeeCallType? _callType;
   String? _customDataFromYourServer;
   bool _isVideoCall = false;
+  @Deprecated('')
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
   late StringeeClient _client;
+  StringeeCall2Listener? _call2Listener;
 
   String? get id => _id;
 
@@ -36,6 +38,7 @@ class StringeeCall2 {
 
   String? get customDataFromYourServer => _customDataFromYourServer;
 
+  @Deprecated('')
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
   StringeeCall2(StringeeClient client) {
@@ -103,12 +106,20 @@ class StringeeCall2 {
     }
   }
 
+  void registerEvent(StringeeCall2Listener call2Listener) {
+    _call2Listener = call2Listener;
+  }
+
   void handleDidChangeSignalingState(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
+
+    if (_call2Listener != null) {
+      _call2Listener!.onChangeSignalingState(signalingState);
+    }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didChangeSignalingState,
       "body": signalingState
@@ -120,6 +131,10 @@ class StringeeCall2 {
     if (callId != this._id) return;
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
+
+    if (_call2Listener != null) {
+      _call2Listener!.onChangeMediaState(mediaState);
+    }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didChangeMediaState,
       "body": mediaState
@@ -130,7 +145,11 @@ class StringeeCall2 {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
-    Map<dynamic, dynamic>? data = map['info'];
+    Map<dynamic, dynamic> data = map['info'];
+
+    if (_call2Listener != null) {
+      _call2Listener!.onReceiveCallInfo(data);
+    }
     _eventStreamController.add(
         {"eventType": StringeeCall2Events.didReceiveCallInfo, "body": data});
   }
@@ -138,6 +157,10 @@ class StringeeCall2 {
   void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
+
+    if (_call2Listener != null) {
+      _call2Listener!.onHandleOnAnotherDevice(signalingState);
+    }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didHandleOnAnotherDevice,
       "body": signalingState
@@ -145,6 +168,9 @@ class StringeeCall2 {
   }
 
   void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
+    if (_call2Listener != null) {
+      _call2Listener!.onReceiveLocalStream();
+    }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didReceiveLocalStream,
       "body": map['callId']
@@ -152,6 +178,9 @@ class StringeeCall2 {
   }
 
   void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
+    if (_call2Listener != null) {
+      _call2Listener!.onReceiveRemoteStream();
+    }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didReceiveRemoteStream,
       "body": map['callId']
@@ -161,6 +190,11 @@ class StringeeCall2 {
   void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
     StringeeVideoTrack videoTrack =
         StringeeVideoTrack(_client, map['videoTrack']);
+    if (_call2Listener != null) {
+      if(_call2Listener!.onAddVideoTrack!= null){
+        _call2Listener!.onAddVideoTrack!(videoTrack);
+      }
+    }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didAddVideoTrack,
       "body": videoTrack
@@ -170,6 +204,11 @@ class StringeeCall2 {
   void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
     StringeeVideoTrack videoTrack =
         StringeeVideoTrack(_client, map['videoTrack']);
+    if (_call2Listener != null) {
+      if(_call2Listener!.onRemoveVideoTrack!= null){
+        _call2Listener!.onRemoveVideoTrack!(videoTrack);
+      }
+    }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didRemoveVideoTrack,
       "body": videoTrack
@@ -184,6 +223,12 @@ class StringeeCall2 {
     for (int i = 0; i < codeList.length; i++) {
       AudioDevice audioDevice = AudioDevice.values[codeList[i]];
       availableAudioDevices.add(audioDevice);
+    }
+    if (_call2Listener != null) {
+      if(_call2Listener!.onChangeAudioDevice != null) {
+        _call2Listener!.onChangeAudioDevice!(
+            selectedAudioDevice, availableAudioDevices);
+      }
     }
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didChangeAudioDevice,

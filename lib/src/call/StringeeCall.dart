@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../StringeeClient.dart';
-import '../StringeeConstants.dart';
+import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 class StringeeCall {
   String? _id;
@@ -15,9 +14,11 @@ class StringeeCall {
   StringeeCallType? _callType;
   String? _customDataFromYourServer;
   bool _isVideoCall = false;
+  @Deprecated('')
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
   late StringeeClient _client;
+  StringeeCallListener? _callListener;
 
   String? get id => _id;
 
@@ -37,6 +38,7 @@ class StringeeCall {
 
   String? get customDataFromYourServer => _customDataFromYourServer;
 
+  @Deprecated('')
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
   StringeeCall(StringeeClient client) {
@@ -98,12 +100,20 @@ class StringeeCall {
     }
   }
 
+  void registerEvent(StringeeCallListener callListener) {
+    _callListener = callListener;
+  }
+
   void handleDidChangeSignalingState(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
+
+    if (_callListener != null) {
+      _callListener!.onChangeSignalingState(signalingState);
+    }
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didChangeSignalingState,
       "body": signalingState
@@ -115,6 +125,9 @@ class StringeeCall {
     if (callId != this._id) return;
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
+    if (_callListener != null) {
+      _callListener!.onChangeMediaState(mediaState);
+    }
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didChangeMediaState,
       "body": mediaState
@@ -125,7 +138,10 @@ class StringeeCall {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
-    Map<dynamic, dynamic>? data = map['info'];
+    Map<dynamic, dynamic> data = map['info'];
+    if (_callListener != null) {
+      _callListener!.onReceiveCallInfo(data);
+    }
     _eventStreamController.add(
         {"eventType": StringeeCallEvents.didReceiveCallInfo, "body": data});
   }
@@ -133,6 +149,9 @@ class StringeeCall {
   void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
+    if (_callListener != null) {
+      _callListener!.onHandleOnAnotherDevice(signalingState);
+    }
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didHandleOnAnotherDevice,
       "body": signalingState
@@ -140,6 +159,9 @@ class StringeeCall {
   }
 
   void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
+    if (_callListener != null) {
+      _callListener!.onReceiveLocalStream();
+    }
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didReceiveLocalStream,
       "body": map['callId']
@@ -147,6 +169,9 @@ class StringeeCall {
   }
 
   void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
+    if (_callListener != null) {
+      _callListener!.onReceiveRemoteStream();
+    }
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didReceiveRemoteStream,
       "body": map['callId']
@@ -161,6 +186,12 @@ class StringeeCall {
     for (int i = 0; i < codeList.length; i++) {
       AudioDevice audioDevice = AudioDevice.values[codeList[i]];
       availableAudioDevices.add(audioDevice);
+    }
+    if (_callListener != null) {
+      if(_callListener!.onChangeAudioDevice != null) {
+        _callListener!.onChangeAudioDevice!(
+            selectedAudioDevice, availableAudioDevices);
+      }
     }
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didChangeAudioDevice,
