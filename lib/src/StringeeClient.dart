@@ -485,8 +485,10 @@ class StringeeClient {
     if (_clientListener != null) {
       _clientListener!.onConnect(_userId!);
     }
-    _eventStreamController
-        .add({"eventType": StringeeClientEvents.didConnect, "body": null});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeClientEvents.didConnect, "body": null});
+    }
   }
 
   void _handleDidDisconnectEvent(Map<dynamic, dynamic> map) {
@@ -497,8 +499,10 @@ class StringeeClient {
     if (_clientListener != null) {
       _clientListener!.onDisconnect();
     }
-    _eventStreamController
-        .add({"eventType": StringeeClientEvents.didDisconnect, "body": null});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeClientEvents.didDisconnect, "body": null});
+    }
   }
 
   void _handleDidFailWithErrorEvent(Map<dynamic, dynamic> map) {
@@ -510,10 +514,12 @@ class StringeeClient {
     if (_clientListener != null) {
       _clientListener!.onFailWithError(map['code'], map['message']);
     }
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didFailWithError,
-      "body": bodyMap,
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeClientEvents.didFailWithError,
+        "body": bodyMap,
+      });
+    }
   }
 
   void _handleRequestAccessTokenEvent(Map<dynamic, dynamic> map) {
@@ -521,8 +527,10 @@ class StringeeClient {
     if (_clientListener != null) {
       _clientListener!.onRequestAccessToken();
     }
-    _eventStreamController.add(
-        {"eventType": StringeeClientEvents.requestAccessToken, "body": null});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add(
+          {"eventType": StringeeClientEvents.requestAccessToken, "body": null});
+    }
   }
 
   void _handleIncomingCallEvent(Map<dynamic, dynamic>? map) {
@@ -532,8 +540,10 @@ class StringeeClient {
         _clientListener!.onIncomingCall!(call);
       }
     }
-    _eventStreamController
-        .add({"eventType": StringeeClientEvents.incomingCall, "body": call});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeClientEvents.incomingCall, "body": call});
+    }
   }
 
   void _handleIncomingCall2Event(Map<dynamic, dynamic>? map) {
@@ -543,8 +553,10 @@ class StringeeClient {
         _clientListener!.onIncomingCall2!(call);
       }
     }
-    _eventStreamController
-        .add({"eventType": StringeeClientEvents.incomingCall2, "body": call});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeClientEvents.incomingCall2, "body": call});
+    }
   }
 
   void _handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic>? map) {
@@ -555,10 +567,12 @@ class StringeeClient {
         _clientListener!.onReceiveCustomMessage!(from, message);
       }
     }
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didReceiveCustomMessage,
-      "body": map
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeClientEvents.didReceiveCustomMessage,
+        "body": map
+      });
+    }
   }
 
   void _handleDidReceiveChatRequestEvent(Map<dynamic, dynamic> map) {
@@ -568,10 +582,12 @@ class StringeeClient {
         _clientListener!.onReceiveChatRequest!(request);
       }
     }
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didReceiveChatRequest,
-      "body": request
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeClientEvents.didReceiveChatRequest,
+        "body": request
+      });
+    }
   }
 
   void _handleDidReceiveTransferChatRequestEvent(Map<dynamic, dynamic> map) {
@@ -581,10 +597,12 @@ class StringeeClient {
         _clientListener!.onReceiveTransferChatRequest!(request);
       }
     }
-    _eventStreamController.add({
-      "eventType": StringeeClientEvents.didReceiveTransferChatRequest,
-      "body": request
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeClientEvents.didReceiveTransferChatRequest,
+        "body": request
+      });
+    }
   }
 
   void _handleTimeoutAnswerChatEvent(Map<dynamic, dynamic> map) {
@@ -594,8 +612,10 @@ class StringeeClient {
         _clientListener!.onTimeoutAnswerChat!(request);
       }
     }
-    _eventStreamController.add(
-        {"eventType": StringeeClientEvents.timeoutAnswerChat, "body": request});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add(
+          {"eventType": StringeeClientEvents.timeoutAnswerChat, "body": request});
+    }
   }
 
   void _handleTimeoutInQueueEvent(Map<dynamic, dynamic> map) {
@@ -608,8 +628,10 @@ class StringeeClient {
             conversationId, customerId, customerName);
       }
     }
-    _eventStreamController
-        .add({"eventType": StringeeClientEvents.timeoutInQueue, "body": map});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeClientEvents.timeoutInQueue, "body": map});
+    }
   }
 
   void _handleConversationEndedEvent(Map<dynamic, dynamic> map) {
@@ -620,8 +642,10 @@ class StringeeClient {
         _clientListener!.onConversationEnded!(conversationId, endedBy);
       }
     }
-    _eventStreamController.add(
-        {"eventType": StringeeClientEvents.conversationEnded, "body": map});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add(
+          {"eventType": StringeeClientEvents.conversationEnded, "body": map});
+    }
   }
 
   void _handleUserBeginTypingEvent(Map<dynamic, dynamic> map) {
@@ -634,8 +658,10 @@ class StringeeClient {
             conversationId, userId, displayName);
       }
     }
-    _eventStreamController
-        .add({"eventType": StringeeClientEvents.userBeginTyping, "body": map});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeClientEvents.userBeginTyping, "body": map});
+    }
   }
 
   void _handleUserEndTypingEvent(Map<dynamic, dynamic> map) {
@@ -647,8 +673,10 @@ class StringeeClient {
         _clientListener!.onUserEndTyping!(conversationId, userId, displayName);
       }
     }
-    _eventStreamController
-        .add({"eventType": StringeeClientEvents.userEndTyping, "body": map});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeClientEvents.userEndTyping, "body": map});
+    }
   }
 
   void _handleReceiveChangeEvent(Map<dynamic, dynamic> map) {

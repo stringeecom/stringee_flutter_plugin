@@ -114,10 +114,12 @@ class StringeeCall {
     if (_callListener != null) {
       _callListener!.onChangeSignalingState(signalingState);
     }
-    _eventStreamController.add({
-      "eventType": StringeeCallEvents.didChangeSignalingState,
-      "body": signalingState
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeCallEvents.didChangeSignalingState,
+        "body": signalingState
+      });
+    }
   }
 
   void handleDidChangeMediaState(Map<dynamic, dynamic> map) {
@@ -128,10 +130,12 @@ class StringeeCall {
     if (_callListener != null) {
       _callListener!.onChangeMediaState(mediaState);
     }
-    _eventStreamController.add({
-      "eventType": StringeeCallEvents.didChangeMediaState,
-      "body": mediaState
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeCallEvents.didChangeMediaState,
+        "body": mediaState
+      });
+    }
   }
 
   void handleDidReceiveCallInfo(Map<dynamic, dynamic> map) {
@@ -142,8 +146,10 @@ class StringeeCall {
     if (_callListener != null) {
       _callListener!.onReceiveCallInfo(data);
     }
-    _eventStreamController.add(
-        {"eventType": StringeeCallEvents.didReceiveCallInfo, "body": data});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add(
+          {"eventType": StringeeCallEvents.didReceiveCallInfo, "body": data});
+    }
   }
 
   void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
@@ -152,30 +158,36 @@ class StringeeCall {
     if (_callListener != null) {
       _callListener!.onHandleOnAnotherDevice(signalingState);
     }
-    _eventStreamController.add({
-      "eventType": StringeeCallEvents.didHandleOnAnotherDevice,
-      "body": signalingState
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeCallEvents.didHandleOnAnotherDevice,
+        "body": signalingState
+      });
+    }
   }
 
   void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
     if (_callListener != null) {
       _callListener!.onReceiveLocalStream();
     }
-    _eventStreamController.add({
-      "eventType": StringeeCallEvents.didReceiveLocalStream,
-      "body": map['callId']
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeCallEvents.didReceiveLocalStream,
+        "body": map['callId']
+      });
+    }
   }
 
   void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
     if (_callListener != null) {
       _callListener!.onReceiveRemoteStream();
     }
-    _eventStreamController.add({
-      "eventType": StringeeCallEvents.didReceiveRemoteStream,
-      "body": map['callId']
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeCallEvents.didReceiveRemoteStream,
+        "body": map['callId']
+      });
+    }
   }
 
   void handleDidChangeAudioDevice(Map<dynamic, dynamic> map) {
@@ -188,16 +200,18 @@ class StringeeCall {
       availableAudioDevices.add(audioDevice);
     }
     if (_callListener != null) {
-      if(_callListener!.onChangeAudioDevice != null) {
+      if (_callListener!.onChangeAudioDevice != null) {
         _callListener!.onChangeAudioDevice!(
             selectedAudioDevice, availableAudioDevices);
       }
     }
-    _eventStreamController.add({
-      "eventType": StringeeCallEvents.didChangeAudioDevice,
-      "selectedAudioDevice": selectedAudioDevice,
-      "availableAudioDevices": availableAudioDevices
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeCallEvents.didChangeAudioDevice,
+        "selectedAudioDevice": selectedAudioDevice,
+        "availableAudioDevices": availableAudioDevices
+      });
+    }
   }
 
   /// Make a new coll with custom [parameters]

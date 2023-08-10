@@ -68,8 +68,10 @@ class StringeeVideoRoom {
     if (_roomListener != null) {
       _roomListener!.onJoinRoom(roomUser);
     }
-    _eventStreamController
-        .add({"eventType": StringeeRoomEvents.didJoinRoom, "body": roomUser});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeRoomEvents.didJoinRoom, "body": roomUser});
+    }
   }
 
   void handleDidLeaveRoom(Map<dynamic, dynamic> map) {
@@ -80,8 +82,10 @@ class StringeeVideoRoom {
     if (_roomListener != null) {
       _roomListener!.onLeaveRoom(roomUser);
     }
-    _eventStreamController
-        .add({"eventType": StringeeRoomEvents.didLeaveRoom, "body": roomUser});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController
+          .add({"eventType": StringeeRoomEvents.didLeaveRoom, "body": roomUser});
+    }
   }
 
   void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
@@ -93,10 +97,12 @@ class StringeeVideoRoom {
     if (_roomListener != null) {
       _roomListener!.onAddVideoTrack(videoTrackInfo);
     }
-    _eventStreamController.add({
-      "eventType": StringeeRoomEvents.didAddVideoTrack,
-      "body": videoTrackInfo
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeRoomEvents.didAddVideoTrack,
+        "body": videoTrackInfo
+      });
+    }
   }
 
   void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
@@ -108,10 +114,12 @@ class StringeeVideoRoom {
     if (_roomListener != null) {
       _roomListener!.onRemoveVideoTrack(videoTrackInfo);
     }
-    _eventStreamController.add({
-      "eventType": StringeeRoomEvents.didRemoveVideoTrack,
-      "body": videoTrackInfo
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeRoomEvents.didRemoveVideoTrack,
+        "body": videoTrackInfo
+      });
+    }
   }
 
   void handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
@@ -123,10 +131,12 @@ class StringeeVideoRoom {
     if (_roomListener != null) {
       _roomListener!.onReceiveRoomMessage(roomUser, map['msg']);
     }
-    _eventStreamController.add({
-      "eventType": StringeeRoomEvents.didReceiveRoomMessage,
-      "body": bodyMap
-    });
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add({
+        "eventType": StringeeRoomEvents.didReceiveRoomMessage,
+        "body": bodyMap
+      });
+    }
   }
 
   void handleTrackReadyToPlay(Map<dynamic, dynamic> map) {
@@ -138,8 +148,10 @@ class StringeeVideoRoom {
     if (_roomListener != null) {
       _roomListener!.onTrackReadyToPlay(videoTrack);
     }
-    _eventStreamController.add(
-        {"eventType": StringeeRoomEvents.trackReadyToPlay, "body": videoTrack});
+    if (!_eventStreamController.isClosed) {
+      _eventStreamController.add(
+          {"eventType": StringeeRoomEvents.trackReadyToPlay, "body": videoTrack});
+    }
   }
 
   // void handleDidReceiveVideoTrackControlNotification(
