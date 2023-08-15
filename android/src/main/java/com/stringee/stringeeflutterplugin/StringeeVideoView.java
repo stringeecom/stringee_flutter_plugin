@@ -89,28 +89,26 @@ public class StringeeVideoView implements PlatformView {
                 layoutParams.gravity = Gravity.CENTER;
 
                 layout.removeAllViews();
-                layout.setBackgroundColor(Color.BLACK);
                 if (isLocal) {
+                    TextureViewRenderer localView;
                     if (call != null) {
-                        TextureViewRenderer localView = call.getLocalView();
+                        localView = call.getLocalView();
                         if (localView.getParent() != null) {
                             ((FrameLayout) localView.getParent()).removeView(localView);
                         }
 
                         layout.addView(localView, layoutParams);
                         call.renderLocalView(scalingType);
-                        localView.setMirror(isMirror);
                     } else {
-
-                        TextureViewRenderer localView = call2.getLocalView();
+                        localView = call2.getLocalView();
                         if (localView.getParent() != null) {
                             ((FrameLayout) localView.getParent()).removeView(localView);
                         }
 
                         layout.addView(localView, layoutParams);
                         call2.renderLocalView(scalingType);
-                        localView.setMirror(isMirror);
                     }
+                    localView.setMirror(isMirror);
 
                     //save localView option
                     Map<String, Object> localViewOptions = new HashMap<>();
@@ -120,25 +118,25 @@ public class StringeeVideoView implements PlatformView {
                     StringeeManager.getInstance().getLocalViewOptions().put(callId, localViewOptions);
 
                 } else {
+                    TextureViewRenderer remoteView;
                     if (call != null) {
-                        TextureViewRenderer remoteView = call.getRemoteView();
+                        remoteView = call.getRemoteView();
                         if (remoteView.getParent() != null) {
                             ((FrameLayout) remoteView.getParent()).removeView(remoteView);
                         }
 
                         layout.addView(remoteView, layoutParams);
                         call.renderRemoteView(scalingType);
-                        remoteView.setMirror(isMirror);
                     } else {
-                        TextureViewRenderer remoteView = call2.getRemoteView();
+                        remoteView = call2.getRemoteView();
                         if (remoteView.getParent() != null) {
                             ((FrameLayout) remoteView.getParent()).removeView(remoteView);
                         }
 
                         layout.addView(remoteView, layoutParams);
                         call2.renderRemoteView(scalingType);
-                        remoteView.setMirror(isMirror);
                     }
+                    remoteView.setMirror(isMirror);
 
                     //save remoteView option
                     Map<String, Object> remoteViewOptions = new HashMap<>();

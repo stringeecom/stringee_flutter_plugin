@@ -116,7 +116,7 @@ class StringeeCall2 {
 
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
-
+    this._id = map['callId'];
     if (_call2Listener != null) {
       _call2Listener!.onChangeSignalingState(signalingState);
     }
@@ -133,7 +133,7 @@ class StringeeCall2 {
     if (callId != this._id) return;
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
-
+    this._id = map['callId'];
     if (_call2Listener != null) {
       _call2Listener!.onChangeMediaState(mediaState);
     }
@@ -150,7 +150,7 @@ class StringeeCall2 {
     if (callId != this._id) return;
 
     Map<dynamic, dynamic> data = map['info'];
-
+    this._id = map['callId'];
     if (_call2Listener != null) {
       _call2Listener!.onReceiveCallInfo(data);
     }
@@ -163,7 +163,7 @@ class StringeeCall2 {
   void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
-
+    this._id = map['callId'];
     if (_call2Listener != null) {
       _call2Listener!.onHandleOnAnotherDevice(signalingState);
     }
@@ -176,6 +176,7 @@ class StringeeCall2 {
   }
 
   void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
+    this._id = map['callId'];
     if (_call2Listener != null) {
       _call2Listener!.onReceiveLocalStream();
     }
@@ -188,6 +189,7 @@ class StringeeCall2 {
   }
 
   void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
+    this._id = map['callId'];
     if (_call2Listener != null) {
       _call2Listener!.onReceiveRemoteStream();
     }
@@ -203,7 +205,7 @@ class StringeeCall2 {
     StringeeVideoTrack videoTrack =
         StringeeVideoTrack(_client, map['videoTrack']);
     if (_call2Listener != null) {
-      if(_call2Listener!.onAddVideoTrack!= null){
+      if (_call2Listener!.onAddVideoTrack != null) {
         _call2Listener!.onAddVideoTrack!(videoTrack);
       }
     }
@@ -219,7 +221,7 @@ class StringeeCall2 {
     StringeeVideoTrack videoTrack =
         StringeeVideoTrack(_client, map['videoTrack']);
     if (_call2Listener != null) {
-      if(_call2Listener!.onRemoveVideoTrack!= null){
+      if (_call2Listener!.onRemoveVideoTrack != null) {
         _call2Listener!.onRemoveVideoTrack!(videoTrack);
       }
     }
@@ -241,7 +243,7 @@ class StringeeCall2 {
       availableAudioDevices.add(audioDevice);
     }
     if (_call2Listener != null) {
-      if(_call2Listener!.onChangeAudioDevice != null) {
+      if (_call2Listener!.onChangeAudioDevice != null) {
         _call2Listener!.onChangeAudioDevice!(
             selectedAudioDevice, availableAudioDevices);
       }
@@ -498,4 +500,3 @@ class StringeeCall2 {
     _eventStreamController.close();
   }
 }
-

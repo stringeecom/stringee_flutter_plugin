@@ -110,7 +110,7 @@ class StringeeCall {
 
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
-
+    this._id = map['callId'];
     if (_callListener != null) {
       _callListener!.onChangeSignalingState(signalingState);
     }
@@ -127,6 +127,7 @@ class StringeeCall {
     if (callId != this._id) return;
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
+    this._id = map['callId'];
     if (_callListener != null) {
       _callListener!.onChangeMediaState(mediaState);
     }
@@ -142,6 +143,7 @@ class StringeeCall {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
+    this._id = map['callId'];
     Map<dynamic, dynamic> data = map['info'];
     if (_callListener != null) {
       _callListener!.onReceiveCallInfo(data);
@@ -155,6 +157,7 @@ class StringeeCall {
   void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
+    this._id = map['callId'];
     if (_callListener != null) {
       _callListener!.onHandleOnAnotherDevice(signalingState);
     }
@@ -167,6 +170,7 @@ class StringeeCall {
   }
 
   void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
+    this._id = map['callId'];
     if (_callListener != null) {
       _callListener!.onReceiveLocalStream();
     }
@@ -179,6 +183,7 @@ class StringeeCall {
   }
 
   void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
+    this._id = map['callId'];
     if (_callListener != null) {
       _callListener!.onReceiveRemoteStream();
     }
@@ -222,7 +227,6 @@ class StringeeCall {
         !parameters.containsKey('to') ||
         (parameters['to'] as String).trim().isEmpty)
       return await reportInvalidValue('MakeCallParams');
-
     var params = {};
 
     params['from'] = (parameters['from'] as String).trim();

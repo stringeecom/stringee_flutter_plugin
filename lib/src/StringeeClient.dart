@@ -712,6 +712,9 @@ class StringeeClient {
       _chatEvent!.onChangeEvent(stringeeChange);
     }
   }
-
   /// End handle events
+
+  void destroy() {
+    _eventStreamController.close();
+  }
 }
