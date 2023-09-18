@@ -18,7 +18,7 @@ public class VideoTrackManager implements Listener {
     private boolean mediaAvailable = false;
     private boolean forCall = false;
     private Listener listener;
-    private static final String TAG = "StringeeSDK";
+    private Map<String, Object> viewOptions = new HashMap<>();
 
     public VideoTrackManager(ClientWrapper clientWrapper, StringeeVideoTrack videoTrack, String localId, boolean forCall) {
         this.clientWrapper = clientWrapper;
@@ -27,7 +27,7 @@ public class VideoTrackManager implements Listener {
         this.forCall = forCall;
         videoTrack.setListener(this);
         if (forCall) {
-            mediaAvailable = true;
+            this.mediaAvailable = true;
         }
     }
 
@@ -52,6 +52,10 @@ public class VideoTrackManager implements Listener {
         return this;
     }
 
+    public Map<String, Object> getViewOptions() {
+        return viewOptions;
+    }
+
     @Override
     public void onMediaAvailable() {
         StringeeManager.getInstance().getHandler().post(new Runnable() {
@@ -62,13 +66,13 @@ public class VideoTrackManager implements Listener {
                     listener.onMediaAvailable();
                 }
 
-                Log.d(TAG, "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId()));
+                Log.d(StringeeFlutterPlugin.TAG, "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId()));
                 if (!forCall) {
-                    Map map = new HashMap();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("nativeEventType", RoomEvent.getValue());
                     map.put("event", "trackReadyToPlay");
                     map.put("uuid", clientWrapper.getId());
-                    Map bodyMap = new HashMap();
+                    Map<String, Object> bodyMap = new HashMap<>();
                     bodyMap.put("roomId", videoTrack.getRoomId());
                     bodyMap.put("track", Utils.convertVideoTrackToMap(getThis()));
                     map.put("body", bodyMap);

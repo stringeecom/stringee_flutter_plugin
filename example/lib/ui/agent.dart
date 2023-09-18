@@ -110,7 +110,7 @@ class AgentPageState extends State<AgentPage>
                   });
                   if (status) {
                     chat
-                        .getConversationById(_chatRequest!.convId)
+                        .getConversationById(_chatRequest!.convId!)
                         .then((value) {
                       bool status = value['status'];
                       setState(() {

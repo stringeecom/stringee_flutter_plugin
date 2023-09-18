@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -255,23 +256,23 @@ class _CallState extends State<Call> {
                           primary:
                               _isVideoEnable ? Colors.white54 : Colors.white,
                           onPressed: toggleVideo),
-                      if (widget._isVideoCall &&
-                          widget._callType == StringeeObjectEventType.call2)
-                        CircleButton(
-                            icon: _sharingScreen
-                                ? Icon(
-                                    Icons.stop_screen_share,
-                                    color: Colors.black,
-                                    size: 28,
-                                  )
-                                : Icon(
-                                    Icons.screen_share,
-                                    color: Colors.white,
-                                    size: 28,
-                                  ),
-                            primary:
-                                _sharingScreen ? Colors.white : Colors.white54,
-                            onPressed: toggleShareScreen),
+                      // if (widget._isVideoCall &&
+                      //     widget._callType == StringeeObjectEventType.call2)
+                      //   CircleButton(
+                      //       icon: _sharingScreen
+                      //           ? Icon(
+                      //               Icons.stop_screen_share,
+                      //               color: Colors.black,
+                      //               size: 28,
+                      //             )
+                      //           : Icon(
+                      //               Icons.screen_share,
+                      //               color: Colors.white,
+                      //               size: 28,
+                      //             ),
+                      //       primary:
+                      //           _sharingScreen ? Colors.white : Colors.white54,
+                      //       onPressed: toggleShareScreen),
                       CircleButton(
                           icon: Icon(
                             Icons.call_end,
@@ -309,7 +310,10 @@ class _CallState extends State<Call> {
 
   Future makeOrInitAnswerCall() async {
     if (!widget._showIncomingUi) {
-      widget._stringeeCall = StringeeCall(widget._client);
+      widget._stringeeCall =
+          StringeeCall(widget._client, widget._fromUserId, widget._toUserId);
+      widget._stringeeCall!.isVideoCall = widget._isVideoCall;
+      widget._stringeeCall!.videoQuality = VideoQuality.fullHd;
     }
 
     // Listen events
@@ -353,15 +357,7 @@ class _CallState extends State<Call> {
         }
       });
     } else {
-      final parameters = {
-        'from': widget._fromUserId,
-        'to': widget._toUserId,
-        'isVideoCall': widget._isVideoCall,
-        'customData': null,
-        'videoQuality': VideoQuality.fullHd,
-      };
-
-      widget._stringeeCall!.makeCall(parameters).then((result) {
+      widget._stringeeCall!.makeCall().then((result) {
         bool status = result['status'];
         int code = result['code'];
         String message = result['message'];
@@ -376,7 +372,10 @@ class _CallState extends State<Call> {
 
   Future makeOrInitAnswerCall2() async {
     if (!widget._showIncomingUi) {
-      widget._stringeeCall2 = StringeeCall2(widget._client);
+      widget._stringeeCall2 =
+          StringeeCall2(widget._client, widget._fromUserId, widget._toUserId);
+      widget._stringeeCall!.isVideoCall = widget._isVideoCall;
+      widget._stringeeCall!.videoQuality = VideoQuality.fullHd;
     }
 
     // Listen events
@@ -425,15 +424,7 @@ class _CallState extends State<Call> {
         }
       });
     } else {
-      final parameters = {
-        'from': widget._fromUserId,
-        'to': widget._toUserId,
-        'isVideoCall': widget._isVideoCall,
-        'customData': null,
-        'videoQuality': VideoQuality.fullHd,
-      };
-
-      widget._stringeeCall2!.makeCall(parameters).then((result) {
+      widget._stringeeCall2!.makeCall().then((result) {
         bool status = result['status'];
         int code = result['code'];
         String message = result['message'];
@@ -766,33 +757,33 @@ class _CallState extends State<Call> {
   }
 
   void toggleShareScreen() {
-    if (_sharingScreen) {
-      // remove foreground service notification
-      flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.stopForegroundService();
-
-      widget._stringeeCall2!.stopCapture().then((result) {
-        bool status = result['status'];
-        print('flutter stopCapture: $status');
-        if (status) {
-          setState(() {
-            _sharingScreen = false;
-          });
-        }
-      });
-    } else {
-      createForegroundServiceNotification();
-      widget._stringeeCall2!.startCapture().then((result) {
-        bool status = result['status'];
-        print('flutter startCapture: $status');
-        if (status) {
-          setState(() {
-            _sharingScreen = true;
-          });
-        }
-      });
-    }
+    // if (_sharingScreen) {
+    //   // remove foreground service notification
+    //   flutterLocalNotificationsPlugin
+    //       .resolvePlatformSpecificImplementation<
+    //           AndroidFlutterLocalNotificationsPlugin>()
+    //       ?.stopForegroundService();
+    //
+    //   widget._stringeeCall2!.stopCapture().then((result) {
+    //     bool status = result['status'];
+    //     print('flutter stopCapture: $status');
+    //     if (status) {
+    //       setState(() {
+    //         _sharingScreen = false;
+    //       });
+    //     }
+    //   });
+    // } else {
+    //   createForegroundServiceNotification();
+    //   widget._stringeeCall2!.startCapture().then((result) {
+    //     bool status = result['status'];
+    //     print('flutter startCapture: $status');
+    //     if (status) {
+    //       setState(() {
+    //         _sharingScreen = true;
+    //       });
+    //     }
+    //   });
+    // }
   }
 }

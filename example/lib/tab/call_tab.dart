@@ -14,7 +14,8 @@ class CallTab extends StatefulWidget {
 
 class CallTabState extends State<CallTab> {
   String myUserId = 'Not connected...';
-  String token = '';
+  String token =
+      'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2OTQ0MDQ1MDMiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjk2OTk2NTAzLCJ1c2VySWQiOiJhbmRyb2lkMSJ9.1fh_vAVXezPJ2uKiAx41ItFYiurmMH3BexYIUrRS3Ag';
   String toUser = '';
 
   @override
@@ -247,20 +248,27 @@ class CallTabState extends State<CallTab> {
   }
 
   void callTapped(bool isVideoCall, StringeeObjectEventType callType) {
-    if (toUser.isEmpty || !client.hasConnected) return;
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => Call(
-                client,
-                client.userId!,
-                toUser,
-                false,
-                isVideoCall,
-                callType,
-              )),
-    );
+    client.sendCustomMessage(
+        'userId', {}).then((value) => debugPrint(value.toString()));
+    // client.getChatProfile('QXlQZHVWRlc1eTRLcjhuSjlPV2pHM0ZXQlNNK2ljTFZiSkdDdFNuMkJQL0Ztdy9MYzFBOXkwbDdGSm5UZTFNcA==').then((value) {
+    //   if (value['status']) {
+    //     print("getUserInfo: " + value['body'].toString());
+    //   }
+    // });
+    // if (toUser.isEmpty || !client.hasConnected) return;
+    //
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (context) => Call(
+    //             client,
+    //             client.userId!,
+    //             toUser,
+    //             false,
+    //             isVideoCall,
+    //             callType,
+    //           )),
+    // );
   }
 
   @override

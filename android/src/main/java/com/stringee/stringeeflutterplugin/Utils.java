@@ -1,30 +1,26 @@
 package com.stringee.stringeeflutterplugin;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.stringee.StringeeClient;
 import com.stringee.exception.StringeeError;
+import com.stringee.messaging.ChannelType;
 import com.stringee.messaging.ChatProfile;
 import com.stringee.messaging.ChatRequest;
 import com.stringee.messaging.Conversation;
+import com.stringee.messaging.ConversationFilter;
 import com.stringee.messaging.Message;
-import com.stringee.messaging.Message.Type;
 import com.stringee.messaging.Queue;
 import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
 import com.stringee.messaging.listeners.CallbackListener;
-import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
 import com.stringee.video.RemoteParticipant;
 import com.stringee.video.StringeeRoom;
 import com.stringee.video.StringeeVideoTrack;
+import com.stringee.video.VideoDimensions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,12 +36,38 @@ import java.util.UUID;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class Utils {
-    private static final String TAG = "StringeeSDK";
+    public static boolean isStringEmpty(@Nullable CharSequence text) {
+        if (text != null) {
+            if (text.toString().equalsIgnoreCase("null")) {
+                return true;
+            } else {
+                return text.toString().trim().length() == 0;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean isListEmpty(@Nullable List list) {
+        if (list != null) {
+            return list.isEmpty();
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean isArrayEmpty(@Nullable JSONArray array) {
+        if (array != null) {
+            return array.length() == 0;
+        } else {
+            return true;
+        }
+    }
 
     public static boolean isCallWrapperAvailable(String methodName, String callId, Result result) {
         if (callId == null || callId.isEmpty()) {
-            Log.d(TAG, methodName + ": false - -2 - callId is invalid");
-            Map map = new HashMap();
+            Log.d(StringeeFlutterPlugin.TAG, methodName + ": false - -2 - callId is invalid");
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -55,8 +77,8 @@ public class Utils {
 
         CallWrapper call = StringeeManager.getInstance().getCallsMap().get(callId);
         if (call == null) {
-            Log.d(TAG, methodName + ": false - -3 - StringeeCall is not found");
-            Map map = new HashMap();
+            Log.d(StringeeFlutterPlugin.TAG, methodName + ": false - -3 - StringeeCall is not found");
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall is not found");
@@ -69,8 +91,8 @@ public class Utils {
 
     public static boolean isCall2WrapperAvailable(String methodName, String callId, Result result) {
         if (callId == null || callId.isEmpty()) {
-            Log.d(TAG, methodName + ": false - -2 - callId is invalid");
-            Map map = new HashMap();
+            Log.d(StringeeFlutterPlugin.TAG, methodName + ": false - -2 - callId is invalid");
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "callId is invalid");
@@ -80,8 +102,8 @@ public class Utils {
 
         Call2Wrapper call = StringeeManager.getInstance().getCall2sMap().get(callId);
         if (call == null) {
-            Log.d(TAG, methodName + ": false - -3 - StringeeCall2 is not found");
-            Map map = new HashMap();
+            Log.d(StringeeFlutterPlugin.TAG, methodName + ": false - -3 - StringeeCall2 is not found");
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "StringeeCall2 is not found");
@@ -92,9 +114,9 @@ public class Utils {
         return true;
     }
 
-    public static Map convertJsonToMap(JSONObject object) throws JSONException {
+    public static Map<String, Object> convertJsonToMap(JSONObject object) throws JSONException {
         if (object != null) {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             Iterator<String> keysItr = object.keys();
             while (keysItr.hasNext()) {
                 String key = keysItr.next();
@@ -112,11 +134,9 @@ public class Utils {
         }
     }
 
-    public static JSONObject convertMapToJson(Map map) throws JSONException {
+    public static JSONObject convertMapToJson(Map<String, Object> map) throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        Iterator<Map.Entry<String, Object>> entries = map.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<String, Object> entry = entries.next();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
             jsonObject.put(key, value);
@@ -143,15 +163,19 @@ public class Utils {
         List<User> list = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             JSONObject object = (JSONObject) array.get(i);
-            User user = new User(object.optString("userId", null));
-            user.setName(object.optString("name", null));
-            user.setAvatarUrl(object.optString("avatarUrl", null));
+            User user = new User(object.optString("userId", ""));
+            user.setName(object.optString("name", ""));
+            user.setAvatarUrl(object.optString("avatarUrl", ""));
             if (object.has("role")) {
                 short role = (short) object.getInt("role");
-                if (role == UserRole.Admin.getValue()) {
-                    user.setRole(Role.ADMIN);
-                } else if (role == UserRole.Admin.getValue()) {
-                    user.setRole(Role.MEMBER);
+                switch (role) {
+                    case 0:
+                        user.setRole(Role.ADMIN);
+                        break;
+                    case 1:
+                    default:
+                        user.setRole(Role.MEMBER);
+                        break;
                 }
             }
             list.add(user);
@@ -159,8 +183,8 @@ public class Utils {
         return list;
     }
 
-    public static Map convertChatRequestToMap(@NonNull ChatRequest chatRequest) {
-        Map chatRequestMap = new HashMap();
+    public static Map<String, Object> convertChatRequestToMap(@NonNull ChatRequest chatRequest) {
+        Map<String, Object> chatRequestMap = new HashMap<>();
         chatRequestMap.put("convId", chatRequest.getConvId());
         chatRequestMap.put("customerId", chatRequest.getCustomerId());
         chatRequestMap.put("customerName", chatRequest.getName());
@@ -169,159 +193,41 @@ public class Utils {
         return chatRequestMap;
     }
 
-    public static Map convertConversationToMap(@NonNull Conversation conversation) {
-        Map conversationMap = new HashMap();
-        try {
-            conversationMap.put("id", conversation.getId());
-            conversationMap.put("name", conversation.getName());
-            conversationMap.put("isGroup", conversation.isGroup());
-            conversationMap.put("creator", conversation.getCreator());
-            conversationMap.put("createdAt", conversation.getCreateAt());
-            conversationMap.put("updatedAt", conversation.getUpdateAt());
-            conversationMap.put("totalUnread", conversation.getTotalUnread());
-            String text = null;
-            if (!TextUtils.isEmpty(conversation.getText())) {
-                text = conversation.getText();
-            }
-            conversationMap.put("text", text);
-            conversationMap.put("lastMsgSender", conversation.getLastMsgSender());
-            conversationMap.put("lastMsgType", conversation.getLastMsgType().getValue());
-            conversationMap.put("lastMsgId", conversation.getLastMsgId());
-            conversationMap.put("lastMsgSeqReceived", conversation.getLastMsgSeqReceived());
-            conversationMap.put("lastTimeNewMsg", conversation.getLastTimeNewMsg());
-            conversationMap.put("lastMsgState", conversation.getLastMsgState().getValue());
-
-            if (conversation.getLastMsg() != null) {
-                String lastMsg = conversation.getLastMsg();
-                if (!TextUtils.isEmpty(lastMsg)) {
-                    JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
-                    conversationMap.put("text", convertLastMessageToMap(lastMsgMap, conversation.getLastMsgType()));
-                }
-            }
-            conversationMap.put("pinnedMsgId", conversation.getPinnedMsgId());
-
-            List<User> participants = conversation.getParticipants();
-            List participantsList = new ArrayList();
-            for (int j = 0; j < participants.size(); j++) {
-                participantsList.add(convertUserToMap(participants.get(j)));
-            }
-            conversationMap.put("participants", participantsList);
-            conversationMap.put("oaId", conversation.getOaId());
-            conversationMap.put("customData", conversation.getCustomData());
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public static Map<String, Object> convertConversationToMap(@NonNull Conversation conversation) {
+        Map<String, Object> conversationMap = new HashMap<>();
+        conversationMap.put("id", conversation.getId());
+        conversationMap.put("name", conversation.getName());
+        conversationMap.put("isGroup", conversation.isGroup());
+        conversationMap.put("creator", conversation.getCreator());
+        conversationMap.put("createdAt", conversation.getCreateAt());
+        conversationMap.put("updatedAt", conversation.getUpdateAt());
+        conversationMap.put("totalUnread", conversation.getTotalUnread());
+        String text = null;
+        if (!Utils.isStringEmpty(conversation.getText())) {
+            text = conversation.getText();
         }
+        conversationMap.put("text", text);
+        conversationMap.put("lastMsg", Utils.convertMessageToMap(conversation.getLastMessage()));
+        conversationMap.put("pinnedMsgId", conversation.getPinnedMsgId());
+
+        List<User> participants = conversation.getParticipants();
+        List<Map<String, Object>> participantsList = new ArrayList<>();
+        for (int j = 0; j < participants.size(); j++) {
+            participantsList.add(convertUserToMap(participants.get(j)));
+        }
+        conversationMap.put("participants", participantsList);
+        conversationMap.put("oaId", conversation.getOaId());
+        conversationMap.put("lastTimeNewMsg", conversation.getLastTimeNewMsg());
+        conversationMap.put("lastMsgSeqReceived", conversation.getLastMsgSeqReceived());
+        conversationMap.put("localId", conversation.getLocalId());
+        conversationMap.put("channelType", conversation.getChannelType().getValue());
+        conversationMap.put("ended", conversation.isEnded());
+        conversationMap.put("lastSequence", conversation.getLastSequence());
         return conversationMap;
     }
 
-    public static Map convertLastMessageToMap(@NonNull JSONObject msgObj, Type type) {
-        Map msgMap = new HashMap();
-        try {
-            if (msgObj.has("metadata")) {
-                msgMap.put("metadata", Utils.convertJsonToMap(msgObj.optJSONObject("metadata")));
-            }
-            switch (type) {
-                case TEXT:
-                case LINK:
-                    msgMap.put("text", msgObj.optString("content"));
-                    break;
-                case PHOTO:
-                    JSONObject photoObj = msgObj.optJSONObject("photo");
-                    if (photoObj != null) {
-                        Map photoMap = new HashMap();
-                        photoMap.put("filePath", photoObj.optString("filePath"));
-                        photoMap.put("fileUrl", photoObj.optString("fileUrl"));
-                        photoMap.put("thumbnail", photoObj.optString("thumbnail"));
-                        photoMap.put("ratio", ((Integer) photoObj.optInt("ratio")).floatValue());
-                        msgMap.put("photo", photoMap);
-                    }
-                    break;
-                case VIDEO:
-                    JSONObject videoObj = msgObj.optJSONObject("video");
-                    if (videoObj != null) {
-                        Map videoMap = new HashMap();
-                        videoMap.put("filePath", videoObj.optString("filePath"));
-                        videoMap.put("fileUrl", videoObj.optString("fileUrl"));
-                        videoMap.put("thumbnail", videoObj.optString("thumbnail"));
-                        videoMap.put("ratio", ((Integer) videoObj.optInt("ratio")).floatValue());
-                        videoMap.put("duration", (double) videoObj.optInt("duration"));
-                        msgMap.put("video", videoMap);
-                    }
-                    break;
-                case AUDIO:
-                    JSONObject audioObj = msgObj.optJSONObject("audio");
-                    if (audioObj != null) {
-                        Map audioMap = new HashMap();
-                        audioMap.put("filePath", audioObj.optString("filePath"));
-                        audioMap.put("fileUrl", audioObj.optString("fileUrl"));
-                        audioMap.put("duration", (double) audioObj.optInt("duration"));
-                        msgMap.put("audio", audioMap);
-                    }
-                    break;
-                case FILE:
-                    JSONObject fileObj = msgObj.optJSONObject("file");
-                    if (fileObj != null) {
-                        Map fileMap = new HashMap();
-                        fileMap.put("filePath", fileObj.optString("filePath"));
-                        fileMap.put("fileUrl", fileObj.optString("fileUrl"));
-                        fileMap.put("fileName", fileObj.optString("fileName"));
-                        fileMap.put("fileLength", fileObj.optLong("length"));
-                        msgMap.put("file", fileMap);
-                    }
-                    break;
-                case CREATE_CONVERSATION:
-                case RENAME_CONVERSATION:
-                    msgMap.put("groupName", msgObj.optString("groupName"));
-                    msgMap.put("creator", msgObj.optString("creator"));
-                    JSONArray participantsArray = msgObj.optJSONArray("participants");
-                    List participants = new ArrayList();
-                    if (participantsArray != null) {
-                        if (participantsArray.length() > 0) {
-                            for (int i = 0; i < participantsArray.length(); i++) {
-                                participants.add(participantsArray.get(i));
-                            }
-                        }
-                    }
-                    msgMap.put("participants", participants);
-                    break;
-                case LOCATION:
-                    JSONObject locationObj = msgObj.optJSONObject("location");
-                    if (locationObj != null) {
-                        Map locationMap = new HashMap();
-                        locationMap.put("lat", (double) locationObj.optInt("lat"));
-                        locationMap.put("lon", (double) locationObj.optInt("lon"));
-                        msgMap.put("location", locationMap);
-                    }
-                    break;
-                case CONTACT:
-                    JSONObject contactObj = msgObj.optJSONObject("contact");
-                    if (contactObj != null) {
-                        Map contactMap = new HashMap();
-                        contactMap.put("vcard", contactObj.optString("vcard"));
-                        msgMap.put("contact", contactMap);
-                    }
-                    break;
-                case STICKER:
-                    JSONObject stickerObj = msgObj.optJSONObject("sticker");
-                    if (stickerObj != null) {
-                        Map stickerMap = new HashMap();
-                        stickerMap.put("name", stickerObj.optString("name"));
-                        stickerMap.put("category", stickerObj.optString("category"));
-                        msgMap.put("sticker", stickerMap);
-                    }
-                    break;
-                case NOTIFICATION:
-                    msgMap = convertNotifyContentToMap(msgObj);
-                    break;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return msgMap;
-    }
-
-    public static Map convertMessageToMap(@NonNull Message message) {
-        Map msgMap = new HashMap();
+    public static Map<String, Object> convertMessageToMap(@NonNull Message message) {
+        Map<String, Object> msgMap = new HashMap<>();
         try {
             msgMap.put("id", message.getId());
             msgMap.put("localId", message.getLocalId());
@@ -332,14 +238,18 @@ public class Utils {
             msgMap.put("customData", convertJsonToMap(message.getCustomData()));
             msgMap.put("state", message.getState().getValue());
             msgMap.put("type", message.getType().getValue());
-            Map contentMap = new HashMap();
+            msgMap.put("convLocalId", message.getConversationLocalId());
+            msgMap.put("sender", Utils.convertUserToMap(message.getSender()));
+            msgMap.put("updateAt", message.getUpdateAt());
+            msgMap.put("deleted", message.isDeleted());
+            Map<String, Object> contentMap = new HashMap<>();
             switch (message.getType()) {
                 case TEXT:
                 case LINK:
                     contentMap.put("content", message.getText());
                     break;
                 case PHOTO:
-                    Map photoMap = new HashMap();
+                    Map<String, Object> photoMap = new HashMap<>();
                     photoMap.put("filePath", message.getFilePath());
                     photoMap.put("fileUrl", message.getFileUrl());
                     photoMap.put("thumbnail", message.getThumbnailUrl());
@@ -347,7 +257,7 @@ public class Utils {
                     contentMap.put("photo", photoMap);
                     break;
                 case VIDEO:
-                    Map videoMap = new HashMap();
+                    Map<String, Object> videoMap = new HashMap<>();
                     videoMap.put("filePath", message.getFilePath());
                     videoMap.put("fileUrl", message.getFileUrl());
                     videoMap.put("thumbnail", message.getThumbnailUrl());
@@ -356,14 +266,14 @@ public class Utils {
                     contentMap.put("video", videoMap);
                     break;
                 case AUDIO:
-                    Map audioMap = new HashMap();
+                    Map<String, Object> audioMap = new HashMap<>();
                     audioMap.put("filePath", message.getFilePath());
                     audioMap.put("fileUrl", message.getFileUrl());
                     audioMap.put("duration", (double) message.getDuration());
                     contentMap.put("audio", audioMap);
                     break;
                 case FILE:
-                    Map fileMap = new HashMap();
+                    Map<String, Object> fileMap = new HashMap<>();
                     fileMap.put("filePath", message.getFilePath());
                     fileMap.put("fileUrl", message.getFileUrl());
                     fileMap.put("fileName", message.getFileName());
@@ -376,29 +286,28 @@ public class Utils {
                     contentMap.put("groupName", messageObject.getString("groupName"));
                     contentMap.put("creator", messageObject.getString("creator"));
                     JSONArray participantsArray = messageObject.getJSONArray("participants");
-                    List participants = new ArrayList();
-                    if (participantsArray != null) {
-                        if (participantsArray.length() > 0) {
-                            for (int i = 0; i < participantsArray.length(); i++) {
-                                participants.add(participantsArray.get(i));
-                            }
+                    List<Map<String, Object>> participants = new ArrayList<>();
+                    if (!Utils.isArrayEmpty(participantsArray)) {
+                        for (int i = 0; i < participantsArray.length(); i++) {
+                            Map<String, Object> participantMap = (Map<String, Object>) participantsArray.get(i);
+                            participants.add(participantMap);
                         }
                     }
                     contentMap.put("participants", participants);
                     break;
                 case LOCATION:
-                    Map locationMap = new HashMap();
+                    Map<String, Object> locationMap = new HashMap<>();
                     locationMap.put("lat", message.getLatitude());
                     locationMap.put("lon", message.getLongitude());
                     contentMap.put("location", locationMap);
                     break;
                 case CONTACT:
-                    Map contactMap = new HashMap();
+                    Map<String, Object> contactMap = new HashMap<>();
                     contactMap.put("vcard", message.getContact());
                     contentMap.put("contact", contactMap);
                     break;
                 case STICKER:
-                    Map stickerMap = new HashMap();
+                    Map<String, Object> stickerMap = new HashMap<>();
                     stickerMap.put("name", message.getStickerName());
                     stickerMap.put("category", message.getStickerCategory());
                     contentMap.put("sticker", stickerMap);
@@ -418,17 +327,63 @@ public class Utils {
         return msgMap;
     }
 
-    public static Map convertUserToMap(@NonNull User user) {
-        Map userMap = new HashMap();
+    public static Map<String, Object> convertUserToMap(@NonNull User user) {
+        Map<String, Object> userMap = new HashMap<>();
         userMap.put("user", user.getUserId());
         userMap.put("displayName", user.getName());
         userMap.put("avatarUrl", user.getAvatarUrl());
-        userMap.put("role", user.getRole().getValue());
+        userMap.put("email", user.getEmail());
+        userMap.put("phone", user.getPhone());
+        userMap.put("location", user.getLocation());
+        userMap.put("browser", user.getBrowser());
+        userMap.put("device", user.getDevice());
+        userMap.put("ipAddress", user.getIpAddress());
+        userMap.put("hostName", user.getHostName());
+        userMap.put("userAgent", user.getUserAgent());
+        userMap.put("lastMsgSeqReceived", user.getLastMsgSeqReceived());
+        userMap.put("lastMsgSeqSeen", user.getLastMsgSeqSeen());
         return userMap;
     }
 
-    public static Map convertNotifyContentToMap(@NonNull JSONObject notifyObject) {
-        Map contentMap = new HashMap();
+    public static User convertMapToUser(@NonNull Map<String, Object> map) {
+        User user = new User();
+        user.setName((String) map.get("name"));
+        user.setEmail((String) map.get("email"));
+        user.setAvatarUrl((String) map.get("avatarUrl"));
+        user.setLocation((String) map.get("location"));
+        user.setBrowser((String) map.get("browser"));
+        user.setDevice((String) map.get("device"));
+        user.setIpAddress((String) map.get("ipAddress"));
+        user.setHostName((String) map.get("hostName"));
+        user.setUserAgent((String) map.get("userAgent"));
+        return user;
+    }
+
+    public static StringeeVideoTrack.Options convertMapToStringeeVideoOption(@NonNull Map<String, Object> map) {
+        StringeeVideoTrack.Options options = new StringeeVideoTrack.Options();
+        options.screen((Boolean) map.get("audio"));
+        options.video((Boolean) map.get("video"));
+        options.audio((Boolean) map.get("screen"));
+        String videoDimensions = (String) map.get("videoDimension");
+        switch (videoDimensions) {
+            case "288":
+                options.videoDimensions(VideoDimensions.CIF_VIDEO_DIMENSIONS);
+                break;
+            case "480":
+                options.videoDimensions(VideoDimensions.WVGA_VIDEO_DIMENSIONS);
+                break;
+            case "720":
+                options.videoDimensions(VideoDimensions.HD_720P_VIDEO_DIMENSIONS);
+                break;
+            case "1080":
+                options.videoDimensions(VideoDimensions.HD_1080P_VIDEO_DIMENSIONS);
+                break;
+        }
+        return options;
+    }
+
+    public static Map<String, Object> convertNotifyContentToMap(@NonNull JSONObject notifyObject) {
+        Map<String, Object> contentMap = new HashMap<>();
         try {
             int type = notifyObject.optInt("type");
             contentMap.put("type", type);
@@ -436,7 +391,9 @@ public class Utils {
                 case 1:
                     User addUser = new User(notifyObject.getString("addedby"));
                     JSONObject addedInfoObject = notifyObject.optJSONObject("addedInfo");
-                    addUser.setName(addedInfoObject.optString("displayName", null));
+                    if (addedInfoObject != null) {
+                        addUser.setName(addedInfoObject.optString("displayName", ""));
+                    }
                     addUser.setAvatarUrl(null);
                     contentMap.put("addedInfo", convertUserToMap(addUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
@@ -444,7 +401,9 @@ public class Utils {
                 case 2:
                     User removeUser = new User(notifyObject.getString("removedBy"));
                     JSONObject removedInfoObject = notifyObject.optJSONObject("removedInfo");
-                    removeUser.setName(removedInfoObject.optString("displayName", null));
+                    if (removedInfoObject != null) {
+                        removeUser.setName(removedInfoObject.optString("displayName", ""));
+                    }
                     removeUser.setAvatarUrl(null);
                     contentMap.put("removedInfo", convertUserToMap(removeUser));
                     contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
@@ -463,88 +422,90 @@ public class Utils {
         return contentMap;
     }
 
-    public static Map convertChatProfileToMap(@NonNull ChatProfile chatProfile) {
-        Map chatProfileMap = new HashMap();
+    public static Map<String, Object> convertChatProfileToMap(@NonNull ChatProfile chatProfile) {
+        Map<String, Object> chatProfileMap = new HashMap<>();
         chatProfileMap.put("id", chatProfile.getId());
-        chatProfileMap.put("background", chatProfile.getBackground());
-        chatProfileMap.put("hour", chatProfile.getBusinessHour());
+        chatProfileMap.put("portalId", chatProfile.getPortalId());
+        chatProfileMap.put("projectId", chatProfile.getProjectId());
         chatProfileMap.put("language", chatProfile.getLanguage());
-        chatProfileMap.put("logo_url", chatProfile.getLogoUrl());
-        chatProfileMap.put("popup_answer_url", chatProfile.getPopupAnswerUrl());
-        chatProfileMap.put("portal", chatProfile.getPortalId());
+        chatProfileMap.put("background", chatProfile.getBackground());
+        chatProfileMap.put("isAutoCreateTicket", chatProfile.isAutoCreateTicket());
+        chatProfileMap.put("popupAnswerUrl", chatProfile.getPopupAnswerUrl());
+        chatProfileMap.put("numberOfAgents", chatProfile.getNumberOfAgents());
+        chatProfileMap.put("logoUrl", chatProfile.getLogoUrl());
+        chatProfileMap.put("enabledBusinessHour", chatProfile.isEnabledBusinessHour());
+        chatProfileMap.put("businessHourId", chatProfile.getBusinessHourId());
+        chatProfileMap.put("businessHour", chatProfile.getBusinessHour());
         List<Queue> queues = chatProfile.getQueues();
-        List queueList = new ArrayList();
+        List<Map<String, Object>> queueList = new ArrayList<>();
         for (int i = 0; i < queues.size(); i++) {
             queueList.add(convertQueueToMap(queues.get(i)));
         }
         chatProfileMap.put("queues", queueList);
-        chatProfileMap.put("auto_create_ticket", chatProfile.isAutoCreateTicket());
-        chatProfileMap.put("enabled", chatProfile.isEnabledBusinessHour());
-        chatProfileMap.put("facebook_as_livechat", chatProfile.isFacebookAsLivechat());
-        chatProfileMap.put("project_id", chatProfile.getProjectId());
-        chatProfileMap.put("zalo_as_livechat", chatProfile.isZaloAsLivechat());
+        chatProfileMap.put("facebookAsLivechat", chatProfile.isFacebookAsLivechat());
+        chatProfileMap.put("zaloAsLivechat", chatProfile.isZaloAsLivechat());
         return chatProfileMap;
     }
 
-    public static Map convertQueueToMap(@NonNull Queue queue) {
-        Map queueMap = new HashMap();
+    public static Map<String, Object> convertQueueToMap(@NonNull Queue queue) {
+        Map<String, Object> queueMap = new HashMap<>();
         queueMap.put("id", queue.getId());
         queueMap.put("name", queue.getName());
         return queueMap;
     }
 
-    public static Map convertRoomToMap(@NonNull StringeeRoom room) {
-        Map roomMap = new HashMap();
+    public static Map<String, Object> convertRoomToMap(@NonNull StringeeRoom room) {
+        Map<String, Object> roomMap = new HashMap<>();
         roomMap.put("id", room.getId());
         roomMap.put("recorded", room.isRecorded());
         return roomMap;
     }
 
-    public static Map convertRoomUserToMap(@NonNull RemoteParticipant participant) {
-        Map userMap = new HashMap();
+    public static Map<String, Object> convertRoomUserToMap(@NonNull RemoteParticipant participant) {
+        Map<String, Object> userMap = new HashMap<>();
         userMap.put("id", participant.getId());
         return userMap;
     }
 
-    public static Map convertLocalVideoTrackToMap(@NonNull VideoTrackManager trackManager, String clientId) {
+    public static Map<String, Object> convertLocalVideoTrackToMap(@NonNull VideoTrackManager trackManager, String clientId) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
-        Map trackMap = new HashMap();
+        Map<String, Object> trackMap = new HashMap<>();
         trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
         trackMap.put("localId", trackManager.getLocalId());
         trackMap.put("audio", videoTrack.audioEnabled());
         trackMap.put("video", videoTrack.videoEnabled());
         trackMap.put("screen", videoTrack.isScreenCapture());
         trackMap.put("isLocal", videoTrack.isLocal());
-        Map userMap = new HashMap();
+        Map<String, Object> userMap = new HashMap<>();
         userMap.put("id", clientId);
         trackMap.put("publisher", userMap);
         return trackMap;
     }
 
-    public static Map convertVideoTrackToMap(@NonNull VideoTrackManager trackManager) {
+    public static Map<String, Object> convertVideoTrackToMap(@NonNull VideoTrackManager trackManager) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
-        Map trackMap = new HashMap();
+        Map<String, Object> trackMap = new HashMap<>();
         trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
         trackMap.put("localId", trackManager.getLocalId());
         trackMap.put("audio", videoTrack.audioEnabled());
         trackMap.put("video", videoTrack.videoEnabled());
         trackMap.put("screen", videoTrack.isScreenCapture());
         trackMap.put("isLocal", videoTrack.isLocal());
-        Map userMap = new HashMap();
+        Map<String, Object> userMap = new HashMap<>();
         userMap.put("id", videoTrack.getUserId());
         trackMap.put("publisher", userMap);
         return trackMap;
     }
 
-    public static Map convertVideoTrackInfoToMap(@NonNull VideoTrackManager trackManager) {
+    public static Map<String, Object> convertVideoTrackInfoToMap(@NonNull VideoTrackManager trackManager) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
-        Map trackMap = new HashMap();
+        Map<String, Object> trackMap = new HashMap<>();
         trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
         trackMap.put("localId", trackManager.getLocalId());
         trackMap.put("audio", videoTrack.audioEnabled());
         trackMap.put("video", videoTrack.videoEnabled());
         trackMap.put("screen", videoTrack.isScreenCapture());
-        Map userMap = new HashMap();
+        Map<String, Object> userMap = new HashMap<>();
         userMap.put("id", videoTrack.getUserId());
         trackMap.put("publisher", userMap);
         return trackMap;
@@ -554,16 +515,14 @@ public class Utils {
         return "android-" + UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
     }
 
-    public static List getParticipantsFromNotify(@NonNull JSONArray participantsArray) {
-        List resultArray = new ArrayList();
+    public static List<Map<String, Object>> getParticipantsFromNotify(@NonNull JSONArray participantsArray) {
+        List<Map<String, Object>> resultArray = new ArrayList<>();
         try {
             for (int i = 0; i < participantsArray.length(); i++) {
-                JSONObject userObject = new JSONObject();
-                userObject = participantsArray.getJSONObject(i);
-
+                JSONObject userObject = participantsArray.getJSONObject(i);
                 User user = new User(userObject.getString("user"));
-                user.setName(userObject.optString("displayName", null));
-                user.setAvatarUrl(userObject.optString("avatarUrl", null));
+                user.setName(userObject.optString("displayName", ""));
+                user.setAvatarUrl(userObject.optString("avatarUrl", ""));
                 user.setRole(Role.getRole(userObject.optString("role")));
 
                 resultArray.add(convertUserToMap(user));
@@ -575,11 +534,10 @@ public class Utils {
     }
 
     public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
-        Handler handler = new Handler(Looper.getMainLooper());
         client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
-                handler.post(new Runnable() {
+                StringeeManager.getInstance().getHandler().post(new Runnable() {
                     @Override
                     public void run() {
                         callbackListener.onSuccess(conversation);
@@ -590,56 +548,7 @@ public class Utils {
             @Override
             public void onError(final StringeeError error) {
                 super.onError(error);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callbackListener.onError(error);
-                    }
-                });
-            }
-        });
-    }
-
-    public static void getLastMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Message> callbackListener) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        getConversation(client, convId, new CallbackListener<Conversation>() {
-            @Override
-            public void onSuccess(Conversation conversation) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        conversation.getLastMessages(client, 1, true, true, false, new CallbackListener<List<Message>>() {
-                            @Override
-                            public void onSuccess(List<Message> messages) {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (messages != null && messages.size() > 0) {
-                                            callbackListener.onSuccess(messages.get(0));
-                                        }
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        callbackListener.onError(stringeeError);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final StringeeError error) {
-                super.onError(error);
-                handler.post(new Runnable() {
+                StringeeManager.getInstance().getHandler().post(new Runnable() {
                     @Override
                     public void run() {
                         callbackListener.onError(error);
@@ -650,11 +559,10 @@ public class Utils {
     }
 
     public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
-        Handler handler = new Handler(Looper.getMainLooper());
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                handler.post(new Runnable() {
+                StringeeManager.getInstance().getHandler().post(new Runnable() {
                     @Override
                     public void run() {
                         conversation.getMessages(client, msgId, new CallbackListener<List<Message>>() {
@@ -678,7 +586,7 @@ public class Utils {
             @Override
             public void onError(final StringeeError error) {
                 super.onError(error);
-                handler.post(new Runnable() {
+                StringeeManager.getInstance().getHandler().post(new Runnable() {
                     @Override
                     public void run() {
                         callbackListener.onError(error);
@@ -689,11 +597,10 @@ public class Utils {
     }
 
     public static void getChatRequest(@NonNull final StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
-        Handler handler = new Handler(Looper.getMainLooper());
         client.getChatRequests(new CallbackListener<List<ChatRequest>>() {
             @Override
             public void onSuccess(List<ChatRequest> chatRequestList) {
-                handler.post(new Runnable() {
+                StringeeManager.getInstance().getHandler().post(new Runnable() {
                     @Override
                     public void run() {
                         ChatRequest finalChatRequest = null;
@@ -715,7 +622,7 @@ public class Utils {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                StringeeManager.getInstance().getHandler().post(new Runnable() {
                     @Override
                     public void run() {
                         callbackListener.onError(stringeeError);
@@ -725,123 +632,78 @@ public class Utils {
         });
     }
 
-    public static ChannelInfo getChannelInfo(Map channelMap) {
-        ChannelInfo channelInfo = new ChannelInfo();
-        channelInfo.setChannelId((String) channelMap.get("channelId"));
-        channelInfo.setChannelName((String) channelMap.get("channelName"));
-        channelInfo.setDescription((String) channelMap.get("description"));
-        channelInfo.setImportance((Integer) channelMap.get("importance"));
-        channelInfo.setEnableLights((Boolean) channelMap.get("enableLights"));
-        channelInfo.setEnableVibration((Boolean) channelMap.get("enableVibration"));
-        List vibrationPatternList = (List) channelMap.get("vibrationPattern");
-        long[] vibrationPattern = new long[vibrationPatternList.size()];
-        for (int i = 0; i < vibrationPatternList.size(); i++) {
-            vibrationPattern[i] = ((Integer) vibrationPatternList.get(i)).longValue();
-        }
-        channelInfo.setVibrationPattern(vibrationPattern);
-        channelInfo.setLockscreenVisibility((Integer) channelMap.get("lockscreenVisibility"));
-        boolean playSound = (Boolean) channelMap.get("playSound");
-        channelInfo.setPlaySound(playSound);
-        if (playSound) {
-            Map notificationSound = (Map) channelMap.get("notificationSound");
-            channelInfo.setSoundSource((String) notificationSound.get("source"));
-            channelInfo.setSourceType((Integer) notificationSound.get("sourceType"));
-            channelInfo.setRingtoneType((Integer) notificationSound.get("ringtoneType"));
-        }
-        channelInfo.setBypassDnd((Boolean) channelMap.get("bypassDnd"));
-        return channelInfo;
-    }
-
-    public static NotificationInfo getNotificationInfo(Map notiMap) {
-        NotificationInfo notiInfo = new NotificationInfo();
-        notiInfo.setId((Integer) notiMap.get("id"));
-        notiInfo.setChannelId((String) notiMap.get("channelId"));
-        notiInfo.setContentTitle((String) notiMap.get("contentTitle"));
-        notiInfo.setContentText((String) notiMap.get("contentText"));
-        notiInfo.setSubText((String) notiMap.get("subText"));
-        notiInfo.setContentInfo((String) notiMap.get("contentInfo"));
-        notiInfo.setNumber((Integer) notiMap.get("number"));
-        notiInfo.setAutoCancel((Boolean) notiMap.get("autoCancel"));
-        notiInfo.setWhen((Integer) notiMap.get("showWhen"));
-        if (notiInfo.getWhen() > 0) {
-            notiInfo.setShowWhen(true);
-        }
-        Map iconMap = (Map) notiMap.get("icon");
-        if (iconMap != null) {
-            notiInfo.setIconSource((String) iconMap.get("source"));
-            notiInfo.setSourceFrom((Integer) iconMap.get("sourceFrom"));
-        }
-        Map largeIconMap = (Map) notiMap.get("largeIcon");
-        if (largeIconMap != null) {
-            notiInfo.setLargeIconSource((String) largeIconMap.get("source"));
-            notiInfo.setLargeSourceFrom((Integer) largeIconMap.get("sourceFrom"));
-        }
-        boolean playSound = (Boolean) notiMap.get("playSound");
-        notiInfo.setPlaySound(playSound);
-        if (playSound) {
-            Map notificationSound = (Map) notiMap.get("notificationSound");
-            notiInfo.setSoundSource((String) notificationSound.get("source"));
-            notiInfo.setSourceType((Integer) notificationSound.get("sourceType"));
-            notiInfo.setRingtoneType((Integer) notificationSound.get("ringtoneType"));
-        }
-        notiInfo.setCategory((String) notiMap.get("category"));
-        notiInfo.setFullScreenIntent((Boolean) notiMap.get("fullScreenIntent"));
-        List vibrationPatternList = (List) notiMap.get("vibrationPattern");
-        long[] vibrationPattern = new long[vibrationPatternList.size()];
-        for (int i = 0; i < vibrationPatternList.size(); i++) {
-            vibrationPattern[i] = ((Integer) vibrationPatternList.get(i)).longValue();
-        }
-        notiInfo.setVibrationPattern(vibrationPattern);
-        notiInfo.setOnGoing((Boolean) notiMap.get("onGoing"));
-        notiInfo.setOnlyAlertOnce((Boolean) notiMap.get("onlyAlertOnce"));
-        notiInfo.setTimeoutAfter((Integer) notiMap.get("timeoutAfter"));
-        if (notiInfo.getTimeoutAfter() > 0) {
-            notiInfo.setTimeoutAfter(true);
-        }
-        notiInfo.setPriority((Integer) notiMap.get("priority"));
-        notiInfo.setRecreateTask((Boolean) notiMap.get("recreateTask"));
-        List actionsMapList = (List) notiMap.get("actions");
-
-        if (actionsMapList.size() > 0) {
-            List<NotificationAction> actions = new ArrayList<>();
-            for (int i = 0; i < actionsMapList.size(); i++) {
-                Map actionMap = (Map) actionsMapList.get(i);
-                NotificationAction action = new NotificationAction();
-                action.setId((String) actionMap.get("id"));
-                Map actionIconMap = (Map) notiMap.get("icon");
-                if (actionIconMap != null) {
-                    action.setIcon((String) actionIconMap.get("source"));
-                    action.setSourceFrom((Integer) actionIconMap.get("sourceFrom"));
+    public static ConversationFilter getConversationFilter(String filter) {
+        ConversationFilter conversationFilter = new ConversationFilter();
+        if (!Utils.isStringEmpty(filter)) {
+            try {
+                JSONObject jsonObject = new JSONObject(filter);
+                if (jsonObject.has("oaId")) {
+                    conversationFilter.setOaId(jsonObject.optString("oaId"));
                 }
-                action.setTitle((String) actionMap.get("title"));
-                action.setRecreateTask((Boolean) actionMap.get("recreateTask"));
-                actions.add(action);
+                conversationFilter.setDeleted(jsonObject.optBoolean("isDeleted"));
+                conversationFilter.setUnread(jsonObject.optBoolean("isUnread"));
+                if (jsonObject.has("chatSupportStatus")) {
+                    conversationFilter.setFilterChatStatus(ConversationFilter.ConversationFilterChatSupportStatus.getStats(jsonObject.optInt("chatSupportStatus")));
+                }
+                conversationFilter.setChannelTypes(getChannelTypes(jsonObject.getJSONArray("channelTypes")));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            notiInfo.setActions(actions);
         }
-        return notiInfo;
+        return conversationFilter;
     }
 
-    public static boolean isResourceAvailable(Context context, String source, String sourceFrom) {
-        int id = context.getResources().getIdentifier(source, sourceFrom, context.getPackageName());
-        return id != 0;
-    }
-
-    public static int getIconResourceId(Context context, String source, int sourceFrom) {
-        if (sourceFrom == 0) {
-            return context.getResources().getIdentifier(source, "drawable", context.getPackageName());
-        } else {
-            return context.getResources().getIdentifier(source, "mipmap", context.getPackageName());
+    public static List<ChannelType> getChannelTypes(List<Integer> channels) {
+        List<ChannelType> channelTypes = new ArrayList<>();
+        for (int channel : channels) {
+            channelTypes.add(ChannelType.getType(channel));
         }
+        return channelTypes;
     }
 
-    public static int getDefaultIconResourceId(Context context) {
-        return context.getResources().getIdentifier("ic_launcher", "mipmap", context.getPackageName());
+    public static List<ChannelType> getChannelTypes(JSONArray channels) throws JSONException {
+        List<ChannelType> channelTypes = new ArrayList<>();
+        for (int i = 0; i < channels.length(); i++) {
+            channelTypes.add(ChannelType.getType(channels.getInt(i)));
+        }
+        return channelTypes;
     }
 
-    public static Intent getLaunchIntent(Context context) {
-        String packageName = context.getPackageName();
-        PackageManager packageManager = context.getPackageManager();
-        return packageManager.getLaunchIntentForPackage(packageName);
+    public static boolean isClientConnected(ClientWrapper clientWrapper, String function, Result result) {
+        if (!clientWrapper.isConnected()) {
+            sendErrorResponse(function, -1, "StringeeClient is disconnected", result);
+            return false;
+        }
+        return true;
+    }
+
+    public static void sendErrorResponse(String function, int code, String message, Result result) {
+        Log.d(StringeeFlutterPlugin.TAG, function + ": false - " + code + " - " + message);
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", false);
+        map.put("code", code);
+        map.put("message", message);
+        result.success(map);
+    }
+
+    public static void sendSuccessResponse(String function, Object body, Result result) {
+        sendSuccessResponse(function, "body", body, result);
+    }
+
+    public static void sendSuccessResponse(String function, String bodyKey, Object body, Result result) {
+        Log.d(StringeeFlutterPlugin.TAG, function + ": success");
+        Map<String, Object> map = getSuccessMap();
+        if (body != null) {
+            map.put(bodyKey, body);
+        }
+        result.success(map);
+    }
+
+    private static Map<String, Object> getSuccessMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        return map;
     }
 }

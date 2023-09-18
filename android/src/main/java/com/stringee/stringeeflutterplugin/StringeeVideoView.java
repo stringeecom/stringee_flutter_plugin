@@ -1,7 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -24,7 +23,6 @@ import io.flutter.plugin.platform.PlatformView;
 
 public class StringeeVideoView implements PlatformView {
     private FrameLayout frameLayout;
-    private static final String TAG = "Stringee sdk";
 
     StringeeVideoView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams) {
         try {
@@ -44,7 +42,7 @@ public class StringeeVideoView implements PlatformView {
             }
 
         } catch (Exception e) {
-            Log.d(TAG, "StringeeVideoView render error: " + e.getMessage());
+            Log.d(StringeeFlutterPlugin.TAG, "StringeeVideoView render error: " + e.getMessage());
         }
     }
 
@@ -70,17 +68,21 @@ public class StringeeVideoView implements PlatformView {
                 }
 
                 boolean isLocal = (Boolean) creationParams.get("isLocal");
-                boolean isMirror = false;
 
-                ScalingType scalingType = null;
-                if (creationParams.get("scalingType").equals("FILL")) {
-                    scalingType = ScalingType.SCALE_ASPECT_FILL;
-                } else if (creationParams.get("scalingType").equals("FIT")) {
-                    scalingType = ScalingType.SCALE_ASPECT_FIT;
-                } else if (creationParams.get("scalingType").equals("BALANCED")) {
-                    scalingType = ScalingType.SCALE_ASPECT_BALANCED;
+                String scalingTypeString = (String) creationParams.get("scalingType");
+                ScalingType scalingType = ScalingType.SCALE_ASPECT_BALANCED;
+                if (scalingTypeString != null) {
+                    switch (scalingTypeString) {
+                        case "FILL":
+                            scalingType = ScalingType.SCALE_ASPECT_FILL;
+                            break;
+                        case "FIT":
+                            scalingType = ScalingType.SCALE_ASPECT_FIT;
+                            break;
+                    }
                 }
 
+                boolean isMirror = false;
                 if (creationParams.containsKey("isMirror")) {
                     isMirror = (Boolean) creationParams.get("isMirror");
                 }
@@ -111,11 +113,11 @@ public class StringeeVideoView implements PlatformView {
                     localView.setMirror(isMirror);
 
                     //save localView option
-                    Map<String, Object> localViewOptions = new HashMap<>();
-                    localViewOptions.put("isMirror", isMirror);
-                    localViewOptions.put("scalingType", scalingType);
-                    localViewOptions.put("layout", layout);
-                    StringeeManager.getInstance().getLocalViewOptions().put(callId, localViewOptions);
+                    Map<String, Object> localViewOption = new HashMap<>();
+                    localViewOption.put("isMirror", isMirror);
+                    localViewOption.put("scalingType", scalingType);
+                    localViewOption.put("layout", layout);
+                    StringeeManager.getInstance().getLocalViewOption().put(callId, localViewOption);
 
                 } else {
                     TextureViewRenderer remoteView;
@@ -139,11 +141,11 @@ public class StringeeVideoView implements PlatformView {
                     remoteView.setMirror(isMirror);
 
                     //save remoteView option
-                    Map<String, Object> remoteViewOptions = new HashMap<>();
-                    remoteViewOptions.put("isMirror", isMirror);
-                    remoteViewOptions.put("scalingType", scalingType);
-                    remoteViewOptions.put("layout", layout);
-                    StringeeManager.getInstance().getRemoteViewOptions().put(callId, remoteViewOptions);
+                    Map<String, Object> remoteViewOption = new HashMap<>();
+                    remoteViewOption.put("isMirror", isMirror);
+                    remoteViewOption.put("scalingType", scalingType);
+                    remoteViewOption.put("layout", layout);
+                    StringeeManager.getInstance().getRemoteViewOption().put(callId, remoteViewOption);
                 }
             }
         }, 500);
@@ -158,37 +160,35 @@ public class StringeeVideoView implements PlatformView {
                 if (videoTrackManager == null) {
                     return;
                 }
-
-                ScalingType scalingType;
-                if (creationParams.get("scalingType").equals("FILL")) {
-                    scalingType = ScalingType.SCALE_ASPECT_FILL;
-                } else if (creationParams.get("scalingType").equals("FIT")) {
-                    scalingType = ScalingType.SCALE_ASPECT_FIT;
-                } else if (creationParams.get("scalingType").equals("BALANCED")) {
-                    scalingType = ScalingType.SCALE_ASPECT_BALANCED;
-                } else {
-                    scalingType = ScalingType.SCALE_ASPECT_FILL;
-                }
-
-                boolean isMirror;
-                if (creationParams.containsKey("isMirror")) {
-                    isMirror = (Boolean) creationParams.get("isMirror");
-                } else {
-                    isMirror = false;
-                }
-
-                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                layoutParams.gravity = Gravity.CENTER;
-
-                layout.removeAllViews();
-                layout.setBackgroundColor(Color.BLACK);
-
                 videoTrackManager.setListener(new Listener() {
                     @Override
                     public void onMediaAvailable() {
                         StringeeManager.getInstance().getHandler().post(new Runnable() {
                             @Override
                             public void run() {
+                                String scalingTypeString = (String) creationParams.get("scalingType");
+                                ScalingType scalingType = ScalingType.SCALE_ASPECT_BALANCED;
+                                if (scalingTypeString != null) {
+                                    switch (scalingTypeString) {
+                                        case "FILL":
+                                            scalingType = ScalingType.SCALE_ASPECT_FILL;
+                                            break;
+                                        case "FIT":
+                                            scalingType = ScalingType.SCALE_ASPECT_FIT;
+                                            break;
+                                    }
+                                }
+
+                                boolean isMirror = false;
+                                if (creationParams.containsKey("isMirror")) {
+                                    isMirror = (Boolean) creationParams.get("isMirror");
+                                }
+
+                                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                                layoutParams.gravity = Gravity.CENTER;
+
+                                layout.removeAllViews();
+
                                 TextureViewRenderer trackView = videoTrackManager.getVideoTrack().getView2(context);
                                 if (trackView.getParent() != null) {
                                     ((FrameLayout) trackView.getParent()).removeView(trackView);
@@ -197,6 +197,11 @@ public class StringeeVideoView implements PlatformView {
                                 layout.addView(trackView, layoutParams);
                                 videoTrackManager.getVideoTrack().renderView2(scalingType);
                                 trackView.setMirror(isMirror);
+
+                                //save track view option
+                                videoTrackManager.getViewOptions().put("isMirror", isMirror);
+                                videoTrackManager.getViewOptions().put("scalingType", scalingType);
+                                videoTrackManager.getViewOptions().put("layout", layout);
                             }
                         });
                     }

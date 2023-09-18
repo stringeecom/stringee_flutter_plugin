@@ -1,13 +1,43 @@
 import '../../stringee_flutter_plugin.dart';
 
 class StringeeRoomListener {
-  void Function(StringeeRoomUser roomUser) onJoinRoom;
-  void Function(StringeeRoomUser roomUser) onLeaveRoom;
-  void Function(StringeeVideoTrackInfo videoTrackInfo) onAddVideoTrack;
-  void Function(StringeeVideoTrackInfo videoTrackInfo) onRemoveVideoTrack;
-  void Function(StringeeRoomUser roomUser, Map<dynamic, dynamic> message)
-      onReceiveRoomMessage;
-  void Function(StringeeVideoTrack videoTrack) onTrackReadyToPlay;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    StringeeRoomUser roomUser,
+  ) onJoinRoom;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    StringeeRoomUser roomUser,
+  ) onLeaveRoom;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    StringeeVideoTrackInfo videoTrackInfo,
+  ) onAddVideoTrack;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    StringeeVideoTrackInfo videoTrackInfo,
+  ) onRemoveVideoTrack;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    StringeeRoomUser roomUser,
+    Map<dynamic, dynamic> message,
+  ) onReceiveRoomMessage;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    StringeeVideoTrackInfo videoTrackInfo,
+    StringeeRoomUser roomUser,
+    MediaType mediaType,
+    bool enable,
+  )? onTrackMediaStateChange;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    StringeeVideoTrack videoTrack,
+  ) onTrackReadyToPlay;
+  void Function(
+    StringeeVideoRoom stringeeVideoRoom,
+    AudioDevice selectedAudioDevice,
+    List<AudioDevice> availableAudioDevices,
+  )? onChangeAudioDevice;
 
   StringeeRoomListener({
     required this.onJoinRoom,

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+
 /// Events for StringeeClient
 enum StringeeClientEvents {
   didConnect,
@@ -55,20 +57,7 @@ enum StringeeRoomEvents {
   didAddVideoTrack,
   didRemoveVideoTrack,
   didReceiveRoomMessage,
-  trackReadyToPlay
-  // didReceiveVideoTrackControlNotification,
-}
-
-enum StringeeChannelType {
-  normal,
-  livechat,
-  facebook,
-  zalo,
-}
-
-enum StringeeChatRequestType {
-  normal,
-  transfer,
+  trackReadyToPlay,
 }
 
 /// Type of event
@@ -80,18 +69,10 @@ enum StringeeObjectEventType {
   room,
 }
 
-/// Error code and message in flutter:
-/// -1 : StringeeClient is not initialized or disconnected
-/// -2 : value is invalid
-/// -3 : Object is not found
-/// -4 : This function work only for Android
-Future<Map<String, dynamic>> reportInvalidValue(String value) async {
-  Map<String, dynamic> params = {
-    'status': false,
-    'code': -2,
-    'message': value + ' value is invalid',
-  };
-  return params;
+/// Type of chat request
+enum StringeeChatRequestType {
+  normal,
+  transfer,
 }
 
 /// Type of Call
@@ -102,7 +83,7 @@ enum StringeeCallType {
   phoneToApp,
 }
 
-/// Type of Audio Device
+/// Type of the audio device
 enum AudioDevice {
   speakerPhone,
   wiredHeadset,
@@ -111,7 +92,7 @@ enum AudioDevice {
   none,
 }
 
-/// Type of Signaling State
+/// State of the signaling
 enum StringeeSignalingState {
   calling,
   ringing,
@@ -120,84 +101,23 @@ enum StringeeSignalingState {
   ended,
 }
 
-/// Type of Media State
+/// State of the media
 enum StringeeMediaState {
   connected,
   disconnected,
 }
 
-/// Type of Video Quality
+/// Quality of the video
 enum VideoQuality {
   normal,
   hd,
   fullHd,
 }
 
-///Type of Scaling type
+/// Type of scaling.
 enum ScalingType {
   fit,
   fill,
-}
-
-///Class represents options for make a call
-class MakeCallParams {
-  String? _from;
-  String? _to;
-  bool? _isVideoCall;
-  Map<dynamic, dynamic>? _customData;
-  VideoQuality? _videoQuality;
-
-  MakeCallParams(
-    String from,
-    String to, {
-    bool? isVideoCall,
-    Map<dynamic, dynamic>? customData,
-    VideoQuality? videoQuality,
-  })  : assert(from.trim().isNotEmpty),
-        assert(to.trim().isNotEmpty) {
-    this._from = from.trim();
-    this._to = to.trim();
-    this._isVideoCall = (isVideoCall != null) ? isVideoCall : false;
-    if (customData != null) this._customData = customData;
-    if (this._isVideoCall!)
-      this._videoQuality =
-          (videoQuality != null) ? videoQuality : VideoQuality.normal;
-  }
-
-  VideoQuality? get videoQuality => _videoQuality;
-
-  Map<dynamic, dynamic>? get customData => _customData;
-
-  bool? get isVideoCall => _isVideoCall;
-
-  String? get to => _to;
-
-  String? get from => _from;
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> params = new Map();
-    params['from'] = this._from!.trim();
-    params['to'] = this._to!.trim();
-    if (this._customData != null) params['customData'] = this._customData;
-    params['isVideoCall'] = this._isVideoCall;
-    if (this._isVideoCall!) {
-      switch (this._videoQuality) {
-        case VideoQuality.normal:
-          params['videoResolution'] = "NORMAL";
-          break;
-        case VideoQuality.hd:
-          params['videoResolution'] = "HD";
-          break;
-        case VideoQuality.fullHd:
-          params['videoResolution'] = "FULLHD";
-          break;
-        default:
-          params['videoResolution'] = "NORMAL";
-          break;
-      }
-    }
-    return params;
-  }
 }
 
 /// Chat object type
@@ -213,13 +133,13 @@ enum ChangeType {
   delete,
 }
 
-/// Role of user
+/// Role of the user in conversation.
 enum UserRole {
   admin,
   member,
 }
 
-/// [message]'s State
+/// State of the message
 enum MsgState {
   initialize,
   sending,
@@ -228,7 +148,7 @@ enum MsgState {
   read,
 }
 
-/// Type of [message]
+/// Type of the message
 enum MsgType {
   text,
   photo,
@@ -245,7 +165,6 @@ enum MsgType {
 }
 
 extension MsgTypeValueExtension on MsgType? {
-  // ignore: missing_return
   int get value {
     switch (this) {
       case MsgType.text:
@@ -279,7 +198,6 @@ extension MsgTypeValueExtension on MsgType? {
 }
 
 extension MsgTypeExtension on int? {
-  // ignore: missing_return
   MsgType get msgType {
     switch (this) {
       case 1:
@@ -312,7 +230,7 @@ extension MsgTypeExtension on int? {
   }
 }
 
-/// Type of noti [message]
+/// Type of the noti message
 enum MsgNotifyType {
   addParticipants,
   removeParticipants,
@@ -320,7 +238,6 @@ enum MsgNotifyType {
 }
 
 extension MsgNotifyTypeExtension on int? {
-  // ignore: missing_return
   MsgNotifyType get notifyType {
     switch (this) {
       case 1:
@@ -335,143 +252,55 @@ extension MsgNotifyTypeExtension on int? {
   }
 }
 
-///Class represents options for create a new [StringeeConversation]
-class StringeeConversationOption {
-  String? _name;
-  bool _isGroup = false;
-  bool _isDistinct = false;
-  String? _oaId;
-  String? _customData;
-  String? _creatorId;
-
-  StringeeConversationOption(
-      {required bool isGroup,
-      required bool isDistinct,
-      String? name,
-      String? oaId,
-      String? customData,
-      String? creatorId}) {
-    if (name != null) this._name = name;
-    this._isGroup = isGroup;
-    this._isDistinct = isDistinct;
-    if (oaId != null) this._oaId = oaId;
-    if (customData != null) this._customData = customData;
-    if (creatorId != null) this._creatorId = creatorId;
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (_name != null) 'name': _name!.trim(),
-      'isGroup': _isGroup,
-      'isDistinct': _isDistinct,
-      if (_oaId != null) 'oaId': _oaId!.trim(),
-      if (_customData != null) 'customData': _customData!.trim(),
-      if (_creatorId != null) 'creatorId': _creatorId!.trim(),
-    };
-  }
-}
-
-/// Class represents the change of [StringeeConversation] and [StringeeMessage]
-class StringeeObjectChange {
-  ChangeType? _type;
-  ObjectType? _objectType;
-  List<dynamic>? _objects;
-
-  ChangeType? get type => _type;
-
-  ObjectType? get objectType => _objectType;
-
-  List<dynamic>? get objects => _objects;
-
-  StringeeObjectChange(
-      ChangeType type, ObjectType objectType, List<dynamic> objects) {
-    this._type = type;
-    this._objects = objects;
-    this._objectType = objectType;
-  }
-}
-
-///Class represents server address
-class StringeeServerAddress {
-  String? _host;
-  int? _port;
-
-  String? get host => _host;
-
-  int? get port => _port;
-
-  StringeeServerAddress(String host, int port) {
-    this._host = host;
-    this._port = port;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> params = new Map();
-    if (_host != null) params['host'] = _host!.trim();
-    if (_port != null) params['port'] = _port;
-    return params;
-  }
-}
-
-///Class represents server address
-class StringeeVideoTrackOption {
-  late bool _audio;
-  late bool _video;
-  late bool _screen;
-  StringeeVideoDimensions _videoDimension =
-      StringeeVideoDimensions.dimesion_288;
-
-  bool get audio => _audio;
-
-  bool get video => _video;
-
-  bool get screen => _screen;
-
-  StringeeVideoDimensions get videoDimension => _videoDimension;
-
-  StringeeVideoTrackOption(
-      {required bool audio,
-      required bool video,
-      required bool screen,
-      StringeeVideoDimensions? videoDimension}) {
-    this._audio = audio;
-    this._video = video;
-    this._screen = screen;
-    if (videoDimension != null) this._videoDimension = videoDimension;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> params = new Map();
-    params['audio'] = _audio;
-    params['video'] = _video;
-    params['screen'] = _screen;
-    switch (this._videoDimension) {
-      case StringeeVideoDimensions.dimesion_288:
-        params['videoDimension'] = '288';
-        break;
-      case StringeeVideoDimensions.dimesion_480:
-        params['videoDimension'] = '480';
-        break;
-      case StringeeVideoDimensions.dimesion_720:
-        params['videoDimension'] = '720';
-        break;
-      case StringeeVideoDimensions.dimesion_1080:
-        params['videoDimension'] = '1080';
-        break;
-      default:
-        params['videoDimension'] = '288';
-        break;
-    }
-    return params;
-  }
-}
-
-/// Dimension of [StringeeVideoTrack]
+/// Dimensions of the video track
 enum StringeeVideoDimensions {
-  dimesion_1080,
-  dimesion_720,
-  dimesion_480,
-  dimesion_288,
+  dimension_1080,
+  dimension_720,
+  dimension_480,
+  dimension_288,
+}
+
+/// Channel of [StringeeConversation] and [StringeeChatRequest]
+enum ChannelType {
+  normal,
+  live_chat,
+  facebook,
+  zalo,
+}
+
+extension ListChannelTypeExtension on List<ChannelType>? {
+  List<int> get getListTypes {
+    List<int> channelTypes = [];
+    this!.forEach((element) {
+      channelTypes.add(element.index);
+    });
+    return channelTypes;
+  }
+}
+
+/// Status of chat support conversation
+enum ChatSupportStatus {
+  current_chat,
+  past_chat,
+  all,
+}
+
+/// State of chat request
+enum ChatRequestState {
+  accepted,
+  rejected,
+}
+
+/// Media type
+enum MediaType {
+  audio,
+  video,
+}
+
+/// Type of rate chat
+enum Rating {
+  bad,
+  good,
 }
 
 class GUIDGen {
@@ -499,4 +328,18 @@ class GUIDGen {
     buffer.writeAll(uuid);
     return buffer.toString();
   }
+}
+
+/// Error code and message in flutter:
+/// -1 : StringeeClient is not initialized or disconnected
+/// -2 : value is invalid
+/// -3 : Object is not found
+/// -4 : This function work only for Android
+Future<Map<String, dynamic>> reportInvalidValue(String value) async {
+  Map<String, dynamic> params = {
+    'status': false,
+    'code': -2,
+    'message': value + ' value is invalid',
+  };
+  return params;
 }

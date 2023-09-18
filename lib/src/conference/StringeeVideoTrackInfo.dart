@@ -32,4 +32,15 @@ class StringeeVideoTrackInfo {
     this._isScreenCapture = track.isScreenCapture;
     this._publisher = track.publisher;
   }
+
+  @override
+  String toString() {
+    return {
+      'id': _id,
+      'audioEnable': _audioEnable,
+      'videoEnable': _videoEnable,
+      'isScreenCapture': _isScreenCapture,
+      'publisher': _publisher.toString(),
+    }.toString();
+  }
 }

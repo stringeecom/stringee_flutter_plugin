@@ -1,10 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
 class StringeeCall {
+  late StringeeClient _client;
   String? _id;
   int? _serial;
   String? _from;
@@ -12,13 +14,15 @@ class StringeeCall {
   String? _fromAlias;
   String? _toAlias;
   StringeeCallType? _callType;
-  String? _customDataFromYourServer;
-  bool _isVideoCall = false;
-  @Deprecated('')
+  String? customDataFromYourServer;
+  bool isVideoCall = false;
+  bool _isP2P = false;
+  VideoQuality videoQuality = VideoQuality.normal;
+
+  StringeeCallListener? _callListener;
+
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
-  late StringeeClient _client;
-  StringeeCallListener? _callListener;
 
   String? get id => _id;
 
@@ -32,18 +36,37 @@ class StringeeCall {
 
   String? get toAlias => _toAlias;
 
-  bool get isVideoCall => _isVideoCall;
-
   StringeeCallType? get callType => _callType;
 
-  String? get customDataFromYourServer => _customDataFromYourServer;
+  bool get isP2P => _isP2P;
 
-  @Deprecated('')
+  @deprecated
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
-  StringeeCall(StringeeClient client) {
-    _client = client;
-    _subscriber = client.eventStreamController.stream.listen(this._listener);
+  @override
+  String toString() {
+    return {
+      'userId': _client.userId,
+      'uuid': _client.uuid,
+      'serial': _serial,
+      'from': _from,
+      'fromAlias': _fromAlias,
+      'to': _to,
+      'toAlias': _toAlias,
+      'callType': _callType,
+      'customDataFromYourServer': customDataFromYourServer,
+      'isVideoCall': isVideoCall,
+      'isP2P': _isP2P,
+      'videoQuality': videoQuality.index,
+    }.toString();
+  }
+
+  StringeeCall(StringeeClient client, String from, String to) {
+    this._client = client;
+    this._from = from;
+    this._to = to;
+    this._subscriber =
+        client.eventStreamController.stream.listen(this._listener);
   }
 
   StringeeCall.fromCallInfo(
@@ -64,9 +87,11 @@ class StringeeCall {
     this._to = callInfo['to'];
     this._fromAlias = callInfo['fromAlias'];
     this._toAlias = callInfo['toAlias'];
-    this._isVideoCall = callInfo['isVideoCall'];
-    this._customDataFromYourServer = callInfo['customDataFromYourServer'];
+    this.isVideoCall = callInfo['isVideoCall'];
+    this.customDataFromYourServer = callInfo['customDataFromYourServer'];
     this._callType = StringeeCallType.values[callInfo['callType']];
+    this.videoQuality = VideoQuality.values[callInfo['videoQuality']];
+    this._isP2P = callInfo['isP2P'];
   }
 
   void _listener(dynamic event) {
@@ -76,25 +101,25 @@ class StringeeCall {
         map['uuid'] == _client.uuid) {
       switch (map['event']) {
         case 'didChangeSignalingState':
-          handleDidChangeSignalingState(map['body']);
+          _handleDidChangeSignalingState(map['body']);
           break;
         case 'didChangeMediaState':
-          handleDidChangeMediaState(map['body']);
+          _handleDidChangeMediaState(map['body']);
           break;
         case 'didReceiveCallInfo':
-          handleDidReceiveCallInfo(map['body']);
+          _handleDidReceiveCallInfo(map['body']);
           break;
         case 'didHandleOnAnotherDevice':
-          handleDidHandleOnAnotherDevice(map['body']);
+          _handleDidHandleOnAnotherDevice(map['body']);
           break;
         case 'didReceiveLocalStream':
-          handleDidReceiveLocalStream(map['body']);
+          _handleDidReceiveLocalStream(map['body']);
           break;
         case 'didReceiveRemoteStream':
-          handleDidReceiveRemoteStream(map['body']);
+          _handleDidReceiveRemoteStream(map['body']);
           break;
         case 'didChangeAudioDevice':
-          handleDidChangeAudioDevice(map['body']);
+          _handleDidChangeAudioDevice(map['body']);
           break;
       }
     }
@@ -104,7 +129,7 @@ class StringeeCall {
     _callListener = callListener;
   }
 
-  void handleDidChangeSignalingState(Map<dynamic, dynamic> map) {
+  void _handleDidChangeSignalingState(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
@@ -112,7 +137,7 @@ class StringeeCall {
         StringeeSignalingState.values[map['code']];
     this._id = map['callId'];
     if (_callListener != null) {
-      _callListener!.onChangeSignalingState(signalingState);
+      _callListener!.onChangeSignalingState(this, signalingState);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -120,16 +145,20 @@ class StringeeCall {
         "body": signalingState
       });
     }
+    if (signalingState == StringeeSignalingState.ended ||
+        signalingState == StringeeSignalingState.busy) {
+      destroy();
+    }
   }
 
-  void handleDidChangeMediaState(Map<dynamic, dynamic> map) {
+  void _handleDidChangeMediaState(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
     StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
     this._id = map['callId'];
     if (_callListener != null) {
-      _callListener!.onChangeMediaState(mediaState);
+      _callListener!.onChangeMediaState(this, mediaState);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -139,14 +168,14 @@ class StringeeCall {
     }
   }
 
-  void handleDidReceiveCallInfo(Map<dynamic, dynamic> map) {
+  void _handleDidReceiveCallInfo(Map<dynamic, dynamic> map) {
     String? callId = map['callId'];
     if (callId != this._id) return;
 
     this._id = map['callId'];
     Map<dynamic, dynamic> data = map['info'];
     if (_callListener != null) {
-      _callListener!.onReceiveCallInfo(data);
+      _callListener!.onReceiveCallInfo(this, data);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add(
@@ -154,12 +183,12 @@ class StringeeCall {
     }
   }
 
-  void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
+  void _handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState =
         StringeeSignalingState.values[map['code']];
     this._id = map['callId'];
     if (_callListener != null) {
-      _callListener!.onHandleOnAnotherDevice(signalingState);
+      _callListener!.onHandleOnAnotherDevice(this, signalingState);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -167,12 +196,15 @@ class StringeeCall {
         "body": signalingState
       });
     }
+    if (signalingState != StringeeSignalingState.ringing) {
+      destroy();
+    }
   }
 
-  void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
+  void _handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
     this._id = map['callId'];
     if (_callListener != null) {
-      _callListener!.onReceiveLocalStream();
+      _callListener!.onReceiveLocalStream(this);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -182,10 +214,10 @@ class StringeeCall {
     }
   }
 
-  void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
+  void _handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
     this._id = map['callId'];
     if (_callListener != null) {
-      _callListener!.onReceiveRemoteStream();
+      _callListener!.onReceiveRemoteStream(this);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -195,7 +227,7 @@ class StringeeCall {
     }
   }
 
-  void handleDidChangeAudioDevice(Map<dynamic, dynamic> map) {
+  void _handleDidChangeAudioDevice(Map<dynamic, dynamic> map) {
     AudioDevice selectedAudioDevice = AudioDevice.values[map['code']];
     List<dynamic> codeList = [];
     codeList.addAll(map['codeList']);
@@ -207,7 +239,7 @@ class StringeeCall {
     if (_callListener != null) {
       if (_callListener!.onChangeAudioDevice != null) {
         _callListener!.onChangeAudioDevice!(
-            selectedAudioDevice, availableAudioDevices);
+            this, selectedAudioDevice, availableAudioDevices);
       }
     }
     if (!_eventStreamController.isClosed) {
@@ -220,55 +252,31 @@ class StringeeCall {
   }
 
   /// Make a new coll with custom [parameters]
-  Future<Map<dynamic, dynamic>> makeCall(
-      Map<dynamic, dynamic> parameters) async {
-    if (!parameters.containsKey('from') ||
-        (parameters['from'] as String).trim().isEmpty ||
-        !parameters.containsKey('to') ||
-        (parameters['to'] as String).trim().isEmpty)
-      return await reportInvalidValue('MakeCallParams');
-    var params = {};
-
-    params['from'] = (parameters['from'] as String).trim();
-    params['to'] = (parameters['to'] as String).trim();
-    if (parameters.containsKey('customData')) if (parameters['customData'] !=
-        null) {
-      if (parameters['customData'] is Map) {
-        params['customData'] = json.encode(parameters['customData']);
-      } else {
-        params['customData'] = (parameters['customData'].toString()).trim();
-      }
-    }
-    if (parameters.containsKey('isVideoCall')) {
-      params['isVideoCall'] = (parameters['isVideoCall'] != null)
-          ? parameters['isVideoCall']
-          : false;
-      if (params['isVideoCall']) {
-        if (parameters['videoQuality'] != null) {
-          switch (parameters['videoQuality']) {
-            case VideoQuality.normal:
-              params['videoQuality'] = "NORMAL";
-              break;
-            case VideoQuality.hd:
-              params['videoQuality'] = "HD";
-              break;
-            case VideoQuality.fullHd:
-              params['videoQuality'] = "FULLHD";
-              break;
-            default:
-              params['videoQuality'] = "NORMAL";
-              break;
-          }
-        } else {
+  Future<Map<dynamic, dynamic>> makeCall() async {
+    var params = {
+      'uuid': _client.uuid,
+      'from': this._from,
+      'to': this._to,
+      if (this.customDataFromYourServer != null)
+        'customData': this.customDataFromYourServer,
+      'isVideoCall': this.isVideoCall,
+    };
+    if (this.isVideoCall) {
+      switch (this.videoQuality) {
+        case VideoQuality.normal:
           params['videoQuality'] = "NORMAL";
-        }
+          break;
+        case VideoQuality.hd:
+          params['videoQuality'] = "HD";
+          break;
+        case VideoQuality.fullHd:
+          params['videoQuality'] = "FULLHD";
+          break;
       }
     }
-
-    params['uuid'] = _client.uuid;
 
     Map<dynamic, dynamic> results =
-        await StringeeClient.methodChannel.invokeMethod('makeCall', params);
+        await _client.methodChannel.invokeMethod('makeCall', params);
     Map<dynamic, dynamic>? callInfo = results['callInfo'];
     this.initCallInfo(callInfo);
 
@@ -280,45 +288,41 @@ class StringeeCall {
     return resultDatas;
   }
 
-  /// Make a new coll with [MakeCallParams]
-  Future<Map<dynamic, dynamic>> makeCallFromParams(
-      MakeCallParams params) async {
-    Map<dynamic, dynamic> parameters = {
-      'from': params.from!.trim(),
-      'to': params.to!.trim(),
-      if (params.customData != null) 'customData': params.customData,
-      'isVideoCall': params.isVideoCall,
-      if (params.isVideoCall!) 'videoQuality': params.videoQuality,
-    };
-    return await makeCall(parameters);
-  }
-
   /// Init an answer from incoming call
   Future<Map<dynamic, dynamic>> initAnswer() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
 
-    return await StringeeClient.methodChannel.invokeMethod('initAnswer', param);
+    return await _client.methodChannel.invokeMethod('initAnswer', param);
   }
 
   /// Answer a call
   Future<Map<dynamic, dynamic>> answer() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
 
-    return await StringeeClient.methodChannel.invokeMethod('answer', param);
+    return await _client.methodChannel.invokeMethod('answer', param);
   }
 
   /// Hang up a call
   Future<Map<dynamic, dynamic>> hangup() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
-
-    return await StringeeClient.methodChannel.invokeMethod('hangup', param);
+    Map<dynamic, dynamic> result =
+        await _client.methodChannel.invokeMethod('hangup', param);
+    if (result['status']) {
+      destroy();
+    }
+    return result;
   }
 
   /// Reject a call
   Future<Map<dynamic, dynamic>> reject() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
 
-    return await StringeeClient.methodChannel.invokeMethod('reject', param);
+    Map<dynamic, dynamic> result =
+        await _client.methodChannel.invokeMethod('reject', param);
+    if (result['status']) {
+      destroy();
+    }
+    return result;
   }
 
   /// Send a [dtmf]
@@ -329,7 +333,7 @@ class StringeeCall {
       'dtmf': dtmf.trim(),
       'uuid': _client.uuid
     };
-    return await StringeeClient.methodChannel.invokeMethod('sendDtmf', params);
+    return await _client.methodChannel.invokeMethod('sendDtmf', params);
   }
 
   /// Send a call info
@@ -340,8 +344,7 @@ class StringeeCall {
       'callInfo': callInfo,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('sendCallInfo', params);
+    return await _client.methodChannel.invokeMethod('sendCallInfo', params);
   }
 
   /// Get call stats
@@ -350,9 +353,12 @@ class StringeeCall {
       'callId': this._id,
       'uuid': _client.uuid,
     };
-
-    return await StringeeClient.methodChannel
-        .invokeMethod('getCallStats', params);
+    var result =
+        await _client.methodChannel.invokeMethod('getCallStats', params);
+    if (result['status']) {
+      result['stats'] = new StringeeCallStats(result['stats']);
+    }
+    return result;
   }
 
   /// Mute/Unmute
@@ -362,7 +368,7 @@ class StringeeCall {
       'mute': mute,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel.invokeMethod('mute', params);
+    return await _client.methodChannel.invokeMethod('mute', params);
   }
 
   /// Enable/ Disable video
@@ -372,8 +378,7 @@ class StringeeCall {
       'enableVideo': enableVideo,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('enableVideo', params);
+    return await _client.methodChannel.invokeMethod('enableVideo', params);
   }
 
   /// Set speaker phone on/off
@@ -383,7 +388,7 @@ class StringeeCall {
       'speaker': speakerPhoneOn,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
+    return await _client.methodChannel
         .invokeMethod('setSpeakerphoneOn', params);
   }
 
@@ -394,8 +399,7 @@ class StringeeCall {
       'uuid': _client.uuid,
       if (cameraId != null) 'cameraId': cameraId,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('switchCamera', params);
+    return await _client.methodChannel.invokeMethod('switchCamera', params);
   }
 
   /// Resume local video
@@ -412,8 +416,7 @@ class StringeeCall {
         'callId': this._id,
         'uuid': _client.uuid,
       };
-      return await StringeeClient.methodChannel
-          .invokeMethod('resumeVideo', params);
+      return await _client.methodChannel.invokeMethod('resumeVideo', params);
     }
   }
 
@@ -433,14 +436,90 @@ class StringeeCall {
         'isMirror': isMirror,
         'uuid': _client.uuid,
       };
-      return await StringeeClient.methodChannel
-          .invokeMethod('setMirror', params);
+      return await _client.methodChannel.invokeMethod('setMirror', params);
     }
   }
 
-  /// close event stream
+  /// Hold the call
+  Future<Map<dynamic, dynamic>> hold() async {
+    final params = {
+      'callId': this._id,
+      'uuid': _client.uuid,
+    };
+    return await _client.methodChannel.invokeMethod('hold', params);
+  }
+
+  /// Un hold the call
+  Future<Map<dynamic, dynamic>> unHold() async {
+    final params = {
+      'callId': this._id,
+      'uuid': _client.uuid,
+    };
+    return await _client.methodChannel.invokeMethod('unHold', params);
+  }
+
+  /// Transfer call to other user with userId
+  Future<Map<dynamic, dynamic>> transferToUserId(String userId) async {
+    if (userId.trim().isEmpty) return await reportInvalidValue('userId');
+    final params = {
+      'callId': this._id,
+      'userId': userId,
+      'uuid': _client.uuid,
+    };
+    return await _client.methodChannel.invokeMethod('transferToUserId', params);
+  }
+
+  /// Transfer call to phone
+  Future<Map<dynamic, dynamic>> transferToPhone(String from, String to) async {
+    if (from.trim().isEmpty) return await reportInvalidValue('from');
+    if (to.trim().isEmpty) return await reportInvalidValue('to');
+    final params = {
+      'callId': this._id,
+      'from': from,
+      'to': to,
+      'uuid': _client.uuid,
+    };
+    return await _client.methodChannel.invokeMethod('transferToPhone', params);
+  }
+
+  /// Set audio to bluetooth
+  Future<Map<dynamic, dynamic>> setBluetoothScoOn(bool bluetoothScoOn) async {
+    if (Platform.isIOS) {
+      final params = {
+        'status': false,
+        "code": '-4',
+        "message": "This function work only for Android",
+      };
+      return params;
+    } else {
+      final params = {
+        'callId': this._id,
+        'bluetooth': bluetoothScoOn,
+        'uuid': _client.uuid,
+      };
+      return await _client.methodChannel
+          .invokeMethod('setBluetoothScoOn', params);
+    }
+  }
+
+  /// Snap shot local
+  Future<Map<dynamic, dynamic>> snapShot() async {
+    final params = {
+      'callId': this._id,
+      'uuid': _client.uuid,
+    };
+    var result = await _client.methodChannel.invokeMethod('snapShot', params);
+    if (result['status']) {
+      result['image'] = MemoryImage(Uint8List.fromList(result['image']));
+    }
+    return result;
+  }
+
+
+  /// Close event stream
+  @deprecated
   void destroy() {
     _subscriber.cancel();
-    _eventStreamController.close();
+    if (!_eventStreamController.isClosed) _eventStreamController.close();
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideo {
@@ -17,7 +15,7 @@ class StringeeVideo {
       'uuid': _client.uuid,
     };
 
-    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+    Map<dynamic, dynamic> result = await _client.methodChannel
         .invokeMethod('video.joinRoom', params);
 
     if (result['status']) {
@@ -49,7 +47,7 @@ class StringeeVideo {
       'uuid': _client.uuid,
     };
 
-    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+    Map<dynamic, dynamic> result = await _client.methodChannel
         .invokeMethod('video.createLocalVideoTrack', params);
 
     if (result['status']) {
@@ -60,14 +58,14 @@ class StringeeVideo {
     return result;
   }
 
-  /// Create capture screen [StringeeVideoTrack]
+  // /// Create capture screen [StringeeVideoTrack]
   // Future<Map<dynamic, dynamic>> createCaptureScreenTrack() async {
   //   if (Platform.isAndroid) {
   //     final params = {
   //       'uuid': _client.uuid,
   //     };
   //
-  //     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
+  //     Map<dynamic, dynamic> result = await _client.methodChannel
   //         .invokeMethod('video.createCaptureScreenTrack', params);
   //
   //     if (result['status']) {
@@ -85,4 +83,14 @@ class StringeeVideo {
   //     return result;
   //   }
   // }
+
+  /// Create local [StringeeVideoTrack]
+  Future<Map<dynamic, dynamic>> release(StringeeVideoRoom videoRoom) async {
+    final params = {
+      'uuid': _client.uuid,
+      'roomId': videoRoom.id,
+    };
+    return await _client.methodChannel
+        .invokeMethod('video.release', params);
+  }
 }

@@ -3,18 +3,18 @@ import 'dart:async';
 import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideoRoom {
-  late String _id;
+  String? _id;
   late bool _recorded;
   late StringeeClient _client;
-  @Deprecated('')
+  @deprecated
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
 
-  String get id => _id;
+  String? get id => _id;
 
   bool get recorded => _recorded;
 
-  @Deprecated('')
+  @deprecated
   StreamController<dynamic> get eventStreamController => _eventStreamController;
   StringeeRoomListener? _roomListener;
 
@@ -32,26 +32,29 @@ class StringeeVideoRoom {
         map['uuid'] == _client.uuid) {
       switch (map['event']) {
         case 'didJoinRoom':
-          handleDidJoinRoom(map['body']);
+          _handleDidJoinRoom(map['body']);
           break;
         case 'didLeaveRoom':
-          handleDidLeaveRoom(map['body']);
+          _handleDidLeaveRoom(map['body']);
           break;
         case 'didAddVideoTrack':
-          handleDidAddVideoTrack(map['body']);
+          _handleDidAddVideoTrack(map['body']);
           break;
         case 'didRemoveVideoTrack':
-          handleDidRemoveVideoTrack(map['body']);
+          _handleDidRemoveVideoTrack(map['body']);
           break;
         case 'didReceiveRoomMessage':
-          handleDidReceiveRoomMessage(map['body']);
+          _handleDidReceiveRoomMessage(map['body']);
           break;
         case 'trackReadyToPlay':
-          handleTrackReadyToPlay(map['body']);
+          _handleTrackReadyToPlay(map['body']);
           break;
-        // case 'didReceiveVideoTrackControlNotification':
-        //   handleDidReceiveVideoTrackControlNotification(map['body']);
-        //   break;
+        case 'didTrackMediaStateChange':
+          _handleDidTrackMediaStateChange(map['body']);
+          break;
+        case 'didChangeAudioDevice':
+          _handleDidChangeAudioDevice(map['body']);
+          break;
       }
     }
   }
@@ -60,13 +63,13 @@ class StringeeVideoRoom {
     _roomListener = roomListener;
   }
 
-  void handleDidJoinRoom(Map<dynamic, dynamic> map) {
+  void _handleDidJoinRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
-    if (roomId != this._id) return;
+    if (roomId != null && roomId != this._id) return;
 
     StringeeRoomUser roomUser = new StringeeRoomUser(map['user']);
     if (_roomListener != null) {
-      _roomListener!.onJoinRoom(roomUser);
+      _roomListener!.onJoinRoom(this, roomUser);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController
@@ -74,28 +77,28 @@ class StringeeVideoRoom {
     }
   }
 
-  void handleDidLeaveRoom(Map<dynamic, dynamic> map) {
+  void _handleDidLeaveRoom(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
-    if (roomId != this._id) return;
+    if (roomId != null && roomId != this._id) return;
 
     StringeeRoomUser roomUser = new StringeeRoomUser(map['user']);
     if (_roomListener != null) {
-      _roomListener!.onLeaveRoom(roomUser);
+      _roomListener!.onLeaveRoom(this, roomUser);
     }
     if (!_eventStreamController.isClosed) {
-      _eventStreamController
-          .add({"eventType": StringeeRoomEvents.didLeaveRoom, "body": roomUser});
+      _eventStreamController.add(
+          {"eventType": StringeeRoomEvents.didLeaveRoom, "body": roomUser});
     }
   }
 
-  void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
+  void _handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
-    if (roomId != this._id) return;
+    if (roomId != null && roomId != this._id) return;
 
     StringeeVideoTrackInfo videoTrackInfo =
         new StringeeVideoTrackInfo(map['videoTrackInfo']);
     if (_roomListener != null) {
-      _roomListener!.onAddVideoTrack(videoTrackInfo);
+      _roomListener!.onAddVideoTrack(this, videoTrackInfo);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -105,14 +108,14 @@ class StringeeVideoRoom {
     }
   }
 
-  void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
+  void _handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
-    if (roomId != this._id) return;
+    if (roomId != null && roomId != this._id) return;
 
     StringeeVideoTrackInfo videoTrackInfo =
         new StringeeVideoTrackInfo(map['videoTrackInfo']);
     if (_roomListener != null) {
-      _roomListener!.onRemoveVideoTrack(videoTrackInfo);
+      _roomListener!.onRemoveVideoTrack(this, videoTrackInfo);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -122,14 +125,14 @@ class StringeeVideoRoom {
     }
   }
 
-  void handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
+  void _handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
-    if (roomId != this._id) return;
+    if (roomId != null && roomId != this._id) return;
     StringeeRoomUser roomUser = new StringeeRoomUser(map['from']);
     Map<dynamic, dynamic> bodyMap = {'msg': map['msg'], 'from': roomUser};
 
     if (_roomListener != null) {
-      _roomListener!.onReceiveRoomMessage(roomUser, map['msg']);
+      _roomListener!.onReceiveRoomMessage(this, roomUser, map['msg']);
     }
     if (!_eventStreamController.isClosed) {
       _eventStreamController.add({
@@ -139,44 +142,67 @@ class StringeeVideoRoom {
     }
   }
 
-  void handleTrackReadyToPlay(Map<dynamic, dynamic> map) {
+  void _handleTrackReadyToPlay(Map<dynamic, dynamic> map) {
     String? roomId = map['roomId'];
     if (roomId != null && roomId != this._id) return;
 
     StringeeVideoTrack videoTrack =
         new StringeeVideoTrack(_client, map['track']);
     if (_roomListener != null) {
-      _roomListener!.onTrackReadyToPlay(videoTrack);
+      _roomListener!.onTrackReadyToPlay(this, videoTrack);
     }
     if (!_eventStreamController.isClosed) {
-      _eventStreamController.add(
-          {"eventType": StringeeRoomEvents.trackReadyToPlay, "body": videoTrack});
+      _eventStreamController.add({
+        "eventType": StringeeRoomEvents.trackReadyToPlay,
+        "body": videoTrack
+      });
     }
   }
 
-  // void handleDidReceiveVideoTrackControlNotification(
-  //     Map<dynamic, dynamic> map) {
-  //   String? roomId = map['roomId'];
-  //   if (roomId != this._id) return;
-  //   Map<dynamic, dynamic> bodyMap = {
-  //     'videoTrack': StringeeVideoTrack(_client, map['videoTrack']),
-  //     'from': StringeeRoomUser(map['from'])
-  //   };
-  //   _eventStreamController.add({
-  //     "eventType": StringeeRoomEvents.didReceiveVideoTrackControlNotification,
-  //     "body": bodyMap
-  //   });
-  // }
+  void _handleDidTrackMediaStateChange(Map<dynamic, dynamic> map) {
+    String? roomId = map['roomId'];
+    if (roomId != null && roomId != this._id) return;
+
+    if (_roomListener != null) {
+      if (_roomListener!.onTrackMediaStateChange != null) {
+        _roomListener!.onTrackMediaStateChange!(
+            this,
+            new StringeeVideoTrackInfo(map['videoTrackInfo']),
+            new StringeeRoomUser(map['from']),
+            MediaType.values[map['mediaType']],
+            map['enable']);
+      }
+    }
+  }
+
+  void _handleDidChangeAudioDevice(Map<dynamic, dynamic> map) {
+    AudioDevice selectedAudioDevice = AudioDevice.values[map['code']];
+    List<dynamic> codeList = [];
+    codeList.addAll(map['codeList']);
+    List<AudioDevice> availableAudioDevices = [];
+    for (int i = 0; i < codeList.length; i++) {
+      AudioDevice audioDevice = AudioDevice.values[codeList[i]];
+      availableAudioDevices.add(audioDevice);
+    }
+    if (_roomListener != null) {
+      if (_roomListener!.onChangeAudioDevice != null) {
+        _roomListener!.onChangeAudioDevice!(
+            this, selectedAudioDevice, availableAudioDevices);
+      }
+    }
+  }
 
   /// Publish local [StringeeVideoTrack]
-  Future<Map<dynamic, dynamic>> publish(StringeeVideoTrack videoTrack) async {
+  Future<Map<dynamic, dynamic>> publish(StringeeVideoTrack videoTrack,
+      {StringeeVideoTrackOption? option}) async {
     final params = {
       'roomId': _id,
       'localId': videoTrack.localId,
+      if (option != null) 'options': option.toJson(),
       'uuid': _client.uuid,
     };
     Map<dynamic, dynamic> result =
-        await StringeeClient.methodChannel.invokeMethod('room.publish', params);
+        await _client.methodChannel.invokeMethod('room.publish', params);
     if (result['status']) {
       videoTrack = StringeeVideoTrack(_client, result['body']);
       result['body'] = videoTrack;
@@ -191,8 +217,7 @@ class StringeeVideoRoom {
       'localId': videoTrack.localId,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('room.unpublish', params);
+    return await _client.methodChannel.invokeMethod('room.unpublish', params);
   }
 
   /// Subscribe [StringeeVideoTrackInfo]
@@ -204,8 +229,8 @@ class StringeeVideoRoom {
       'options': option.toJson(),
       'uuid': _client.uuid,
     };
-    Map<dynamic, dynamic> result = await StringeeClient.methodChannel
-        .invokeMethod('room.subscribe', params);
+    Map<dynamic, dynamic> result =
+        await _client.methodChannel.invokeMethod('room.subscribe', params);
     if (result['status']) {
       StringeeVideoTrack videoTrack =
           StringeeVideoTrack(_client, result['body']);
@@ -223,21 +248,24 @@ class StringeeVideoRoom {
       'trackId': trackInfo.id,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('room.unsubscribe', params);
+    return await _client.methodChannel.invokeMethod('room.unsubscribe', params);
   }
 
   /// Leave [StringeeVideoRoom]
   Future<Map<dynamic, dynamic>> leave({
-    required bool allClient,
+    bool? allClient,
   }) async {
     final params = {
       'roomId': _id,
-      'allClient': allClient,
+      'allClient': allClient != null ? allClient : false,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('room.leave', params);
+    Map<dynamic, dynamic> result =
+        await _client.methodChannel.invokeMethod('room.leave', params);
+    if (result['status']) {
+      destroy();
+    }
+    return result;
   }
 
   /// Send a message to [StringeeVideoRoom]
@@ -247,13 +275,13 @@ class StringeeVideoRoom {
       'msg': msg,
       'uuid': _client.uuid,
     };
-    return await StringeeClient.methodChannel
-        .invokeMethod('room.sendMessage', params);
+    return await _client.methodChannel.invokeMethod('room.sendMessage', params);
   }
 
-  /// close event stream
+  /// Close event stream
+  @deprecated
   void destroy() {
     _subscriber.cancel();
-    _eventStreamController.close();
+    if (!_eventStreamController.isClosed) _eventStreamController.close();
   }
 }

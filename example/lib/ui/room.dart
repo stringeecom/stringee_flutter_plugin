@@ -207,9 +207,9 @@ class RoomState extends State<Room> {
     if (videoTrackInfos.length > 0) {
       videoTrackInfos.forEach((trackInfo) {
         StringeeVideoTrackOption options = StringeeVideoTrackOption(
-          audio: trackInfo.audioEnable,
-          video: trackInfo.videoEnable,
-          screen: trackInfo.isScreenCapture,
+          audio: trackInfo.audioEnable!,
+          video: trackInfo.videoEnable!,
+          screen: trackInfo.isScreenCapture!,
         );
         _room!.subscribe(trackInfo, options).then((value) {
           if (value['status']) {
@@ -230,9 +230,9 @@ class RoomState extends State<Room> {
   void handleAddVideoTrackEvent(StringeeVideoTrackInfo trackInfo) {
     print("handleAddVideoTrackEvent - ${trackInfo.id}");
     StringeeVideoTrackOption options = StringeeVideoTrackOption(
-      audio: trackInfo.audioEnable,
-      video: trackInfo.videoEnable,
-      screen: trackInfo.isScreenCapture,
+      audio: trackInfo.audioEnable!,
+      video: trackInfo.videoEnable!,
+      screen: trackInfo.isScreenCapture!,
     );
     _room!.subscribe(trackInfo, options).then((value) {
       if (value['status']) {

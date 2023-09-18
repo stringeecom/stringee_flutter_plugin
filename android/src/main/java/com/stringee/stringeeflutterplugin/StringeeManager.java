@@ -1,9 +1,10 @@
 package com.stringee.stringeeflutterplugin;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.stringee.common.StringeeAudioManager;
 import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
@@ -11,10 +12,12 @@ import com.stringee.common.StringeeAudioManager.AudioManagerEvents;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeManager {
-    private static StringeeManager instance;
+    private static volatile StringeeManager instance;
+    private static final Object lock = new Object();
     private Context context;
     private Map<String, ClientWrapper> clientMap = new HashMap<>();
     private Map<String, CallWrapper> callsMap = new HashMap<>();
@@ -24,31 +27,10 @@ public class StringeeManager {
     private Map<String, VideoTrackManager> tracksMap = new HashMap<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private StringeeAudioManager audioManager;
-    private ScreenCaptureManager captureManager;
-
-    public enum StringeeCallType {
-        AppToAppOutgoing(0),
-        AppToAppIncoming(1),
-        AppToPhone(2),
-        PhoneToApp(3);
-
-        public final short value;
-
-        StringeeCallType(int value) {
-            this.value = (short) value;
-        }
-
-        public short getValue() {
-            return this.value;
-        }
-    }
+    private ActivityPluginBinding binding;
 
     public enum StringeeEventType {
-        ClientEvent(0),
-        CallEvent(1),
-        Call2Event(2),
-        ChatEvent(3),
-        RoomEvent(4);
+        ClientEvent(0), CallEvent(1), Call2Event(2), ChatEvent(3), RoomEvent(4);
 
         public final short value;
 
@@ -61,26 +43,14 @@ public class StringeeManager {
         }
     }
 
-    public enum UserRole {
-        Admin(0),
-        Member(1);
-
-        public final short value;
-
-        UserRole(int value) {
-            this.value = (short) value;
-        }
-
-        public short getValue() {
-            return this.value;
-        }
-    }
-
     public static synchronized StringeeManager getInstance() {
         if (instance == null) {
-            instance = new StringeeManager();
+            synchronized (lock) {
+                if (instance == null) {
+                    instance = new StringeeManager();
+                }
+            }
         }
-
         return instance;
     }
 
@@ -104,11 +74,11 @@ public class StringeeManager {
         return call2sMap;
     }
 
-    public Map<String, Map<String, Object>> getLocalViewOptions() {
+    public Map<String, Map<String, Object>> getLocalViewOption() {
         return localViewOption;
     }
 
-    public Map<String, Map<String, Object>> getRemoteViewOptions() {
+    public Map<String, Map<String, Object>> getRemoteViewOption() {
         return remoteViewOption;
     }
 
@@ -124,6 +94,26 @@ public class StringeeManager {
         this.handler = handler;
     }
 
+    public ActivityPluginBinding getBinding() {
+        return binding;
+    }
+
+    public void setBinding(ActivityPluginBinding binding) {
+        this.binding = binding;
+    }
+
+    public Activity getActivity() {
+        return binding.getActivity();
+    }
+
+    public Resources getResources() {
+        return binding.getActivity().getResources();
+    }
+
+    public String getPackageName() {
+        return binding.getActivity().getPackageName();
+    }
+
     public void startAudioManager(Context context, AudioManagerEvents events) {
         audioManager = StringeeAudioManager.create(context);
         audioManager.start(events);
@@ -137,46 +127,30 @@ public class StringeeManager {
     }
 
     public ScreenCaptureManager getCaptureManager() {
-        return captureManager;
-    }
-
-    public void setCaptureManager(ScreenCaptureManager captureManager) {
-        this.captureManager = captureManager;
+        return ScreenCaptureManager.getInstance();
     }
 
     /**
      * Set speaker on/off
-     *
-     * @param on
-     * @param result
      */
     public void setSpeakerphoneOn(boolean on, Result result) {
         if (audioManager != null) {
             audioManager.setSpeakerphoneOn(on);
-            Log.d("StringeeSDK", "setSpeakerphoneOn: success");
-            Map map = new HashMap();
-            map.put("status", true);
-            map.put("code", 0);
-            map.put("message", "Success");
-            result.success(map);
+            Utils.sendSuccessResponse("setSpeakerphoneOn", null, result);
         } else {
-            Log.d("StringeeSDK", "setSpeakerphoneOn: false - -2 - AudioManager is not found");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "AudioManager is not found");
-            result.success(map);
+            Utils.sendErrorResponse("setSpeakerphoneOn", -2, "AudioManager is not found", result);
         }
     }
 
     /**
-     * Set speaker on/off
-     *
-     * @param on
+     * Set bluetooth on/off
      */
-    public void setSpeakerphoneOn(boolean on) {
+    public void setBluetoothScoOn(boolean on, Result result) {
         if (audioManager != null) {
-            audioManager.setSpeakerphoneOn(on);
+            audioManager.setBluetoothScoOn(on);
+            Utils.sendSuccessResponse("setBluetoothScoOn", null, result);
+        } else {
+            Utils.sendErrorResponse("setBluetoothScoOn", -2, "AudioManager is not found", result);
         }
     }
 }

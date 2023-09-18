@@ -333,8 +333,12 @@ class _VisitorPageState extends State<VisitorPage>
     });
 
     /// if you want to change user info then use this fucntion
-    chat
-        .updateUserInfo(name: "new name", email: "new email", avatar: "new avatar url", phone: "146845641565")
+    client
+        .updateUserInfo(StringeeUser.forUpdate(
+            name: "new name",
+            email: "new email",
+            avatarUrl: "new avatar url",
+            phone: "146845641565"))
         .then((value) {
       bool status = value['status'];
       print("updateUserInfo: " + status.toString());

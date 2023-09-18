@@ -1,20 +1,15 @@
 package com.stringee.stringeeflutterplugin;
 
-import android.os.Handler;
-import android.util.Log;
-
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
 import com.stringee.messaging.Conversation;
 import com.stringee.messaging.Message;
 import com.stringee.messaging.User;
 import com.stringee.messaging.listeners.CallbackListener;
-import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,39 +17,23 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ConversationManager {
     private ClientWrapper clientWrapper;
-    private Handler handler;
-
-    private static final String TAG = "StringeeSDK";
+    private StringeeManager stringeeManager;
 
     public ConversationManager(ClientWrapper clientWrapper) {
-        handler = StringeeManager.getInstance().getHandler();
+        this.stringeeManager = StringeeManager.getInstance();
         this.clientWrapper = clientWrapper;
     }
 
     /**
      * Delete conversation
-     *
-     * @param convId
-     * @param result
      */
     public void delete(final String convId, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "delete: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+        if (!Utils.isClientConnected(clientWrapper, "delete", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "deleteConversation: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("delete", -2, "convId is invalid", result);
             return;
         }
 
@@ -64,30 +43,20 @@ public class ConversationManager {
                 conversation.delete(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "deleteConversation: success");
-                                Map map1 = new HashMap();
-                                map1.put("status", true);
-                                map1.put("code", 0);
-                                map1.put("message", "Success");
-                                result.success(map1);
+                                Utils.sendSuccessResponse("deleteConversation", null, result);
                             }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map12 = new HashMap();
-                                map12.put("status", false);
-                                map12.put("code", stringeeError.getCode());
-                                map12.put("message", stringeeError.getMessage());
-                                result.success(map12);
+                                Utils.sendErrorResponse("deleteConversation", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -96,15 +65,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map13 = new HashMap();
-                        map13.put("status", false);
-                        map13.put("code", stringeeError.getCode());
-                        map13.put("message", stringeeError.getMessage());
-                        result.success(map13);
+                        Utils.sendErrorResponse("deleteConversation", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -113,29 +77,14 @@ public class ConversationManager {
 
     /**
      * Add participants
-     *
-     * @param convId
-     * @param participants
-     * @param result
      */
     public void addParticipants(final String convId, final List<User> participants, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "addParticipants: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+        if (!Utils.isClientConnected(clientWrapper, "addParticipants", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "addParticipants: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("addParticipants", -2, "convId is invalid", result);
             return;
         }
 
@@ -145,20 +94,14 @@ public class ConversationManager {
                 conversation.addParticipants(clientWrapper.getClient(), participants, new CallbackListener<List<User>>() {
                     @Override
                     public void onSuccess(final List<User> users) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "addParticipants: success");
-                                Map map1 = new HashMap();
-                                List participantsArray = new ArrayList();
+                                List<Map<String, Object>> participantsArray = new ArrayList<>();
                                 for (int j = 0; j < users.size(); j++) {
                                     participantsArray.add(Utils.convertUserToMap(users.get(j)));
                                 }
-                                map1.put("status", true);
-                                map1.put("code", 0);
-                                map1.put("message", "Success");
-                                map1.put("body", participantsArray);
-                                result.success(map1);
+                                Utils.sendSuccessResponse("addParticipants", participantsArray, result);
                             }
                         });
 
@@ -166,15 +109,10 @@ public class ConversationManager {
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map12 = new HashMap();
-                                map12.put("status", false);
-                                map12.put("code", stringeeError.getCode());
-                                map12.put("message", stringeeError.getMessage());
-                                result.success(map12);
+                                Utils.sendErrorResponse("addParticipants", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -183,15 +121,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "addParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map13 = new HashMap();
-                        map13.put("status", false);
-                        map13.put("code", stringeeError.getCode());
-                        map13.put("message", stringeeError.getMessage());
-                        result.success(map13);
+                        Utils.sendErrorResponse("addParticipants", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -200,29 +133,14 @@ public class ConversationManager {
 
     /**
      * Remove participants
-     *
-     * @param convId
-     * @param participants
-     * @param result
      */
     public void removeParticipants(final String convId, final List<User> participants, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "removeParticipants: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+        if (!Utils.isClientConnected(clientWrapper, "removeParticipants", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "removeParticipants: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("removeParticipants", -2, "convId is invalid", result);
             return;
         }
 
@@ -232,20 +150,14 @@ public class ConversationManager {
                 conversation.removeParticipants(clientWrapper.getClient(), participants, new CallbackListener<List<User>>() {
                     @Override
                     public void onSuccess(final List<User> users) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "removeParticipants: success");
-                                Map map = new HashMap();
-                                List participantsArray = new ArrayList();
+                                List<Map<String, Object>> participantsArray = new ArrayList<>();
                                 for (int j = 0; j < users.size(); j++) {
                                     participantsArray.add(Utils.convertUserToMap(users.get(j)));
                                 }
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                map.put("body", participantsArray);
-                                result.success(map);
+                                Utils.sendSuccessResponse("removeParticipants", participantsArray, result);
                             }
                         });
 
@@ -253,15 +165,10 @@ public class ConversationManager {
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("removeParticipants", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -270,15 +177,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("removeParticipants", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -287,28 +189,14 @@ public class ConversationManager {
 
     /**
      * Send message
-     *
-     * @param message
-     * @param result
      */
     public void sendMessage(final String convId, final Message message, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "sendMessage: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+        if (!Utils.isClientConnected(clientWrapper, "sendMessage", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "sendMessage: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("sendMessage", -2, "convId is invalid", result);
             return;
         }
 
@@ -318,30 +206,20 @@ public class ConversationManager {
                 conversation.sendMessage(clientWrapper.getClient(), message, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "sendMessage: success");
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                                Utils.sendSuccessResponse("sendMessage", null, result);
                             }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("sendMessage", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -350,15 +228,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("sendMessage", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -367,29 +240,14 @@ public class ConversationManager {
 
     /**
      * Get messages with Id
-     *
-     * @param convId
-     * @param msgIds
-     * @param result
      */
-    public void getMessages(String convId, final String[] msgIds, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "getMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void getMessages(final String convId, final String[] msgIds, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "getMessages", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "getMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("getMessages", -2, "convId is invalid", result);
             return;
         }
 
@@ -399,35 +257,24 @@ public class ConversationManager {
                 conversation.getMessages(clientWrapper.getClient(), msgIds, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getMessages: success");
-                                Map map = new HashMap();
-                                List msgArray = new ArrayList();
+                                List<Map<String, Object>> msgArray = new ArrayList<>();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                map.put("body", msgArray);
-                                result.success(map);
+                                Utils.sendSuccessResponse("getMessages", msgArray, result);
                             }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("getMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -436,15 +283,10 @@ public class ConversationManager {
 
             @Override
             public void onError(final StringeeError stringeeError) {
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("getMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -453,19 +295,10 @@ public class ConversationManager {
 
     /**
      * Get local messages
-     *
-     * @param convId
-     * @param count
-     * @param result
      */
-    public void getLocalMessages(String convId, final int count, final Result result) {
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "getLocalMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+    public void getLocalMessages(final String convId, final int count, final Result result) {
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("getLocalMessages", -2, "convId is invalid", result);
             return;
         }
 
@@ -475,20 +308,14 @@ public class ConversationManager {
                 conversation.getLocalMessages(clientWrapper.getClient(), count, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getLocalMessages: success");
-                                Map map = new HashMap();
-                                List msgArray = new ArrayList();
+                                List<Map<String, Object>> msgArray = new ArrayList<>();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                map.put("body", msgArray);
-                                result.success(map);
+                                Utils.sendSuccessResponse("getLocalMessages", msgArray, result);
                             }
                         });
                     }
@@ -496,15 +323,10 @@ public class ConversationManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Map map = new HashMap();
-                                Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("getLocalMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -514,15 +336,10 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("getLocalMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -531,52 +348,31 @@ public class ConversationManager {
 
     /**
      * Get last messages
-     *
-     * @param convId
-     * @param count
-     * @param result
      */
-    public void getLastMessages(String convId, final int count, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "getLastMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void getLastMessages(final String convId, final int count, final boolean loadDeletedMsg, final boolean loadDeletedMsgContent, final boolean loadAll, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "getLastMessages", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "getLastMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("getLastMessages", -2, "convId is invalid", result);
             return;
         }
 
         Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                conversation.getLastMessages(clientWrapper.getClient(), count, new CallbackListener<List<Message>>() {
+                conversation.getLastMessages(clientWrapper.getClient(), count, loadDeletedMsg, loadDeletedMsgContent, loadAll, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getLastMessages: success");
-                                Map map = new HashMap();
-                                List msgArray = new ArrayList();
+                                List<Map<String, Object>> msgArray = new ArrayList<>();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                map.put("body", msgArray);
-                                result.success(map);
+                                Utils.sendSuccessResponse("getLastMessages", msgArray, result);
                             }
                         });
                     }
@@ -584,15 +380,10 @@ public class ConversationManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("getLastMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -602,15 +393,10 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("getLastMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -619,53 +405,31 @@ public class ConversationManager {
 
     /**
      * Get messages which have sequence greater than seq
-     *
-     * @param convId
-     * @param seq
-     * @param count
-     * @param result
      */
-    public void getMessagesAfter(String convId, final long seq, final int count, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "getMessagesAfter: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void getMessagesAfter(final String convId, final long seq, final int count, final boolean loadDeletedMsg, final boolean loadDeletedMsgContent, final boolean loadAll, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "getMessagesAfter", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "getMessagesAfter: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("getMessagesAfter", -2, "convId is invalid", result);
             return;
         }
 
         Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                conversation.getMessagesAfter(clientWrapper.getClient(), seq, count, new CallbackListener<List<Message>>() {
+                conversation.getMessagesAfter(clientWrapper.getClient(), seq, count, loadDeletedMsg, loadDeletedMsgContent, loadAll, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getMessagesAfter: success");
-                                Map map = new HashMap();
-                                List msgArray = new ArrayList();
+                                List<Map<String, Object>> msgArray = new ArrayList<>();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                map.put("body", msgArray);
-                                result.success(map);
+                                Utils.sendSuccessResponse("getMessagesAfter", msgArray, result);
                             }
                         });
                     }
@@ -673,15 +437,10 @@ public class ConversationManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("getMessagesAfter", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -691,15 +450,10 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("getMessagesAfter", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -708,53 +462,31 @@ public class ConversationManager {
 
     /**
      * Get messages which have sequence smaller than seq
-     *
-     * @param convId
-     * @param seq
-     * @param count
-     * @param result
      */
-    public void getMessagesBefore(String convId, final long seq, final int count, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "getMessagesBefore: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void getMessagesBefore(final String convId, final long seq, final int count, final boolean loadDeletedMsg, final boolean loadDeletedMsgContent, final boolean loadAll, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "getMessagesBefore", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "getMessagesBefore: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("getMessagesBefore", -2, "convId is invalid", result);
             return;
         }
 
         Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                conversation.getMessagesBefore(clientWrapper.getClient(), seq, count, new CallbackListener<List<Message>>() {
+                conversation.getMessagesBefore(clientWrapper.getClient(), seq, count, loadDeletedMsg, loadDeletedMsgContent, loadAll, new CallbackListener<List<Message>>() {
                     @Override
                     public void onSuccess(final List<Message> messages) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getMessagesBefore: success");
-                                Map map = new HashMap();
-                                List msgArray = new ArrayList();
+                                List<Map<String, Object>> msgArray = new ArrayList<>();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
                                 }
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                map.put("body", msgArray);
-                                result.success(map);
+                                Utils.sendSuccessResponse("getMessagesBefore", msgArray, result);
                             }
                         });
 
@@ -763,15 +495,10 @@ public class ConversationManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("getMessagesBefore", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -781,15 +508,68 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("getMessagesBefore", stringeeError.getCode(), stringeeError.getMessage(), result);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Get attachment messages
+     */
+    public void getAttachmentMessages(final String convId, final int start, final int count, final Message.Type type, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "getAttachmentMessages", result)) {
+            return;
+        }
+
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("getAttachmentMessages", -2, "convId is invalid", result);
+            return;
+        }
+
+        Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.getAttachmentMessages(clientWrapper.getClient(), type, start, count, new CallbackListener<List<Message>>() {
+                    @Override
+                    public void onSuccess(final List<Message> messages) {
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                List<Map<String, Object>> msgArray = new ArrayList<>();
+                                for (int i = 0; i < messages.size(); i++) {
+                                    msgArray.add(Utils.convertMessageToMap(messages.get(i)));
+                                }
+                                Utils.sendSuccessResponse("getAttachmentMessages", msgArray, result);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendErrorResponse("getAttachmentMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError stringeeError) {
+                super.onError(stringeeError);
+                stringeeManager.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.sendErrorResponse("getAttachmentMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -798,30 +578,14 @@ public class ConversationManager {
 
     /**
      * Update conversation
-     *
-     * @param convId
-     * @param name
-     * @param avatar
-     * @param result
      */
-    public void updateConversation(String convId, final String name, final String avatar, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "updateConversation: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void updateConversation(final String convId, final String name, final String avatar, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "updateConversation", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "updateConversation: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("updateConversation", -2, "convId is invalid", result);
             return;
         }
 
@@ -831,15 +595,10 @@ public class ConversationManager {
                 conversation.updateConversation(clientWrapper.getClient(), name, avatar, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "updateConversation: success");
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                                Utils.sendSuccessResponse("updateConversation", null, result);
                             }
                         });
                     }
@@ -847,15 +606,10 @@ public class ConversationManager {
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("updateConversation", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -865,15 +619,10 @@ public class ConversationManager {
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("updateConversation", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -882,120 +631,51 @@ public class ConversationManager {
 
     /**
      * Set role of participant
-     *
-     * @param convId
-     * @param userId
-     * @param role
-     * @param result
      */
-    public void setRole(String convId, final String userId, final UserRole role, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "setRole: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void setRole(final String convId, final String userId, final User.Role role, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "setRole", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "setRole: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("setRole", -2, "convId is invalid", result);
             return;
         }
 
         Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                switch (role) {
-                    case Admin:
-                        conversation.setAsAdmin(clientWrapper.getClient(), userId, new StatusListener() {
+                conversation.setRole(clientWrapper.getClient(), userId, role, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
-                            public void onSuccess() {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.d(TAG, "setRole: success");
-                                        Map map = new HashMap();
-                                        map.put("status", true);
-                                        map.put("code", 0);
-                                        map.put("message", "Success");
-                                        result.success(map);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(final StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                        Map map = new HashMap();
-                                        map.put("status", false);
-                                        map.put("code", stringeeError.getCode());
-                                        map.put("message", stringeeError.getMessage());
-                                        result.success(map);
-                                    }
-                                });
+                            public void run() {
+                                Utils.sendSuccessResponse("setRole", null, result);
                             }
                         });
-                        break;
-                    case Member:
-                        conversation.setAsMember(clientWrapper.getClient(), userId, new StatusListener() {
-                            @Override
-                            public void onSuccess() {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.d(TAG, "setRole: success");
-                                        Map map = new HashMap();
-                                        map.put("status", true);
-                                        map.put("code", 0);
-                                        map.put("message", "Success");
-                                        result.success(map);
-                                    }
-                                });
-                            }
+                    }
 
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
-                            public void onError(final StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                        Map map = new HashMap();
-                                        map.put("status", false);
-                                        map.put("code", stringeeError.getCode());
-                                        map.put("message", stringeeError.getMessage());
-                                        result.success(map);
-                                    }
-                                });
+                            public void run() {
+                                Utils.sendErrorResponse("setRole", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
-                        break;
-                }
+                    }
+                });
             }
 
             @Override
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("setRole", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -1004,144 +684,115 @@ public class ConversationManager {
 
     /**
      * Delete messages
-     *
-     * @param convId
-     * @param msgIdArray
-     * @param result
      */
-    public void deleteMessages(String convId, JSONArray msgIdArray, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "deleteMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void deleteMessages(final String convId, final JSONArray messageIds, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "deleteMessages", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "deleteMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("deleteMessages", -2, "convId is invalid", result);
             return;
         }
 
-        clientWrapper.getClient().deleteMessages(convId, msgIdArray, new StatusListener() {
+        Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
             @Override
-            public void onSuccess() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "deleteMessages: success");
-                        Map map = new HashMap();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        result.success(map);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(final StringeeError stringeeError) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "deleteMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
-                    }
-                });
-            }
-        });
-    }
-
-    public void revokeMessages(String convId, JSONArray msgIdArray, boolean deleted, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "revokeMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
-            return;
-        }
-
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "revokeMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
-            return;
-        }
-
-        clientWrapper.getClient().revokeMessages(convId, msgIdArray, deleted, new StatusListener() {
+            public void onSuccess(Conversation conversation) {
+                conversation.deleteMessages(clientWrapper.getClient(), messageIds, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "revokeMessages: success");
-                                Map map1 = new HashMap();
-                                map1.put("status", true);
-                                map1.put("code", 0);
-                                map1.put("message", "Success");
-                                result.success(map1);
+                                Utils.sendSuccessResponse("deleteMessages", null, result);
                             }
                         });
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "revokeMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map12 = new HashMap();
-                                map12.put("status", false);
-                                map12.put("code", stringeeError.getCode());
-                                map12.put("message", stringeeError.getMessage());
-                                result.success(map12);
+                                Utils.sendErrorResponse("deleteMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
-                }
-        );
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError stringeeError) {
+                super.onError(stringeeError);
+                stringeeManager.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.sendErrorResponse("deleteMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
+                    }
+                });
+            }
+        });
     }
 
-    /**
-     * Mark conversation readed
-     *
-     * @param convId
-     * @param result
-     */
-    public void markAsRead(String convId, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "markAsRead: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void revokeMessages(final String convId, final List<String> messageIds, final boolean deleted, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "revokeMessages", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "markAsRead: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("revokeMessages", -2, "convId is invalid", result);
+            return;
+        }
+
+        Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.revokeMessages(clientWrapper.getClient(), messageIds, deleted, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendSuccessResponse("revokeMessages", null, result);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendErrorResponse("revokeMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError stringeeError) {
+                super.onError(stringeeError);
+                stringeeManager.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.sendErrorResponse("revokeMessages", stringeeError.getCode(), stringeeError.getMessage(), result);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Mark conversation read
+     */
+    public void markAsRead(final String convId, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "markAsRead", result)) {
+            return;
+        }
+
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("markAsRead", -2, "convId is invalid", result);
             return;
         }
 
@@ -1151,15 +802,10 @@ public class ConversationManager {
                 conversation.markAllAsRead(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "markAsRead: success");
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                                Utils.sendSuccessResponse("markAsRead", null, result);
                             }
                         });
                     }
@@ -1167,15 +813,10 @@ public class ConversationManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("markAsRead", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -1185,15 +826,116 @@ public class ConversationManager {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("markAsRead", stringeeError.getCode(), stringeeError.getMessage(), result);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Mark conversation read
+     */
+    public void rateChat(final String convId, final Conversation.Rating rating, final String comment, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "rateChat", result)) {
+            return;
+        }
+
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("rateChat", -2, "convId is invalid", result);
+            return;
+        }
+
+        Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.rateChat(clientWrapper.getClient(), comment, rating, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendSuccessResponse("rateChat", null, result);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendErrorResponse("rateChat", stringeeError.getCode(), stringeeError.getMessage(), result);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                stringeeManager.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.sendErrorResponse("rateChat", stringeeError.getCode(), stringeeError.getMessage(), result);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Transfer chat support to other agent
+     */
+    public void transferTo(final String convId, final String userId, final String customerId, final String customerName, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "transferTo", result)) {
+            return;
+        }
+
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("transferTo", -2, "convId is invalid", result);
+            return;
+        }
+
+        Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.transferTo(clientWrapper.getClient(), userId, customerId, customerName, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendSuccessResponse("transferTo", null, result);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendErrorResponse("transferTo", stringeeError.getCode(), stringeeError.getMessage(), result);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                stringeeManager.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.sendErrorResponse("transferTo", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -1202,30 +944,14 @@ public class ConversationManager {
 
     /**
      * Send chat transcript
-     *
-     * @param convId
-     * @param email
-     * @param domain
-     * @param result
      */
     public void sendChatTranscript(String convId, String email, String domain, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "sendChatTranscript: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+        if (!Utils.isClientConnected(clientWrapper, "sendChatTranscript", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "sendChatTranscript: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("sendChatTranscript", -2, "convId is invalid", result);
             return;
         }
 
@@ -1235,15 +961,10 @@ public class ConversationManager {
                 conversation.sendChatTranscriptTo(clientWrapper.getClient(), email, domain, new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "sendChatTranscript: success");
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                                Utils.sendSuccessResponse("sendChatTranscript", null, result);
                             }
                         });
                     }
@@ -1251,15 +972,10 @@ public class ConversationManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "sendChatTranscript: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("sendChatTranscript", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -1269,15 +985,10 @@ public class ConversationManager {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "sendChatTranscript: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("sendChatTranscript", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -1286,28 +997,14 @@ public class ConversationManager {
 
     /**
      * End chat
-     *
-     * @param convId
-     * @param result
      */
-    public void endChat(String convId, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "endChat: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void endChat(final String convId, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "endChat", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "endChat: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("endChat", -2, "convId is invalid", result);
             return;
         }
 
@@ -1317,15 +1014,10 @@ public class ConversationManager {
                 conversation.endChat(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "endChat: success");
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                                Utils.sendSuccessResponse("endChat", null, result);
                             }
                         });
                     }
@@ -1333,15 +1025,10 @@ public class ConversationManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "endChat: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("endChat", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -1351,15 +1038,10 @@ public class ConversationManager {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "endChat: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("endChat", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -1368,28 +1050,14 @@ public class ConversationManager {
 
     /**
      * Send state begin typing
-     *
-     * @param convId
-     * @param result
      */
-    public void beginTyping(String convId, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "beginTyping: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void beginTyping(final String convId, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "beginTyping", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "beginTyping: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("beginTyping", -2, "convId is invalid", result);
             return;
         }
 
@@ -1399,15 +1067,10 @@ public class ConversationManager {
                 conversation.beginTyping(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "beginTyping: success");
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                                Utils.sendSuccessResponse("beginTyping", null, result);
                             }
                         });
                     }
@@ -1415,15 +1078,10 @@ public class ConversationManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("beginTyping", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -1433,15 +1091,10 @@ public class ConversationManager {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("beginTyping", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }
@@ -1450,28 +1103,14 @@ public class ConversationManager {
 
     /**
      * Send state end typing
-     *
-     * @param convId
-     * @param result
      */
-    public void endTyping(String convId, final Result result) {
-        if (!clientWrapper.isConnected()) {
-            Log.d(TAG, "endTyping: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -1);
-            map.put("message", "StringeeClient is disconnected");
-            result.success(map);
+    public void endTyping(final String convId, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "endTyping", result)) {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
-            Log.d(TAG, "endTyping: false - -2 - convId is invalid");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "convId is invalid");
-            result.success(map);
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("endTyping", -2, "convId is invalid", result);
             return;
         }
 
@@ -1481,15 +1120,10 @@ public class ConversationManager {
                 conversation.endTyping(clientWrapper.getClient(), new StatusListener() {
                     @Override
                     public void onSuccess() {
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "endTyping: success");
-                                Map map = new HashMap();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
+                                Utils.sendSuccessResponse("endTyping", null, result);
                             }
                         });
                     }
@@ -1497,15 +1131,10 @@ public class ConversationManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        handler.post(new Runnable() {
+                        stringeeManager.getHandler().post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "endTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
+                                Utils.sendErrorResponse("endTyping", stringeeError.getCode(), stringeeError.getMessage(), result);
                             }
                         });
                     }
@@ -1515,15 +1144,63 @@ public class ConversationManager {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(new Runnable() {
+                stringeeManager.getHandler().post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "endTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
+                        Utils.sendErrorResponse("endTyping", stringeeError.getCode(), stringeeError.getMessage(), result);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * End chat
+     */
+    public void continueChatting(final String convId, final Result result) {
+        if (!Utils.isClientConnected(clientWrapper, "continueChatting", result)) {
+            return;
+        }
+
+        if (Utils.isStringEmpty(convId)) {
+            Utils.sendErrorResponse("continueChatting", -2, "convId is invalid", result);
+            return;
+        }
+
+        Utils.getConversation(clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
+            @Override
+            public void onSuccess(Conversation conversation) {
+                conversation.continueChatting(clientWrapper.getClient(), new CallbackListener<Conversation>() {
+                    @Override
+                    public void onSuccess(Conversation conversation) {
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendSuccessResponse("continueChatting", Utils.convertConversationToMap(conversation), result);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        stringeeManager.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Utils.sendErrorResponse("continueChatting", stringeeError.getCode(), stringeeError.getMessage(), result);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onError(StringeeError stringeeError) {
+                super.onError(stringeeError);
+                stringeeManager.getHandler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.sendErrorResponse("continueChatting", stringeeError.getCode(), stringeeError.getMessage(), result);
                     }
                 });
             }

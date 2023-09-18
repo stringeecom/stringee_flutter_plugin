@@ -1,14 +1,33 @@
 import '../../stringee_flutter_plugin.dart';
 
 class StringeeCallListener {
-  void Function(StringeeSignalingState signalingState) onChangeSignalingState;
-  void Function(StringeeMediaState mediaState) onChangeMediaState;
-  void Function(Map<dynamic, dynamic> callInfo) onReceiveCallInfo;
-  void Function(StringeeSignalingState signalingState) onHandleOnAnotherDevice;
-  void Function() onReceiveLocalStream;
-  void Function() onReceiveRemoteStream;
-  void Function(AudioDevice selectedAudioDevice,
-      List<AudioDevice> availableAudioDevices)? onChangeAudioDevice;
+  void Function(
+    StringeeCall stringeeCall,
+    StringeeSignalingState signalingState,
+  ) onChangeSignalingState;
+  void Function(
+    StringeeCall stringeeCall,
+    StringeeMediaState mediaState,
+  ) onChangeMediaState;
+  void Function(
+    StringeeCall stringeeCall,
+    Map<dynamic, dynamic> callInfo,
+  ) onReceiveCallInfo;
+  void Function(
+    StringeeCall stringeeCall,
+    StringeeSignalingState signalingState,
+  ) onHandleOnAnotherDevice;
+  void Function(
+    StringeeCall stringeeCall,
+  ) onReceiveLocalStream;
+  void Function(
+    StringeeCall stringeeCall,
+  ) onReceiveRemoteStream;
+  void Function(
+    StringeeCall stringeeCall,
+    AudioDevice selectedAudioDevice,
+    List<AudioDevice> availableAudioDevices,
+  )? onChangeAudioDevice;
 
   StringeeCallListener({
     required this.onChangeSignalingState,
