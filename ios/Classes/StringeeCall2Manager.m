@@ -328,7 +328,7 @@
 - (void)didAddTrack2:(StringeeCall2 *)stringeeCall2 track:(StringeeVideoTrack *)track {
     [[StringeeManager instance].call2VideoTracks setObject:track forKey:stringeeCall2.callId];
 
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidAddVideoTrack, STEBody : @{ @"callId" : stringeeCall2.callId }});
 }
 
 - (void)didHandleOnAnotherDevice2:(StringeeCall2 *)stringeeCall2 signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {

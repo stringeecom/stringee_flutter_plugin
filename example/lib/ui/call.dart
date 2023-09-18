@@ -535,6 +535,10 @@ class _CallState extends State<Call> {
     print('handleAddVideoTrackEvent - ${track.id}');
     if (track.isLocal) {
       setState(() {
+        localScreen=null;
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
         localScreen = track.attach(
           alignment: Alignment.topRight,
           margin: EdgeInsets.only(top: 25.0, right: 25.0),
@@ -543,13 +547,21 @@ class _CallState extends State<Call> {
           scalingType: ScalingType.fit,
         );
       });
+      });
+      
     } else {
       setState(() {
+        remoteScreen=null;
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
         remoteScreen = track.attach(
           isMirror: false,
           scalingType: ScalingType.fit,
         );
       });
+      });
+      
     }
   }
 
