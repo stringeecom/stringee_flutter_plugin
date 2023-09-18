@@ -569,10 +569,24 @@ class _CallState extends State<Call> {
 
   void handleReceiveLocalStreamEvent(String callId) {
     print('handleReceiveLocalStreamEvent - $callId');
-    setState(() {
-      _hasLocalStream = true;
-      widget._callId = callId;
-    });
+    if (_hasLocalStream) {
+      setState(() {
+        _hasLocalStream = false;
+        widget._callId = callId;
+      });
+
+      Future.delayed(Duration(milliseconds: 100), () {
+        setState(() {
+          _hasLocalStream = true;
+          widget._callId = callId;
+        });
+      });
+    } else {
+      setState(() {
+        _hasLocalStream = true;
+        widget._callId = callId;
+      });
+    }
   }
 
   void handleReceiveRemoteStreamEvent(String callId) {
