@@ -506,36 +506,17 @@ class _CallState extends State<Call> {
     print('handleReceiveLocalStreamEvent - $callId');
     setState(() {
       widget._callId = callId;
-      localScreen = new StringeeVideoView(
-        callId,
-        true,
-        alignment: Alignment.topRight,
-        margin: EdgeInsets.only(top: 25.0, right: 25.0),
-        height: 150.0,
-        width: 100.0,
-        scalingType: ScalingType.fit,
-      );
     });
-  }
-
-  void handleReceiveRemoteStreamEvent(String callId) {
-    print('handleReceiveRemoteStreamEvent - $callId');
-    setState(() {
-      widget._callId = callId;
-      remoteScreen = new StringeeVideoView(
-        callId,
-        false,
-        isMirror: false,
-        scalingType: ScalingType.fit,
-      );
-    });
-  }
-
-  void handleAddVideoTrackEvent(StringeeVideoTrack track) {
-    print('handleAddVideoTrackEvent - ${track.id}');
-    if (track.isLocal) {
+    if (localScreen != null) {
       setState(() {
-        localScreen = track.attach(
+        localScreen = null;
+      });
+    }
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        localScreen = new StringeeVideoView(
+          callId,
+          true,
           alignment: Alignment.topRight,
           margin: EdgeInsets.only(top: 25.0, right: 25.0),
           height: 150.0,
@@ -543,12 +524,63 @@ class _CallState extends State<Call> {
           scalingType: ScalingType.fit,
         );
       });
-    } else {
+    });
+  }
+
+  void handleReceiveRemoteStreamEvent(String callId) {
+    print('handleReceiveRemoteStreamEvent - $callId');
+    setState(() {
+      widget._callId = callId;
+    });
+    if (remoteScreen != null) {
       setState(() {
-        remoteScreen = track.attach(
+        remoteScreen = null;
+      });
+    }
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {
+        remoteScreen = new StringeeVideoView(
+          callId,
+          false,
           isMirror: false,
           scalingType: ScalingType.fit,
         );
+      });
+    });
+  }
+
+  void handleAddVideoTrackEvent(StringeeVideoTrack track) {
+    print('handleAddVideoTrackEvent - ${track.id}');
+    if (track.isLocal) {
+      if (localScreen != null) {
+        setState(() {
+          localScreen = null;
+        });
+      }
+      Future.delayed(Duration(milliseconds: 100), () {
+        setState(() {
+          localScreen = track.attach(
+            alignment: Alignment.topRight,
+            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
+            scalingType: ScalingType.fit,
+          );
+        });
+      });
+    } else {
+      if (remoteScreen != null) {
+        setState(() {
+          remoteScreen = null;
+        });
+      }
+      Future.delayed(Duration(milliseconds: 100), () {
+        setState(() {
+          remoteScreen = track.attach(
+            isMirror: false,
+            scalingType: ScalingType.fit,
+          );
+        });
       });
     }
   }
