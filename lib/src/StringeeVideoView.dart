@@ -186,7 +186,7 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     if (widget.borderRadius != null) {
       current = new ClipRRect(
         clipBehavior: Clip.hardEdge,
-        borderRadius: widget.borderRadius,
+        borderRadius: widget.borderRadius!,
         child: current,
       );
     }
