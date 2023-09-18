@@ -56,7 +56,8 @@
                 call.localVideoView.frame = CGRectMake(oldFrame.origin.x, oldFrame.origin.y, width, height);
                 [_view addSubview:call.localVideoView];
             } else {
-                StringeeVideoTrack *track = [[StringeeManager instance].call2VideoTracks objectForKey:callId];
+//                StringeeVideoTrack *track = [[StringeeManager instance].call2VideoTracks objectForKey:callId];
+                StringeeVideoTrack *track = [[StringeeManager instance] getVideoTrackForCall2:callId trackId:@""];
                 if (track != nil) {
                     StringeeVideoView *videoView = [track attachWithVideoContentMode:contentMode];
                     if (videoView != nil) {
@@ -64,7 +65,7 @@
                         [_view addSubview:videoView];
                     }
 
-                    [[StringeeManager instance].call2VideoTracks removeObjectForKey:callId];
+                    [[StringeeManager instance] removeTrackForCall2:callId trackId:track.serverId];
                 } else {
                     call.remoteVideoView.contentMode = contentMode;
                     CGRect oldFrame = call.remoteVideoView.frame;
@@ -97,8 +98,11 @@
 
             StringeeVideoTrack *track = [StringeeVideoConferenceManager getTrack:trackId];
             if (track == nil) {
-                NSLog(@"Track not found");
-                return self;
+                track = [[StringeeManager instance] getVideoTrackForCall2ByTracKId:trackId];
+                if (track == nil) {
+                    NSLog(@"Track not found");
+                    return self;
+                }
             }
 
             StringeeVideoView *videoView = [track attachWithVideoContentMode:contentMode];
