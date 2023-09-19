@@ -537,7 +537,7 @@ class _CallState extends State<Call> {
 
   void handleReceiveRemoteStreamEvent(String callId) {
     print('handleReceiveRemoteStreamEvent - $callId');
-    if (localScreen != null) {
+    if (remoteScreen != null) {
       setState(() {
         remoteScreen = null;
       });
