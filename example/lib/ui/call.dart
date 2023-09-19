@@ -11,7 +11,6 @@ class Call extends StatefulWidget {
   late StringeeCall2? _stringeeCall2;
   late String _toUserId;
   late String _fromUserId;
-  late String _callId;
   late StringeeObjectEventType _callType;
   bool _showIncomingUi = false;
   bool _isVideoCall = false;
@@ -505,7 +504,9 @@ class _CallState extends State<Call> {
   void handleReceiveLocalStreamEvent(String callId) {
     print('handleReceiveLocalStreamEvent - $callId');
     setState(() {
-      widget._callId = callId;
+      localScreen = null;
+    });
+    setState(() {
       localScreen = new StringeeVideoView(
         callId,
         true,
@@ -521,7 +522,9 @@ class _CallState extends State<Call> {
   void handleReceiveRemoteStreamEvent(String callId) {
     print('handleReceiveRemoteStreamEvent - $callId');
     setState(() {
-      widget._callId = callId;
+      remoteScreen = null;
+    });
+    setState(() {
       remoteScreen = new StringeeVideoView(
         callId,
         false,
@@ -535,33 +538,31 @@ class _CallState extends State<Call> {
     print('handleAddVideoTrackEvent - ${track.id}');
     if (track.isLocal) {
       setState(() {
-        localScreen=null;
+        localScreen = null;
       });
       Future.delayed(Duration(milliseconds: 200), () {
         setState(() {
-        localScreen = track.attach(
-          alignment: Alignment.topRight,
-          margin: EdgeInsets.only(top: 25.0, right: 25.0),
-          height: 150.0,
-          width: 100.0,
-          scalingType: ScalingType.fit,
-        );
+          localScreen = track.attach(
+            alignment: Alignment.topRight,
+            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
+            scalingType: ScalingType.fit,
+          );
+        });
       });
-      });
-      
     } else {
       setState(() {
-        remoteScreen=null;
+        remoteScreen = null;
       });
       Future.delayed(Duration(milliseconds: 200), () {
         setState(() {
-        remoteScreen = track.attach(
-          isMirror: false,
-          scalingType: ScalingType.fit,
-        );
+          remoteScreen = track.attach(
+            isMirror: false,
+            scalingType: ScalingType.fit,
+          );
+        });
       });
-      });
-      
     }
   }
 
