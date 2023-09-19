@@ -503,35 +503,64 @@ class _CallState extends State<Call> {
 
   void handleReceiveLocalStreamEvent(String callId) {
     print('handleReceiveLocalStreamEvent - $callId');
-    setState(() {
-      localScreen = null;
-    });
-    setState(() {
-      localScreen = new StringeeVideoView(
-        callId,
-        true,
-        alignment: Alignment.topRight,
-        margin: EdgeInsets.only(top: 25.0, right: 25.0),
-        height: 150.0,
-        width: 100.0,
-        scalingType: ScalingType.fit,
-      );
-    });
+    if (localScreen != null) {
+      setState(() {
+        localScreen = null;
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
+          localScreen = new StringeeVideoView(
+            callId,
+            true,
+            alignment: Alignment.topRight,
+            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
+            scalingType: ScalingType.fit,
+          );
+        });
+      });
+    } else {
+      setState(() {
+        localScreen = new StringeeVideoView(
+          callId,
+          true,
+          alignment: Alignment.topRight,
+          margin: EdgeInsets.only(top: 25.0, right: 25.0),
+          height: 150.0,
+          width: 100.0,
+          scalingType: ScalingType.fit,
+        );
+      });
+    }
   }
 
   void handleReceiveRemoteStreamEvent(String callId) {
     print('handleReceiveRemoteStreamEvent - $callId');
-    setState(() {
-      remoteScreen = null;
-    });
-    setState(() {
-      remoteScreen = new StringeeVideoView(
-        callId,
-        false,
-        isMirror: false,
-        scalingType: ScalingType.fit,
-      );
-    });
+    if (localScreen != null) {
+      setState(() {
+        remoteScreen = null;
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
+          remoteScreen = new StringeeVideoView(
+            callId,
+            false,
+            isMirror: false,
+            scalingType: ScalingType.fit,
+          );
+        });
+      });
+    } else {
+      setState(() {
+        remoteScreen = new StringeeVideoView(
+          callId,
+          false,
+          isMirror: false,
+          scalingType: ScalingType.fit,
+        );
+      });
+    }
   }
 
   void handleAddVideoTrackEvent(StringeeVideoTrack track) {
