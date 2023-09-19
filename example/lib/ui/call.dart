@@ -12,7 +12,6 @@ class Call extends StatefulWidget {
   late StringeeCall2? _stringeeCall2;
   late String _toUserId;
   late String _fromUserId;
-  late String _callId;
   late StringeeObjectEventType _callType;
   bool _showIncomingUi = false;
   bool _isVideoCall = false;
@@ -54,14 +53,9 @@ class _CallState extends State<Call> {
   bool _isSpeaker = false;
   bool _isMute = false;
   bool _isVideoEnable = false;
-  bool _sharingScreen = false;
-  bool _hasLocalStream = false;
-  bool _hasRemoteStream = false;
 
-  bool _hasLocalScreen = false;
-  late StringeeVideoTrack _localScreenTrack;
-  bool _hasRemoteScreen = false;
-  late StringeeVideoTrack _remoteScreenTrack;
+  Widget? localScreen = null;
+  Widget? remoteScreen = null;
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -114,55 +108,6 @@ class _CallState extends State<Call> {
         ],
       ),
     );
-
-    Widget localView = (_hasLocalStream)
-        ? new StringeeVideoView(
-            widget._callId,
-            true,
-            alignment: Alignment.topRight,
-            margin: EdgeInsets.only(top: 25.0, right: 25.0),
-            height: 150.0,
-            width: 100.0,
-            scalingType: ScalingType.fill,
-          )
-        : Placeholder(
-            color: Colors.transparent,
-          );
-
-    Widget remoteView = (_hasRemoteStream)
-        ? new StringeeVideoView(
-            widget._callId,
-            false,
-            isMirror: false,
-            scalingType: ScalingType.fill,
-          )
-        : Placeholder(
-            color: Colors.transparent,
-          );
-
-    Widget localScreen = (_hasLocalScreen)
-        ? _localScreenTrack.attach(
-            alignment: Alignment.topRight,
-            margin: EdgeInsets.only(top: 200.0, right: 25.0),
-            height: 150.0,
-            width: 100.0,
-            scalingType: ScalingType.fill,
-          )
-        : Placeholder(
-            color: Colors.transparent,
-          );
-
-    Widget remoteScreen = (_hasRemoteScreen)
-        ? _remoteScreenTrack.attach(
-            alignment: Alignment.topRight,
-            margin: EdgeInsets.only(top: 375.0, right: 25.0),
-            height: 150.0,
-            width: 100.0,
-            scalingType: ScalingType.fill,
-          )
-        : Placeholder(
-            color: Colors.transparent,
-          );
 
     Widget btnSwitch = Align(
       alignment: Alignment.topLeft,
@@ -256,23 +201,6 @@ class _CallState extends State<Call> {
                           primary:
                               _isVideoEnable ? Colors.white54 : Colors.white,
                           onPressed: toggleVideo),
-                      // if (widget._isVideoCall &&
-                      //     widget._callType == StringeeObjectEventType.call2)
-                      //   CircleButton(
-                      //       icon: _sharingScreen
-                      //           ? Icon(
-                      //               Icons.stop_screen_share,
-                      //               color: Colors.black,
-                      //               size: 28,
-                      //             )
-                      //           : Icon(
-                      //               Icons.screen_share,
-                      //               color: Colors.white,
-                      //               size: 28,
-                      //             ),
-                      //       primary:
-                      //           _sharingScreen ? Colors.white : Colors.white54,
-                      //       onPressed: toggleShareScreen),
                       CircleButton(
                           icon: Icon(
                             Icons.call_end,
@@ -291,10 +219,16 @@ class _CallState extends State<Call> {
         backgroundColor: Colors.black,
         body: new Stack(
           children: <Widget>[
-            remoteView,
-            localView,
-            localScreen,
-            remoteScreen,
+            remoteScreen != null
+                ? remoteScreen!
+                : Placeholder(
+                    color: Colors.transparent,
+                  ),
+            localScreen != null
+                ? localScreen!
+                : Placeholder(
+                    color: Colors.transparent,
+                  ),
             nameCalling,
             bottomContainer,
             btnSwitch,
@@ -560,56 +494,100 @@ class _CallState extends State<Call> {
 
   void handleReceiveLocalStreamEvent(String callId) {
     print('handleReceiveLocalStreamEvent - $callId');
-    setState(() {
-      _hasLocalStream = true;
-      widget._callId = callId;
-    });
-  }
-
-  void handleReceiveRemoteStreamEvent(String callId) {
-    print('handleReceiveRemoteStreamEvent - $callId');
-    if (_hasRemoteStream) {
+    if (localScreen != null) {
       setState(() {
-        _hasRemoteStream = false;
-        widget._callId = callId;
+        localScreen = null;
       });
-
-      Future.delayed(Duration(milliseconds: 100), () {
+      Future.delayed(Duration(milliseconds: 200), () {
         setState(() {
-          _hasRemoteStream = true;
-          widget._callId = callId;
+          localScreen = new StringeeVideoView(
+            callId,
+            true,
+            alignment: Alignment.topRight,
+            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
+            scalingType: ScalingType.fit,
+          );
         });
       });
     } else {
       setState(() {
-        _hasRemoteStream = true;
-        widget._callId = callId;
+        localScreen = new StringeeVideoView(
+          callId,
+          true,
+          alignment: Alignment.topRight,
+          margin: EdgeInsets.only(top: 25.0, right: 25.0),
+          height: 150.0,
+          width: 100.0,
+          scalingType: ScalingType.fit,
+        );
+      });
+    }
+  }
+
+  void handleReceiveRemoteStreamEvent(String callId) {
+    print('handleReceiveRemoteStreamEvent - $callId');
+    if (remoteScreen != null) {
+      setState(() {
+        remoteScreen = null;
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
+          remoteScreen = new StringeeVideoView(
+            callId,
+            false,
+            isMirror: false,
+            scalingType: ScalingType.fit,
+          );
+        });
+      });
+    } else {
+      setState(() {
+        remoteScreen = new StringeeVideoView(
+          callId,
+          false,
+          isMirror: false,
+          scalingType: ScalingType.fit,
+        );
       });
     }
   }
 
   void handleAddVideoTrackEvent(StringeeVideoTrack track) {
     print('handleAddVideoTrackEvent - ${track.id}');
-    setState(() {
-      if (track.isLocal) {
-        _hasLocalScreen = true;
-        _localScreenTrack = track;
-      } else {
-        _hasRemoteScreen = true;
-        _remoteScreenTrack = track;
-      }
-    });
+    if (track.isLocal) {
+      setState(() {
+        localScreen = null;
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
+          localScreen = track.attach(
+            alignment: Alignment.topRight,
+            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            height: 150.0,
+            width: 100.0,
+            scalingType: ScalingType.fit,
+          );
+        });
+      });
+    } else {
+      setState(() {
+        remoteScreen = null;
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+        setState(() {
+          remoteScreen = track.attach(
+            isMirror: false,
+            scalingType: ScalingType.fit,
+          );
+        });
+      });
+    }
   }
 
   void handleRemoveVideoTrackEvent(StringeeVideoTrack track) {
     print('handleRemoveVideoTrackEvent - ${track.id}');
-    setState(() {
-      if (track.isLocal) {
-        _hasLocalScreen = false;
-      } else {
-        _hasRemoteScreen = false;
-      }
-    });
   }
 
   void handleChangeAudioDeviceEvent(AudioDevice audioDevice) {
@@ -754,36 +732,5 @@ class _CallState extends State<Call> {
             priority: Priority.defaultPriority,
           ),
         );
-  }
-
-  void toggleShareScreen() {
-    // if (_sharingScreen) {
-    //   // remove foreground service notification
-    //   flutterLocalNotificationsPlugin
-    //       .resolvePlatformSpecificImplementation<
-    //           AndroidFlutterLocalNotificationsPlugin>()
-    //       ?.stopForegroundService();
-    //
-    //   widget._stringeeCall2!.stopCapture().then((result) {
-    //     bool status = result['status'];
-    //     print('flutter stopCapture: $status');
-    //     if (status) {
-    //       setState(() {
-    //         _sharingScreen = false;
-    //       });
-    //     }
-    //   });
-    // } else {
-    //   createForegroundServiceNotification();
-    //   widget._stringeeCall2!.startCapture().then((result) {
-    //     bool status = result['status'];
-    //     print('flutter startCapture: $status');
-    //     if (status) {
-    //       setState(() {
-    //         _sharingScreen = true;
-    //       });
-    //     }
-    //   });
-    // }
   }
 }
