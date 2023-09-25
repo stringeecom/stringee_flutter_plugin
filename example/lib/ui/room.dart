@@ -160,6 +160,26 @@ class RoomState extends State<Room> {
 
   void initRoom(List<StringeeVideoTrackInfo> videoTrackInfos,
       List<StringeeRoomUser> userList) {
+    _room!.registerEvent(StringeeRoomListener(
+      onJoinRoom: (stringeeVideoRoom, roomUser) {
+
+      },
+      onLeaveRoom: (stringeeVideoRoom, roomUser) {
+
+      },
+      onAddVideoTrack: (stringeeVideoRoom, videoTrackInfo) {
+
+      },
+      onRemoveVideoTrack: (stringeeVideoRoom, videoTrackInfo) {
+
+      },
+      onReceiveRoomMessage: (stringeeVideoRoom, roomUser, message) {
+
+      },
+      onTrackReadyToPlay: (stringeeVideoRoom, videoTrack) {
+
+      },
+    ));
     _room!.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
       print("Room " + map.toString());

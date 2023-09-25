@@ -126,7 +126,6 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                                 }
                             }
                             callInfoMap.put("videoQuality", videoQuality);
-                            callInfoMap.put("isP2P", call.isP2P());
                             Utils.sendSuccessResponse("makeCall", "callInfo", callInfoMap, makeCallResult);
                             makeCallResult = null;
                         }

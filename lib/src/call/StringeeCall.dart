@@ -16,7 +16,6 @@ class StringeeCall {
   StringeeCallType? _callType;
   String? customDataFromYourServer;
   bool isVideoCall = false;
-  bool _isP2P = false;
   VideoQuality videoQuality = VideoQuality.normal;
 
   StringeeCallListener? _callListener;
@@ -38,9 +37,6 @@ class StringeeCall {
 
   StringeeCallType? get callType => _callType;
 
-  bool get isP2P => _isP2P;
-
-  @deprecated
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
   @override
@@ -56,7 +52,6 @@ class StringeeCall {
       'callType': _callType,
       'customDataFromYourServer': customDataFromYourServer,
       'isVideoCall': isVideoCall,
-      'isP2P': _isP2P,
       'videoQuality': videoQuality.index,
     }.toString();
   }
@@ -91,7 +86,6 @@ class StringeeCall {
     this.customDataFromYourServer = callInfo['customDataFromYourServer'];
     this._callType = StringeeCallType.values[callInfo['callType']];
     this.videoQuality = VideoQuality.values[callInfo['videoQuality']];
-    this._isP2P = callInfo['isP2P'];
   }
 
   void _listener(dynamic event) {

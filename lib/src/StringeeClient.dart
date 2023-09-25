@@ -190,7 +190,7 @@ class StringeeClient {
     String deviceToken,
     List<String> packageNames, {
     bool? isProduction,
-    bool? isVoip
+    bool? isVoip,
   }) async {
     if (deviceToken.trim().isEmpty)
       return await reportInvalidValue('deviceToken');

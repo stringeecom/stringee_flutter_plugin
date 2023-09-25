@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:stringee_flutter_plugin_example/tab/call_tab.dart';
 import 'package:stringee_flutter_plugin_example/tab/chat_tab.dart';
 import 'package:stringee_flutter_plugin_example/tab/conference_tab.dart';
+import 'package:stringee_flutter_plugin_example/utils/Common.dart';
 
 import 'tab/live_chat_tab.dart';
 
@@ -31,7 +32,7 @@ class MyHomePage extends StatefulWidget {
   }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMixin<MyHomePage>{
   int _currentIndex = 0;
   List<Widget> _children = [
     CallTab(),
@@ -39,40 +40,49 @@ class _MyHomePageState extends State<MyHomePage> {
     LiveChatTab(),
     ConferenceTab(),
   ];
+  @override
+  bool get wantKeepAlive => true;
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.bottom]);
 
     if (Platform.isAndroid) {
-      requestPermissions();
+      if (!Common.isPermissionGranted) {
+        requestPermissions();
+      }
     }
   }
 
   requestPermissions() async {
-    DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-    deviceInfoPlugin.androidInfo.then((value) async {
-      if (value.version.sdkInt! >= 31) {
-        Map<Permission, PermissionStatus> statuses = await [
-          Permission.camera,
-          Permission.microphone,
-          Permission.bluetoothConnect,
-        ].request();
-        print(statuses);
-      } else {
-        Map<Permission, PermissionStatus> statuses = await [
-          Permission.camera,
-          Permission.microphone,
-        ].request();
-        print(statuses);
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    List<Permission> permissions = [
+      Permission.camera,
+      Permission.microphone,
+    ];
+    if (androidInfo.version.sdkInt >= 31) {
+      permissions.add(Permission.bluetoothConnect);
+    }
+    Map<Permission, PermissionStatus> permissionsStatus =
+        await permissions.request();
+    debugPrint('Permission statuses - $permissionsStatus');
+    bool isAllGranted = true;
+    permissionsStatus.forEach((key, value) {
+      if (value != PermissionStatus.granted) {
+        setState(() {
+          isAllGranted = false;
+        });
       }
     });
+    Common.isPermissionGranted = isAllGranted;
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: new AppBar(
         title: new Text("Stringee flutter sample"),

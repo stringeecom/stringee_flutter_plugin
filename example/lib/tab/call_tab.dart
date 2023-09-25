@@ -2,69 +2,99 @@ import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/ui/call.dart';
 
-StringeeClient client = new StringeeClient();
+import '../utils/Common.dart';
 
 class CallTab extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return CallTabState();
   }
 }
 
 class CallTabState extends State<CallTab> {
-  String myUserId = 'Not connected...';
-  String token =
+  String _connectStatus = 'Not connected...';
+  StringeeClient? _stringeeClient;
+  String _token =
       'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2OTQ0MDQ1MDMiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjk2OTk2NTAzLCJ1c2VySWQiOiJhbmRyb2lkMSJ9.1fh_vAVXezPJ2uKiAx41ItFYiurmMH3BexYIUrRS3Ag';
-  String toUser = '';
+  String _toUser = '';
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    /// Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
-    client.eventStreamController.stream.listen((event) {
-      Map<dynamic, dynamic> map = event;
-      switch (map['eventType']) {
-        case StringeeClientEvents.didConnect:
-          handleDidConnectEvent();
-          break;
-        case StringeeClientEvents.didDisconnect:
-          handleDiddisconnectEvent();
-          break;
-        case StringeeClientEvents.didFailWithError:
-          handleDidFailWithErrorEvent(
-              map['body']['code'], map['body']['message']);
-          break;
-        case StringeeClientEvents.requestAccessToken:
-          handleRequestAccessTokenEvent();
-          break;
-        case StringeeClientEvents.didReceiveCustomMessage:
-          handleDidReceiveCustomMessageEvent(map['body']);
-          break;
-        case StringeeClientEvents.incomingCall:
-          StringeeCall call = map['body'];
-          handleIncomingCallEvent(call);
-          break;
-        case StringeeClientEvents.incomingCall2:
-          StringeeCall2 call = map['body'];
-          handleIncomingCall2Event(call);
-          break;
-        default:
-          break;
-      }
-    });
-
-    /// Connect
-    if (token.isNotEmpty) {
-      client.connect(token);
+    _stringeeClient ??= StringeeClient();
+    _stringeeClient!.registerEvent(StringeeClientListener(
+      onConnect: (stringeeClient, userId) {
+        debugPrint('onConnect: $userId');
+        setState(() {
+          _connectStatus = 'Connected as $userId';
+        });
+      },
+      onDisconnect: (stringeeClient) {
+        debugPrint('onDisconnect');
+        setState(() {
+          _connectStatus = 'Disconnected';
+        });
+      },
+      onFailWithError: (stringeeClient, code, message) {
+        debugPrint('onFailWithError: code - $code - message - $message');
+        setState(() {
+          _connectStatus = 'Connect fail: $message';
+        });
+      },
+      onRequestAccessToken: (stringeeClient) {
+        debugPrint('onRequestAccessToken');
+      },
+      onIncomingCall: (stringeeClient, stringeeCall) {
+        debugPrint('onIncomingCall: callId - ${stringeeCall.id}');
+        if (Common.isInCall) {
+          stringeeCall.reject();
+          return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Call(
+              stringeeClient,
+              stringeeCall.from!,
+              stringeeCall.to!,
+              true,
+              stringeeCall.isVideoCall,
+              true,
+              stringeeCall: stringeeCall,
+            ),
+          ),
+        );
+      },
+      onIncomingCall2: (stringeeClient, stringeeCall2) {
+        debugPrint('onIncomingCall2: callId - ${stringeeCall2.id}');
+        if (Common.isInCall) {
+          stringeeCall2.reject();
+          return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Call(
+              stringeeClient,
+              stringeeCall2.from!,
+              stringeeCall2.to!,
+              true,
+              stringeeCall2.isVideoCall,
+              false,
+              stringeeCall2: stringeeCall2,
+            ),
+          ),
+        );
+      },
+    ));
+    if (!_stringeeClient!.hasConnected) {
+      _stringeeClient!.connect(_token);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -74,7 +104,7 @@ class CallTabState extends State<CallTab> {
             Container(
               padding: EdgeInsets.only(left: 10.0, top: 10.0),
               child: new Text(
-                'Connected as: $myUserId',
+                _connectStatus,
                 style: new TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
@@ -91,7 +121,7 @@ class CallTabState extends State<CallTab> {
                     child: new TextField(
                       onChanged: (String value) {
                         setState(() {
-                          toUser = value;
+                          _toUser = value;
                         });
                       },
                       decoration: InputDecoration(
@@ -117,8 +147,7 @@ class CallTabState extends State<CallTab> {
                                   width: 175.0,
                                   child: new ElevatedButton(
                                     onPressed: () {
-                                      callTapped(
-                                          false, StringeeObjectEventType.call);
+                                      callTapped(false, true);
                                     },
                                     child: Text('CALL'),
                                   ),
@@ -129,8 +158,7 @@ class CallTabState extends State<CallTab> {
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: new ElevatedButton(
                                     onPressed: () {
-                                      callTapped(
-                                          true, StringeeObjectEventType.call);
+                                      callTapped(true, true);
                                     },
                                     child: Text('VIDEOCALL'),
                                   ),
@@ -148,8 +176,7 @@ class CallTabState extends State<CallTab> {
                                         padding: EdgeInsets.only(
                                             left: 20.0, right: 20.0)),
                                     onPressed: () {
-                                      callTapped(
-                                          false, StringeeObjectEventType.call2);
+                                      callTapped(false, false);
                                     },
                                     child: Text('CALL2'),
                                   ),
@@ -163,8 +190,7 @@ class CallTabState extends State<CallTab> {
                                         padding: EdgeInsets.only(
                                             left: 20.0, right: 20.0)),
                                     onPressed: () {
-                                      callTapped(
-                                          true, StringeeObjectEventType.call2);
+                                      callTapped(true, false);
                                     },
                                     child: Text('VIDEOCALL2'),
                                   ),
@@ -185,93 +211,20 @@ class CallTabState extends State<CallTab> {
     );
   }
 
-  //region Handle Client Event
-  void handleDidConnectEvent() {
-    setState(() {
-      myUserId = client.userId!;
-    });
-  }
+  void callTapped(bool isVideoCall, bool isStringeeCall) {
+    if (_toUser.isEmpty || !_stringeeClient!.hasConnected) return;
 
-  void handleDiddisconnectEvent() {
-    setState(() {
-      myUserId = 'Not connected';
-    });
-  }
-
-  void handleDidFailWithErrorEvent(int code, String message) {
-    print('code: ' + code.toString() + '\nmessage: ' + message);
-  }
-
-  void handleRequestAccessTokenEvent() {
-    print('Request new access token');
-  }
-
-  void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
-    print('from: ' +
-        map['fromUserId'] +
-        '\nmessage: ' +
-        map['message'].toString());
-  }
-
-  void handleIncomingCallEvent(StringeeCall call) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Call(
-          client,
-          call.from!,
-          call.to!,
-          true,
-          call.isVideoCall,
-          StringeeObjectEventType.call,
-          stringeeCall: call,
-        ),
-      ),
+          builder: (context) => Call(
+                _stringeeClient!,
+                _stringeeClient!.userId!,
+                _toUser,
+                false,
+                isVideoCall,
+                isStringeeCall,
+              )),
     );
   }
-
-  void handleIncomingCall2Event(StringeeCall2 call) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Call(
-          client,
-          call.from!,
-          call.to!,
-          true,
-          call.isVideoCall,
-          StringeeObjectEventType.call2,
-          stringeeCall2: call,
-        ),
-      ),
-    );
-  }
-
-  void callTapped(bool isVideoCall, StringeeObjectEventType callType) {
-    client.sendCustomMessage(
-        'userId', {}).then((value) => debugPrint(value.toString()));
-    // client.getChatProfile('QXlQZHVWRlc1eTRLcjhuSjlPV2pHM0ZXQlNNK2ljTFZiSkdDdFNuMkJQL0Ztdy9MYzFBOXkwbDdGSm5UZTFNcA==').then((value) {
-    //   if (value['status']) {
-    //     print("getUserInfo: " + value['body'].toString());
-    //   }
-    // });
-    // if (toUser.isEmpty || !client.hasConnected) return;
-    //
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) => Call(
-    //             client,
-    //             client.userId!,
-    //             toUser,
-    //             false,
-    //             isVideoCall,
-    //             callType,
-    //           )),
-    // );
-  }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }

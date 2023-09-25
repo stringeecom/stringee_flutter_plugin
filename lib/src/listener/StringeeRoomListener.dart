@@ -46,5 +46,7 @@ class StringeeRoomListener {
     required this.onRemoveVideoTrack,
     required this.onReceiveRoomMessage,
     required this.onTrackReadyToPlay,
+    this.onTrackMediaStateChange,
+    this.onChangeAudioDevice,
   });
 }

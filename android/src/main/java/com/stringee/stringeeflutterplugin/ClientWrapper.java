@@ -208,7 +208,6 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     }
                 }
                 callInfoMap.put("videoQuality", videoQuality);
-                callInfoMap.put("isP2P", stringeeCall.isP2P());
                 map.put("body", callInfoMap);
                 StringeeFlutterPlugin.eventSink.success(map);
             }
