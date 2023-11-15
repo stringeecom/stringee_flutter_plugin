@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   requestPermissions() async {
     DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
     deviceInfoPlugin.androidInfo.then((value) async {
-      if (value.version.sdkInt! >= 31) {
+      if (value.version.sdkInt >= 31) {
         Map<Permission, PermissionStatus> statuses = await [
           Permission.camera,
           Permission.microphone,

@@ -119,8 +119,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
               (BuildContext context, PlatformViewController controller) {
             return AndroidViewSurface(
               controller: controller as AndroidViewController,
-              gestureRecognizers: const <
-                  Factory<OneSequenceGestureRecognizer>>{},
+              gestureRecognizers: const <Factory<
+                  OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },
@@ -186,7 +186,9 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     if (widget.borderRadius != null) {
       current = new ClipRRect(
         clipBehavior: Clip.hardEdge,
-        borderRadius: widget.borderRadius,
+        borderRadius: widget.borderRadius != null
+            ? widget.borderRadius!
+            : BorderRadius.zero,
         child: current,
       );
     }
