@@ -119,8 +119,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
               (BuildContext context, PlatformViewController controller) {
             return AndroidViewSurface(
               controller: controller as AndroidViewController,
-              gestureRecognizers: const <Factory<
-                  OneSequenceGestureRecognizer>>{},
+              gestureRecognizers: const <
+                  Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },
