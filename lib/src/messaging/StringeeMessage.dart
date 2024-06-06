@@ -402,6 +402,8 @@ class StringeeMessage {
             break;
         }
         break;
+      case null:
+        break;
     }
     this._text = text;
   }
@@ -556,6 +558,9 @@ class StringeeMessage {
           }
           break;
         }
+        break;
+      case null:
+        break;
     }
     this._text = text;
   }

@@ -94,6 +94,7 @@ class StringeeVideoTrack {
     EdgeInsetsGeometry? padding,
     Widget? child,
     ScalingType? scalingType,
+    BorderRadius? borderRadius,
   }) {
     StringeeVideoView videoView = StringeeVideoView.forTrack(
       _isLocal ? _localId : _id,
@@ -105,6 +106,7 @@ class StringeeVideoTrack {
       alignment: alignment,
       child: child,
       scalingType: scalingType,
+      borderRadius: borderRadius,
     );
     return videoView;
   }

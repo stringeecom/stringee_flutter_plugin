@@ -40,7 +40,7 @@
             if (call == nil) {
                 call = [[StringeeManager instance].call2s objectForKey:callId];
             }
-
+            
             if (call == nil) {
                 return self;
             }
@@ -76,7 +76,6 @@
         } else {
             // Video conference
             NSString *trackId = [args objectForKey:@"trackId"];
-
             NSString *scalingType = [args objectForKey:@"scalingType"];
             if ([args objectForKey:@"width"] == [NSNull null] || [args objectForKey:@"width"] == nil || [args objectForKey:@"height"] == [NSNull null] || [args objectForKey:@"height"] == nil) {
                 NSLog(@"StringeeVideoView's size is invalid");
