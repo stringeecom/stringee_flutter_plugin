@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import '../../stringee_flutter_plugin.dart';
 
 class StringeeVideo {

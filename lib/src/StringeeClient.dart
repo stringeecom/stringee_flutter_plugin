@@ -204,6 +204,13 @@ class StringeeClient {
     return await methodChannel.invokeMethod('sendCustomMessage', params);
   }
 
+  /// Check if stringee call is exist by [callId]
+  Future<Map<dynamic, dynamic>> existCall(String callId) async {
+    if (callId.trim().isEmpty) return await reportInvalidValue('callId');
+    final params = {'callId': callId.trim(), 'uuid': _uuid};
+    return await methodChannel.invokeMethod('existCall', params);
+  }
+
   /// Begin handle events
 
   void _handleDidConnectEvent(Map<dynamic, dynamic> map) {
