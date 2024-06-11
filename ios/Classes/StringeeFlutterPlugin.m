@@ -90,6 +90,9 @@
     else if ([call.method isEqualToString:@"sendCustomMessage"]) {
         [wrapper sendCustomMessage:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"existCall"]) {
+        [wrapper existCall:call.arguments result:result];
+    }
 
     // Call
     else if ([call.method isEqualToString:@"makeCall"]) {

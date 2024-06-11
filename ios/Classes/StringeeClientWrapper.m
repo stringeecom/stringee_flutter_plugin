@@ -229,6 +229,24 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     }];
 }
 
+- (void)existCall:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = data[@"callId"];
+
+    if (!callId || [callId isKindOfClass:[NSNull class]]) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"CallId is invalid."});
+    }
+
+    [_client existCall:callId completion:^(BOOL status, int code, NSString *message, BOOL isExist) {
+        result(@{STEStatus : @(isExist), STECode : @(code), STEMessage: message});
+    }];
+}
+
 #pragma mark - Client Delegate
 
 - (void)didConnect:(StringeeClient *)stringeeClient isReconnecting:(BOOL)isReconnecting {

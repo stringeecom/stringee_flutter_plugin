@@ -51,6 +51,9 @@
 
 - (void)sendCustomMessage:(id)arguments result:(FlutterResult)result;
 
+// Check stringee call exist by callId
+- (void)existCall:(id)arguments result:(FlutterResult)result;
+
 @end
 
 
