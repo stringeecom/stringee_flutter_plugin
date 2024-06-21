@@ -45,10 +45,10 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     private Result makeCallResult;
     private Handler handler;
     private StringeeCall2.MediaState _mediaState;
+    private boolean localStreamShowed;
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
-    private boolean isResumeVideo = false;
-    private boolean isIncomingCall = false;
+    private boolean isIncomingCall;
     private String shareId = "";
 
     private static final String TAG = "StringeeSDK";
@@ -494,7 +494,6 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
             return;
         }
 
-        isResumeVideo = true;
         call2.resumeVideo();
         Log.d(TAG, "resumeVideo: success");
         Map map = new HashMap();
@@ -849,7 +848,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
                     map.put("body", bodyMap);
-                    if (isResumeVideo) {
+                    if (localStreamShowed) {
                         Map<String, Object> localViewOptions = stringeeManager.getLocalViewOptions().get(stringeeCall.getCallId());
                         FrameLayout localView = (FrameLayout) localViewOptions.get("layout");
                         boolean isMirror = (Boolean) localViewOptions.get("isMirror");
@@ -864,9 +863,8 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
                         localView.addView(getLocalView(), layoutParams);
                         renderLocalView(scalingType);
                         getLocalView().setMirror(isMirror);
-
-                        isResumeVideo = false;
                     }
+                    localStreamShowed = true;
                     StringeeFlutterPlugin.eventSink.success(map);
                 }
             }
