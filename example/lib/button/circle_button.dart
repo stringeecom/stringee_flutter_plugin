@@ -19,10 +19,9 @@ class CircleButton extends StatelessWidget {
       child: icon,
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.all(15.0),
+        backgroundColor: primary,
         shape: CircleBorder(),
-        primary: primary,
       ),
     );
   }
 }
-
