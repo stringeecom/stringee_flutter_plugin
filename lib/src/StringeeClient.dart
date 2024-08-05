@@ -133,7 +133,13 @@ class StringeeClient {
   Future<Map<dynamic, dynamic>> disconnect() async {
     final params = {'uuid': _uuid};
 
-    return await methodChannel.invokeMethod('disconnect', params);
+    await methodChannel.invokeMethod('disconnect', params);
+    Map<String, dynamic> rData = {
+      'status': true,
+      'code': 0,
+      'message': 'Success',
+    };
+    return rData;
   }
 
   /// Register push from Stringee by [deviceToken]
