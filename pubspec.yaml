@@ -1,8 +1,10 @@
 name: stringee_flutter_plugin
-description: A new Flutter plugin.
+description: The Stringee communications platform makes it easy to embed high-quality interactive video, voice, SMS, chat, and conferencing into web and mobile applications
 version: 1.2.11
 author: Stringee
 homepage: https://stringee.com/
+license: BSD-3-Clause
+repository: https://github.com/stringeecom/stringee_flutter_plugin
 
 environment:
   sdk: '>=2.12.0 <4.0.0'

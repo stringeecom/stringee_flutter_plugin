@@ -12,7 +12,8 @@ This Dart Package can be integrated into any Flutter application to make use of 
 
 ## Getting Started
 
-Check out our comprehensive [Example](https://github.com/stringeecom/flutter-samples) provided with this plugin.
+Check out our comprehensive [Example](https://github.com/stringeecom/flutter-samples) provided with
+this plugin.
 
 To use this package, add the dependency to your pubspec.yaml file.
 
@@ -20,11 +21,19 @@ To use this package, add the dependency to your pubspec.yaml file.
 dependencies:
   flutter:
     sdk: flutter
-  stringee_flutter_plugin: $newest_version
+  stringee_flutter_plugin: $version
 ```
 
-Check out getting started guide at here:
+Replace `$version` with the plugin version you want to use. See a list of versions in [CHANGELOG](CHANGELOG).
+
+Check out our getting started guide at here:
+
 - [Getting started with Stringee Call API using Flutter Plugin](https://asia-1.console.stringee.com/docs/getting-started-flutter)
 - [Getting started with Stringee Call2 API using Flutter Plugin](https://developer.stringee.com/docs/getting-started/getting-started-flutter2)
 - [Getting started with Stringee Chat API using Flutter Plugin](https://developer.stringee.com/docs/flutter-plugin/install)
 - [Getting started with Stringee Video Conference API using Flutter Plugin](https://developer.stringee.com/docs/video-conference-get-started-flutter)
+
+## License
+
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for
+details.
