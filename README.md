@@ -21,10 +21,10 @@ To use this package, add the dependency to your pubspec.yaml file.
 dependencies:
   flutter:
     sdk: flutter
-  stringee_flutter_plugin: $version
+  stringee_plugin: $version
 ```
 
-Replace `$version` with the plugin version you want to use. See a list of versions in [CHANGELOG](CHANGELOG).
+Replace `$version` with the plugin version you want to use. See a list of versions in [Changelog](CHANGELOG.md).
 
 Check out our getting started guide at here:
 

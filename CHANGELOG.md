@@ -1,16 +1,3 @@
-## Flutter v1
-
-### 1.0.0-no-null-safety:
-
-- Feature: live chat
-
-### 1.1.0-no-null-safety:
-
-- Feature: Video conference in android
-- Feature: Share screen in StringeeCall2 in android
-
-## Flutter v2
-
 ### 1.0.0:
 
 - Feature: live chat
