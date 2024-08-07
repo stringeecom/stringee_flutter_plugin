@@ -1,0 +1,17 @@
+.DS_Store
+.dart_tool/
+
+.packages
+.pub/
+pubspec.lock
+
+build/
+example/.flutter-plugins-dependencies
+.idea/
+.last_build_id
+contents.xcworkspacedata
+Flutter.podspec
+Podfile
+example/android/app/release/
+
+.vscode/
