@@ -1,51 +1,39 @@
-# stringee_flutter_plugin
+# Stringee Flutter
 
-A new Flutter plugin.
+A Dart package for all platforms which helps developers with Stringee API services.
+This Dart Package can be integrated into any Flutter application to make use of Stringee API.
+
+## Features
+
+* Voice call
+* Video call
+* Chat 1-1, chat group
+* Video conference
 
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Check out our comprehensive [Example](https://github.com/stringeecom/flutter-samples) provided with
+this plugin.
 
-For help on editing plugin code, view
-the [documentation](https://flutter.io/developing-packages/#edit-plugin-package).
+To use this package, add the dependency to your pubspec.yaml file.
 
-## Release Notes
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  stringee_plugin: $version
+```
 
-### Flutter v1
+Replace `$version` with the plugin version you want to use. See a list of versions in [Changelog](CHANGELOG.md).
 
-- Version 1.0.0-no-null-safety:
-  + Add feature: live chat
-- Version 1.1.0-no-null-safety:
-  + Add feature: video conference in android
-  + Add feature: share screen in StringeeCall2 in android
+Check out our getting started guide at here:
 
-### Flutter v2
+- [Getting started with Stringee Call API using Flutter Plugin](https://asia-1.console.stringee.com/docs/getting-started-flutter)
+- [Getting started with Stringee Call2 API using Flutter Plugin](https://developer.stringee.com/docs/getting-started/getting-started-flutter2)
+- [Getting started with Stringee Chat API using Flutter Plugin](https://developer.stringee.com/docs/flutter-plugin/install)
+- [Getting started with Stringee Video Conference API using Flutter Plugin](https://developer.stringee.com/docs/video-conference-get-started-flutter)
 
-- Version 1.0.0:
-  + Add feature: live chat
-- Version 1.1.0:
-  + Upgrade sdk
-- Version 1.2.0:
-  + Add feature: video conference in android
-  + Add feature: share screen in StringeeCall2 in android
-- Version 1.2.1:
-  + Fix bug: fix StringeeVideoView in android
-- Version 1.2.2:
-  + Add feature: Allow to remove device token by package name  
-- Version 1.2.3:
-  + Allow to update phone number when updating user info
-- Version 1.2.4:
-  + Bug fixed: Crash when convert message from android native
-- Version 1.2.5:
-  + Upgrade android sdk
-- Version 1.2.6:
-  + Upgrade android webrtc version
-- Version 1.2.7:
-  + Bug fixed: iOS voIP socket will not wake on iOS 16
-- Version 1.2.8:
-  + Bug fixed: Crash on checking exist call progress
-- Version 1.2.9:
-  + Bug fixed: Connectivity doesn't establish with DualSIM iPhones.
-- Version 1.2.10:
-  + Bug fixed: ListView does not refresh after removing item.
+## License
+
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for
+details.

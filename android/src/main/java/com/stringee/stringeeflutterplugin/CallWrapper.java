@@ -38,10 +38,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     private Result makeCallResult;
     private Handler handler;
     private MediaState _mediaState;
+    private boolean localStreamShowed;
     private boolean hasRemoteStream;
     private boolean remoteStreamShowed;
-    private boolean isResumeVideo = false;
-    private boolean isIncomingCall = false;
+    private boolean isIncomingCall;
 
     private static final String TAG = "StringeeSDK";
 
@@ -536,7 +536,6 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
             return;
         }
 
-        isResumeVideo = true;
         call.resumeVideo();
         Log.d(TAG, "resumeVideo: success");
         Map map = new HashMap();
@@ -773,7 +772,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                     Map bodyMap = new HashMap();
                     bodyMap.put("callId", stringeeCall.getCallId());
                     map.put("body", bodyMap);
-                    if (isResumeVideo) {
+                    if (localStreamShowed) {
                         Map<String, Object> localViewOptions = stringeeManager.getLocalViewOptions().get(stringeeCall.getCallId());
                         FrameLayout localView = (FrameLayout) localViewOptions.get("layout");
                         boolean isMirror = (Boolean) localViewOptions.get("isMirror");
@@ -788,10 +787,8 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                         localView.addView(getLocalView(), layoutParams);
                         renderLocalView(scalingType);
                         getLocalView().setMirror(isMirror);
-
-
-                        isResumeVideo = false;
                     }
+                    localStreamShowed = true;
                     StringeeFlutterPlugin.eventSink.success(map);
                 }
             }

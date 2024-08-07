@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:stringee_flutter_plugin/src/StringeeClient.dart';
-import 'package:stringee_flutter_plugin/src/messaging/StringeeMessage.dart';
-
-import '../StringeeConstants.dart';
-import 'StringeeUser.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeConversation {
   String? _id;

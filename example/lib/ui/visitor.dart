@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import 'package:stringee_plugin/stringee_plugin.dart';
 
 StringeeClient client = new StringeeClient();
 StringeeChat chat = new StringeeChat(client);
@@ -334,7 +334,11 @@ class _VisitorPageState extends State<VisitorPage>
 
     /// if you want to change user info then use this fucntion
     chat
-        .updateUserInfo(name: "new name", email: "new email", avatar: "new avatar url", phone: "146845641565")
+        .updateUserInfo(
+            name: "new name",
+            email: "new email",
+            avatar: "new avatar url",
+            phone: "146845641565")
         .then((value) {
       bool status = value['status'];
       print("updateUserInfo: " + status.toString());

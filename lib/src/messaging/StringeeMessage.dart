@@ -1,7 +1,4 @@
-import 'package:stringee_flutter_plugin/src/messaging/StringeeUser.dart';
-
-import '../StringeeClient.dart';
-import '../StringeeConstants.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeMessage {
   /// Base

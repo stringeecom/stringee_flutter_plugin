@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeCall2 {
   String? _id;
@@ -435,4 +435,3 @@ class StringeeCall2 {
     _eventStreamController.close();
   }
 }
-

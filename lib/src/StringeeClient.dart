@@ -4,10 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 
-import 'StringeeConstants.dart';
-import 'call/StringeeCall.dart';
-import 'call/StringeeCall2.dart';
-import 'messaging/StringeeChatRequest.dart';
+import '../stringee_plugin.dart';
 
 class StringeeClient {
   // Native
@@ -51,8 +48,7 @@ class StringeeClient {
     // Config client
     methodChannel.invokeMapMethod('setupClient', params);
 
-    // Xu ly su kien nhan duoc tu native
-    // eventChannel.receiveBroadcastStream().listen(this._listener);
+    // Handle events received from native
     broadcastStream.listen(this._listener);
   }
 
@@ -129,7 +125,7 @@ class StringeeClient {
     return rData;
   }
 
-  /// Disconnect from [StringeeCLient]
+  /// Disconnect from [StringeeClient]
   Future<Map<dynamic, dynamic>> disconnect() async {
     final params = {'uuid': _uuid};
 

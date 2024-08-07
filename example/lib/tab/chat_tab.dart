@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/ui/conversation_info.dart';
+import 'package:stringee_plugin/stringee_plugin.dart';
 
 StringeeClient client = new StringeeClient();
 StringeeChat chat = new StringeeChat(client);
@@ -245,7 +245,9 @@ class ChatTabState extends State<ChatTab> {
                         width: 175.0,
                         child: new ElevatedButton(
                           onPressed: () {
-                            chat.getConversationById('getConversationById').then((value) {
+                            chat
+                                .getConversationById('getConversationById')
+                                .then((value) {
                               print("Flutter - getConversationById - result: " +
                                   value.toString());
 

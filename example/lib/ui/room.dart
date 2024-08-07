@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flat_list/flat_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/button/circle_button.dart';
 import 'package:stringee_flutter_plugin_example/button/rounded_button.dart';
+import 'package:stringee_plugin/stringee_plugin.dart';
 
 class Room extends StatefulWidget {
   late StringeeVideo _video;

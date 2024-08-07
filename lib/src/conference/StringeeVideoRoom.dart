@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../../stringee_flutter_plugin.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeVideoRoom {
   late String _id;

@@ -1,4 +1,4 @@
-import 'package:stringee_flutter_plugin/src/StringeeConstants.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeUser {
   String? _userId;
