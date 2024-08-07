@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../stringee_flutter_plugin.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeVideoTrack {
   late String _id;

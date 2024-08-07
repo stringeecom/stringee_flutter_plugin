@@ -1,7 +1,6 @@
-import 'package:stringee_flutter_plugin/src/notification/NotificationIcon.dart';
+import '../../stringee_plugin.dart';
 
-import '../../stringee_flutter_plugin.dart';
-
+@Deprecated('This class will be removed in the next major release.')
 class NotificationAndroid {
   int id;
   String channelId;

@@ -1,3 +1,4 @@
+@Deprecated('This class will be removed in the next major release.')
 enum NotificationCategory {
   Call,
   Navigation,
@@ -113,7 +114,7 @@ enum NotificationLockScreenVisibility {
 }
 
 extension NotificationLockScreenVisibilityValueExtension
-on NotificationLockScreenVisibility? {
+    on NotificationLockScreenVisibility? {
   int get value {
     switch (this) {
       case NotificationLockScreenVisibility.Secret:
@@ -140,8 +141,7 @@ enum NotificationRingtoneType {
   Alarm,
 }
 
-extension NotificationRingtoneTypeValueExtension
-on NotificationRingtoneType? {
+extension NotificationRingtoneTypeValueExtension on NotificationRingtoneType? {
   int get value {
     switch (this) {
       case NotificationRingtoneType.Notification:
@@ -156,7 +156,7 @@ on NotificationRingtoneType? {
   }
 }
 
-enum IconSourceFrom{
+enum IconSourceFrom {
   Drawable,
   Mipmap,
 }

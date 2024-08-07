@@ -15,7 +15,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
 
-  stringee_flutter_plugin:
+  stringee_plugin:
     path: ../
   permission_handler: ^11.0.0
   http: ^1.1.0

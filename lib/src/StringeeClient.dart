@@ -4,10 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 
-import 'StringeeConstants.dart';
-import 'call/StringeeCall.dart';
-import 'call/StringeeCall2.dart';
-import 'messaging/StringeeChatRequest.dart';
+import '../stringee_plugin.dart';
 
 class StringeeClient {
   // Native

@@ -1,5 +1,4 @@
-import '../StringeeClient.dart';
-import '../StringeeConstants.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeChatRequest {
   late String _convId;

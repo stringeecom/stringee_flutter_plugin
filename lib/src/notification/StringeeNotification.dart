@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:stringee_flutter_plugin/src/notification/NotificationChannel.dart';
 
-import '../../stringee_flutter_plugin.dart';
+import '../../stringee_plugin.dart';
 
 typedef CallBack = Future<void> Function(String actionId);
 
+@Deprecated('This class will be removed in the next major release.')
 class StringeeNotification {
   static const MethodChannel methodChannel =
       MethodChannel('com.stringee.flutter.methodchannel.notification');
@@ -66,7 +66,6 @@ class StringeeNotification {
 
   /// Cancel notification
   Future<Map<dynamic, dynamic>> cancel(int notificationId) async {
-
     if (Platform.isIOS) {
       final params = {
         'status': false,

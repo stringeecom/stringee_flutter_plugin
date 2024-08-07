@@ -2,8 +2,8 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/button/circle_button.dart';
+import 'package:stringee_plugin/stringee_plugin.dart';
 
 class Call extends StatefulWidget {
   late StringeeClient _client;

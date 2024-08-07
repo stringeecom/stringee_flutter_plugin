@@ -1,5 +1,6 @@
-import '../../stringee_flutter_plugin.dart';
+import '../../stringee_plugin.dart';
 
+@Deprecated('This class will be removed in the next major release.')
 class NotificationSound {
   String? source;
   SourceType sourceType = SourceType.System;

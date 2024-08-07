@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 import 'package:stringee_flutter_plugin_example/ui/room.dart';
+import 'package:stringee_plugin/stringee_plugin.dart';
 
 StringeeClient client = new StringeeClient();
 

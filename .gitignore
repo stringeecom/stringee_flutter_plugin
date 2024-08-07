@@ -1,17 +1,26 @@
-.DS_Store
+# Ignore Dart tool directories
 .dart_tool/
-
 .packages
 .pub/
 pubspec.lock
 
+# Ignore build directories
 build/
 example/.flutter-plugins-dependencies
+example/android/app/release/
+
+# Ignore IDE directories
 .idea/
+.vscode/
+
+# Ignore macOS specific files
+.DS_Store
+
+# Ignore Flutter specific files
 .last_build_id
 contents.xcworkspacedata
 Flutter.podspec
 Podfile
-example/android/app/release/
 
-.vscode/
+# Ignore module files
+stringee_flutter_plugin.iml

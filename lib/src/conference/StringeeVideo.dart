@@ -1,4 +1,4 @@
-import '../../stringee_flutter_plugin.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeVideo {
   late StringeeClient _client;

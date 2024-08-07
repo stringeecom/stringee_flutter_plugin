@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import '../StringeeClient.dart';
-import '../StringeeConstants.dart';
-import 'StringeeConversation.dart';
-import 'StringeeMessage.dart';
-import 'StringeeUser.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeChat {
   late StringeeClient _client;

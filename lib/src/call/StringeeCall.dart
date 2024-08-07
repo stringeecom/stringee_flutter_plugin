@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../StringeeClient.dart';
-import '../StringeeConstants.dart';
+import '../../stringee_plugin.dart';
 
 class StringeeCall {
   String? _id;
