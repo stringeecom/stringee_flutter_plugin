@@ -2,9 +2,9 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'stringee_flutter_plugin'
+  s.name             = 'stringee_plugin'
   s.version          = '0.0.1'
-  s.summary          = 'stringee_flutter_plugin'
+  s.summary          = 'stringee_plugin'
   s.description      = <<-DESC
 Stringee plugin for flutter.
                        DESC
