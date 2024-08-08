@@ -1,3 +1,7 @@
+### 1.2.13:
+
+- Bugfix: Update file name podspec with new plugin name.
+
 ### 1.2.12:
 
 - Improved:
