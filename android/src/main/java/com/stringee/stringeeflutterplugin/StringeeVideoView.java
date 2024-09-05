@@ -33,12 +33,12 @@ public class StringeeVideoView implements PlatformView {
             boolean forCall = (boolean) creationParams.get("forCall");
             if (forCall) {
                 String callId = (String) creationParams.get("callId");
-                if (!(callId == null || callId.length() == 0)) {
+                if (!Utils.isStringEmpty(callId)) {
                     renderView(frameLayout, callId, creationParams);
                 }
             } else {
                 String trackId = (String) creationParams.get("trackId");
-                if (!(trackId == null || trackId.length() == 0)) {
+                if (!Utils.isStringEmpty(trackId)) {
                     renderView(context, frameLayout, trackId, creationParams);
                 }
             }

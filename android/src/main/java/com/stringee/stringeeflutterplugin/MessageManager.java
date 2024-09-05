@@ -32,7 +32,7 @@ public class MessageManager {
      * @param result
      */
     public void edit(String convId, String msgId, final String content, final Result result) {
-        Map map = new HashMap();
+        Map<String,Object> map = new HashMap<>();
 
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "edit: false - -1 - StringeeClient is disconnected");
@@ -43,7 +43,7 @@ public class MessageManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "edit: false - -2 - convId is invalid");
             map.put("status", false);
             map.put("code", -2);
@@ -52,7 +52,7 @@ public class MessageManager {
             return;
         }
 
-        if (msgId == null || msgId.isEmpty()) {
+        if (Utils.isStringEmpty(msgId)) {
             Log.d(TAG, "edit: false - -2 - msgId is invalid");
             map.put("status", false);
             map.put("code", -2);
@@ -124,7 +124,7 @@ public class MessageManager {
      * @param result
      */
     public void pinOrUnPin(String convId, String msgId, final boolean pinOrUnPin, final Result result) {
-        Map map = new HashMap();
+        Map<String,Object> map = new HashMap<>();
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "pinOrUnPin: false - -1 - StringeeClient is disconnected");
             map.put("status", false);
@@ -134,7 +134,7 @@ public class MessageManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "pinOrUnPin: false - -2 - convId is invalid");
             map.put("status", false);
             map.put("code", -2);
@@ -143,7 +143,7 @@ public class MessageManager {
             return;
         }
 
-        if (msgId == null || msgId.isEmpty()) {
+        if (Utils.isStringEmpty(msgId)) {
             Log.d(TAG, "pinOrUnPin: false - -2 - msgId is invalid");
             map.put("status", false);
             map.put("code", -2);

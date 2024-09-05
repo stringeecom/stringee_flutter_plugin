@@ -567,43 +567,34 @@ class StringeeMessage {
     params['convId'] = _convId!.trim();
     params['type'] = _type.value;
     if (_customData != null) params['customData'] = _customData;
-    switch (this._type) {
-      case MsgType.text:
-      case MsgType.link:
-        params['text'] = _text!.trim();
-        break;
-      case MsgType.photo:
-        if (_filePath != null) params['filePath'] = _filePath!.trim();
-        if (_thumbnail != null) params['thumbnail'] = _thumbnail!.trim();
-        if (_ratio != null) params['ratio'] = _ratio;
-        break;
-      case MsgType.file:
-        if (_filePath != null) params['filePath'] = _filePath!.trim();
-        if (_fileName != null) params['filename'] = _fileName!.trim();
-        if (_fileLength != null) params['length'] = _fileLength;
-        break;
-      case MsgType.video:
-        if (_filePath != null) params['filePath'] = _filePath!.trim();
-        if (_thumbnail != null) params['thumbnail'] = _thumbnail!.trim();
-        if (_ratio != null) params['ratio'] = _ratio;
-        if (_duration != null) params['duration'] = _duration;
-        break;
-      case MsgType.audio:
-        if (_filePath != null) params['filePath'] = _filePath!.trim();
-        if (_duration != null) params['duration'] = _duration;
-        break;
-      case MsgType.location:
-        if (_latitude != null) params['lat'] = _latitude;
-        if (_longitude != null) params['lon'] = _longitude;
-        break;
-      case MsgType.contact:
-        if (_vcard != null) params['vcard'] = _vcard!.trim();
-        break;
-      case MsgType.sticker:
-        if (_stickerCategory != null)
-          params['stickerCategory'] = _stickerCategory!.trim();
-        if (_stickerName != null) params['stickerName'] = _stickerName!.trim();
-        break;
+    if (this._type == MsgType.text ||this._type == MsgType.link) {
+      params['text'] = _text!.trim();
+    } else if (this._type == MsgType.photo) {
+      if (_filePath != null) params['filePath'] = _filePath!.trim();
+      if (_thumbnail != null) params['thumbnail'] = _thumbnail!.trim();
+      if (_ratio != null) params['ratio'] = _ratio;
+    } else if (this._type == MsgType.file) {
+      if (_filePath != null) params['filePath'] = _filePath!.trim();
+      if (_fileName != null) params['filename'] = _fileName!.trim();
+      if (_fileLength != null) params['length'] = _fileLength;
+    } else if (this._type == MsgType.video) {
+      if (_filePath != null) params['filePath'] = _filePath!.trim();
+      if (_thumbnail != null) params['thumbnail'] = _thumbnail!.trim();
+      if (_ratio != null) params['ratio'] = _ratio;
+      if (_duration != null) params['duration'] = _duration;
+    } else if (this._type == MsgType.audio) {
+      if (_filePath != null) params['filePath'] = _filePath!.trim();
+      if (_duration != null) params['duration'] = _duration;
+    } else if (this._type == MsgType.location) {
+      if (_latitude != null) params['lat'] = _latitude;
+      if (_longitude != null) params['lon'] = _longitude;
+    } else if (this._type == MsgType.contact) {
+      if (_vcard != null) params['vcard'] = _vcard!.trim();
+    } else if (this._type == MsgType.sticker) {
+      if (_stickerCategory != null) {
+        params['stickerCategory'] = _stickerCategory!.trim();
+      }
+      if (_stickerName != null) params['stickerName'] = _stickerName!.trim();
     }
     return params;
   }

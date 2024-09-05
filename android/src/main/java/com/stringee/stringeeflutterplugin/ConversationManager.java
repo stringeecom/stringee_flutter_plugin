@@ -40,7 +40,7 @@ public class ConversationManager {
     public void delete(final String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "delete: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -48,9 +48,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "deleteConversation: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -121,7 +121,7 @@ public class ConversationManager {
     public void addParticipants(final String convId, final List<User> participants, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "addParticipants: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -129,9 +129,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "addParticipants: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -208,7 +208,7 @@ public class ConversationManager {
     public void removeParticipants(final String convId, final List<User> participants, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "removeParticipants: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -216,9 +216,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "removeParticipants: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -236,7 +236,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "removeParticipants: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 List participantsArray = new ArrayList();
                                 for (int j = 0; j < users.size(); j++) {
                                     participantsArray.add(Utils.convertUserToMap(users.get(j)));
@@ -257,7 +257,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -274,7 +274,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -294,7 +294,7 @@ public class ConversationManager {
     public void sendMessage(final String convId, final Message message, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "sendMessage: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -302,9 +302,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "sendMessage: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -322,7 +322,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "sendMessage: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -337,7 +337,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -354,7 +354,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -375,7 +375,7 @@ public class ConversationManager {
     public void getMessages(String convId, final String[] msgIds, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "getMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -383,9 +383,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "getMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -403,7 +403,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getMessages: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
@@ -423,7 +423,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -440,7 +440,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -459,9 +459,9 @@ public class ConversationManager {
      * @param result
      */
     public void getLocalMessages(String convId, final int count, final Result result) {
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "getLocalMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -479,7 +479,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getLocalMessages: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
@@ -499,7 +499,7 @@ public class ConversationManager {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
@@ -518,7 +518,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "getLocalMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -539,7 +539,7 @@ public class ConversationManager {
     public void getLastMessages(String convId, final int count, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "getLastMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -547,9 +547,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "getLastMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -567,7 +567,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getLastMessages: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
@@ -588,7 +588,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -606,7 +606,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "getLastMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -628,7 +628,7 @@ public class ConversationManager {
     public void getMessagesAfter(String convId, final long seq, final int count, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "getMessagesAfter: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -636,9 +636,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "getMessagesAfter: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -656,7 +656,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getMessagesAfter: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
@@ -677,7 +677,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -695,7 +695,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "getMessagesAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -717,7 +717,7 @@ public class ConversationManager {
     public void getMessagesBefore(String convId, final long seq, final int count, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "getMessagesBefore: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -725,9 +725,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "getMessagesBefore: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -745,7 +745,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getMessagesBefore: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 List msgArray = new ArrayList();
                                 for (int i = 0; i < messages.size(); i++) {
                                     msgArray.add(Utils.convertMessageToMap(messages.get(i)));
@@ -767,7 +767,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -785,7 +785,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -807,7 +807,7 @@ public class ConversationManager {
     public void updateConversation(String convId, final String name, final String avatar, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "updateConversation: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -815,9 +815,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "updateConversation: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -835,7 +835,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "updateConversation: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -851,7 +851,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -869,7 +869,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -891,7 +891,7 @@ public class ConversationManager {
     public void setRole(String convId, final String userId, final UserRole role, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "setRole: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -899,9 +899,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "setRole: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -921,7 +921,7 @@ public class ConversationManager {
                                     @Override
                                     public void run() {
                                         Log.d(TAG, "setRole: success");
-                                        Map map = new HashMap();
+                                        Map<String,Object> map = new HashMap<>();
                                         map.put("status", true);
                                         map.put("code", 0);
                                         map.put("message", "Success");
@@ -937,7 +937,7 @@ public class ConversationManager {
                                     @Override
                                     public void run() {
                                         Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                        Map map = new HashMap();
+                                        Map<String,Object> map = new HashMap<>();
                                         map.put("status", false);
                                         map.put("code", stringeeError.getCode());
                                         map.put("message", stringeeError.getMessage());
@@ -955,7 +955,7 @@ public class ConversationManager {
                                     @Override
                                     public void run() {
                                         Log.d(TAG, "setRole: success");
-                                        Map map = new HashMap();
+                                        Map<String,Object> map = new HashMap<>();
                                         map.put("status", true);
                                         map.put("code", 0);
                                         map.put("message", "Success");
@@ -971,7 +971,7 @@ public class ConversationManager {
                                     @Override
                                     public void run() {
                                         Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                        Map map = new HashMap();
+                                        Map<String,Object> map = new HashMap<>();
                                         map.put("status", false);
                                         map.put("code", stringeeError.getCode());
                                         map.put("message", stringeeError.getMessage());
@@ -991,7 +991,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1012,7 +1012,7 @@ public class ConversationManager {
     public void deleteMessages(String convId, JSONArray msgIdArray, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "deleteMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1020,9 +1020,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "deleteMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -1037,7 +1037,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "deleteMessages: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1052,7 +1052,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "deleteMessages: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1066,7 +1066,7 @@ public class ConversationManager {
     public void revokeMessages(String convId, JSONArray msgIdArray, boolean deleted, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "revokeMessages: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1074,9 +1074,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "revokeMessages: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -1127,7 +1127,7 @@ public class ConversationManager {
     public void markAsRead(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "markAsRead: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1135,9 +1135,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "markAsRead: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -1155,7 +1155,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "markAsRead: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -1171,7 +1171,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -1189,7 +1189,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1211,7 +1211,7 @@ public class ConversationManager {
     public void sendChatTranscript(String convId, String email, String domain, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "sendChatTranscript: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1219,9 +1219,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "sendChatTranscript: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -1239,7 +1239,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "sendChatTranscript: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -1255,7 +1255,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "sendChatTranscript: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -1273,7 +1273,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "sendChatTranscript: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1293,7 +1293,7 @@ public class ConversationManager {
     public void endChat(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "endChat: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1301,9 +1301,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "endChat: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -1321,7 +1321,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "endChat: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -1337,7 +1337,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "endChat: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -1355,7 +1355,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "endChat: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1375,7 +1375,7 @@ public class ConversationManager {
     public void beginTyping(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "beginTyping: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1383,9 +1383,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "beginTyping: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -1403,7 +1403,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "beginTyping: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -1419,7 +1419,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -1437,7 +1437,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1457,7 +1457,7 @@ public class ConversationManager {
     public void endTyping(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "endTyping: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1465,9 +1465,9 @@ public class ConversationManager {
             return;
         }
 
-        if (convId == null || convId.isEmpty()) {
+        if (Utils.isStringEmpty(convId)) {
             Log.d(TAG, "endTyping: false - -2 - convId is invalid");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "convId is invalid");
@@ -1485,7 +1485,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "endTyping: success");
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", true);
                                 map.put("code", 0);
                                 map.put("message", "Success");
@@ -1501,7 +1501,7 @@ public class ConversationManager {
                             @Override
                             public void run() {
                                 Log.d(TAG, "endTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<>();
                                 map.put("status", false);
                                 map.put("code", stringeeError.getCode());
                                 map.put("message", stringeeError.getMessage());
@@ -1519,7 +1519,7 @@ public class ConversationManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "endTyping: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());

@@ -2,8 +2,6 @@ package com.stringee.stringeeflutterplugin;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.util.Log;
 
@@ -23,11 +21,10 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
 public class VideoConferenceManager {
-    private ClientWrapper clientWrapper;
-    private StringeeManager stringeeManager;
-    private Handler handler;
-    private StringeeVideo stringeeVideo;
-    private Map<String, RoomManager> roomsMap = new HashMap<>();
+    private final ClientWrapper clientWrapper;
+    private final StringeeManager stringeeManager;
+    private final Handler handler;
+    private final Map<String, RoomManager> roomsMap = new HashMap<>();
 
     private static final String TAG = "StringeeSDK";
 
@@ -35,11 +32,6 @@ public class VideoConferenceManager {
         this.clientWrapper = clientWrapper;
         stringeeManager = StringeeManager.getInstance();
         handler = stringeeManager.getHandler();
-        stringeeVideo = new StringeeVideo();
-    }
-
-    public StringeeVideo getStringeeVideo() {
-        return stringeeVideo;
     }
 
     public Map<String, RoomManager> getRoomsMap() {
@@ -55,7 +47,7 @@ public class VideoConferenceManager {
     public void connect(final String roomToken, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "Room connect: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -64,7 +56,7 @@ public class VideoConferenceManager {
         }
 
         RoomManager roomManager = new RoomManager(clientWrapper, this);
-        roomManager.connect(stringeeVideo, roomToken, result);
+        roomManager.connect(roomToken, result);
     }
 
     /**
@@ -76,7 +68,7 @@ public class VideoConferenceManager {
     public void createLocalVideoTrack(final StringeeVideoTrack.Options options, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "createLocalVideoTrack: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -84,7 +76,7 @@ public class VideoConferenceManager {
             return;
         }
 
-        StringeeVideoTrack localVideoTrack = stringeeVideo.createLocalVideoTrack(stringeeManager.getContext(), options, new StatusListener() {
+        StringeeVideoTrack localVideoTrack = StringeeVideo.createLocalVideoTrack(stringeeManager.getContext(), options, new StatusListener() {
             @Override
             public void onSuccess() {
 
@@ -95,7 +87,7 @@ public class VideoConferenceManager {
         stringeeManager.getTracksMap().put(localId, videoTrackManager);
 
         Log.d(TAG, "createLocalVideoTrack: success");
-        Map map = new HashMap();
+        Map<String,Object> map = new HashMap<>();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -111,7 +103,7 @@ public class VideoConferenceManager {
     public void createCaptureScreenTrack(final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "createCaptureScreenTrack: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -119,53 +111,54 @@ public class VideoConferenceManager {
             return;
         }
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            final int REQUEST_CODE = new Random().nextInt(65536);
+        final int REQUEST_CODE = new Random().nextInt(65536);
 
-            stringeeManager.getCaptureManager().getActivityResult(new ActivityResultListener() {
-                @Override
-                public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-                    if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                        stringeeManager.getCaptureManager().getScreenCapture().createCapture(data);
-                    }
-                    return false;
-                }
-            });
+        stringeeManager.getCaptureManager().createCapture(REQUEST_CODE, new ActivityResultListener() {
+            @Override
+            public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+                if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                    stringeeManager.getCaptureManager().getScreenCapture().createCapture(data, new CallbackListener<StringeeVideoTrack>() {
+                        @Override
+                        public void onSuccess(StringeeVideoTrack stringeeVideoTrack) {
+                            String localId = Utils.createLocalId();
+                            VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, stringeeVideoTrack, localId, false);
+                            stringeeManager.getTracksMap().put(localId, videoTrackManager);
+                            Log.d(TAG, "createCaptureScreenTrack: success");
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", Utils.convertLocalVideoTrackToMap(videoTrackManager, clientWrapper.getClient().getUserId()));
+                            result.success(map);
+                        }
 
-            stringeeManager.getCaptureManager().getScreenCapture().startCapture(REQUEST_CODE, new CallbackListener<StringeeVideoTrack>() {
-                @Override
-                public void onSuccess(StringeeVideoTrack videoTrack) {
-                    String localId = Utils.createLocalId();
-                    VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, videoTrack, localId, false);
-                    stringeeManager.getTracksMap().put(localId, videoTrackManager);
-                    Log.d(TAG, "createCaptureScreenTrack: success");
-                    Map map = new HashMap();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", Utils.convertLocalVideoTrackToMap(videoTrackManager, clientWrapper.getClient().getUserId()));
-                    result.success(map);
+                        @Override
+                        public void onError(StringeeError stringeeError) {
+                            super.onError(stringeeError);
+                            Log.d(TAG, "createCaptureScreenTrack: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        }
+                    });
+                } else {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "createCaptureScreenTrack: false - -101 - Capture request is rejected");
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", -101);
+                            map.put("message", "Capture request is rejected");
+                            result.success(map);
+                        }
+                    });
                 }
-
-                @Override
-                public void onError(StringeeError stringeeError) {
-                    super.onError(stringeeError);
-                    Log.d(TAG, "createCaptureScreenTrack: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map map = new HashMap();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                }
-            });
-        } else {
-            Log.d(TAG, "createCaptureScreenTrack: false - -5 - This feature requires android api level >= 21");
-            Map map = new HashMap();
-            map.put("status", false);
-            map.put("code", -5);
-            map.put("message", "This feature requires android api level >= 21");
-            result.success(map);
-        }
+                return false;
+            }
+        });
     }
 
     /**
@@ -178,7 +171,7 @@ public class VideoConferenceManager {
     public void publish(final String roomId, final String localId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "publish: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -189,7 +182,7 @@ public class VideoConferenceManager {
         RoomManager roomManager = roomsMap.get(roomId);
         if (roomManager == null) {
             Log.d(TAG, "publish: false - -3 - Room is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Room is not found");
@@ -200,7 +193,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(localId);
         if (videoTrackManager == null) {
             Log.d(TAG, "publish: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -221,7 +214,7 @@ public class VideoConferenceManager {
     public void unpublish(final String roomId, final String trackId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "unpublish: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -232,7 +225,7 @@ public class VideoConferenceManager {
         RoomManager roomManager = roomsMap.get(roomId);
         if (roomManager == null) {
             Log.d(TAG, "unpublish: false - -3 - Room is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Room is not found");
@@ -243,7 +236,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(trackId);
         if (videoTrackManager == null) {
             Log.d(TAG, "unpublish: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -265,7 +258,7 @@ public class VideoConferenceManager {
     public void subscribe(final String roomId, final String trackId, final StringeeVideoTrack.Options options, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "subscribe: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -276,7 +269,7 @@ public class VideoConferenceManager {
         RoomManager roomManager = roomsMap.get(roomId);
         if (roomManager == null) {
             Log.d(TAG, "subscribe: false - -3 - Room is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Room is not found");
@@ -287,7 +280,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(trackId);
         if (videoTrackManager == null) {
             Log.d(TAG, "subscribe: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -308,7 +301,7 @@ public class VideoConferenceManager {
     public void unsubscribe(final String roomId, final String trackId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "unsubscribe: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -319,7 +312,7 @@ public class VideoConferenceManager {
         RoomManager roomManager = roomsMap.get(roomId);
         if (roomManager == null) {
             Log.d(TAG, "unsubscribe: false - -3 - Room is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Room is not found");
@@ -330,7 +323,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(trackId);
         if (videoTrackManager == null) {
             Log.d(TAG, "unsubscribe: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -351,7 +344,7 @@ public class VideoConferenceManager {
     public void leave(final String roomId, final boolean allClient, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "leave: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -362,7 +355,7 @@ public class VideoConferenceManager {
         RoomManager roomManager = roomsMap.get(roomId);
         if (roomManager == null) {
             Log.d(TAG, "leave: false - -3 - Room is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Room is not found");
@@ -383,7 +376,7 @@ public class VideoConferenceManager {
     public void sendMessage(final String roomId, final JSONObject msg, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "sendMessage: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -394,7 +387,7 @@ public class VideoConferenceManager {
         RoomManager roomManager = roomsMap.get(roomId);
         if (roomManager == null) {
             Log.d(TAG, "sendMessage: false - -3 - Room is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Room is not found");
@@ -415,7 +408,7 @@ public class VideoConferenceManager {
     public void mute(final String localId, final boolean mute, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "mute: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -426,7 +419,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(localId);
         if (videoTrackManager == null) {
             Log.d(TAG, "mute: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -437,7 +430,7 @@ public class VideoConferenceManager {
         videoTrackManager.getVideoTrack().mute(mute);
 
         Log.d(TAG, "mute: success");
-        Map map = new HashMap();
+        Map<String,Object> map = new HashMap<>();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -454,7 +447,7 @@ public class VideoConferenceManager {
     public void enableVideo(final String localId, final boolean enable, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "enableVideo: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -465,7 +458,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(localId);
         if (videoTrackManager == null) {
             Log.d(TAG, "enableVideo: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -476,7 +469,7 @@ public class VideoConferenceManager {
         videoTrackManager.getVideoTrack().enableVideo(enable);
 
         Log.d(TAG, "enableVideo: success");
-        Map map = new HashMap();
+        Map<String,Object> map = new HashMap<>();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -492,7 +485,7 @@ public class VideoConferenceManager {
     public void switchCamera(final String localId, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "switchCamera: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -503,7 +496,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(localId);
         if (videoTrackManager == null) {
             Log.d(TAG, "switchCamera: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -518,7 +511,7 @@ public class VideoConferenceManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "switchCamera: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -534,7 +527,7 @@ public class VideoConferenceManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "switchCamera: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -555,7 +548,7 @@ public class VideoConferenceManager {
     public void switchCamera(final String localId, final String cameraName, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "switchCamera: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -566,7 +559,7 @@ public class VideoConferenceManager {
         VideoTrackManager videoTrackManager = stringeeManager.getTracksMap().get(localId);
         if (videoTrackManager == null) {
             Log.d(TAG, "switchCamera: false - -3 - Video track is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -3);
             map.put("message", "Video track is not found");
@@ -580,7 +573,7 @@ public class VideoConferenceManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "switchCamera: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -596,7 +589,7 @@ public class VideoConferenceManager {
                     @Override
                     public void run() {
                         Log.d(TAG, "switchCamera: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());

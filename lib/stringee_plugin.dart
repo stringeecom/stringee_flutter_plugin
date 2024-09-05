@@ -16,11 +16,3 @@ export 'src/messaging/StringeeChatRequest.dart';
 export 'src/messaging/StringeeConversation.dart';
 export 'src/messaging/StringeeMessage.dart';
 export 'src/messaging/StringeeUser.dart';
-/// notification
-export 'src/notification/NotificationAction.dart';
-export 'src/notification/NotificationAndroid.dart';
-export 'src/notification/NotificationChannel.dart';
-export 'src/notification/NotificationIcon.dart';
-export 'src/notification/NotificationSound.dart';
-export 'src/notification/StringeeNotification.dart';
-export 'src/notification/StringeeNotificationEnums.dart';

@@ -16,7 +16,7 @@ public class VideoTrackManager implements Listener {
     private String localId;
     private StringeeVideoTrack videoTrack;
     private boolean mediaAvailable = false;
-    private boolean forCall = false;
+    private boolean forCall;
     private Listener listener;
     private static final String TAG = "StringeeSDK";
 
@@ -64,7 +64,7 @@ public class VideoTrackManager implements Listener {
 
                 Log.d(TAG, "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId()));
                 if (!forCall) {
-                    Map map = new HashMap();
+                    Map<String,Object> map = new HashMap<>();
                     map.put("nativeEventType", RoomEvent.getValue());
                     map.put("event", "trackReadyToPlay");
                     map.put("uuid", clientWrapper.getId());

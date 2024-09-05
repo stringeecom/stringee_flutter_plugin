@@ -73,7 +73,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         chatRequestManager = new ChatRequestManager(this);
         videoConferenceManager = new VideoConferenceManager(this);
         client = new StringeeClient(stringeeManager.getContext());
-        if (baseAPIUrl != null) {
+        if (!Utils.isStringEmpty(baseAPIUrl)) {
             client.setBaseAPIUrl(baseAPIUrl);
         }
         setListener();
@@ -111,10 +111,10 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public CallWrapper callWrapper(final String from, final String to, final boolean isVideoCall, final String customData, final String videoResolution, final Result result) {
         StringeeCall call = new StringeeCall(client, from, to);
         call.setVideoCall(isVideoCall);
-        if (customData != null) {
+        if (!Utils.isStringEmpty(customData)) {
             call.setCustom(customData);
         }
-        if (videoResolution != null) {
+        if (!Utils.isStringEmpty(videoResolution)) {
             if (videoResolution.equalsIgnoreCase("NORMAL")) {
                 call.setQuality(StringeeConstant.QUALITY_NORMAL);
             } else if (videoResolution.equalsIgnoreCase("HD")) {
@@ -144,7 +144,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public Call2Wrapper call2Wrapper(final String from, final String to, final boolean isVideoCall, final String customData, final Result result) {
         StringeeCall2 call = new StringeeCall2(client, from, to);
         call.setVideoCall(isVideoCall);
-        if (customData != null) {
+        if (!Utils.isStringEmpty(customData)) {
             call.setCustom(customData);
         }
 
@@ -175,7 +175,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onConnectionConnected: " + stringeeClient.getUserId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "didConnect");
                 map.put("uuid", uuid);
@@ -195,7 +195,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onConnectionDisconnected: " + stringeeClient.getUserId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "didDisconnect");
                 map.put("uuid", uuid);
@@ -216,7 +216,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             public void run() {
                 Log.d(TAG, "onIncomingCall: " + stringeeCall.getCallId());
                 stringeeManager.getCallsMap().put(stringeeCall.getCallId(), new CallWrapper(ClientWrapper.this, stringeeCall));
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "incomingCall");
                 map.put("uuid", uuid);
@@ -252,7 +252,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             public void run() {
                 Log.d(TAG, "onIncomingCall2: " + stringeeCall2.getCallId());
                 stringeeManager.getCall2sMap().put(stringeeCall2.getCallId(), new Call2Wrapper(ClientWrapper.this, stringeeCall2));
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "incomingCall2");
                 map.put("uuid", uuid);
@@ -282,7 +282,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onConnectionError: " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "didFailWithError");
                 map.put("uuid", uuid);
@@ -302,7 +302,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onRequestNewToken: " + stringeeClient.getUserId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "requestAccessToken");
                 map.put("uuid", uuid);
@@ -321,7 +321,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             public void run() {
                 Log.d(TAG, "onCustomMessage: " + from + " - " + jsonObject.toString());
                 try {
-                    Map map = new HashMap();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("nativeEventType", ClientEvent.getValue());
                     map.put("event", "didReceiveCustomMessage");
                     map.put("uuid", uuid);
@@ -331,7 +331,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     map.put("body", bodyMap);
                     StringeeFlutterPlugin.eventSink.success(map);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Logging.e(ClientWrapper.class, e);
                 }
             }
         });
@@ -348,7 +348,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onChangeEvent: " + stringeeChange.getObjectType() + " - " + stringeeChange.getChangeType());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ChatEvent.getValue());
                 map.put("event", "didReceiveChangeEvent");
                 map.put("uuid", uuid);
@@ -377,7 +377,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onReceiveChatRequest: " + chatRequest.getConvId() + " - from: " + chatRequest.getCustomerId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "didReceiveChatRequest");
                 map.put("uuid", uuid);
@@ -393,7 +393,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onReceiveTransferChatRequest: " + chatRequest.getConvId() + " - from: " + chatRequest.getCustomerId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "didReceiveTransferChatRequest");
                 map.put("uuid", uuid);
@@ -414,7 +414,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onTimeoutAnswerChat: " + chatRequest.getConvId() + " - from: " + chatRequest.getCustomerId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "timeoutAnswerChat");
                 map.put("uuid", uuid);
@@ -430,7 +430,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onTimeoutInQueue: " + conversation.getId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "timeoutInQueue");
                 map.put("uuid", uuid);
@@ -451,7 +451,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onConversationEnded: " + conversation.getId() + " - endedBy: " + user.getUserId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "conversationEnded");
                 map.put("uuid", uuid);
@@ -470,7 +470,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onTyping: " + conversation.getId() + " - endedBy: " + user.getUserId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "userBeginTyping");
                 map.put("uuid", uuid);
@@ -479,7 +479,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 bodyMap.put("userId", user.getUserId());
                 bodyMap.put("displayName", user.getUserId());
                 String userName = user.getName();
-                if (userName != null) {
+                if (!Utils.isStringEmpty(userName)) {
                     if (!TextUtils.isEmpty(userName.trim())) {
                         bodyMap.put("displayName", userName);
                     }
@@ -496,7 +496,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             @Override
             public void run() {
                 Log.d(TAG, "onEndTyping: " + conversation.getId() + " - endedBy: " + user.getUserId());
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", ClientEvent.getValue());
                 map.put("event", "userEndTyping");
                 map.put("uuid", uuid);
@@ -505,10 +505,8 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 bodyMap.put("userId", user.getUserId());
                 bodyMap.put("displayName", user.getUserId());
                 String userName = user.getName();
-                if (userName != null) {
-                    if (!TextUtils.isEmpty(userName.trim())) {
-                        bodyMap.put("displayName", userName);
-                    }
+                if (!Utils.isStringEmpty(userName)) {
+                    bodyMap.put("displayName", userName);
                 }
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin.eventSink.success(map);
@@ -524,26 +522,12 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * @param result
      */
     public void connect(final List<SocketAddress> socketAddressList, final String token, final Result result) {
-        client.setHost(socketAddressList);
+        if (!Utils.isListEmpty(socketAddressList)) {
+            client.setHost(socketAddressList);
+        }
         client.connect(token);
         Log.d(TAG, "connect: success");
-        Map map = new HashMap();
-        map.put("status", true);
-        map.put("code", 0);
-        map.put("message", "Success");
-        result.success(map);
-    }
-
-    /**
-     * Connect to Stringee server
-     *
-     * @param token
-     * @param result
-     */
-    public void connect(final String token, final Result result) {
-        client.connect(token);
-        Log.d(TAG, "connect: success");
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -562,7 +546,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void disconnect(final Result result) {
         client.disconnect();
         Log.d(TAG, "disconnect: success");
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -578,7 +562,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void registerPush(final String registrationToken, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "registerPush: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -593,7 +577,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "registerPush: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -608,7 +592,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "registerPush: false - " + error.getCode() + " - " + error.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", error.getCode());
                         map.put("message", error.getMessage());
@@ -628,7 +612,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void registerPushAndDeleteOthers(final String registrationToken, final List<String> packageNames, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "registerPush: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -643,7 +627,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "registerPush: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -658,7 +642,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "registerPush: false - " + error.getCode() + " - " + error.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", error.getCode());
                         map.put("message", error.getMessage());
@@ -678,7 +662,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void unregisterPush(final String registrationToken, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "unregisterPush: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -729,7 +713,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void sendCustomMessage(final String toUserId, final JSONObject data, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "sendCustomMessage: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -744,7 +728,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "sendCustomMessage: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -759,7 +743,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "sendCustomMessage: false - " + error.getCode() + " - " + error.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", error.getCode());
                         map.put("message", error.getMessage());
@@ -780,7 +764,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void createConversation(final List<User> participants, final ConversationOptions options, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "createConversation: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -795,7 +779,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "createConversation: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -811,7 +795,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "createConversation: false - " + error.getCode() + " - " + error.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", error.getCode());
                         map.put("message", error.getMessage());
@@ -831,7 +815,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void getConversationById(final String convId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getConversationById: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -846,7 +830,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getConversationById: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -862,7 +846,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getConversationById: false - " + error.getCode() + " - " + error.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", error.getCode());
                         map.put("message", error.getMessage());
@@ -882,7 +866,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void getConversationByUserId(final String userId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getConversationByUserId: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -897,7 +881,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getConversationByUserId: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -913,7 +897,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getConversationByUserId: false - " + error.getCode() + " - " + error.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", error.getCode());
                         map.put("message", error.getMessage());
@@ -936,7 +920,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getLocalConversations: success");
                             List bodyArray = new ArrayList();
@@ -959,7 +943,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getLocalConversations: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -980,7 +964,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void getLastConversation(final int count, final String oaId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getLastConversation: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -994,7 +978,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getLastConversation: success");
                             List bodyArray = new ArrayList();
@@ -1017,7 +1001,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getLastConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1038,7 +1022,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void getConversationsBefore(final long updateAt, final int count, final String oaId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getConversationsBefore: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1052,7 +1036,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getConversationsBefore: success");
                             List bodyArray = new ArrayList();
@@ -1075,7 +1059,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getConversationsBefore: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1096,7 +1080,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void getConversationsAfter(final long updateAt, final int count, final String oaId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getConversationsAfter: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1110,7 +1094,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         if (conversations.size() > 0) {
                             Log.d(TAG, "getConversationsAfter: success");
                             List bodyArray = new ArrayList();
@@ -1133,7 +1117,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getConversationsAfter: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1152,7 +1136,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void clearDb(final Result result) {
         client.clearDb();
         Log.d(TAG, "clearDb: success");
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         map.put("status", true);
         map.put("code", 0);
         map.put("message", "Success");
@@ -1168,7 +1152,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void blockUser(final String userId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "blockUser: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1183,7 +1167,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "blockUser: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1198,7 +1182,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "blockUser: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1217,7 +1201,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void getTotalUnread(final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "getTotalUnread: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1232,7 +1216,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getTotalUnread: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1248,7 +1232,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getTotalUnread: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1273,7 +1257,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getChatProfile: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1289,7 +1273,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getChatProfile: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1316,7 +1300,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getLiveChatToken: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1332,7 +1316,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "getLiveChatToken: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1354,7 +1338,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void updateUserInfo(String name, String email, String avatar, String phone, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "updateUserInfo: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1369,7 +1353,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "updateUserInfo: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1384,7 +1368,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "updateUserInfo: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1404,7 +1388,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void createLiveChatConversation(final String queueId, final String customData, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "createLiveChatConversation: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1419,7 +1403,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "createLiveChatConversation: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1435,7 +1419,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "convertConversationToMap: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1458,7 +1442,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void createLiveChatTicket(String key, String name, String email, String note, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "createLiveChatTicket: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1473,7 +1457,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "createLiveChatTicket: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1488,7 +1472,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "createLiveChatTicket: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -1502,7 +1486,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void joinOaConversation(final String convId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "joinOaConversation: false - -1 - StringeeClient is disconnected");
-            Map map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -1);
             map.put("message", "StringeeClient is disconnected");
@@ -1517,7 +1501,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "joinOaConversation: success");
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -1533,7 +1517,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                     @Override
                     public void run() {
                         Log.d(TAG, "joinOaConversation: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String, Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());

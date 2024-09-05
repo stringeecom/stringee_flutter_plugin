@@ -154,14 +154,14 @@ public class StringeeManager {
         if (audioManager != null) {
             audioManager.setSpeakerphoneOn(on);
             Log.d("StringeeSDK", "setSpeakerphoneOn: success");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", true);
             map.put("code", 0);
             map.put("message", "Success");
             result.success(map);
         } else {
             Log.d("StringeeSDK", "setSpeakerphoneOn: false - -2 - AudioManager is not found");
-            Map map = new HashMap();
+            Map<String,Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", -2);
             map.put("message", "AudioManager is not found");

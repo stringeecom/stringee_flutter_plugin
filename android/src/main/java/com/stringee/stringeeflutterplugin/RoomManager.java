@@ -43,9 +43,9 @@ public class RoomManager implements StringeeRoomListener {
         handler = stringeeManager.getHandler();
     }
 
-    public void connect(final StringeeVideo stringeeVideo, final String roomToken, final Result result) {
+    public void connect(final String roomToken, final Result result) {
         _connectRoomResult = result;
-        _stringeeRoom = stringeeVideo.connect(clientWrapper.getClient(), roomToken, this);
+        _stringeeRoom = StringeeVideo.connect(clientWrapper.getClient(), roomToken, this);
     }
 
     public void publish(final VideoTrackManager trackManager, final Result result) {
@@ -57,7 +57,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "publish: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -74,7 +74,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "publish: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -94,7 +94,7 @@ public class RoomManager implements StringeeRoomListener {
                     public void run() {
                         videoTrack.release();
                         Log.d(TAG, "unpublish: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -110,7 +110,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "unpublish: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -129,7 +129,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "subscribe: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -146,7 +146,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "subscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -165,7 +165,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "unsubscribe: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -181,7 +181,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "unsubscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -199,9 +199,9 @@ public class RoomManager implements StringeeRoomListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        videoConferenceManager.getStringeeVideo().release(_stringeeRoom);
+                        StringeeVideo.release(_stringeeRoom);
                         Log.d(TAG, "leave: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -217,7 +217,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "leave: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -236,7 +236,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "sendMessage: success");
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", true);
                         map.put("code", 0);
                         map.put("message", "Success");
@@ -252,7 +252,7 @@ public class RoomManager implements StringeeRoomListener {
                     @Override
                     public void run() {
                         Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map map = new HashMap();
+                        Map<String,Object> map = new HashMap<>();
                         map.put("status", false);
                         map.put("code", stringeeError.getCode());
                         map.put("message", stringeeError.getMessage());
@@ -287,7 +287,7 @@ public class RoomManager implements StringeeRoomListener {
                 bodyMap.put("users", users);
 
                 Log.d(TAG, "Room connect: success");
-                Map map = new HashMap();
+                Map<String,Object> map = new HashMap<>();
                 map.put("status", true);
                 map.put("code", 0);
                 map.put("message", "Success");
@@ -331,7 +331,7 @@ public class RoomManager implements StringeeRoomListener {
             @Override
             public void run() {
                 Log.d(TAG, "Room connect: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                Map map = new HashMap();
+                Map<String,Object> map = new HashMap<>();
                 map.put("status", false);
                 map.put("code", stringeeError.getCode());
                 map.put("message", stringeeError.getMessage());
@@ -346,7 +346,7 @@ public class RoomManager implements StringeeRoomListener {
             @Override
             public void run() {
                 Log.d(TAG, "didJoinRoom: " + remoteParticipant.getId());
-                Map map = new HashMap();
+                Map<String,Object> map = new HashMap<>();
                 map.put("nativeEventType", RoomEvent.getValue());
                 map.put("event", "didJoinRoom");
                 map.put("uuid", clientWrapper.getId());
@@ -365,7 +365,7 @@ public class RoomManager implements StringeeRoomListener {
             @Override
             public void run() {
                 Log.d(TAG, "didLeaveRoom: " + remoteParticipant.getId());
-                Map map = new HashMap();
+                Map<String,Object> map = new HashMap<>();
                 map.put("nativeEventType", RoomEvent.getValue());
                 map.put("event", "didLeaveRoom");
                 map.put("uuid", clientWrapper.getId());
@@ -386,7 +386,7 @@ public class RoomManager implements StringeeRoomListener {
                 Log.d(TAG, "didAddVideoTrack: " + stringeeVideoTrack.getId());
                 VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, stringeeVideoTrack, "", false);
                 stringeeManager.getTracksMap().put(stringeeVideoTrack.getId(), videoTrackManager);
-                Map map = new HashMap();
+                Map<String,Object> map = new HashMap<>();
                 map.put("nativeEventType", RoomEvent.getValue());
                 map.put("event", "didAddVideoTrack");
                 map.put("uuid", clientWrapper.getId());
@@ -406,7 +406,7 @@ public class RoomManager implements StringeeRoomListener {
             public void run() {
                 if (!stringeeVideoTrack.isLocal()) {
                     Log.d(TAG, "didRemoveVideoTrack: " + stringeeVideoTrack.getId());
-                    Map map = new HashMap();
+                    Map<String,Object> map = new HashMap<>();
                     map.put("nativeEventType", RoomEvent.getValue());
                     map.put("event", "didRemoveVideoTrack");
                     map.put("uuid", clientWrapper.getId());
@@ -427,7 +427,7 @@ public class RoomManager implements StringeeRoomListener {
             public void run() {
                 try {
                     Log.d(TAG, "didReceiveRoomMessage: " + jsonObject.toString() + " from: " + remoteParticipant.getId());
-                    Map map = new HashMap();
+                    Map<String,Object> map = new HashMap<>();
                     map.put("nativeEventType", RoomEvent.getValue());
                     map.put("event", "didReceiveRoomMessage");
                     map.put("uuid", clientWrapper.getId());
@@ -438,7 +438,7 @@ public class RoomManager implements StringeeRoomListener {
                     map.put("body", bodyMap);
                     StringeeFlutterPlugin.eventSink.success(map);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Logging.e(RoomManager.class, e);
                 }
             }
         });
@@ -450,7 +450,7 @@ public class RoomManager implements StringeeRoomListener {
 //            @Override
 //            public void run() {
 //                Log.d(TAG, "didReceiveVideoTrackControlNotification: " + remoteParticipant.getId());
-//                Map map = new HashMap();
+//                Map<String,Object> map = new HashMap<>();
 //                map.put("nativeEventType", RoomEvent.getValue());
 //                map.put("event", "didReceiveVideoTrackControlNotification");
 //                map.put("uuid", clientWrapper.getId());
