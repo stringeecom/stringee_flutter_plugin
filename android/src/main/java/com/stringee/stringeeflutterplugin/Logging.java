@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 public class Logging {
-    private static final String TAG = "Stringee native";
+    public static final String TAG = "Stringee native";
 
     public static void d(String msg) {
         Log.d(TAG, msg);

@@ -1,8 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.stringee.common.StringeeAudioManager;
@@ -14,15 +12,14 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeManager {
-    private static StringeeManager instance;
+    private static volatile StringeeManager instance;
     private Context context;
-    private Map<String, ClientWrapper> clientMap = new HashMap<>();
-    private Map<String, CallWrapper> callsMap = new HashMap<>();
-    private Map<String, Call2Wrapper> call2sMap = new HashMap<>();
-    private Map<String, Map<String, Object>> localViewOption = new HashMap<>();
-    private Map<String, Map<String, Object>> remoteViewOption = new HashMap<>();
-    private Map<String, VideoTrackManager> tracksMap = new HashMap<>();
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Map<String, ClientWrapper> clientMap = new HashMap<>();
+    private final Map<String, CallWrapper> callsMap = new HashMap<>();
+    private final Map<String, Call2Wrapper> call2sMap = new HashMap<>();
+    private final Map<String, Map<String, Object>> localViewOption = new HashMap<>();
+    private final Map<String, Map<String, Object>> remoteViewOption = new HashMap<>();
+    private final Map<String, VideoTrackManager> tracksMap = new HashMap<>();
     private StringeeAudioManager audioManager;
     private ScreenCaptureManager captureManager;
 
@@ -78,7 +75,11 @@ public class StringeeManager {
 
     public static synchronized StringeeManager getInstance() {
         if (instance == null) {
-            instance = new StringeeManager();
+            synchronized (StringeeManager.class) {
+                if (instance == null) {
+                    instance = new StringeeManager();
+                }
+            }
         }
 
         return instance;
@@ -89,7 +90,7 @@ public class StringeeManager {
     }
 
     public void setContext(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     public Map<String, ClientWrapper> getClientMap() {
@@ -116,14 +117,6 @@ public class StringeeManager {
         return tracksMap;
     }
 
-    public Handler getHandler() {
-        return handler;
-    }
-
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
-
     public void startAudioManager(Context context, AudioManagerEvents events) {
         audioManager = StringeeAudioManager.create(context);
         audioManager.start(events);
@@ -147,24 +140,16 @@ public class StringeeManager {
     /**
      * Set speaker on/off
      *
-     * @param on
-     * @param result
+     * @param on     true: on, false: off
+     * @param result result
      */
     public void setSpeakerphoneOn(boolean on, Result result) {
         if (audioManager != null) {
             audioManager.setSpeakerphoneOn(on);
-            Log.d("StringeeSDK", "setSpeakerphoneOn: success");
-            Map<String,Object> map = new HashMap<>();
-            map.put("status", true);
-            map.put("code", 0);
-            map.put("message", "Success");
+            Map<String, Object> map = Utils.createSuccessMap("setSpeakerphoneOn");
             result.success(map);
         } else {
-            Log.d("StringeeSDK", "setSpeakerphoneOn: false - -2 - AudioManager is not found");
-            Map<String,Object> map = new HashMap<>();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "AudioManager is not found");
+            Map<String, Object> map = Utils.createNotFoundErrorMap("setSpeakerphoneOn", "AudioManager");
             result.success(map);
         }
     }
@@ -172,7 +157,7 @@ public class StringeeManager {
     /**
      * Set speaker on/off
      *
-     * @param on
+     * @param on true: on, false: off
      */
     public void setSpeakerphoneOn(boolean on) {
         if (audioManager != null) {

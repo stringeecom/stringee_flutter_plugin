@@ -17,6 +17,7 @@ import com.stringee.messaging.Queue;
 import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
 import com.stringee.messaging.listeners.CallbackListener;
+import com.stringee.stringeeflutterplugin.StringeeManager.StringeeEventType;
 import com.stringee.stringeeflutterplugin.StringeeManager.UserRole;
 import com.stringee.video.RemoteParticipant;
 import com.stringee.video.StringeeRoom;
@@ -38,11 +39,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class Utils {
     public static boolean isCallWrapperAvailable(String methodName, String callId, Result result) {
         if (isStringEmpty(callId)) {
-            Logging.d(methodName, false, -2, "callId is invalid");
-            Map<String, Object> map = new HashMap<>();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "callId is invalid");
+            Map<String, Object> map = Utils.createInvalidErrorMap(methodName, "callId");
             result.success(map);
             return false;
         }
@@ -63,11 +60,7 @@ public class Utils {
 
     public static boolean isCall2WrapperAvailable(String methodName, String callId, Result result) {
         if (isStringEmpty(callId)) {
-            Logging.d(methodName, false, -2, "callId is invalid");
-            Map<String, Object> map = new HashMap<>();
-            map.put("status", false);
-            map.put("code", -2);
-            map.put("message", "callId is invalid");
+            Map<String, Object> map = Utils.createInvalidErrorMap(methodName, "callId");
             result.success(map);
             return false;
         }
@@ -570,63 +563,57 @@ public class Utils {
     }
 
     public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
-        Handler handler = new Handler(Looper.getMainLooper());
         client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
-                handler.post(() -> callbackListener.onSuccess(conversation));
+                post(() -> callbackListener.onSuccess(conversation));
             }
 
             @Override
             public void onError(final StringeeError error) {
                 super.onError(error);
-                handler.post(() -> callbackListener.onError(error));
+                post(() -> callbackListener.onError(error));
             }
         });
     }
 
     public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
-        Handler handler = new Handler(Looper.getMainLooper());
         getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
-                handler.post(new Runnable() {
+                post(() -> conversation.getMessages(client, msgId, new CallbackListener<List<Message>>() {
                     @Override
-                    public void run() {
-                        conversation.getMessages(client, msgId, new CallbackListener<List<Message>>() {
-                            @Override
-                            public void onSuccess(List<Message> messages) {
-                                if (!isListEmpty(messages)) {
-                                    callbackListener.onSuccess(messages.get(0));
-                                } else {
-                                    callbackListener.onError(new StringeeError(-3, "No message found"));
-                                }
-                            }
-
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                callbackListener.onError(stringeeError);
+                    public void onSuccess(List<Message> messages) {
+                        post(() -> {
+                            if (!isListEmpty(messages)) {
+                                callbackListener.onSuccess(messages.get(0));
+                            } else {
+                                callbackListener.onError(new StringeeError(-3, "No message found"));
                             }
                         });
                     }
-                });
+
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        post(() -> callbackListener.onError(stringeeError));
+                    }
+                }));
             }
 
             @Override
             public void onError(final StringeeError error) {
                 super.onError(error);
-                handler.post(() -> callbackListener.onError(error));
+                post(() -> callbackListener.onError(error));
             }
         });
     }
 
     public static void getChatRequest(@NonNull final StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
-        Handler handler = new Handler(Looper.getMainLooper());
         client.getChatRequests(new CallbackListener<List<ChatRequest>>() {
             @Override
             public void onSuccess(List<ChatRequest> chatRequestList) {
-                handler.post(() -> {
+                post(() -> {
                     boolean isFound = false;
                     for (int i = 0; i < chatRequestList.size(); i++) {
                         ChatRequest chatRequest = chatRequestList.get(i);
@@ -644,7 +631,7 @@ public class Utils {
             @Override
             public void onError(StringeeError stringeeError) {
                 super.onError(stringeeError);
-                handler.post(() -> callbackListener.onError(stringeeError));
+                post(() -> callbackListener.onError(stringeeError));
             }
         });
     }
@@ -675,5 +662,53 @@ public class Utils {
         } else {
             return true;
         }
+    }
+
+    public static void post(Runnable runnable) {
+        post(runnable, 0);
+    }
+
+    public static void post(Runnable runnable, long delayMillis) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(runnable, delayMillis);
+    }
+
+    public static Map<String, Object> createEventMap(String event, String uuid, StringeeEventType eventType) {
+        Logging.d(event);
+        Map<String, Object> map = new HashMap<>();
+        map.put("nativeEventType", eventType.getValue());
+        map.put("event", event);
+        map.put("uuid", uuid);
+        return map;
+    }
+
+    public static Map<String, Object> createSuccessMap(String function) {
+        Logging.d(function + ": Success");
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        return map;
+    }
+
+    public static Map<String, Object> createErrorMap(String function, int code, String message) {
+        Logging.d(function + ": false - " + code + " - " + message);
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", false);
+        map.put("code", code);
+        map.put("message", message);
+        return map;
+    }
+
+    public static Map<String, Object> createInvalidErrorMap(String function, String objectInvalid) {
+        return createErrorMap(function, -2, objectInvalid + " is invalid");
+    }
+
+    public static Map<String, Object> createErrorClientDisconnectedMap(String function) {
+        return createErrorMap(function, -1, "StringeeClient is disconnected");
+    }
+
+    public static Map<String, Object> createNotFoundErrorMap(String function, String objectInvalid) {
+        return createErrorMap(function, -3, objectInvalid + " is not found");
     }
 }

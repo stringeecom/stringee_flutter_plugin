@@ -1,9 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -21,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,12 +35,9 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     public static EventSink eventSink;
     private StringeeManager stringeeManager;
 
-    private static final String TAG = "StringeeSDK";
-
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
         stringeeManager = StringeeManager.getInstance();
-        stringeeManager.setHandler(new Handler(Looper.getMainLooper()));
         stringeeManager.setContext(binding.getApplicationContext());
 
         MethodChannel channel = new MethodChannel(binding.getBinaryMessenger(), "com.stringee.flutter.methodchannel");
@@ -82,12 +75,8 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         }
 
         ClientWrapper clientWrapper = stringeeManager.getClientMap().get(uuid);
-        Map<String, Object> map = new HashMap<>();
         if (clientWrapper == null) {
-            Log.d(TAG, call.method + ": false - -100 - Wrapper is not found");
-            map.put("status", false);
-            map.put("code", -100);
-            map.put("message", "Wrapper is not found");
+            Map<String, Object> map = Utils.createErrorMap(call.method, -100, "Wrapper is not found");
             result.success(map);
             return;
         }
@@ -326,16 +315,23 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "getLocalConversations":
                 clientWrapper.getLocalConversations(oaId, result);
                 break;
-            case "getLastConversation":
-                Integer count = call.argument("count");
-                clientWrapper.getLastConversation(count != null ? count : 20, oaId, result);
-                break;
-            case "getConversationsBefore":
-                clientWrapper.getConversationsBefore(call.argument("datetime"), call.argument("count"), oaId, result);
-                break;
-            case "getConversationsAfter":
-                clientWrapper.getConversationsAfter(call.argument("datetime"), call.argument("count"), oaId, result);
-                break;
+            case "getLastConversation": {
+                Object count = call.argument("count");
+                clientWrapper.getLastConversation(count instanceof Integer ? (int) count : 20, oaId, result);
+            }
+            break;
+            case "getConversationsBefore": {
+                Object datetime = call.argument("datetime");
+                Object count = call.argument("count");
+                clientWrapper.getConversationsBefore(datetime instanceof Long ? (long) datetime : System.currentTimeMillis(), count instanceof Integer ? (int) count : 20, oaId, result);
+            }
+            break;
+            case "getConversationsAfter": {
+                Object datetime = call.argument("datetime");
+                Object count = call.argument("count");
+                clientWrapper.getConversationsAfter(datetime instanceof Long ? (long) datetime : System.currentTimeMillis(), count instanceof Integer ? (int) count : 20, oaId, result);
+            }
+            break;
             case "joinOaConversation":
                 clientWrapper.joinOaConversation(call.argument("convId"), result);
                 break;
@@ -353,8 +349,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "addParticipants":
                 try {
-                    List<User> participants = new ArrayList<>();
-                    participants = Utils.getListUser(call.argument("participants"));
+                    List<User> participants = Utils.getListUser(call.argument("participants"));
                     clientWrapper.conversation().addParticipants(call.argument("convId"), participants, result);
                 } catch (JSONException e) {
                     Logging.e(StringeeFlutterPlugin.class, e);
@@ -362,8 +357,7 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "removeParticipants":
                 try {
-                    List<User> participants = new ArrayList<>();
-                    participants = Utils.getListUser(call.argument("participants"));
+                    List<User> participants = Utils.getListUser(call.argument("participants"));
                     clientWrapper.conversation().removeParticipants(call.argument("convId"), participants, result);
                 } catch (JSONException e) {
                     Logging.e(StringeeFlutterPlugin.class, e);
@@ -371,45 +365,64 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 break;
             case "sendMessage":
                 try {
-                    Map msgMap = (Map) call.arguments;
+                    Map<String, Object> msgMap = (Map) call.arguments;
                     String convId = (String) msgMap.get("convId");
-                    Type msgType = Type.getType((int) msgMap.get("type"));
+                    Object type = msgMap.get("type");
+                    Type msgType = Type.getType(type != null ? (int) type : 0);
                     Message message = new Message(msgType);
                     switch (message.getType()) {
                         case TEXT:
                         case LINK:
                             message = new Message((String) msgMap.get("text"));
                             break;
-                        case PHOTO:
+                        case PHOTO: {
                             message.setFileUrl((String) msgMap.get("filePath"));
-                            if (msgMap.containsKey("thumbnail"))
+                            if (msgMap.containsKey("thumbnail")) {
                                 message.setThumbnailUrl((String) msgMap.get("thumbnail"));
-                            if (msgMap.containsKey("ratio"))
-                                message.setImageRatio(((Double) msgMap.get("ratio")).floatValue());
-                            break;
-                        case VIDEO:
+                            }
+                            if (msgMap.containsKey("ratio")) {
+                                Object ratio = msgMap.get("ratio");
+                                message.setImageRatio(ratio instanceof Float ? (float) ratio : 0);
+                            }
+                        }
+                        break;
+                        case VIDEO: {
                             message.setFileUrl((String) msgMap.get("filePath"));
-                            message.setDuration(((Double) msgMap.get("duration")).intValue());
-                            if (msgMap.containsKey("thumbnail"))
+                            Object duration = msgMap.get("duration");
+                            message.setDuration(duration instanceof Integer ? (int) duration : 0);
+                            if (msgMap.containsKey("thumbnail")) {
                                 message.setThumbnailUrl((String) msgMap.get("thumbnail"));
-                            if (msgMap.containsKey("ratio"))
-                                message.setImageRatio(((Double) msgMap.get("ratio")).floatValue());
-                            break;
-                        case AUDIO:
+                            }
+                            if (msgMap.containsKey("ratio")) {
+                                Object ratio = msgMap.get("ratio");
+                                message.setImageRatio(ratio instanceof Float ? (float) ratio : 0);
+                            }
+                        }
+                        break;
+                        case AUDIO: {
                             message.setFileUrl((String) msgMap.get("filePath"));
-                            message.setDuration(((Double) msgMap.get("duration")).intValue());
-                            break;
-                        case FILE:
+                            Object duration = msgMap.get("duration");
+                            message.setDuration(duration instanceof Integer ? (int) duration : 0);
+                        }
+                        break;
+                        case FILE: {
                             message.setFileUrl((String) msgMap.get("filePath"));
-                            if (msgMap.containsKey("filename"))
+                            if (msgMap.containsKey("filename")) {
                                 message.setFileName((String) msgMap.get("filename"));
-                            if (msgMap.containsKey("length"))
-                                message.setFileLength(((Integer) msgMap.get("length")).longValue());
-                            break;
-                        case LOCATION:
-                            message.setLatitude((Double) msgMap.get("lat"));
-                            message.setLongitude((Double) msgMap.get("lon"));
-                            break;
+                            }
+                            if (msgMap.containsKey("length")) {
+                                Object length = msgMap.get("length");
+                                message.setFileLength(length instanceof Long ? (long) length : 0);
+                            }
+                        }
+                        break;
+                        case LOCATION: {
+                            Object lat = msgMap.get("lat");
+                            Object lon = msgMap.get("lon");
+                            message.setLatitude(lat instanceof Double ? (double) lat : 0);
+                            message.setLongitude(lon instanceof Double ? (double) lon : 0);
+                        }
+                        break;
                         case CONTACT:
                             message.setContact((String) msgMap.get("vcard"));
                             break;
@@ -426,49 +439,69 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                     Logging.e(StringeeFlutterPlugin.class, e);
                 }
                 break;
-            case "getMessages":
-                String[] msgIds = ((List<String>) call.argument("msgIds")).toArray(new String[0]);
+            case "getMessages": {
+                List<String> msgIdList = call.argument("msgIds");
+                String[] msgIds = Utils.isListEmpty(msgIdList) ? new String[0] : msgIdList.toArray(new String[0]);
                 clientWrapper.conversation().getMessages(call.argument("convId"), msgIds, result);
-                break;
-            case "getLocalMessages":
-                clientWrapper.conversation().getLocalMessages(call.argument("convId"), call.argument("count"), result);
-                break;
-            case "getLastMessages":
-                clientWrapper.conversation().getLastMessages(call.argument("convId"), call.argument("count"), result);
-                break;
-            case "getMessagesAfter":
-                clientWrapper.conversation().getMessagesAfter(call.argument("convId"), call.argument("seq"), call.argument("count"), result);
-                break;
-            case "getMessagesBefore":
-                clientWrapper.conversation().getMessagesBefore(call.argument("convId"), call.argument("seq"), call.argument("count"), result);
-                break;
+            }
+            break;
+            case "getLocalMessages": {
+                Object count = call.argument("count");
+                clientWrapper.conversation().getLocalMessages(call.argument("convId"), count instanceof Integer ? (int) count : 20, result);
+            }
+            break;
+            case "getLastMessages": {
+                Object count = call.argument("count");
+                clientWrapper.conversation().getLastMessages(call.argument("convId"), count instanceof Integer ? (int) count : 20, result);
+            }
+            break;
+            case "getMessagesAfter": {
+                Object count = call.argument("count");
+                Object seq = call.argument("seq");
+                clientWrapper.conversation().getMessagesAfter(call.argument("convId"), seq instanceof Long ? (long) seq : 0, count instanceof Integer ? (int) count : 20, result);
+            }
+            break;
+            case "getMessagesBefore": {
+                Object count = call.argument("count");
+                Object seq = call.argument("seq");
+                clientWrapper.conversation().getMessagesBefore(call.argument("convId"), seq instanceof Long ? (long) seq : 0, count instanceof Integer ? (int) count : 20, result);
+            }
+            break;
             case "updateConversation":
                 clientWrapper.conversation().updateConversation(call.argument("convId"), call.argument("name"), call.argument("avatar"), result);
                 break;
-            case "setRole":
-                int role = call.argument("role");
-                if (role == UserRole.Admin.getValue()) {
-                    clientWrapper.conversation().setRole(call.argument("convId"), call.argument("userId"), UserRole.Admin, result);
-                } else if (role == UserRole.Member.getValue()) {
-                    clientWrapper.conversation().setRole(call.argument("convId"), call.argument("userId"), UserRole.Member, result);
+            case "setRole": {
+                Object role = call.argument("role");
+                if (role instanceof Short) {
+                    if ((short) role == UserRole.Admin.getValue()) {
+                        clientWrapper.conversation().setRole(call.argument("convId"), call.argument("userId"), UserRole.Admin, result);
+                    } else if ((short) role == UserRole.Member.getValue()) {
+                        clientWrapper.conversation().setRole(call.argument("convId"), call.argument("userId"), UserRole.Member, result);
+                    }
                 }
-                break;
-            case "deleteMessages":
+            }
+            break;
+            case "deleteMessages": {
                 try {
-                    JSONArray msgIdArray = new JSONArray(((List<String>) call.argument("msgIds")).toArray(new String[0]));
+                    List<String> msgIdList = call.argument("msgIds");
+                    JSONArray msgIdArray = new JSONArray(Utils.isListEmpty(msgIdList) ? new String[0] : msgIdList.toArray(new String[0]));
                     clientWrapper.conversation().deleteMessages(call.argument("convId"), msgIdArray, result);
                 } catch (JSONException e) {
                     Logging.e(StringeeFlutterPlugin.class, e);
                 }
-                break;
-            case "revokeMessages":
+            }
+            break;
+            case "revokeMessages": {
                 try {
-                    JSONArray msgIdArray = new JSONArray(((List<String>) call.argument("msgIds")).toArray(new String[0]));
-                    clientWrapper.conversation().revokeMessages(call.argument("convId"), msgIdArray, call.argument("isDeleted"), result);
+                    List<String> msgIdList = call.argument("msgIds");
+                    JSONArray msgIdArray = new JSONArray(Utils.isListEmpty(msgIdList) ? new String[0] : msgIdList.toArray(new String[0]));
+                    Object isDeleted = call.argument("isDeleted");
+                    clientWrapper.conversation().revokeMessages(call.argument("convId"), msgIdArray, isDeleted instanceof Boolean && (boolean) isDeleted, result);
                 } catch (JSONException e) {
                     Logging.e(StringeeFlutterPlugin.class, e);
                 }
-                break;
+            }
+            break;
             case "markAsRead":
                 clientWrapper.conversation().markAsRead(call.argument("convId"), result);
                 break;
@@ -476,7 +509,8 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.message().edit(call.argument("convId"), call.argument("msgId"), call.argument("content"), result);
                 break;
             case "pinOrUnPin":
-                clientWrapper.message().pinOrUnPin(call.argument("convId"), call.argument("msgId"), call.argument("pinOrUnPin"), result);
+                Object pinOrUnPin = call.argument("pinOrUnPin");
+                clientWrapper.message().pinOrUnPin(call.argument("convId"), call.argument("msgId"), pinOrUnPin instanceof Boolean && (boolean) pinOrUnPin, result);
                 break;
             case "getChatProfile":
                 clientWrapper.getChatProfile(call.argument("key"), result);
@@ -587,7 +621,8 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 clientWrapper.videoConference().unsubscribe(call.argument("roomId"), call.argument("trackId"), result);
                 break;
             case "room.leave":
-                clientWrapper.videoConference().leave(call.argument("roomId"), call.argument("allClient"), result);
+                Object allClient = call.argument("allClient");
+                clientWrapper.videoConference().leave(call.argument("roomId"), allClient instanceof Boolean && (boolean) allClient, result);
                 break;
             case "room.sendMessage":
                 try {
@@ -597,10 +632,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                 }
                 break;
             case "track.mute":
-                clientWrapper.videoConference().mute(call.argument("localId"), call.argument("mute"), result);
+                Object mute = call.argument("mute");
+                clientWrapper.videoConference().mute(call.argument("localId"), mute instanceof Boolean && (boolean) mute, result);
                 break;
             case "track.enableVideo":
-                clientWrapper.videoConference().enableVideo(call.argument("localId"), call.argument("enable"), result);
+                Object enable = call.argument("enable");
+                clientWrapper.videoConference().enableVideo(call.argument("localId"), enable instanceof Boolean && (boolean) enable, result);
                 break;
             case "track.switchCamera":
                 if (call.hasArgument("cameraId")) {
