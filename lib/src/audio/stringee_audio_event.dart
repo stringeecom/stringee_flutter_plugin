@@ -7,7 +7,7 @@ class StringeeAudioEvent {
   void Function(
     AudioDevice selectedAudioDevice,
     List<AudioDevice> availableAudioDevices,
-  )? onChangeAudioDevice;
+  ) onChangeAudioDevice;
 
   String get key => _key;
 

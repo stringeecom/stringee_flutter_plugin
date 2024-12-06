@@ -104,11 +104,11 @@ enum StringeeCallType {
 
 /// Type of Audio Device
 enum AudioDevice {
+  none,
   speakerPhone,
   wiredHeadset,
   earpiece,
   bluetooth,
-  none,
 }
 
 extension AudioDeviceX on AudioDevice {

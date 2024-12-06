@@ -29,10 +29,12 @@ class StringeeAudioManager {
 
   void _listener(dynamic event) {
     assert(event != null);
-    final Map<dynamic, dynamic> map = event;
-    _selectedAudioDevice = AudioDeviceX.fromValue(map['code']);
+    _selectedAudioDevice = AudioDeviceX.fromValue(event['code']);
     _availableAudioDevices =
-        map['codeList'].map((e) => AudioDeviceX.fromValue(e)).toList() ?? [];
+        event['codeList'].map((e) => AudioDeviceX.fromValue(e)).toList() ?? [];
+    _events.forEach((e) {
+      e.onChangeAudioDevice.call(_selectedAudioDevice, _availableAudioDevices);
+    });
   }
 
   /// Add a listener to the list of listeners
