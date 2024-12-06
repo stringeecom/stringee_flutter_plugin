@@ -111,6 +111,23 @@ enum AudioDevice {
   none,
 }
 
+extension AudioDeviceX on AudioDevice {
+  static AudioDevice fromValue(int? value) {
+    switch (value) {
+      case 1:
+        return AudioDevice.speakerPhone;
+      case 2:
+        return AudioDevice.wiredHeadset;
+      case 3:
+        return AudioDevice.earpiece;
+      case 4:
+        return AudioDevice.bluetooth;
+      default:
+        return AudioDevice.none;
+    }
+  }
+}
+
 /// Type of Signaling State
 enum StringeeSignalingState {
   calling,

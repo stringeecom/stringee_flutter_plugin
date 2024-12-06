@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import 'StringeeConstants.dart';
+import '../stringee_plugin.dart';
 
 class StringeeVideoView extends StatelessWidget {
   late final String? callId;
