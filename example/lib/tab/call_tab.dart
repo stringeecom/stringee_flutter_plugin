@@ -14,7 +14,7 @@ class CallTab extends StatefulWidget {
 
 class CallTabState extends State<CallTab> {
   String myUserId = 'Not connected...';
-  String token = '';
+  String token = 'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE3MjY3Mzk1NTQzNjQiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwidXNlcklkIjoicXVhbmcxIiwiZXhwIjoxNzU4Mjc1NTU0fQ.Z3_lGs9mWaGbFQ0odznHgL-JVBcCvujbsGmL4w_KkLw';
   String toUser = '';
 
   @override

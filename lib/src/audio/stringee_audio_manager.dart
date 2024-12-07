@@ -28,13 +28,20 @@ class StringeeAudioManager {
   List<AudioDevice> get availableAudioDevices => _availableAudioDevices;
 
   void _listener(dynamic event) {
-    assert(event != null);
+    if (event == null) return;
     _selectedAudioDevice = AudioDeviceX.fromValue(event['code']);
-    _availableAudioDevices =
-        event['codeList'].map((e) => AudioDeviceX.fromValue(e)).toList() ?? [];
-    _events.forEach((e) {
-      e.onChangeAudioDevice.call(_selectedAudioDevice, _availableAudioDevices);
-    });
+    _availableAudioDevices.clear();
+    event['codeList'].forEach(
+      (e) {
+        _availableAudioDevices.add(AudioDeviceX.fromValue(e));
+      },
+    );
+    _events.forEach(
+      (e) {
+        e.onChangeAudioDevice
+            .call(_selectedAudioDevice, _availableAudioDevices);
+      },
+    );
   }
 
   /// Add a listener to the list of listeners
@@ -49,22 +56,31 @@ class StringeeAudioManager {
 
   /// Start the audio manager
   Future<Result> start() async {
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('start');
-    return Result.fromJson(result);
+    return Result.fromJson(await methodChannel.invokeMethod('start'));
   }
 
   /// Stop the audio manager
   Future<Result> stop() async {
-    Map<dynamic, dynamic> result = await methodChannel.invokeMethod('stop');
-    return Result.fromJson(result);
+    return Result.fromJson(await methodChannel.invokeMethod('stop'));
   }
 
   /// Select an audio device
   Future<Result> selectDevice(AudioDevice device) async {
-    Map<dynamic, dynamic> result =
-        await methodChannel.invokeMethod('selectDevice', {
-      'device': device.index,
-    });
-    return Result.fromJson(result);
+    print('Select device: $device');
+    if (!_availableAudioDevices.contains(device)) {
+      return Result(
+        status: false,
+        code: -3,
+        message: 'Audio device not available to select',
+      );
+    }
+    return Result.fromJson(
+      await methodChannel.invokeMethod(
+        'selectDevice',
+        {
+          'device': device.index,
+        },
+      ),
+    );
   }
 }

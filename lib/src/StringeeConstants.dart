@@ -104,23 +104,23 @@ enum StringeeCallType {
 
 /// Type of Audio Device
 enum AudioDevice {
-  none,
   speakerPhone,
   wiredHeadset,
   earpiece,
   bluetooth,
+  none,
 }
 
 extension AudioDeviceX on AudioDevice {
   static AudioDevice fromValue(int? value) {
     switch (value) {
-      case 1:
+      case 0:
         return AudioDevice.speakerPhone;
-      case 2:
+      case 1:
         return AudioDevice.wiredHeadset;
-      case 3:
+      case 2:
         return AudioDevice.earpiece;
-      case 4:
+      case 3:
         return AudioDevice.bluetooth;
       default:
         return AudioDevice.none;

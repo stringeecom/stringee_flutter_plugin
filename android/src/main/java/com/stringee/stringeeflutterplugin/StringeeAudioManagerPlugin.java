@@ -93,15 +93,15 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                 Utils.post(() -> {
                     Map<String, Object> map = new HashMap<>();
                     if (audioManager != null) {
-                        Integer deviceType = call.argument("deviceType");
-                        if (deviceType != null && deviceType != 0) {
-                            if (deviceType == 1) {
+                        Integer device = call.argument("device");
+                        if (device != null && device != 4) {
+                            if (device == 0) {
                                 audioManager.setSpeakerphoneOn(true);
                                 audioManager.setBluetoothScoOn(false);
-                            } else if (deviceType == 2 || deviceType == 3) {
+                            } else if (device == 1 || device == 2) {
                                 audioManager.setSpeakerphoneOn(false);
                                 audioManager.setBluetoothScoOn(false);
-                            } else if (deviceType == 4) {
+                            } else if (device == 3) {
                                 audioManager.setSpeakerphoneOn(false);
                                 audioManager.setBluetoothScoOn(true);
                             }
@@ -110,7 +110,7 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                             map.put("code", 0);
                             map.put("message", "Select audio device success");
                         } else {
-                            Log.d(TAG, "selectDevice: false - 1 - Invalid device type");
+                            Log.d(TAG, "selectDevice: false - 1 - Invalid device");
                             map.put("status", false);
                             map.put("code", -1);
                             map.put("message", "Invalid device type");

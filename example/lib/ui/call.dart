@@ -12,6 +12,7 @@ class Call extends StatefulWidget {
   late String _toUserId;
   late String _fromUserId;
   late StringeeObjectEventType _callType;
+  late StringeeAudioManager _audioManager;
   bool _showIncomingUi = false;
   bool _isVideoCall = false;
 
@@ -38,6 +39,7 @@ class Call extends StatefulWidget {
     if (stringeeCall != null) {
       _stringeeCall = stringeeCall;
     }
+    _audioManager = StringeeAudioManager();
   }
 
   @override
@@ -49,23 +51,83 @@ class Call extends StatefulWidget {
 
 class _CallState extends State<Call> {
   String status = "";
-  bool _isSpeaker = false;
   bool _isMute = false;
   bool _isVideoEnable = false;
 
   Widget? localScreen = null;
   Widget? remoteScreen = null;
+  bool _initializingAudio = true;
+  AudioDevice _preAudioDevice = AudioDevice.earpiece;
+  AudioDevice _audioDevice = AudioDevice.earpiece;
+  List<AudioDevice> _availableAudioDevices = [];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  StringeeAudioEvent? _event;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    _isSpeaker = widget._isVideoCall;
     _isVideoEnable = widget._isVideoCall;
+    _event = new StringeeAudioEvent(
+      onChangeAudioDevice: (selectedAudioDevice, availableAudioDevices) {
+        print('onChangeAudioDevice - $selectedAudioDevice');
+        print('onChangeAudioDevice - $availableAudioDevices');
+        setState(() {
+          _availableAudioDevices = availableAudioDevices;
+        });
+        if (_initializingAudio) {
+          _initializingAudio = false;
+          if (availableAudioDevices.contains(AudioDevice.bluetooth)) {
+            selectedAudioDevice = AudioDevice.bluetooth;
+            if (widget._isVideoCall) {
+              _preAudioDevice = AudioDevice.speakerPhone;
+            }
+          } else if (availableAudioDevices.contains(AudioDevice.wiredHeadset)) {
+            selectedAudioDevice = AudioDevice.wiredHeadset;
+            if (widget._isVideoCall) {
+              _preAudioDevice = AudioDevice.speakerPhone;
+            }
+          } else if (widget._isVideoCall) {
+            selectedAudioDevice = AudioDevice.speakerPhone;
+            _preAudioDevice = AudioDevice.speakerPhone;
+          } else {
+            selectedAudioDevice = AudioDevice.earpiece;
+            _preAudioDevice = AudioDevice.earpiece;
+          }
+          changeAudioDevice(selectedAudioDevice);
+        } else {
+          switch (selectedAudioDevice) {
+            case AudioDevice.wiredHeadset:
+            case AudioDevice.bluetooth:
+              if (_audioDevice != AudioDevice.bluetooth &&
+                  _audioDevice != AudioDevice.wiredHeadset) {
+                _preAudioDevice = _audioDevice;
+              }
+              changeAudioDevice(selectedAudioDevice);
+              break;
+            case AudioDevice.earpiece:
+            case AudioDevice.speakerPhone:
+              if (_audioDevice == AudioDevice.speakerPhone ||
+                  _audioDevice == AudioDevice.earpiece) {
+                changeAudioDevice(_audioDevice);
+                return;
+              }
+              if (_preAudioDevice != selectedAudioDevice) {
+                changeAudioDevice(_preAudioDevice);
+              } else {
+                changeAudioDevice(selectedAudioDevice);
+              }
+              break;
+          }
+        }
+      },
+    );
+    widget._audioManager.addListener(_event!);
+    widget._audioManager.start();
 
     if (widget._callType == StringeeObjectEventType.call) {
       makeOrInitAnswerCall();
@@ -123,6 +185,42 @@ class _CallState extends State<Call> {
       ),
     );
 
+    Widget getBtnAudio() {
+      IconData? icon = Icons.volume_down;
+      Color? color = Colors.black;
+      Color? primary = Colors.white;
+      switch (_audioDevice) {
+        case AudioDevice.speakerPhone:
+          icon = Icons.volume_up;
+          color = Colors.white;
+          primary = Colors.white54;
+          break;
+        case AudioDevice.wiredHeadset:
+          icon = Icons.headphones;
+          color = Colors.black;
+          primary = Colors.white;
+          break;
+        case AudioDevice.earpiece:
+          icon = Icons.volume_down;
+          color = Colors.black;
+          primary = Colors.white;
+          break;
+        case AudioDevice.bluetooth:
+          icon = Icons.bluetooth;
+          color = Colors.black;
+          primary = Colors.white;
+          break;
+      }
+      return CircleButton(
+          icon: Icon(
+            icon,
+            color: color,
+            size: 28,
+          ),
+          primary: primary,
+          onPressed: toggleSpeaker);
+    }
+
     Container bottomContainer = new Container(
       padding: EdgeInsets.only(bottom: 30.0),
       alignment: Alignment.bottomCenter,
@@ -157,20 +255,7 @@ class _CallState extends State<Call> {
                   new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      CircleButton(
-                          icon: _isSpeaker
-                              ? Icon(
-                                  Icons.volume_off,
-                                  color: Colors.black,
-                                  size: 28,
-                                )
-                              : Icon(
-                                  Icons.volume_up,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
-                          primary: _isSpeaker ? Colors.white : Colors.white54,
-                          onPressed: toggleSpeaker),
+                      getBtnAudio(),
                       CircleButton(
                           icon: _isMute
                               ? Icon(
@@ -269,11 +354,6 @@ class _CallState extends State<Call> {
         case StringeeCallEvents.didReceiveRemoteStream:
           handleReceiveRemoteStreamEvent(map['body']);
           break;
-        case StringeeCallEvents.didChangeAudioDevice:
-          if (Platform.isAndroid) {
-            handleChangeAudioDeviceEvent(map['selectedAudioDevice']);
-          }
-          break;
         default:
           break;
       }
@@ -341,11 +421,6 @@ class _CallState extends State<Call> {
         case StringeeCall2Events.didRemoveVideoTrack:
           handleRemoveVideoTrackEvent(map['body']);
           break;
-        case StringeeCall2Events.didChangeAudioDevice:
-          if (Platform.isAndroid) {
-            handleChangeAudioDeviceEvent(map['selectedAudioDevice']);
-          }
-          break;
         default:
           break;
       }
@@ -382,6 +457,7 @@ class _CallState extends State<Call> {
 
   void endCallTapped() {
     if (widget._callType == StringeeObjectEventType.call) {
+      print('stringeeCallId: ${widget._stringeeCall!.id}');
       widget._stringeeCall!.hangup().then((result) {
         print('_endCallTapped -- ${result['message']}');
         bool status = result['status'];
@@ -392,6 +468,7 @@ class _CallState extends State<Call> {
         }
       });
     } else if (widget._callType == StringeeObjectEventType.call2) {
+      print('stringeeCall2Id: ${widget._stringeeCall2!.id}');
       widget._stringeeCall2!.hangup().then((result) {
         print('_endCallTapped -- ${result['message']}');
         bool status = result['status'];
@@ -473,19 +550,6 @@ class _CallState extends State<Call> {
     setState(() {
       status = state.toString().split('.')[1];
     });
-    switch (state) {
-      case StringeeMediaState.connected:
-        if (widget._callType == StringeeObjectEventType.call) {
-          widget._stringeeCall!.setSpeakerphoneOn(_isSpeaker);
-        } else if (widget._callType == StringeeObjectEventType.call2) {
-          widget._stringeeCall2!.setSpeakerphoneOn(_isSpeaker);
-        }
-        break;
-      case StringeeMediaState.disconnected:
-        break;
-      default:
-        break;
-    }
   }
 
   void handleReceiveCallInfoEvent(Map<dynamic, dynamic> info) {
@@ -599,35 +663,9 @@ class _CallState extends State<Call> {
     print('handleRemoveVideoTrackEvent - ${track.id}');
   }
 
-  void handleChangeAudioDeviceEvent(AudioDevice audioDevice) {
-    print('handleChangeAudioDeviceEvent - $audioDevice');
-    switch (audioDevice) {
-      case AudioDevice.speakerPhone:
-      case AudioDevice.earpiece:
-        if (widget._callType == StringeeObjectEventType.call) {
-          widget._stringeeCall!.setSpeakerphoneOn(_isSpeaker);
-        } else if (widget._callType == StringeeObjectEventType.call2) {
-          widget._stringeeCall2!.setSpeakerphoneOn(_isSpeaker);
-        }
-        break;
-      case AudioDevice.bluetooth:
-      case AudioDevice.wiredHeadset:
-        setState(() {
-          _isSpeaker = false;
-        });
-        if (widget._callType == StringeeObjectEventType.call) {
-          widget._stringeeCall!.setSpeakerphoneOn(_isSpeaker);
-        } else if (widget._callType == StringeeObjectEventType.call2) {
-          widget._stringeeCall2!.setSpeakerphoneOn(_isSpeaker);
-        }
-        break;
-      case AudioDevice.none:
-        print('handleChangeAudioDeviceEvent - non audio devices connected');
-        break;
-    }
-  }
-
   void clearDataEndDismiss() {
+    widget._audioManager.removeListener(_event!);
+    widget._audioManager.stop();
     if (widget._callType == StringeeObjectEventType.call) {
       widget._stringeeCall!.destroy();
       widget._stringeeCall = null;
@@ -655,25 +693,51 @@ class _CallState extends State<Call> {
     }
   }
 
+  void changeAudioDevice(AudioDevice device) {
+    print('changeAudioDevice - $device');
+    widget._audioManager.selectDevice(device).then((value) {
+      print(value);
+      if (value.status) {
+        setState(() {
+          _audioDevice = device;
+        });
+      }
+    });
+  }
+
   void toggleSpeaker() {
-    if (widget._callType == StringeeObjectEventType.call) {
-      widget._stringeeCall!.setSpeakerphoneOn(!_isSpeaker).then((result) {
-        bool status = result['status'];
-        if (status) {
-          setState(() {
-            _isSpeaker = !_isSpeaker;
-          });
-        }
-      });
-    } else if (widget._callType == StringeeObjectEventType.call2) {
-      widget._stringeeCall2!.setSpeakerphoneOn(!_isSpeaker).then((result) {
-        bool status = result['status'];
-        if (status) {
-          setState(() {
-            _isSpeaker = !_isSpeaker;
-          });
-        }
-      });
+    if (_availableAudioDevices.length < 3) {
+      if (_availableAudioDevices.length <= 1) {
+        return;
+      }
+      print('toggleSpeaker - ${_availableAudioDevices}');
+      int position = _availableAudioDevices.indexOf(_audioDevice);
+      if (position == _availableAudioDevices.length - 1) {
+        changeAudioDevice(_availableAudioDevices[0]);
+      } else {
+        changeAudioDevice(_availableAudioDevices[position + 1]);
+      }
+    } else {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return ListView.separated(
+            itemCount: _availableAudioDevices.length,
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(_availableAudioDevices[index].name),
+                onTap: () {
+                  changeAudioDevice(_availableAudioDevices[index]);
+                  Navigator.pop(context);
+                },
+              );
+            },
+          );
+        },
+      );
     }
   }
 

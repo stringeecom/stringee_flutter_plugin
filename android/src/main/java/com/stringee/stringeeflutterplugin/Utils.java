@@ -63,7 +63,7 @@ public class Utils {
                 if (charSequence.toString().equalsIgnoreCase("null")) {
                     return true;
                 } else {
-                    return !charSequence.toString().trim().isEmpty();
+                    return charSequence.toString().trim().isEmpty();
                 }
             }
             return false;
