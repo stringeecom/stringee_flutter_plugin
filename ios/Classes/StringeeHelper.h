@@ -12,6 +12,9 @@
 static NSString *STEMethodChannelName = @"com.stringee.flutter.methodchannel";
 static NSString *STEEventChannelName = @"com.stringee.flutter.eventchannel";
 
+static NSString *STEAudioMethodChannelName = @"com.stringee.flutter.audio.method_channel";
+static NSString *STEAudioEventChannelName = @"com.stringee.flutter.audio.event_channel";
+
 // Common
 static NSString *STEUuid               = @"uuid";
 static NSString *STEEvent              = @"event";

@@ -72,7 +72,7 @@ class _CallState extends State<Call> {
     super.initState();
 
     _isVideoEnable = widget._isVideoCall;
-    _event = new StringeeAudioEvent(
+    _event = StringeeAudioEvent(
       onChangeAudioDevice: (selectedAudioDevice, availableAudioDevices) {
         print('onChangeAudioDevice - $selectedAudioDevice');
         print('onChangeAudioDevice - $availableAudioDevices');
