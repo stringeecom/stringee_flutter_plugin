@@ -102,32 +102,6 @@ enum StringeeCallType {
   phoneToApp,
 }
 
-/// Type of Audio Device
-enum AudioDevice {
-  speakerPhone,
-  wiredHeadset,
-  earpiece,
-  bluetooth,
-  none,
-}
-
-extension AudioDeviceX on AudioDevice {
-  static AudioDevice fromValue(int? value) {
-    switch (value) {
-      case 0:
-        return AudioDevice.speakerPhone;
-      case 1:
-        return AudioDevice.wiredHeadset;
-      case 2:
-        return AudioDevice.earpiece;
-      case 3:
-        return AudioDevice.bluetooth;
-      default:
-        return AudioDevice.none;
-    }
-  }
-}
-
 /// Type of Signaling State
 enum StringeeSignalingState {
   calling,

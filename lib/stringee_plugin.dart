@@ -4,6 +4,7 @@ export 'src/StringeeVideoView.dart';
 /// Helper
 export 'src/StringeeConstants.dart';
 export 'src/helper/result.dart';
+export 'src/helper/audio_type.dart';
 
 /// Call
 export 'src/call/StringeeCall.dart';
@@ -24,5 +25,6 @@ export 'src/messaging/StringeeMessage.dart';
 export 'src/messaging/StringeeUser.dart';
 
 /// Audio
+export 'src/audio/audio_device.dart';
 export 'src/audio/stringee_audio_event.dart';
 export 'src/audio/stringee_audio_manager.dart';
