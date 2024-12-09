@@ -57,8 +57,8 @@ class _CallState extends State<Call> {
   Widget? localScreen = null;
   Widget? remoteScreen = null;
   bool _initializingAudio = true;
-  AudioDevice _preAudioDevice = AudioDevice.earpiece;
-  AudioDevice _audioDevice = AudioDevice.earpiece;
+  AudioDevice _preAudioDevice = AudioDevice(audioType: AudioType.earpiece);
+  AudioDevice _audioDevice = AudioDevice(audioType: AudioType.earpiece);
   List<AudioDevice> _availableAudioDevices = [];
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -76,43 +76,69 @@ class _CallState extends State<Call> {
       onChangeAudioDevice: (selectedAudioDevice, availableAudioDevices) {
         print('onChangeAudioDevice - $selectedAudioDevice');
         print('onChangeAudioDevice - $availableAudioDevices');
-        setState(() {
-          _availableAudioDevices = availableAudioDevices;
-        });
+        _availableAudioDevices = availableAudioDevices;
         if (_initializingAudio) {
           _initializingAudio = false;
-          if (availableAudioDevices.contains(AudioDevice.bluetooth)) {
-            selectedAudioDevice = AudioDevice.bluetooth;
-            if (widget._isVideoCall) {
-              _preAudioDevice = AudioDevice.speakerPhone;
+          int bluetoothIndex = -1;
+          int wiredHeadsetIndex = -1;
+          int speakerIndex = -1;
+          int earpieceIndex = -1;
+          availableAudioDevices.forEach((element) {
+            if (element.audioType == AudioType.bluetooth) {
+              bluetoothIndex = availableAudioDevices.indexOf(element);
             }
-          } else if (availableAudioDevices.contains(AudioDevice.wiredHeadset)) {
-            selectedAudioDevice = AudioDevice.wiredHeadset;
-            if (widget._isVideoCall) {
-              _preAudioDevice = AudioDevice.speakerPhone;
+            if (element.audioType == AudioType.wiredHeadset) {
+              wiredHeadsetIndex = availableAudioDevices.indexOf(element);
             }
-          } else if (widget._isVideoCall) {
-            selectedAudioDevice = AudioDevice.speakerPhone;
-            _preAudioDevice = AudioDevice.speakerPhone;
+            if (element.audioType == AudioType.speakerPhone) {
+              speakerIndex = availableAudioDevices.indexOf(element);
+            }
+            if (element.audioType == AudioType.earpiece) {
+              earpieceIndex = availableAudioDevices.indexOf(element);
+            }
+          });
+          _preAudioDevice = availableAudioDevices.elementAt(0);
+          if (widget._isVideoCall) {
+            if (speakerIndex != -1) {
+              _preAudioDevice = availableAudioDevices.elementAt(speakerIndex);
+            }
           } else {
-            selectedAudioDevice = AudioDevice.earpiece;
-            _preAudioDevice = AudioDevice.earpiece;
+            if (earpieceIndex != -1) {
+              _preAudioDevice = availableAudioDevices.elementAt(earpieceIndex);
+            }
+          }
+          if (bluetoothIndex != -1) {
+            selectedAudioDevice =
+                availableAudioDevices.elementAt(bluetoothIndex);
+          } else if (wiredHeadsetIndex != -1) {
+            selectedAudioDevice =
+                availableAudioDevices.elementAt(wiredHeadsetIndex);
+          } else if (widget._isVideoCall) {
+            if (speakerIndex != -1) {
+              selectedAudioDevice =
+                  availableAudioDevices.elementAt(speakerIndex);
+            }
+          } else {
+            if (earpieceIndex != -1) {
+              selectedAudioDevice =
+                  availableAudioDevices.elementAt(earpieceIndex);
+            }
           }
           changeAudioDevice(selectedAudioDevice);
         } else {
-          switch (selectedAudioDevice) {
-            case AudioDevice.wiredHeadset:
-            case AudioDevice.bluetooth:
-              if (_audioDevice != AudioDevice.bluetooth &&
-                  _audioDevice != AudioDevice.wiredHeadset) {
+          switch (selectedAudioDevice.audioType) {
+            case AudioType.wiredHeadset:
+            case AudioType.bluetooth:
+              if (_audioDevice.audioType != AudioType.bluetooth &&
+                  _audioDevice.audioType != AudioType.wiredHeadset) {
                 _preAudioDevice = _audioDevice;
               }
               changeAudioDevice(selectedAudioDevice);
               break;
-            case AudioDevice.earpiece:
-            case AudioDevice.speakerPhone:
-              if (_audioDevice == AudioDevice.speakerPhone ||
-                  _audioDevice == AudioDevice.earpiece) {
+            case AudioType.earpiece:
+            case AudioType.speakerPhone:
+              if (_audioDevice.audioType == AudioType.speakerPhone ||
+                  _audioDevice.audioType == AudioType.earpiece) {
                 changeAudioDevice(_audioDevice);
                 return;
               }
@@ -189,23 +215,23 @@ class _CallState extends State<Call> {
       IconData? icon = Icons.volume_down;
       Color? color = Colors.black;
       Color? primary = Colors.white;
-      switch (_audioDevice) {
-        case AudioDevice.speakerPhone:
+      switch (_audioDevice.audioType) {
+        case AudioType.speakerPhone:
           icon = Icons.volume_up;
           color = Colors.white;
           primary = Colors.white54;
           break;
-        case AudioDevice.wiredHeadset:
+        case AudioType.wiredHeadset:
           icon = Icons.headphones;
           color = Colors.black;
           primary = Colors.white;
           break;
-        case AudioDevice.earpiece:
+        case AudioType.earpiece:
           icon = Icons.volume_down;
           color = Colors.black;
           primary = Colors.white;
           break;
-        case AudioDevice.bluetooth:
+        case AudioType.bluetooth:
           icon = Icons.bluetooth;
           color = Colors.black;
           primary = Colors.white;
@@ -710,7 +736,6 @@ class _CallState extends State<Call> {
       if (_availableAudioDevices.length <= 1) {
         return;
       }
-      print('toggleSpeaker - ${_availableAudioDevices}');
       int position = _availableAudioDevices.indexOf(_audioDevice);
       if (position == _availableAudioDevices.length - 1) {
         changeAudioDevice(_availableAudioDevices[0]);
@@ -728,7 +753,7 @@ class _CallState extends State<Call> {
             },
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text(_availableAudioDevices[index].name),
+                title: Text(_availableAudioDevices[index].name!),
                 onTap: () {
                   changeAudioDevice(_availableAudioDevices[index]);
                   Navigator.pop(context);
