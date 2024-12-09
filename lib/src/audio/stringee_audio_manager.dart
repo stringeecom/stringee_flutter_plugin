@@ -15,7 +15,7 @@ class StringeeAudioManager {
       EventChannel('com.stringee.flutter.audio.event_channel');
   static Stream broadcastStream = eventChannel.receiveBroadcastStream();
 
-  AudioDevice _selectedAudioDevice = AudioDevice.none;
+  AudioDevice _selectedAudioDevice = AudioDevice(audioType: AudioType.none);
   List<AudioDevice> _availableAudioDevices = [];
   final List<StringeeAudioEvent> _events = [];
 
@@ -29,11 +29,11 @@ class StringeeAudioManager {
 
   void _listener(dynamic event) {
     if (event == null) return;
-    _selectedAudioDevice = AudioDeviceX.fromValue(event['code']);
+    _selectedAudioDevice = AudioDevice.fromJson(event['device']);
     _availableAudioDevices.clear();
-    event['codeList'].forEach(
+    event['devices'].forEach(
       (e) {
-        _availableAudioDevices.add(AudioDeviceX.fromValue(e));
+        _availableAudioDevices.add(AudioDevice.fromJson(e));
       },
     );
     _events.forEach(
@@ -78,7 +78,7 @@ class StringeeAudioManager {
       await methodChannel.invokeMethod(
         'selectDevice',
         {
-          'device': device.index,
+          'device': device.toJson(),
         },
       ),
     );
