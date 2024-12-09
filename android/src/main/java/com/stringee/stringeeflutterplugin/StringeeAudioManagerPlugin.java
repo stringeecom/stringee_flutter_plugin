@@ -93,17 +93,26 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                 Utils.post(() -> {
                     Map<String, Object> map = new HashMap<>();
                     if (audioManager != null) {
-                        Integer device = call.argument("device");
-                        if (device != null && device != 4) {
+                        Map<String, Object> deviceMap = call.argument("device");
+                        if (deviceMap == null) {
+                            Log.d(TAG, "selectDevice: false - 1 - Invalid device");
+                            map.put("status", false);
+                            map.put("code", -1);
+                            map.put("message", "Invalid device");
+                            result.success(map);
+                            return;
+                        }
+                        Integer device = (Integer) deviceMap.get("type");
+                        if (device != null && device < 4 && device >= 0) {
                             if (device == 0) {
                                 audioManager.setSpeakerphoneOn(true);
-                                audioManager.setBluetoothScoOn(false);
-                            } else if (device == 1 || device == 2) {
-                                audioManager.setSpeakerphoneOn(false);
                                 audioManager.setBluetoothScoOn(false);
                             } else if (device == 3) {
                                 audioManager.setSpeakerphoneOn(false);
                                 audioManager.setBluetoothScoOn(true);
+                            } else {
+                                audioManager.setSpeakerphoneOn(false);
+                                audioManager.setBluetoothScoOn(false);
                             }
                             Log.d(TAG, "selectDevice: true - 0 - Select audio device success");
                             map.put("status", true);
@@ -127,7 +136,7 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
         }
     }
 
-    public void setContext(Context context) {
+    private void setContext(Context context) {
         this.context = context.getApplicationContext();
     }
 
@@ -146,13 +155,19 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
             }
         }
         Log.d(TAG, "onAudioManagerDevicesChanged: " + audioDevices + ", " + "selected: " + selectedAudioDevice);
-        List<Integer> codeList = new ArrayList<>();
+        List<Map<String, Object>> devices = new ArrayList<>();
         for (int i = 0; i < audioDevices.size(); i++) {
-            codeList.add(audioDevices.get(i).ordinal());
+            Map<String, Object> map = new HashMap<>();
+            map.put("type", audioDevices.get(i).ordinal());
+            devices.add(map);
         }
+
+        Map<String, Object> device = new HashMap<>();
+        device.put("type", selectedAudioDevice.ordinal());
+
         Map<String, Object> map = new HashMap<>();
-        map.put("code", selectedAudioDevice.ordinal());
-        map.put("codeList", codeList);
+        map.put("device", device);
+        map.put("devices", devices);
         eventSink.success(map);
     }
 
