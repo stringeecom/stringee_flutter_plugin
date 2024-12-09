@@ -29,7 +29,7 @@ class AudioDevice {
     };
   }
 
-  static fromJson(Map<String, dynamic> json) {
+  static fromJson(dynamic json) {
     AudioType audioType = AudioTypeX.fromValue(json['type']);
     String? name = json['name'];
     if (name == null) {
