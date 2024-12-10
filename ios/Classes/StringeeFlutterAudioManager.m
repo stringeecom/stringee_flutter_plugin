@@ -215,6 +215,7 @@
             // Notify success
             result(@{@"status": @YES, @"code": @0, @"message": @"Audio device selected"});
         }
+        return;
     }
 
     // Notify success
@@ -249,18 +250,6 @@
     self.availableAudioDevices = [self mergeInputOutputDevices];
 
     if (self.eventSink) {
-        // Prepare selected device information
-        NSDictionary *selectedDevice = self.selectedAudioDevice ? @{
-            @"uuid": self.selectedAudioDevice.UID ?: [NSNull null],
-            @"name": self.selectedAudioDevice.portName ?: [NSNull null],
-            @"type": @([self audioTypeFromPortType:self.selectedAudioDevice.portType])
-        } : [NSNull null];
-
-        #if DEBUG
-        NSLog(@"[Stringee] current audio device = %@", selectedDevice);
-        NSLog(@"[Stringee] available audio devices = %@", self.availableAudioDevices);
-        #endif
-
         // Prepare available devices list
         NSMutableArray *deviceList = [NSMutableArray array];
         for (AVAudioSessionPortDescription *port in self.availableAudioDevices) {
@@ -270,6 +259,22 @@
                 @"type": @([self audioTypeFromPortType:port.portType])
             }];
         }
+
+        // Prepare selected device information
+        NSDictionary * selectedDevice = nil;
+
+        // check if type of selectedDevice in deviceList
+        for (NSDictionary *device in deviceList) {
+            if ([device[@"type"] isEqual:@([self audioTypeFromPortType:self.selectedAudioDevice.portType])]) {
+                selectedDevice = device;
+                break;
+            }
+        }
+
+        #if DEBUG
+        NSLog(@"[Stringee] current audio device = %@", selectedDevice);
+        NSLog(@"[Stringee] available audio devices = %@", self.availableAudioDevices);
+        #endif
 
         // Prepare event data
         NSDictionary *event = @{
