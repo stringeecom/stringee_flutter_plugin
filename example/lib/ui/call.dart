@@ -57,7 +57,6 @@ class _CallState extends State<Call> {
   Widget? localScreen = null;
   Widget? remoteScreen = null;
   bool _initializingAudio = true;
-  AudioDevice _preAudioDevice = AudioDevice(audioType: AudioType.earpiece);
   AudioDevice _audioDevice = AudioDevice(audioType: AudioType.earpiece);
   List<AudioDevice> _availableAudioDevices = [];
 
@@ -97,16 +96,6 @@ class _CallState extends State<Call> {
               earpieceIndex = availableAudioDevices.indexOf(element);
             }
           });
-          _preAudioDevice = availableAudioDevices.elementAt(0);
-          if (widget._isVideoCall) {
-            if (speakerIndex != -1) {
-              _preAudioDevice = availableAudioDevices.elementAt(speakerIndex);
-            }
-          } else {
-            if (earpieceIndex != -1) {
-              _preAudioDevice = availableAudioDevices.elementAt(earpieceIndex);
-            }
-          }
           if (bluetoothIndex != -1) {
             selectedAudioDevice =
                 availableAudioDevices.elementAt(bluetoothIndex);
@@ -124,32 +113,8 @@ class _CallState extends State<Call> {
                   availableAudioDevices.elementAt(earpieceIndex);
             }
           }
-          changeAudioDevice(selectedAudioDevice);
-        } else {
-          switch (selectedAudioDevice.audioType) {
-            case AudioType.wiredHeadset:
-            case AudioType.bluetooth:
-              if (_audioDevice.audioType != AudioType.bluetooth &&
-                  _audioDevice.audioType != AudioType.wiredHeadset) {
-                _preAudioDevice = _audioDevice;
-              }
-              changeAudioDevice(selectedAudioDevice);
-              break;
-            case AudioType.earpiece:
-            case AudioType.speakerPhone:
-              if (_audioDevice.audioType == AudioType.speakerPhone ||
-                  _audioDevice.audioType == AudioType.earpiece) {
-                changeAudioDevice(_audioDevice);
-                return;
-              }
-              if (_preAudioDevice != selectedAudioDevice) {
-                changeAudioDevice(_preAudioDevice);
-              } else {
-                changeAudioDevice(selectedAudioDevice);
-              }
-              break;
-          }
         }
+        changeAudioDevice(selectedAudioDevice);
       },
     );
     widget._audioManager.addListener(_event!);

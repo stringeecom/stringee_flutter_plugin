@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-class Result extends Equatable {
+class Result {
   final bool status;
   final int code;
   final String message;
@@ -21,12 +19,4 @@ class Result extends Equatable {
       data: json['body'],
     );
   }
-
-  @override
-  List<Object?> get props => [
-        status,
-        code,
-        message,
-        data,
-      ];
 }

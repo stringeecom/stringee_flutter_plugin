@@ -1,5 +1,3 @@
-import 'package:uuid/uuid.dart';
-
 import '../../stringee_plugin.dart';
 
 class StringeeAudioEvent {
@@ -12,6 +10,6 @@ class StringeeAudioEvent {
   String get key => _key;
 
   StringeeAudioEvent({required this.onChangeAudioDevice}) {
-    this._key = Uuid().v4();
+    this._key = GUIDGen.generate();
   }
 }
