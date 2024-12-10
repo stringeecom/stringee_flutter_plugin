@@ -19,4 +19,9 @@ class Result {
       data: json['body'],
     );
   }
+
+  @override
+  String toString() {
+    return 'Result{status: $status, code: $code, message: $message, data: $data}';
+  }
 }

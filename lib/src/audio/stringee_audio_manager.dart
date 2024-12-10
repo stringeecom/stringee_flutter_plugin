@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../stringee_plugin.dart';
@@ -66,8 +67,19 @@ class StringeeAudioManager {
 
   /// Select an audio device
   Future<Result> selectDevice(AudioDevice device) async {
-    print('Select device: $device');
-    if (!_availableAudioDevices.contains(device)) {
+    if (kDebugMode) {
+      print('Selected device: $device');
+    }
+    var deviceSelectable = false;
+    for (final item in _availableAudioDevices) {
+      if (item.audioType == device.audioType &&
+          item.name == device.name &&
+          item.uuid == device.uuid) {
+        deviceSelectable = true;
+        break;
+      }
+    }
+    if (!deviceSelectable) {
       return Result(
         status: false,
         code: -3,

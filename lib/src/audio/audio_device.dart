@@ -60,4 +60,9 @@ class AudioDevice {
       uuid: json['uuid'],
     );
   }
+
+  @override
+  String toString() {
+    return 'AudioDevice{uuid: $_uuid, name: $_name, audioType: $_audioType}';
+  }
 }
