@@ -6,16 +6,51 @@
 @property (nonatomic, copy) NSString *portType;
 @property (nonatomic, copy) NSString *portName;
 @property (nonatomic, copy) NSString *UID;
+
+- (instancetype)initWithPortDescription:(AVAudioSessionPortDescription *)portDescription;
+
 @end
 
 @implementation CustomPortDescription
+
+- (instancetype)initWithPortDescription:(AVAudioSessionPortDescription *)portDescription {
+    self = [super init];
+    if (self) {
+        _UID = portDescription.UID;
+        _portType = portDescription.portType;
+        _portName = portDescription.portName;
+    }
+    return self;
+}
+
+- (instancetype)initWithPortType:(NSString *)portType portName:(NSString *)portName UID:(NSString *)UID {
+    self = [super init];
+    if (self) {
+        _UID = UID;
+        _portType = portType;
+        _portName = portName;
+    }
+    return self;
+}
+
+- (void)updateWithOutputPort:(AVAudioSessionPortDescription *)output {
+    // Optional: Add logic to update device details based on output information if needed
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<CustomPortDescription: portType=%@, portName=%@, UID=%@>",
+            self.portType, self.portName, self.UID];
+}
+
 @end
 
 @interface StringeeFlutterAudioManager ()
 
 // Audio manager state
 @property (nonatomic, strong, nullable) AVAudioSessionPortDescription *selectedAudioDevice;
-@property (nonatomic, strong, nullable) NSArray<AVAudioSessionPortDescription *> *availableAudioDevices;
+@property (nonatomic, strong, nullable) NSArray<AVAudioSessionPortDescription *> *inputDevices;
+@property (nonatomic, strong, nullable) NSArray<AVAudioSessionPortDescription *> *outputDevices;
+@property (nonatomic, strong, nullable) NSArray<CustomPortDescription *> *availableAudioDevices;
 
 // Event sink for broadcasting events
 @property (nonatomic, copy) FlutterEventSink eventSink;
@@ -29,6 +64,8 @@
     if (self) {
         _availableAudioDevices = @[];
         _selectedAudioDevice = nil; // Default: nil
+        _inputDevices = @[];
+        _outputDevices = @[];
 
         // Set up the method channel
         FlutterMethodChannel *methodChannel = [FlutterMethodChannel methodChannelWithName:STEAudioMethodChannelName binaryMessenger:[registrar messenger]];
@@ -50,8 +87,23 @@
         [self stopAudioManagerWithResult:result];
     } else if ([call.method isEqualToString:@"selectDevice"]) {
         NSDictionary *args = call.arguments;
-        NSNumber *deviceCode = args[@"device"];
-        [self selectAudioDevice:[deviceCode integerValue] result:result];
+
+        if (![args isKindOfClass:[NSDictionary class]]) {
+            result([FlutterError errorWithCode:@"INVALID_ARGUMENT"
+                                   message:@"Expected a dictionary for 'device'"
+                                   details:nil]);
+            return;
+        }
+        NSDictionary *deviceDic = args[@"device"];
+        NSNumber *portTypeCode = deviceDic[@"type"];
+        NSString *portType = [self portTypeFromCode:[portTypeCode integerValue]];
+        // Parse dictionary to CustomPortDescription
+        CustomPortDescription *device = [[CustomPortDescription alloc] init];
+        device.portType = portType;
+        device.portName = deviceDic[@"name"];
+        device.UID = deviceDic[@"uuid"];
+
+        [self selectAudioDevice:device result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -78,19 +130,12 @@
                                              selector:@selector(handleAudioRouteChange:)
                                                  name:AVAudioSessionRouteChangeNotification
                                                object:nil];
-    
-    // Get the current audio route
-    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    AVAudioSessionRouteDescription *currentRoute = audioSession.currentRoute;
-    self.selectedAudioDevice = currentRoute.outputs.firstObject;
-    
-    // Initialize list of available audio devices
-    self.availableAudioDevices = [NSMutableArray arrayWithArray:audioSession.availableInputs];
+
+    #if DEBUG
+    NSLog(@"[Stringee] Audio manager started");
+    #endif
 
     // Notify success
-    #if DEBUG
-    NSLog(@"Audio manager started selected audio device = %@", self.selectedAudioDevice);
-    #endif
     if (result) {
         result(@{@"status": @YES, @"code": @0, @"message": @"Audio manager started"});
     }
@@ -100,9 +145,20 @@
 }
 
 - (void)stopAudioManagerWithResult:(FlutterResult)result {
-    // Mock: Stop the audio manager
-    // self.selectedAudioDevice = -1;
-    // [self.availableAudioDevices removeAllObjects];
+    // Remove notification observer for route changes
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:AVAudioSessionRouteChangeNotification
+                                                  object:nil];
+    
+    // Optionally, reset selected audio device and available devices (if needed)
+    self.selectedAudioDevice = nil;
+    self.inputDevices = nil;
+    self.outputDevices = nil;
+    self.availableAudioDevices = nil;
+
+    #if DEBUG
+    NSLog(@"[Stringee] Audio manager stopped");
+    #endif
 
     // Notify success
     if (result) {
@@ -110,13 +166,56 @@
     }
 }
 
-- (void)selectAudioDevice:(NSInteger)deviceCode result:(FlutterResult)result {
-    // if (![self.availableAudioDevices containsObject:@(deviceCode)]) {
-    //     result(@{@"status": @NO, @"code": @-3, @"message": @"Audio device not available to select"});
-    //     return;
-    // }
+- (void)selectAudioDevice:(CustomPortDescription *)device result:(FlutterResult)result {
+    #if DEBUG
+    NSLog(@"[Stringee] current audio device = %@", self.selectedAudioDevice);
+    NSLog(@"[Stringee] Selecting audio device: %@", device);
+    #endif
 
-    // self.selectedAudioDevice = deviceCode;
+    // check if the device is already selected
+    if (self.selectedAudioDevice && [self.selectedAudioDevice.UID isEqualToString:device.UID]) {
+        // Notify success
+        result(@{@"status": @YES, @"code": @0, @"message": @"Audio device already selected"});
+        return;
+    }
+
+    // check if the device is built-in speaker
+    if ([device.portType isEqualToString:AVAudioSessionPortBuiltInSpeaker]) {
+        // set speaker as the audio output
+        AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+        [self handleSpeakerSelectionWithAudioSession:audioSession result:result];
+        return;
+    }
+
+    // get available inputs
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    NSArray<AVAudioSessionPortDescription *> *availableInputs = audioSession.availableInputs;
+
+    // check if the device is available
+    AVAudioSessionPortDescription *deviceInput = nil;
+    for (AVAudioSessionPortDescription *input in availableInputs) {
+        if ([input.UID isEqualToString:device.UID]) {
+            deviceInput = input;
+            break;
+        }
+    }
+    if (deviceInput) {
+        #if DEBUG
+        NSLog(@"[Stringee] Device found in available inputs: device = %@", deviceInput);
+        #endif
+        // set preferred input
+        NSError *error = nil;
+        [audioSession setPreferredInput:deviceInput error:&error];
+        if (error) {
+            result([FlutterError errorWithCode:@"SELECT_DEVICE_ERROR"
+                                       message:@"Failed to select the audio device"
+                                       details:error.localizedDescription]);
+            return;
+        } else {
+            // Notify success
+            result(@{@"status": @YES, @"code": @0, @"message": @"Audio device selected"});
+        }
+    }
 
     // Notify success
     result(@{@"status": @YES, @"code": @0, @"message": @"Audio device selected"});
@@ -125,7 +224,7 @@
 #pragma mark - Audio Route Change Handling
 - (void)handleAudioRouteChange:(NSNotification *)notification {
     #if DEBUG
-    NSLog(@"Audio route changed");
+    NSLog(@"[Stringee] Audio route changed");
     #endif
     // Send updated state to Flutter
     [self sendAudioStateUpdate];
@@ -150,10 +249,6 @@
     self.availableAudioDevices = [self mergeInputOutputDevices];
 
     if (self.eventSink) {
-
-        #if DEBUG
-        NSLog(@"Sending audio state update selectedAudiodevic port type = %@", self.selectedAudioDevice.portType);
-        #endif
         // Prepare selected device information
         NSDictionary *selectedDevice = self.selectedAudioDevice ? @{
             @"uuid": self.selectedAudioDevice.UID ?: [NSNull null],
@@ -162,8 +257,8 @@
         } : [NSNull null];
 
         #if DEBUG
-        NSLog(@"selectedDevice = %@", selectedDevice);
-        NSLog(@"availableAudioDevices = %@", self.availableAudioDevices);
+        NSLog(@"[Stringee] current audio device = %@", selectedDevice);
+        NSLog(@"[Stringee] available audio devices = %@", self.availableAudioDevices);
         #endif
 
         // Prepare available devices list
@@ -175,10 +270,6 @@
                 @"type": @([self audioTypeFromPortType:port.portType])
             }];
         }
-
-        #if DEBUG
-        NSLog(@"deviceList = %@", deviceList);
-        #endif
 
         // Prepare event data
         NSDictionary *event = @{
@@ -193,64 +284,109 @@
 
 #pragma mark - Private helper functions
 
-- (NSArray<AVAudioSessionPortDescription *> *)mergeInputOutputDevices {
-    NSMutableDictionary<NSString *, AVAudioSessionPortDescription *> *mergedDevices = [NSMutableDictionary dictionary];
+- (void)handleSpeakerSelectionWithAudioSession:(AVAudioSession *)audioSession result:(FlutterResult)result {
+    NSError *error = nil;
+    [audioSession overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
 
-    // Combine input devices
-    // for (AVAudioSessionPortDescription *input in [AVAudioSession sharedInstance].availableInputs) {
-    //     mergedDevices[input.UID] = input;
-    // }
+    if (error) {
+        result([FlutterError errorWithCode:@"SPEAKER_SELECTION_ERROR"
+                                   message:@"Failed to set speaker as the audio output"
+                                   details:error.localizedDescription]);
+        return;
+    }
 
-    #if DEBUG
-    // NSLog(@"availableInputs = %@", [AVAudioSession sharedInstance].availableInputs);
-    NSLog(@"current route outputs = %@", [AVAudioSession sharedInstance].currentRoute.outputs);
-    #endif
+    dispatch_async(dispatch_get_main_queue(), ^{
+        result(@{@"status": @YES, @"code": @0, @"message": @"Speaker selected"});
+    });
+}
 
-    // Combine output devices
-    AVAudioSessionRouteDescription *currentRoute = [AVAudioSession sharedInstance].currentRoute;
-    for (AVAudioSessionPortDescription *output in currentRoute.outputs) {
-        if (mergedDevices[output.UID]) {
-            // If the UID already exists, update the entry with the output
-            mergedDevices[output.UID] = output;
+- (NSString *)portTypeFromCode:(NSInteger)code {
+    switch (code) {
+        case 0:
+            return AVAudioSessionPortBuiltInSpeaker;
+        case 1:
+            return AVAudioSessionPortHeadphones;
+        case 2:
+            return AVAudioSessionPortBuiltInReceiver;
+        case 3:
+            return AVAudioSessionPortBluetoothHFP;
+        default:
+            return nil; // Unknown port type
+    }
+}
+
+- (NSArray<CustomPortDescription *> *)mergeInputOutputDevices {
+
+    // Get the current audio route
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    AVAudioSessionRouteDescription *currentRoute = audioSession.currentRoute;
+
+    // Update selected audio device based on the current route
+    self.selectedAudioDevice = currentRoute.outputs.firstObject;
+    // Update the list of available devices (inputs and outputs merged)
+    self.inputDevices = audioSession.availableInputs; // Direct input from AVAudioSession
+    self.outputDevices = currentRoute.outputs;        // Current outputs from the route
+
+    // Merge input and output devices into a single list
+    NSMutableDictionary<NSString *, CustomPortDescription *> *mergedDevices = [NSMutableDictionary dictionary];
+    
+    // Add output devices to the merged list
+    for (AVAudioSessionPortDescription *outputDevice in self.outputDevices) {
+        CustomPortDescription *customDevice = [[CustomPortDescription alloc] initWithPortDescription:outputDevice];
+        mergedDevices[outputDevice.UID] = customDevice;
+    }
+    
+    // Add input devices with replacements
+    for (AVAudioSessionPortDescription *inputDevice in self.inputDevices) {
+        NSString *replacementPortType = nil;
+        if ([inputDevice.portType isEqualToString:AVAudioSessionPortBuiltInMic]) {
+            replacementPortType = AVAudioSessionPortBuiltInReceiver; // Replace Built-In Mic with Built-In Receiver
+        } else if ([inputDevice.portType isEqualToString:AVAudioSessionPortHeadsetMic]) {
+            replacementPortType = AVAudioSessionPortHeadphones; // Replace Headset Mic with Headphones
+        }
+        
+        if (replacementPortType) {
+            // Create a custom device for the replacement
+            CustomPortDescription *customDevice = [[CustomPortDescription alloc] init];
+            customDevice.portType = replacementPortType;
+            customDevice.portName = inputDevice.portName; // Use the same name
+            customDevice.UID = inputDevice.UID; // Use the same UID
+            mergedDevices[inputDevice.UID] = customDevice;
         } else {
-            mergedDevices[output.UID] = output;
+            // Add the input device as is
+            CustomPortDescription *customDevice = [[CustomPortDescription alloc] initWithPortDescription:inputDevice];
+            mergedDevices[inputDevice.UID] = customDevice;
         }
     }
 
-    // Ensure built-in speaker and receiver are included
-    BOOL hasBuiltInSpeaker = NO;
-    BOOL hasBuiltInReceiver = NO;
+    // If we have both Built-In Mic and Built-In Receiver, remove the Built-In Receiver entry
+    if ([mergedDevices objectForKey:@"Built-In Microphone"] && [mergedDevices objectForKey:@"Built-In Receiver"]) {
+        [mergedDevices removeObjectForKey:@"Built-In Receiver"];
+    }
 
-    for (AVAudioSessionPortDescription *device in mergedDevices.allValues) {
-        if ([device.portType isEqualToString:AVAudioSessionPortBuiltInSpeaker]) {
-            hasBuiltInSpeaker = YES;
-        } else if ([device.portType isEqualToString:AVAudioSessionPortBuiltInReceiver]) {
-            hasBuiltInReceiver = YES;
+    // Ensure built-in speaker is present in the list
+    BOOL builtInSpeakerFound = NO;
+    for (AVAudioSessionPortDescription *outputDevice in self.outputDevices) {
+        if ([outputDevice.portType isEqualToString:AVAudioSessionPortBuiltInSpeaker]) {
+            builtInSpeakerFound = YES;
+            break;
         }
     }
 
-    if (!hasBuiltInSpeaker) {
-        CustomPortDescription *builtInSpeaker = [CustomPortDescription new];
-        builtInSpeaker.portType = AVAudioSessionPortBuiltInSpeaker;
-        builtInSpeaker.portName = @"Built-In Speaker";
-        builtInSpeaker.UID = @"Built-In Speaker";
-        [mergedDevices setObject:(AVAudioSessionPortDescription *)builtInSpeaker forKey:builtInSpeaker.UID];
+    if (!builtInSpeakerFound) {
+        // Add built-in speaker if not found
+        CustomPortDescription *customBuiltInSpeaker = [[CustomPortDescription alloc] initWithPortType:AVAudioSessionPortBuiltInSpeaker portName:@"Built-In Speaker" UID:@"Built-In Speaker"];
+        mergedDevices[customBuiltInSpeaker.UID] = customBuiltInSpeaker;
     }
 
-    if (!hasBuiltInReceiver) {
-        CustomPortDescription *builtInReceiver = [CustomPortDescription new];
-        builtInReceiver.portType = AVAudioSessionPortBuiltInReceiver;
-        builtInReceiver.portName = @"Receiver";
-        builtInReceiver.UID = @"Built-In Receiver";
-        [mergedDevices setObject:(AVAudioSessionPortDescription *)builtInReceiver forKey:builtInReceiver.UID];
-    }
-
-    #if DEBUG
-    NSLog(@"mergedDevices = %@", mergedDevices.allValues);
-    #endif
-
-    // Return the merged devices as an array
-    return [mergedDevices allValues];
+    // #if DEBUG
+    // NSLog(@"Input devices = %@", self.inputDevices);
+    // NSLog(@"Output devices = %@", self.outputDevices);
+    // NSLog(@"Merged devices = %@", mergedDevices);
+    // #endif
+    
+    // Return the merged list of devices as an array
+    return mergedDevices.allValues;
 }
 
 - (NSInteger)audioTypeFromPortType:(NSString *)portType {
