@@ -1,3 +1,7 @@
+### 1.2.14:
+
+- Feature: Separate the audio device management feature from the call feature.
+
 ### 1.2.13:
 
 - Bugfix: Update file name podspec with new plugin name.
