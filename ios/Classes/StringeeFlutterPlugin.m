@@ -7,6 +7,14 @@
 #import "StringeeMessageManager.h"
 #import "StringeeHelper.h"
 #import "StringeeClientWrapper.h"
+#import "StringeeFlutterAudioManager.h"
+
+@interface StringeeFlutterPlugin ()
+
+// Instance of the audio manager
+@property (nonatomic, strong) StringeeFlutterAudioManager *audioManager;
+
+@end
 
 @implementation StringeeFlutterPlugin {
 //    NSArray *DTMF;
@@ -55,6 +63,9 @@
 
     StringeeVideoViewFactory* factory = [[StringeeVideoViewFactory alloc] initWithMessenger:registrar.messenger];
     [registrar registerViewFactory:factory withId:@"stringeeVideoView"];
+
+    // Add audio manager
+    instance.audioManager = [[StringeeFlutterAudioManager alloc] initWithRegistrar:registrar];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {

@@ -7,7 +7,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:stringee_flutter_plugin_example/tab/call_tab.dart';
 import 'package:stringee_flutter_plugin_example/tab/chat_tab.dart';
 import 'package:stringee_flutter_plugin_example/tab/conference_tab.dart';
-import 'package:stringee_plugin/stringee_plugin.dart';
 
 import 'tab/live_chat_tab.dart';
 
@@ -55,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   requestPermissions() async {
     DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
     deviceInfoPlugin.androidInfo.then((value) async {
-      if (value.version.sdkInt! >= 31) {
+      if (value.version.sdkInt >= 31) {
         Map<Permission, PermissionStatus> statuses = await [
           Permission.camera,
           Permission.microphone,

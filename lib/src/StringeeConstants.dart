@@ -102,15 +102,6 @@ enum StringeeCallType {
   phoneToApp,
 }
 
-/// Type of Audio Device
-enum AudioDevice {
-  speakerPhone,
-  wiredHeadset,
-  earpiece,
-  bluetooth,
-  none,
-}
-
 /// Type of Signaling State
 enum StringeeSignalingState {
   calling,

@@ -96,9 +96,6 @@ class StringeeCall2 {
         case 'didRemoveVideoTrack':
           handleDidRemoveVideoTrack(map['body']);
           break;
-        case 'didChangeAudioDevice':
-          handleDidChangeAudioDevice(map['body']);
-          break;
       }
     }
   }
@@ -173,22 +170,6 @@ class StringeeCall2 {
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didRemoveVideoTrack,
       "body": videoTrack
-    });
-  }
-
-  void handleDidChangeAudioDevice(Map<dynamic, dynamic> map) {
-    AudioDevice selectedAudioDevice = AudioDevice.values[map['code']];
-    List<dynamic> codeList = [];
-    codeList.addAll(map['codeList']);
-    List<AudioDevice> availableAudioDevices = [];
-    for (int i = 0; i < codeList.length; i++) {
-      AudioDevice audioDevice = AudioDevice.values[codeList[i]];
-      availableAudioDevices.add(audioDevice);
-    }
-    _eventStreamController.add({
-      "eventType": StringeeCall2Events.didChangeAudioDevice,
-      "selectedAudioDevice": selectedAudioDevice,
-      "availableAudioDevices": availableAudioDevices
     });
   }
 
@@ -345,17 +326,6 @@ class StringeeCall2 {
     };
     return await StringeeClient.methodChannel
         .invokeMethod('enableVideo2', params);
-  }
-
-  /// Set speaker phone on/off
-  Future<Map<dynamic, dynamic>> setSpeakerphoneOn(bool speakerPhoneOn) async {
-    final params = {
-      'callId': this._id,
-      'speaker': speakerPhoneOn,
-      'uuid': _client.uuid,
-    };
-    return await StringeeClient.methodChannel
-        .invokeMethod('setSpeakerphoneOn2', params);
   }
 
   /// Switch camera

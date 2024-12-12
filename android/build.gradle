@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath("com.android.tools.build:gradle:8.1.0")
     }
 }
 
@@ -22,25 +22,31 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 33
+    if (project.android.hasProperty("namespace")) {
+        namespace = "com.stringee.stringeeflutterplugin"
+    }
+
+    compileSdk = 34
 
     defaultConfig {
-        minSdkVersion 21
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        minSdk = 21
     }
+
     lintOptions {
         disable 'InvalidPackage'
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '30.0.3'
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
-    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.1'
-    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.2'
     implementation 'com.android.volley:volley:1.2.1'
+//    implementation 'com.stringee.sdk.android:stringee-android-sdk-dev:2.1.1'
+//    implementation 'io.github.webrtc-sdk:android:125.6422.05'
 }
