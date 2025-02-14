@@ -277,13 +277,21 @@
         #endif
 
         // Prepare event data
-        NSDictionary *event = @{
-            @"device": selectedDevice,
-            @"devices": deviceList
-        };
+        if (selectedDevice && deviceList) {
+            NSMutableDictionary *event = [NSMutableDictionary dictionary];
+            event[@"device"] = selectedDevice;
+            event[@"devices"] = deviceList;
+            #if DEBUG
+            NSLog(@"[Stringee] Audio state update: %@", event);
+            #endif
 
-        // Send event to Flutter
-        self.eventSink(event);
+            // Send event to Flutter
+            self.eventSink(event);
+        } else {
+            #if DEBUG
+            NSLog(@"[Stringee] Audio state update: No audio device selected");
+            #endif
+        }
     }
 }
 

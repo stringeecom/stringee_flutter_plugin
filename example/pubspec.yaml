@@ -24,6 +24,7 @@ dependencies:
   flat_list: ^0.1.14
 
 dev_dependencies:
+  flutter_lints: ^2.0.0
   integration_test:
     sdk: flutter
   flutter_test:
