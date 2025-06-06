@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 class RoundedButton extends StatelessWidget {
-  VoidCallback onPressed;
-  Icon icon;
-  double radius;
-  Color color;
+  final VoidCallback onPressed;
+  final Icon icon;
+  final double radius;
+  final Color color;
 
-  RoundedButton({
+  const RoundedButton({
+    Key? key,
     required this.icon,
     required this.color,
     required this.radius,
     required this.onPressed,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return ElevatedButton(
-        child: icon,
         style: ButtonStyle(
             padding:
                 WidgetStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.only(
@@ -31,7 +31,7 @@ class RoundedButton extends StatelessWidget {
                 RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(radius)),
                     side: BorderSide(color: color)))),
-        onPressed: onPressed);
+        onPressed: onPressed,
+        child: icon);
   }
 }
-
