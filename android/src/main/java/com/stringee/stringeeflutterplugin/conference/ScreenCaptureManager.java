@@ -1,6 +1,4 @@
-package com.stringee.stringeeflutterplugin;
-
-import android.annotation.SuppressLint;
+package com.stringee.stringeeflutterplugin.conference;
 
 import com.stringee.video.StringeeScreenCapture;
 import com.stringee.video.StringeeScreenCapture.Builder;
@@ -8,7 +6,6 @@ import com.stringee.video.StringeeScreenCapture.Builder;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
-@SuppressLint("NewApi")
 public class ScreenCaptureManager {
     private static ScreenCaptureManager instance;
     private final StringeeScreenCapture screenCapture;

@@ -1,8 +1,12 @@
-package com.stringee.stringeeflutterplugin;
+package com.stringee.stringeeflutterplugin.conference;
 
 import android.util.Log;
 
-import com.stringee.stringeeflutterplugin.common.enumeration.StringeeEventType;
+import com.stringee.stringeeflutterplugin.ClientWrapper;
+import com.stringee.stringeeflutterplugin.StringeeFlutterPlugin;
+import com.stringee.stringeeflutterplugin.common.Constants;
+import com.stringee.stringeeflutterplugin.common.Utils;
+import com.stringee.stringeeflutterplugin.common.StringeeEventType;
 import com.stringee.video.StringeeVideoTrack;
 import com.stringee.video.StringeeVideoTrack.Listener;
 import com.stringee.video.StringeeVideoTrack.MediaState;
@@ -17,9 +21,9 @@ public class VideoTrackManager implements Listener {
     private boolean mediaAvailable = false;
     private final boolean forCall;
     private Listener listener;
-    private static final String TAG = "StringeeSDK";
 
-    public VideoTrackManager(ClientWrapper clientWrapper, StringeeVideoTrack videoTrack, String localId, boolean forCall) {
+    public VideoTrackManager(ClientWrapper clientWrapper, StringeeVideoTrack videoTrack,
+                             String localId, boolean forCall) {
         this.clientWrapper = clientWrapper;
         this.videoTrack = videoTrack;
         this.localId = localId;
@@ -59,7 +63,8 @@ public class VideoTrackManager implements Listener {
                 listener.onMediaAvailable();
             }
 
-            Log.d(TAG, "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId()));
+            Log.d(Constants.TAG,
+                    "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId()));
             if (!forCall) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", StringeeEventType.ROOM_EVENT.getValue());
@@ -67,7 +72,7 @@ public class VideoTrackManager implements Listener {
                 map.put("uuid", clientWrapper.getId());
                 Map<String, Object> bodyMap = new HashMap<>();
                 bodyMap.put("roomId", videoTrack.getRoomId());
-                bodyMap.put("track", Utils.convertVideoTrackToMap(getThis()));
+                bodyMap.put("track", ConferenceUtils.convertVideoTrackToMap(getThis()));
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin.eventSink.success(map);
             }

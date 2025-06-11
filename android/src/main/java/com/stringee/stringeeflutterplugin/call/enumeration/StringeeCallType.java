@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.common.enumeration;
+package com.stringee.stringeeflutterplugin.call.enumeration;
 
 public enum StringeeCallType {
     APP_TO_APP_OUTGOING(0),

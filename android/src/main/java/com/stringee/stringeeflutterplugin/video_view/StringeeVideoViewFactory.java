@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin;
+package com.stringee.stringeeflutterplugin.video_view;
 
 import android.content.Context;
 

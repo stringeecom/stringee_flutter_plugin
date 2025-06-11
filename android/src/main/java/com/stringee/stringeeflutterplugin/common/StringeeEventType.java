@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.common.enumeration;
+package com.stringee.stringeeflutterplugin.common;
 
 public enum StringeeEventType {
     CLIENT_EVENT(0),

@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin.common.enumeration;
+package com.stringee.stringeeflutterplugin.chat.enumeration;
 
 public enum UserRole {
     ADMIN(0),

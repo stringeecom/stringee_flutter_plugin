@@ -1,4 +1,9 @@
-class Result {
+import 'dart:convert';
+
+import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+
+class Result extends Equatable {
   final bool status;
   final int code;
   final String message;
@@ -11,17 +16,36 @@ class Result {
     this.data,
   });
 
-  static Result fromJson(Map<dynamic, dynamic> json) {
+  static Result fromJson(dynamic rawJson) {
+    Map<dynamic, dynamic>? result;
+    try {
+      if (rawJson is Map<dynamic, dynamic>) {
+        result = rawJson;
+      } else if (rawJson is String) {
+        result = json.decode(rawJson);
+      }
+    } catch (e) {
+      debugPrint('Error parsing JSON: $e');
+    }
+    bool status = false;
+    int code = -1;
+    String message = 'Error parsing JSON';
+    if (result != null) {
+      status = result['status'] == true;
+      code = result['code'] ?? -1;
+      message = result['message'] ?? 'Error parsing JSON';
+      result.remove('status');
+      result.remove('code');
+      result.remove('message');
+    }
     return Result(
-      status: json['status'],
-      code: json['code'],
-      message: json['message'],
-      data: json['body'],
+      status: status,
+      code: code,
+      message: message,
+      data: result,
     );
   }
 
   @override
-  String toString() {
-    return 'Result{status: $status, code: $code, message: $message, data: $data}';
-  }
+  List<Object?> get props => [status, code, message, data];
 }

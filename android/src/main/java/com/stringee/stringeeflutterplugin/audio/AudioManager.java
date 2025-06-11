@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin;
+package com.stringee.stringeeflutterplugin.audio;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,6 +8,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.stringee.common.StringeeAudioManager;
+import com.stringee.stringeeflutterplugin.common.Constants;
+import com.stringee.stringeeflutterplugin.common.FlutterResult;
+import com.stringee.stringeeflutterplugin.common.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,27 +24,23 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChannel.StreamHandler, StringeeAudioManager.AudioManagerEvents {
-    private static volatile StringeeAudioManagerPlugin instance;
+public class AudioManager implements MethodCallHandler, EventChannel.StreamHandler, StringeeAudioManager.AudioManagerEvents {
+    private static volatile AudioManager instance;
     private EventSink eventSink;
-    private Context context;
+    private final Context context;
     private final List<StringeeAudioManager.AudioDevice> audioDevices = new ArrayList<>();
 
     private StringeeAudioManager audioManager;
-    private static final String TAG = "StringeeSDK";
 
-    public StringeeAudioManagerPlugin() {
+    public AudioManager(Context context) {
+        this.context = context.getApplicationContext();
     }
 
-    static void initialize(Context context) {
-        getInstance().setContext(context.getApplicationContext());
-    }
-
-    public static StringeeAudioManagerPlugin getInstance() {
+    public static AudioManager getInstance(Context context) {
         if (instance == null) {
-            synchronized (StringeeAudioManagerPlugin.class) {
+            synchronized (AudioManager.class) {
                 if (instance == null) {
-                    instance = new StringeeAudioManagerPlugin();
+                    instance = new AudioManager(context);
                 }
             }
         }
@@ -67,12 +66,7 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                         audioManager = new StringeeAudioManager(context);
                     }
                     audioManager.start(this);
-                    Log.d(TAG, "start: true - 0 - Start audio manager success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Start audio manager success");
-                    result.success(map);
+                    result.success(FlutterResult.success("startAudioManager").getMap());
                 });
                 break;
             case "stop":
@@ -81,25 +75,16 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                         audioManager.stop();
                     }
                     audioManager = null;
-                    Log.d(TAG, "start: true - 0 - Stop audio manager success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Stop audio manager success");
-                    result.success(map);
+                    result.success(FlutterResult.success("stopAudioManager").getMap());
                 });
                 break;
             case "selectDevice":
                 Utils.post(() -> {
-                    Map<String, Object> map = new HashMap<>();
                     if (audioManager != null) {
                         Map<String, Object> deviceMap = call.argument("device");
                         if (deviceMap == null) {
-                            Log.d(TAG, "selectDevice: false - 1 - Invalid device");
-                            map.put("status", false);
-                            map.put("code", -1);
-                            map.put("message", "Invalid device");
-                            result.success(map);
+                            result.success(FlutterResult.error("selectDevice", -1, "Invalid device")
+                                    .getMap());
                             return;
                         }
                         Integer device = (Integer) deviceMap.get("type");
@@ -114,34 +99,24 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                                 audioManager.setSpeakerphoneOn(false);
                                 audioManager.setBluetoothScoOn(false);
                             }
-                            Log.d(TAG, "selectDevice: true - 0 - Select audio device success");
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Select audio device success");
+                            result.success(FlutterResult.success("selectDevice").getMap());
                         } else {
-                            Log.d(TAG, "selectDevice: false - 1 - Invalid device");
-                            map.put("status", false);
-                            map.put("code", -1);
-                            map.put("message", "Invalid device type");
+                            result.success(
+                                    FlutterResult.error("selectDevice", -1, "Invalid device type")
+                                            .getMap());
                         }
                     } else {
-                        Log.d(TAG, "selectDevice: false - 2 - Audio manager is not started");
-                        map.put("status", false);
-                        map.put("code", -2);
-                        map.put("message", "Audio manager is not started");
+                        result.success(FlutterResult.error("selectDevice", -2,
+                                "Audio manager is not started").getMap());
                     }
-                    result.success(map);
                 });
                 break;
         }
     }
 
-    private void setContext(Context context) {
-        this.context = context.getApplicationContext();
-    }
-
     @Override
-    public void onAudioDeviceChanged(StringeeAudioManager.AudioDevice selectedAudioDevice, Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
+    public void onAudioDeviceChanged(StringeeAudioManager.AudioDevice selectedAudioDevice,
+                                     Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
         audioDevices.clear();
         audioDevices.add(StringeeAudioManager.AudioDevice.SPEAKER_PHONE);
         if (availableAudioDevices.contains(StringeeAudioManager.AudioDevice.BLUETOOTH)) {
@@ -154,7 +129,8 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                 audioDevices.add(StringeeAudioManager.AudioDevice.EARPIECE);
             }
         }
-        Log.d(TAG, "onAudioManagerDevicesChanged: " + audioDevices + ", " + "selected: " + selectedAudioDevice);
+        Log.d(Constants.TAG, "onAudioManagerDevicesChanged: " + audioDevices + ", " + "selected: " +
+                selectedAudioDevice);
         List<Map<String, Object>> devices = new ArrayList<>();
         for (int i = 0; i < audioDevices.size(); i++) {
             Map<String, Object> map = new HashMap<>();

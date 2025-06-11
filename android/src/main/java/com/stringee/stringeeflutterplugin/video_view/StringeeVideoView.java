@@ -1,4 +1,4 @@
-package com.stringee.stringeeflutterplugin;
+package com.stringee.stringeeflutterplugin.video_view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,6 +10,10 @@ import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.stringee.stringeeflutterplugin.call.StringeeCallWrapper;
+import com.stringee.stringeeflutterplugin.common.StringeeManager;
+import com.stringee.stringeeflutterplugin.common.Utils;
+import com.stringee.stringeeflutterplugin.conference.VideoTrackManager;
 import com.stringee.video.StringeeVideoTrack.Listener;
 import com.stringee.video.StringeeVideoTrack.MediaState;
 import com.stringee.video.TextureViewRenderer;
@@ -56,12 +60,12 @@ public class StringeeVideoView implements PlatformView {
         frameLayout.removeAllViews();
     }
 
-    private void renderView(final FrameLayout layout, final String callId, @NonNull final Map<String, Object> creationParams) {
+    private void renderView(final FrameLayout layout, final String callId,
+                            @NonNull final Map<String, Object> creationParams) {
         Utils.post(() -> {
-            CallWrapper call = StringeeManager.getInstance().getCallsMap().get(callId);
-            Call2Wrapper call2 = StringeeManager.getInstance().getCall2sMap().get(callId);
+            StringeeCallWrapper call = StringeeManager.getInstance().getCallsMap().get(callId);
 
-            if (call == null && call2 == null) {
+            if (call == null) {
                 return;
             }
 
@@ -82,31 +86,21 @@ public class StringeeVideoView implements PlatformView {
                 isMirror = Boolean.TRUE.equals(creationParams.get("isMirror"));
             }
 
-            LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            LayoutParams layoutParams =
+                    new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             layoutParams.gravity = Gravity.CENTER;
 
             layout.removeAllViews();
             layout.setBackgroundColor(Color.BLACK);
             if (isLocal) {
                 TextureViewRenderer localView;
-                if (call != null) {
-                    localView = call.getLocalView();
-                    if (localView.getParent() != null) {
-                        ((FrameLayout) localView.getParent()).removeView(localView);
-                    }
-
-                    layout.addView(localView, layoutParams);
-                    call.renderLocalView(scalingType);
-                } else {
-
-                    localView = call2.getLocalView();
-                    if (localView.getParent() != null) {
-                        ((FrameLayout) localView.getParent()).removeView(localView);
-                    }
-
-                    layout.addView(localView, layoutParams);
-                    call2.renderLocalView(scalingType);
+                localView = call.getLocalView();
+                if (localView.getParent() != null) {
+                    ((FrameLayout) localView.getParent()).removeView(localView);
                 }
+
+                layout.addView(localView, layoutParams);
+                call.renderLocalView(scalingType);
                 localView.setMirror(isMirror);
 
                 //save localView option
@@ -117,23 +111,13 @@ public class StringeeVideoView implements PlatformView {
                 StringeeManager.getInstance().getLocalViewOptions().put(callId, localViewOptions);
             } else {
                 TextureViewRenderer remoteView;
-                if (call != null) {
-                    remoteView = call.getRemoteView();
-                    if (remoteView.getParent() != null) {
-                        ((FrameLayout) remoteView.getParent()).removeView(remoteView);
-                    }
-
-                    layout.addView(remoteView, layoutParams);
-                    call.renderRemoteView(scalingType);
-                } else {
-                    remoteView = call2.getRemoteView();
-                    if (remoteView.getParent() != null) {
-                        ((FrameLayout) remoteView.getParent()).removeView(remoteView);
-                    }
-
-                    layout.addView(remoteView, layoutParams);
-                    call2.renderRemoteView(scalingType);
+                remoteView = call.getRemoteView();
+                if (remoteView.getParent() != null) {
+                    ((FrameLayout) remoteView.getParent()).removeView(remoteView);
                 }
+
+                layout.addView(remoteView, layoutParams);
+                call.renderRemoteView(scalingType);
                 remoteView.setMirror(isMirror);
 
                 //save remoteView option
@@ -146,15 +130,18 @@ public class StringeeVideoView implements PlatformView {
         }, 500);
     }
 
-    private void renderView(final Context context, final FrameLayout layout, final String trackId, final Map<String, Object> creationParams) {
+    private void renderView(final Context context, final FrameLayout layout, final String trackId,
+                            final Map<String, Object> creationParams) {
         Utils.post(() -> {
-            VideoTrackManager videoTrackManager = StringeeManager.getInstance().getTracksMap().get(trackId);
+            VideoTrackManager videoTrackManager =
+                    StringeeManager.getInstance().getTracksMap().get(trackId);
 
             if (videoTrackManager == null) {
                 return;
             }
 
-            LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            LayoutParams layoutParams =
+                    new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             layoutParams.gravity = Gravity.CENTER;
 
             layout.removeAllViews();
@@ -164,7 +151,8 @@ public class StringeeVideoView implements PlatformView {
                 @Override
                 public void onMediaAvailable() {
                     Utils.post(() -> {
-                        TextureViewRenderer trackView = videoTrackManager.getVideoTrack().getView2(context);
+                        TextureViewRenderer trackView =
+                                videoTrackManager.getVideoTrack().getView2(context);
                         if (trackView.getParent() != null) {
                             ((FrameLayout) trackView.getParent()).removeView(trackView);
                         }
@@ -197,5 +185,4 @@ public class StringeeVideoView implements PlatformView {
             });
         });
     }
-
 }
