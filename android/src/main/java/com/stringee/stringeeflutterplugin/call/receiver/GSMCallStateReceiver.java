@@ -89,11 +89,11 @@ public class GSMCallStateReceiver implements MethodChannel.MethodCallHandler, Ev
                 break;
             case "start_listen_gms_call_state":
                 startListening();
-                result.success(FlutterResult.success("startListenGmsCallState"));
+                result.success(FlutterResult.success("startListenGmsCallState").getMap());
                 break;
             case "stop_listen_gms_call_state":
                 stopListening();
-                result.success(FlutterResult.success("stopListenGmsCallState"));
+                result.success(FlutterResult.success("stopListenGmsCallState").getMap());
                 break;
         }
     }

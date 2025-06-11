@@ -488,7 +488,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void connect(final String serverAddresses, final String token, final Result result) {
         connect(serverAddresses, token);
         Log.d(Constants.TAG, "connect: success");
-        result.success(FlutterResult.success("connect"));
+        result.success(FlutterResult.success("connect").getMap());
     }
 
     public void connect(final String serverAddresses, final String token) {
@@ -531,7 +531,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     public void disconnect(final Result result) {
         client.disconnect();
         Log.d(Constants.TAG, "disconnect: success");
-        result.success(FlutterResult.success("disconnect"));
+        result.success(FlutterResult.success("disconnect").getMap());
     }
 
     /**

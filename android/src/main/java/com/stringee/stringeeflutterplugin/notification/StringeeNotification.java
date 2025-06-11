@@ -345,7 +345,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         Notification notification = builder.build();
         nm.notify(info.getId(), notification);
 
-        result.success(FlutterResult.success("notifyIncomingCall"));
+        result.success(FlutterResult.success("notifyIncomingCall").getMap());
     }
 
     /**
