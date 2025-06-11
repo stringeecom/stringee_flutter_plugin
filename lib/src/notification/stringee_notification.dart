@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 import '../../stringee_plugin.dart';
 
-typedef CallBack = Future<void> Function(Map<dynamic, dynamic> event);
+typedef CallBack = void Function(Map<dynamic, dynamic> event);
 
 class StringeeNotification {
   static const MethodChannel methodChannel =
