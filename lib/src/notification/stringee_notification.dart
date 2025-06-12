@@ -8,6 +8,16 @@ import '../../stringee_plugin.dart';
 
 typedef CallBack = void Function(Map<dynamic, dynamic> event);
 
+const String paramBase = 'com.stringee.flutter.param.';
+const String paramUuid = '${paramBase}uuid';
+const String paramCallId =  '${paramBase}call_id';
+const String paramNotificationId = '${paramBase}notification_id';
+
+const String actionBase = 'com.stringee.flutter.action.';
+const String actionFullScreenIntent = '${actionBase}full_screen_intent';
+const String actionClickNotification = '${actionBase}click_notification';
+const String actionAnswerCall ='${actionBase}answer_call';
+
 class StringeeNotification {
   static const MethodChannel methodChannel =
       MethodChannel('com.stringee.flutter.notification.method_channel');

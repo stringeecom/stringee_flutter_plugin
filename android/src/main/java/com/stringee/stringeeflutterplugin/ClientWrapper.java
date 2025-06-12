@@ -487,7 +487,6 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      */
     public void connect(final String serverAddresses, final String token, final Result result) {
         connect(serverAddresses, token);
-        Log.d(Constants.TAG, "connect: success");
         result.success(FlutterResult.success("connect").getMap());
     }
 

@@ -240,13 +240,22 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         }
 
         Intent fullScreenIntent = NotificationUtils.getLaunchIntent(context);
-        fullScreenIntent.setAction(Constants.ACTION_CLICK_NOTIFICATION);
+        fullScreenIntent.setAction(Constants.ACTION_FULL_SCREEN_INTENT);
         fullScreenIntent.putExtra(Constants.PARAM_CALL_ID, info.getCallId());
         fullScreenIntent.putExtra(Constants.PARAM_UUID, info.getClientId());
         fullScreenIntent.putExtra(Constants.PARAM_NOTIFICATION_ID, info.getId());
         PendingIntent fullScreenPendingIntent =
                 PendingIntent.getActivity(context, (int) (System.currentTimeMillis() & 0xfffffff),
                         fullScreenIntent, flag);
+
+        Intent contentIntent = NotificationUtils.getLaunchIntent(context);
+        contentIntent.setAction(Constants.ACTION_CLICK_NOTIFICATION);
+        contentIntent.putExtra(Constants.PARAM_CALL_ID, info.getCallId());
+        contentIntent.putExtra(Constants.PARAM_UUID, info.getClientId());
+        contentIntent.putExtra(Constants.PARAM_NOTIFICATION_ID, info.getId());
+        PendingIntent contentPendingIntent =
+                PendingIntent.getActivity(context, (int) (System.currentTimeMillis() & 0xfffffff),
+                        contentIntent, flag);
 
         Intent rejectIntent = new Intent(context, ActionCallService.class);
         rejectIntent.setAction(Constants.ACTION_REJECT_CALL);
@@ -334,7 +343,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         // Ongoing
         builder.setOngoing(true);
         // Content intent
-        builder.setContentIntent(fullScreenPendingIntent);
+        builder.setContentIntent(contentPendingIntent);
         // Priority
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         // Category
@@ -397,14 +406,14 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
             flag = PendingIntent.FLAG_IMMUTABLE;
         }
 
-        Intent fullScreenIntent = NotificationUtils.getLaunchIntent(context);
-        fullScreenIntent.setAction(Constants.ACTION_CLICK_NOTIFICATION);
-        fullScreenIntent.putExtra(Constants.PARAM_CALL_ID, inCallServiceInfo.getCallId());
-        fullScreenIntent.putExtra(Constants.PARAM_UUID, inCallServiceInfo.getClientId());
-        fullScreenIntent.putExtra(Constants.PARAM_NOTIFICATION_ID, inCallServiceInfo.getId());
-        PendingIntent fullScreenPendingIntent =
+        Intent contentIntent = NotificationUtils.getLaunchIntent(context);
+        contentIntent.setAction(Constants.ACTION_CLICK_NOTIFICATION);
+        contentIntent.putExtra(Constants.PARAM_CALL_ID, inCallServiceInfo.getCallId());
+        contentIntent.putExtra(Constants.PARAM_UUID, inCallServiceInfo.getClientId());
+        contentIntent.putExtra(Constants.PARAM_NOTIFICATION_ID, inCallServiceInfo.getId());
+        PendingIntent contentPendingIntent =
                 PendingIntent.getActivity(context, (int) (System.currentTimeMillis() & 0xfffffff),
-                        fullScreenIntent, flag);
+                        contentIntent, flag);
 
         Intent endIntent = new Intent(context, ActionCallService.class);
         endIntent.setAction(Constants.ACTION_HANG_UP_CALL);
@@ -484,13 +493,11 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         // Ongoing
         builder.setOngoing(true);
         // Content intent
-        builder.setContentIntent(fullScreenPendingIntent);
+        builder.setContentIntent(contentPendingIntent);
         // Priority
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         // Category
         builder.setCategory(NotificationCompat.CATEGORY_CALL);
-        // Full screen intent
-        builder.setFullScreenIntent(fullScreenPendingIntent, true);
         Notification notification = builder.build();
 
         int type = 0;
@@ -549,13 +556,13 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
             flag = PendingIntent.FLAG_IMMUTABLE;
         }
 
-        Intent intent = NotificationUtils.getLaunchIntent(context);
-        intent.setAction(Constants.ACTION_CLICK_NOTIFICATION);
-        intent.putExtra(Constants.PARAM_CALL_ID, screenCaptureServiceInfo.getCallId());
-        intent.putExtra(Constants.PARAM_UUID, screenCaptureServiceInfo.getClientId());
-        PendingIntent pendingIntent =
+        Intent contentIntent = NotificationUtils.getLaunchIntent(context);
+        contentIntent.setAction(Constants.ACTION_CLICK_NOTIFICATION);
+        contentIntent.putExtra(Constants.PARAM_CALL_ID, screenCaptureServiceInfo.getCallId());
+        contentIntent.putExtra(Constants.PARAM_UUID, screenCaptureServiceInfo.getClientId());
+        PendingIntent contentPendingIntent =
                 PendingIntent.getActivity(context, (int) (System.currentTimeMillis() & 0xfffffff),
-                        intent, flag);
+                        contentIntent, flag);
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, screenCaptureServiceInfo.getChannelId());
@@ -578,7 +585,7 @@ public class StringeeNotification implements MethodCallHandler, EventChannel.Str
         // Ongoing
         builder.setOngoing(true);
         // Content intent
-        builder.setContentIntent(pendingIntent);
+        builder.setContentIntent(contentPendingIntent);
         // Priority
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         Notification notification = builder.build();

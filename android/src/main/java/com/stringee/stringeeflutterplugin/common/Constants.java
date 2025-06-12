@@ -30,6 +30,7 @@ public class Constants {
     public static final String ACTION_BASE = "com.stringee.flutter.action.";
     public static final String ACTION_START_FOREGROUND_SERVICE =
             ACTION_BASE + "start_foreground_service";
+    public static final String ACTION_FULL_SCREEN_INTENT = ACTION_BASE + "full_screen_intent";
     public static final String ACTION_CLICK_NOTIFICATION = ACTION_BASE + "click_notification";
     public static final String ACTION_ANSWER_CALL = ACTION_BASE + "answer_call";
     public static final String ACTION_REJECT_CALL = ACTION_BASE + "reject_call";
