@@ -52,7 +52,7 @@ public class PacketSenderThread extends Thread {
             try {
                 Intent intent = packetQueue.take();
                 Map<String, Object> map = new HashMap<>();
-                map.put("action", intent.getAction());
+                map.put(Constants.PARAM_ACTION, intent.getAction());
                 if (intent.getExtras() != null) {
                     for (String key : intent.getExtras().keySet()) {
                         map.put(key, intent.getExtras().get(key));

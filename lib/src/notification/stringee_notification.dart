@@ -10,13 +10,18 @@ typedef CallBack = void Function(Map<dynamic, dynamic> event);
 
 const String paramBase = 'com.stringee.flutter.param.';
 const String paramUuid = '${paramBase}uuid';
-const String paramCallId =  '${paramBase}call_id';
+const String paramCallId = '${paramBase}call_id';
 const String paramNotificationId = '${paramBase}notification_id';
 
 const String actionBase = 'com.stringee.flutter.action.';
 const String actionFullScreenIntent = '${actionBase}full_screen_intent';
-const String actionClickNotification = '${actionBase}click_notification';
-const String actionAnswerCall ='${actionBase}answer_call';
+const String actionClickIncomingNotification =
+    '${actionBase}click_incoming_notification';
+const String actionClickInCallNotification =
+    '${actionBase}click_in_call_notification';
+const String actionClickScreenCaptureNotification =
+    '${actionBase}click_screen_capture_notification';
+const String actionAnswerCall = '${actionBase}answer_call';
 
 class StringeeNotification {
   static const MethodChannel methodChannel =
@@ -76,32 +81,32 @@ class StringeeNotification {
     }
   }
 
-  /// Start in-call service
-  Future<Result> startInCallService(InCallServiceInfo info) async {
-    if (Platform.isIOS) {
-      return Result(
-          status: false,
-          code: -4,
-          message: "This function work only for Android");
-    } else {
-      dynamic result = await methodChannel.invokeMethod(
-          'start_in_call_service', info.toJson());
-      return Result.fromJson(result);
-    }
-  }
-
-  /// Stop in-call service
-  Future<Result> stopInCallService() async {
-    if (Platform.isIOS) {
-      return Result(
-          status: false,
-          code: -4,
-          message: "This function work only for Android");
-    } else {
-      dynamic result = await methodChannel.invokeMethod('stop_in_call_service');
-      return Result.fromJson(result);
-    }
-  }
+  // /// Start in-call service
+  // Future<Result> startInCallService(InCallServiceInfo info) async {
+  //   if (Platform.isIOS) {
+  //     return Result(
+  //         status: false,
+  //         code: -4,
+  //         message: "This function work only for Android");
+  //   } else {
+  //     dynamic result = await methodChannel.invokeMethod(
+  //         'start_in_call_service', info.toJson());
+  //     return Result.fromJson(result);
+  //   }
+  // }
+  //
+  // /// Stop in-call service
+  // Future<Result> stopInCallService() async {
+  //   if (Platform.isIOS) {
+  //     return Result(
+  //         status: false,
+  //         code: -4,
+  //         message: "This function work only for Android");
+  //   } else {
+  //     dynamic result = await methodChannel.invokeMethod('stop_in_call_service');
+  //     return Result.fromJson(result);
+  //   }
+  // }
 
   /// Start screen capture service
   Future<Result> startScreenCaptureService(
