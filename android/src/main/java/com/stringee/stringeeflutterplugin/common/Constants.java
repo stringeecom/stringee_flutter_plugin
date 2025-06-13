@@ -3,41 +3,12 @@ package com.stringee.stringeeflutterplugin.common;
 public class Constants {
     public static final String TAG = "Stringee native";
 
-    public static String methodChannel = "com.stringee.flutter.methodchannel";
-    public static String eventChannel = "com.stringee.flutter.eventchannel";
+    public static final String METHOD_CHANNEL = "com.stringee.flutter.methodchannel";
+    public static final String EVENT_CHANNEL = "com.stringee.flutter.eventchannel";
 
-    public static String audioMethodChannel = "com.stringee.flutter.audio.method_channel";
-    public static String audioEventChannel = "com.stringee.flutter.audio.event_channel";
+    public static final String AUDIO_METHOD_CHANNEL = "com.stringee.flutter.audio.method_channel";
+    public static final String AUDIO_EVENT_CHANNEL = "com.stringee.flutter.audio.event_channel";
 
-    public static String notificationMethodChannel =
-            "com.stringee.flutter.notification.method_channel";
-    public static String notificationEventChannel =
-            "com.stringee.flutter.notification.event_channel";
-
-    public static String gsmMethodChannel = "com.stringee.flutter.gsm_call_state.method_channel";
-    public static String gsmEventChannel = "com.stringee.flutter.gsm_call_state.event_channel";
-
-    public static final String PREF_BASE = "com.stringee.flutter.";
-    public static final String PREF_ACCESS_TOKEN = PREF_BASE + "access_token.";
-    public static final String PREF_SERVER_ADDRESS = PREF_BASE + "server_address.";
-    public static final String PREF_BASE_API_URL = PREF_BASE + "base_API_url.";
-
-    public static final String PARAM_ACTION = "action";
-    public static final String PARAM_UUID = "uuid";
-    public static final String PARAM_CALL_ID = "call_id";
-    public static final String PARAM_NOTIFICATION_ID = "notification_id";
-
-    public static final String ACTION_BASE = "com.stringee.flutter.action.";
-    public static final String ACTION_START_FOREGROUND_SERVICE =
-            ACTION_BASE + "start_foreground_service";
-    public static final String ACTION_FULL_SCREEN_INTENT = ACTION_BASE + "full_screen_intent";
-    public static final String ACTION_CLICK_INCOMING_NOTIFICATION =
-            ACTION_BASE + "click_incoming_notification";
-    public static final String ACTION_CLICK_IN_CALL_NOTIFICATION =
-            ACTION_BASE + "click_in_call_notification";
-    public static final String ACTION_CLICK_SCREEN_CAPTURE_NOTIFICATION =
-            ACTION_BASE + "click_screen_capture_notification";
-    public static final String ACTION_ANSWER_CALL = ACTION_BASE + "answer_call";
-    public static final String ACTION_REJECT_CALL = ACTION_BASE + "reject_call";
-    public static final String ACTION_HANG_UP_CALL = ACTION_BASE + "hang_up_call";
+    public static final String GSM_METHOD_CHANNEL = "com.stringee.flutter.gsm_call_state.method_channel";
+    public static final String GSM_EVENT_CHANNEL = "com.stringee.flutter.gsm_call_state.event_channel";
 }

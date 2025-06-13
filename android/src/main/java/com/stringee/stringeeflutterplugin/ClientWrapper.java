@@ -514,12 +514,6 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         client.connect(token);
     }
 
-    public void connect(final String serverAddresses, final String token,
-                        final StatusListener listener) {
-        autoReconnectListener = listener;
-        connect(serverAddresses, token);
-    }
-
     public boolean isConnected() {
         return client != null && client.isConnected();
     }

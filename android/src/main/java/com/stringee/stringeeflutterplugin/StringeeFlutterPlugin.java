@@ -1,7 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,12 +15,8 @@ import com.stringee.stringeeflutterplugin.call.receiver.GSMCallStateReceiver;
 import com.stringee.stringeeflutterplugin.chat.ChatUtils;
 import com.stringee.stringeeflutterplugin.chat.enumeration.UserRole;
 import com.stringee.stringeeflutterplugin.common.Constants;
-import com.stringee.stringeeflutterplugin.common.PacketSenderThread;
-import com.stringee.stringeeflutterplugin.common.PrefUtils;
 import com.stringee.stringeeflutterplugin.common.StringeeManager;
 import com.stringee.stringeeflutterplugin.common.Utils;
-import com.stringee.stringeeflutterplugin.conference.ScreenCaptureManager;
-import com.stringee.stringeeflutterplugin.notification.StringeeNotification;
 import com.stringee.stringeeflutterplugin.video_view.StringeeVideoViewFactory;
 import com.stringee.video.StringeeVideoTrack.Options;
 import com.stringee.video.VideoDimensions;
@@ -35,8 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.activity.ActivityAware;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodCall;
@@ -44,7 +37,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
+public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
     public static EventSink eventSink;
     public Context context;
 
@@ -54,30 +47,23 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
         /// Audio manager
         new MethodChannel(binding.getBinaryMessenger(),
-                Constants.audioMethodChannel).setMethodCallHandler(
+                Constants.AUDIO_METHOD_CHANNEL).setMethodCallHandler(
                 AudioManager.getInstance(context));
         new EventChannel(binding.getBinaryMessenger(),
-                Constants.audioEventChannel).setStreamHandler(AudioManager.getInstance(context));
-
-        /// Notification
-        new MethodChannel(binding.getBinaryMessenger(),
-                Constants.notificationMethodChannel).setMethodCallHandler(
-                StringeeNotification.getInstance(context));
-        new EventChannel(binding.getBinaryMessenger(),
-                Constants.notificationEventChannel).setStreamHandler(
-                StringeeNotification.getInstance(context));
+                Constants.AUDIO_EVENT_CHANNEL).setStreamHandler(AudioManager.getInstance(context));
 
         /// GSM Call State
         new MethodChannel(binding.getBinaryMessenger(),
-                Constants.gsmMethodChannel).setMethodCallHandler(
+                Constants.GSM_METHOD_CHANNEL).setMethodCallHandler(
                 GSMCallStateReceiver.getInstance(context));
-        new EventChannel(binding.getBinaryMessenger(), Constants.gsmEventChannel).setStreamHandler(
+        new EventChannel(binding.getBinaryMessenger(),
+                Constants.GSM_EVENT_CHANNEL).setStreamHandler(
                 GSMCallStateReceiver.getInstance(context));
 
         /// Main plugin
         new MethodChannel(binding.getBinaryMessenger(),
-                Constants.methodChannel).setMethodCallHandler(this);
-        new EventChannel(binding.getBinaryMessenger(), Constants.eventChannel).setStreamHandler(
+                Constants.METHOD_CHANNEL).setMethodCallHandler(this);
+        new EventChannel(binding.getBinaryMessenger(), Constants.EVENT_CHANNEL).setStreamHandler(
                 this);
 
         binding.getPlatformViewRegistry()
@@ -100,8 +86,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         if (call.method.equals("setupClient")) {
             String baseAPIUrl = call.argument("baseAPIUrl");
             ClientWrapper clientWrapper = new ClientWrapper(context, uuid, baseAPIUrl);
-            PrefUtils.getInstance(context)
-                    .putString(Constants.PREF_BASE_API_URL + uuid, baseAPIUrl);
             StringeeManager.getInstance().getClientMap().put(uuid, clientWrapper);
             return;
         }
@@ -120,9 +104,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         if (call.method.equals("connect")) {
             String token = call.argument("token");
             String serverAddresses = call.argument("serverAddresses");
-            PrefUtils.getInstance(context).putString(Constants.PREF_ACCESS_TOKEN + uuid, token);
-            PrefUtils.getInstance(context)
-                    .putString(Constants.PREF_SERVER_ADDRESS + uuid, serverAddresses);
             clientWrapper.connect(serverAddresses, token, result);
             return;
         }
@@ -741,42 +722,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
 
     @Override
     public void onCancel(Object o) {
-
-    }
-
-    @Override
-    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-        StringeeManager.getInstance().setCaptureManager(ScreenCaptureManager.getInstance(binding));
-        sendActionEvent(binding.getActivity().getIntent());
-        binding.addOnNewIntentListener(intent -> {
-            sendActionEvent(intent);
-            return false;
-        });
-    }
-
-    private void sendActionEvent(Intent intent) {
-        if (intent != null) {
-            String intentAction = intent.getAction();
-            if (intentAction != null) {
-                if (intentAction.startsWith(Constants.ACTION_BASE)) {
-                    PacketSenderThread.getInstance().send(intent);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onDetachedFromActivityForConfigChanges() {
-
-    }
-
-    @Override
-    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-
-    }
-
-    @Override
-    public void onDetachedFromActivity() {
 
     }
 }

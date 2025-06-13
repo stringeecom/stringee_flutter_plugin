@@ -29,10 +29,3 @@ export 'src/messaging/StringeeUser.dart';
 export 'src/audio/audio_device.dart';
 export 'src/audio/stringee_audio_event.dart';
 export 'src/audio/stringee_audio_manager.dart';
-
-/// Notification
-export 'src/notification/incoming_call_notification_info.dart';
-export 'src/notification/in_call_service_info.dart';
-export 'src/notification/screen_capture_service_info.dart';
-export 'src/notification/stringee_notification.dart';
-export 'src/notification/notification_info_extension.dart';
