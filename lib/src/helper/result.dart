@@ -46,6 +46,20 @@ class Result extends Equatable {
     );
   }
 
+  Result copyWith({
+    bool? status,
+    int? code,
+    String? message,
+    dynamic data,
+  }) {
+    return Result(
+      status: status ?? this.status,
+      code: code ?? this.code,
+      message: message ?? this.message,
+      data: data ?? this.data,
+    );
+  }
+
   @override
   List<Object?> get props => [status, code, message, data];
 }

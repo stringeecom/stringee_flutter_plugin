@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
@@ -68,21 +69,44 @@ class GSMCallState {
   }
 
   Future<Result> startListening() async {
+    if (Platform.isIOS) {
+      return Result(
+        status: false,
+        code: -4,
+        message: 'This function work only for Android',
+      );
+    }
     return Result.fromJson(
         await methodChannel.invokeMethod('start_listen_gms_call_state'));
   }
 
   Future<Result> stopListening() async {
+    if (Platform.isIOS) {
+      return Result(
+        status: false,
+        code: -4,
+        message: 'This function work only for Android',
+      );
+    }
     return Result.fromJson(
         await methodChannel.invokeMethod('stop_listen_gms_call_state'));
   }
 
-  Future<PhoneState> getCurrentCallState() async {
-    Map<dynamic, dynamic> result =
-        await methodChannel.invokeMethod('get_current_call_state');
-    if (result['status'] == true) {
-      return PhoneStateX.from(result['state']);
+  Future<Result> getCurrentCallState() async {
+    if (Platform.isIOS) {
+      return Result(
+        status: false,
+        code: -4,
+        message: 'This function work only for Android',
+      );
     }
-    return PhoneState.idle;
+    Result result = Result.fromJson(
+        await methodChannel.invokeMethod('get_current_call_state'));
+
+    if (result.status) {
+      PhoneState state = PhoneStateX.from(result.data['state']);
+      result = result.copyWith(data: {'state': state});
+    }
+    return result;
   }
 }
