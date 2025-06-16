@@ -10,6 +10,8 @@ export 'src/helper/audio_type.dart';
 export 'src/call/StringeeCall.dart';
 export 'src/call/StringeeCall2.dart';
 export 'src/call/gsm_call_state.dart';
+export 'src/call/sensor_manager_utils.dart';
+export 'src/call/window_flag_manager.dart';
 
 /// Conference
 export 'src/conference/StringeeRoomUser.dart';

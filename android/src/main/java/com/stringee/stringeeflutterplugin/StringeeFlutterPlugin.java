@@ -11,6 +11,8 @@ import com.stringee.messaging.Message.Type;
 import com.stringee.messaging.User;
 import com.stringee.stringeeflutterplugin.audio.AudioManager;
 import com.stringee.stringeeflutterplugin.call.CallUtils;
+import com.stringee.stringeeflutterplugin.call.SensorManagerUtils;
+import com.stringee.stringeeflutterplugin.call.WindowFlagManager;
 import com.stringee.stringeeflutterplugin.call.receiver.GSMCallStateReceiver;
 import com.stringee.stringeeflutterplugin.chat.ChatUtils;
 import com.stringee.stringeeflutterplugin.chat.enumeration.UserRole;
@@ -30,6 +32,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodCall;
@@ -37,7 +41,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin {
+public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
     public static EventSink eventSink;
     public Context context;
 
@@ -59,6 +63,16 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
         new EventChannel(binding.getBinaryMessenger(),
                 Constants.GSM_EVENT_CHANNEL).setStreamHandler(
                 GSMCallStateReceiver.getInstance(context));
+
+        /// Sensor
+        new MethodChannel(binding.getBinaryMessenger(),
+                Constants.SENSOR_METHOD_CHANNEL).setMethodCallHandler(
+                SensorManagerUtils.getInstance(context));
+
+        /// Window flag
+        new MethodChannel(binding.getBinaryMessenger(),
+                Constants.WINDOW_FLAG_METHOD_CHANNEL).setMethodCallHandler(
+                WindowFlagManager.getInstance());
 
         /// Main plugin
         new MethodChannel(binding.getBinaryMessenger(),
@@ -723,5 +737,25 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
     @Override
     public void onCancel(Object o) {
 
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        WindowFlagManager.getInstance().onAttachedToActivity(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        WindowFlagManager.getInstance().onDetachedFromActivityForConfigChanges();
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        WindowFlagManager.getInstance().onReattachedToActivityForConfigChanges(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        WindowFlagManager.getInstance().onDetachedFromActivity();
     }
 }

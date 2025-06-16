@@ -11,4 +11,7 @@ public class Constants {
 
     public static final String GSM_METHOD_CHANNEL = "com.stringee.flutter.gsm_call_state.method_channel";
     public static final String GSM_EVENT_CHANNEL = "com.stringee.flutter.gsm_call_state.event_channel";
+
+    public static final String SENSOR_METHOD_CHANNEL = "com.stringee.flutter.sensor.method_channel";
+    public static final String WINDOW_FLAG_METHOD_CHANNEL = "com.stringee.flutter.window.flag.method_channel";
 }
