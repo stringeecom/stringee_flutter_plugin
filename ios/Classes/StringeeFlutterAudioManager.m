@@ -285,8 +285,12 @@
             NSLog(@"[Stringee] Audio state update: %@", event);
             #endif
 
-            // Send event to Flutter
-            self.eventSink(event);
+            // Send event to Flutter on main thread
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.eventSink) {
+                    self.eventSink(event);
+                }
+            });
         } else {
             #if DEBUG
             NSLog(@"[Stringee] Audio state update: No audio device selected");
