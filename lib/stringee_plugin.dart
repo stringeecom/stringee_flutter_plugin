@@ -4,15 +4,14 @@ export 'src/StringeeVideoView.dart';
 /// Helper
 export 'src/StringeeConstants.dart';
 export 'src/helper/result.dart';
-export 'src/helper/audio_type.dart';
 
 /// Call
 export 'src/call/StringeeCall.dart';
 export 'src/call/StringeeCall2.dart';
-export 'src/conference/StringeeRoomUser.dart';
-export 'src/conference/StringeeVideo.dart';
 
 /// Conference
+export 'src/conference/StringeeRoomUser.dart';
+export 'src/conference/StringeeVideo.dart';
 export 'src/conference/StringeeVideoRoom.dart';
 export 'src/conference/StringeeVideoTrack.dart';
 export 'src/conference/StringeeVideoTrackInfo.dart';
