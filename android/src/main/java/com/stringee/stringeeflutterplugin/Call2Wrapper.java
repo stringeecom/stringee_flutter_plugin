@@ -894,6 +894,18 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
     }
 
     @Override
+    public void onLocalTrackAdded(StringeeCall2 stringeeCall2,
+                                  StringeeVideoTrack stringeeVideoTrack) {
+
+    }
+
+    @Override
+    public void onRemoteTrackAdded(StringeeCall2 stringeeCall2,
+                                   StringeeVideoTrack stringeeVideoTrack) {
+
+    }
+
+    @Override
     public void onCallInfo(final StringeeCall2 stringeeCall, final JSONObject jsonObject) {
         Utils.post(() -> {
             try {
