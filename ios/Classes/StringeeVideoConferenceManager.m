@@ -372,30 +372,54 @@ static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_remoteTracks; // 
 // MARK: - Stringee Video Room Delegate
 
 - (void)joinRoom:(StringeeVideoRoom *)room userInfo:(StringeeRoomUserInfo *)userInfo {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidJoinRoom, STEBody : @{ @"roomId" : room.roomId, @"user": [StringeeHelper StringeeRoomUserInfo:userInfo] }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidJoinRoom, STEBody : @{ @"roomId" : room.roomId, @"user": [StringeeHelper StringeeRoomUserInfo:userInfo] }});
+        }
+    });
 }
 
 - (void)leaveRoom:(StringeeVideoRoom *)room userInfo:(StringeeRoomUserInfo *)userInfo {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidLeaveRoom, STEBody : @{ @"roomId" : room.roomId, @"user": [StringeeHelper StringeeRoomUserInfo:userInfo] }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidLeaveRoom, STEBody : @{ @"roomId" : room.roomId, @"user": [StringeeHelper StringeeRoomUserInfo:userInfo] }});
+        }
+    });
 }
 
 - (void)addTrack:(StringeeVideoRoom *)room trackInfo:(StringeeVideoTrackInfo *)trackInfo {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidAddVideoTrack, STEBody : @{ @"roomId" : room.roomId, @"videoTrackInfo": [StringeeHelper StringeeVideoTrackInfo:trackInfo] }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidAddVideoTrack, STEBody : @{ @"roomId" : room.roomId, @"videoTrackInfo": [StringeeHelper StringeeVideoTrackInfo:trackInfo] }});
+        }
+    });
 }
 
 - (void)removeTrack:(StringeeVideoRoom *)room trackInfo:(StringeeVideoTrackInfo *)trackInfo {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidRemoveVideoTrack, STEBody : @{ @"roomId" : room.roomId, @"videoTrackInfo": [StringeeHelper StringeeVideoTrackInfo:trackInfo] }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidRemoveVideoTrack, STEBody : @{ @"roomId" : room.roomId, @"videoTrackInfo": [StringeeHelper StringeeVideoTrackInfo:trackInfo] }});
+        }
+    });
 }
 
 - (void)newMessage:(StringeeVideoRoom *)room msg:(NSDictionary *)msg fromUser:(StringeeRoomUserInfo *)fromUser {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidReceiveRoomMessage, STEBody : @{ @"roomId" : room.roomId, @"from": [StringeeHelper StringeeRoomUserInfo:fromUser], @"msg": msg }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STEDidReceiveRoomMessage, STEBody : @{ @"roomId" : room.roomId, @"from": [StringeeHelper StringeeRoomUserInfo:fromUser], @"msg": msg }});
+        }
+    });
 }
 
 // MARK: - Stringee Video Track Delegate
 
 - (void)ready:(StringeeVideoTrack *)track {
     id roomId = track.room.roomId != nil ? track.room.roomId : [NSNull null];
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STETrackReadyToPlay, STEBody : @{ @"roomId" : roomId, @"track": [StringeeHelper StringeeVideoTrack:track] }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeRoom), STEEvent : STETrackReadyToPlay, STEBody : @{ @"roomId" : roomId, @"track": [StringeeHelper StringeeVideoTrack:track] }});
+        }
+    });
 }
 
 // MARK: - Utils

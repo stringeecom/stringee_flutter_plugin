@@ -425,22 +425,38 @@
 #pragma mark - Call Delegate
 
 - (void)didChangeMediaState:(StringeeCall *)stringeeCall mediaState:(MediaState)mediaState {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(mediaState) }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(mediaState) }});
+        }
+    });
 }
 
 - (void)didChangeSignalingState:(StringeeCall *)stringeeCall signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState) }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState) }});
+        }
+    });
     if (signalingState == SignalingStateBusy || signalingState == SignalingStateEnded) {
         [[StringeeManager instance].calls removeObjectForKey:stringeeCall.callId];
     }
 }
 
 - (void)didReceiveLocalStream:(StringeeCall *)stringeeCall {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall.callId }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall.callId }});
+        }
+    });
 }
 
 - (void)didReceiveRemoteStream:(StringeeCall *)stringeeCall {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall.callId }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall.callId }});
+        }
+    });
 }
 
 - (void)didReceiveDtmfDigit:(StringeeCall *)stringeeCall callDTMF:(CallDTMF)callDTMF {
@@ -452,15 +468,27 @@
     } else if (callDTMF == 11) {
         digit = @"#";
     }
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveDtmfDigit, STEBody : @{ @"callId" : stringeeCall.callId, @"dtmf" : digit }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveDtmfDigit, STEBody : @{ @"callId" : stringeeCall.callId, @"dtmf" : digit }});
+        }
+    });
 }
 
 - (void)didReceiveCallInfo:(StringeeCall *)stringeeCall info:(NSDictionary *)info {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveCallInfo, STEBody : @{ @"callId" : stringeeCall.callId, @"data" : info }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidReceiveCallInfo, STEBody : @{ @"callId" : stringeeCall.callId, @"data" : info }});
+        }
+    });
 }
 
 - (void)didHandleOnAnotherDevice:(StringeeCall *)stringeeCall signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState), @"description" : reason }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall.callId, @"code" : @(signalingState), @"description" : reason }});
+        }
+    });
 }
 
 
