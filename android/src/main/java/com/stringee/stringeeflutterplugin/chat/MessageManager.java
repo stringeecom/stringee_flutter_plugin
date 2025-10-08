@@ -59,7 +59,7 @@ public class MessageManager {
         }
 
         ChatUtils.getMessage(clientWrapper.getClient(), convId, new String[]{msgId},
-                new CallbackListener<>() {
+                new CallbackListener<Message>() {
                     @Override
                     public void onSuccess(Message message) {
                         message.edit(clientWrapper.getClient(), content, new StatusListener() {
@@ -147,7 +147,7 @@ public class MessageManager {
         }
 
         ChatUtils.getMessage(clientWrapper.getClient(), convId, new String[]{msgId},
-                new CallbackListener<>() {
+                new CallbackListener<Message>() {
                     @Override
                     public void onSuccess(Message message) {
                         message.pinOrUnpin(clientWrapper.getClient(), pinOrUnPin,

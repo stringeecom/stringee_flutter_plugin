@@ -714,7 +714,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.createConversation(participants, options, new CallbackListener<>() {
+        client.createConversation(participants, options, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 Utils.post(() -> {
@@ -758,7 +758,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.getConversationFromServer(convId, new CallbackListener<>() {
+        client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 Utils.post(() -> {
@@ -802,7 +802,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.getConversationByUserId(userId, new CallbackListener<>() {
+        client.getConversationByUserId(userId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 Utils.post(() -> {
@@ -836,38 +836,40 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * Get local conversations
      */
     public void getLocalConversations(final String oaId, final Result result) {
-        client.getLocalConversations(client.getUserId(), oaId, new CallbackListener<>() {
-            @Override
-            public void onSuccess(final List<Conversation> conversations) {
-                Utils.post(() -> {
-                    Map<String, Object> map = new HashMap<>();
-                    Log.d(Constants.TAG, "getLocalConversations: success");
-                    List<Map<String, Object>> bodyArray = new ArrayList<>();
-                    for (int i = 0; i < conversations.size(); i++) {
-                        bodyArray.add(ChatUtils.convertConversationToMap(conversations.get(i)));
+        client.getLocalConversations(client.getUserId(), oaId,
+                new CallbackListener<List<Conversation>>() {
+                    @Override
+                    public void onSuccess(final List<Conversation> conversations) {
+                        Utils.post(() -> {
+                            Map<String, Object> map = new HashMap<>();
+                            Log.d(Constants.TAG, "getLocalConversations: success");
+                            List<Map<String, Object>> bodyArray = new ArrayList<>();
+                            for (int i = 0; i < conversations.size(); i++) {
+                                bodyArray.add(
+                                        ChatUtils.convertConversationToMap(conversations.get(i)));
+                            }
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", bodyArray);
+                            result.success(map);
+                        });
                     }
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", bodyArray);
-                    result.success(map);
-                });
-            }
 
-            @Override
-            public void onError(final StringeeError stringeeError) {
-                Utils.post(() -> {
-                    Log.d(Constants.TAG,
-                            "getLocalConversations: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        Utils.post(() -> {
+                            Log.d(Constants.TAG,
+                                    "getLocalConversations: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage());
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
                 });
-            }
-        });
     }
 
     /**
@@ -885,7 +887,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.getLastConversations(count, oaId, new CallbackListener<>() {
+        client.getLastConversations(count, oaId, new CallbackListener<List<Conversation>>() {
             @Override
             public void onSuccess(final List<Conversation> conversations) {
                 Utils.post(() -> {
@@ -935,38 +937,40 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.getConversationsBefore(updateAt, count, oaId, new CallbackListener<>() {
-            @Override
-            public void onSuccess(final List<Conversation> conversations) {
-                Utils.post(() -> {
-                    Map<String, Object> map = new HashMap<>();
-                    Log.d(Constants.TAG, "getConversationsBefore: success");
-                    List<Map<String, Object>> bodyArray = new ArrayList<>();
-                    for (int i = 0; i < conversations.size(); i++) {
-                        bodyArray.add(ChatUtils.convertConversationToMap(conversations.get(i)));
+        client.getConversationsBefore(updateAt, count, oaId,
+                new CallbackListener<List<Conversation>>() {
+                    @Override
+                    public void onSuccess(final List<Conversation> conversations) {
+                        Utils.post(() -> {
+                            Map<String, Object> map = new HashMap<>();
+                            Log.d(Constants.TAG, "getConversationsBefore: success");
+                            List<Map<String, Object>> bodyArray = new ArrayList<>();
+                            for (int i = 0; i < conversations.size(); i++) {
+                                bodyArray.add(
+                                        ChatUtils.convertConversationToMap(conversations.get(i)));
+                            }
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", bodyArray);
+                            result.success(map);
+                        });
                     }
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", bodyArray);
-                    result.success(map);
-                });
-            }
 
-            @Override
-            public void onError(final StringeeError stringeeError) {
-                Utils.post(() -> {
-                    Log.d(Constants.TAG,
-                            "getConversationsBefore: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        Utils.post(() -> {
+                            Log.d(Constants.TAG,
+                                    "getConversationsBefore: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage());
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
                 });
-            }
-        });
     }
 
     /**
@@ -985,38 +989,40 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.getConversationsAfter(updateAt, count, oaId, new CallbackListener<>() {
-            @Override
-            public void onSuccess(final List<Conversation> conversations) {
-                Utils.post(() -> {
-                    Map<String, Object> map = new HashMap<>();
-                    Log.d(Constants.TAG, "getConversationsAfter: success");
-                    List<Map<String, Object>> bodyArray = new ArrayList<>();
-                    for (int i = 0; i < conversations.size(); i++) {
-                        bodyArray.add(ChatUtils.convertConversationToMap(conversations.get(i)));
+        client.getConversationsAfter(updateAt, count, oaId,
+                new CallbackListener<List<Conversation>>() {
+                    @Override
+                    public void onSuccess(final List<Conversation> conversations) {
+                        Utils.post(() -> {
+                            Map<String, Object> map = new HashMap<>();
+                            Log.d(Constants.TAG, "getConversationsAfter: success");
+                            List<Map<String, Object>> bodyArray = new ArrayList<>();
+                            for (int i = 0; i < conversations.size(); i++) {
+                                bodyArray.add(
+                                        ChatUtils.convertConversationToMap(conversations.get(i)));
+                            }
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", bodyArray);
+                            result.success(map);
+                        });
                     }
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", bodyArray);
-                    result.success(map);
-                });
-            }
 
-            @Override
-            public void onError(final StringeeError stringeeError) {
-                Utils.post(() -> {
-                    Log.d(Constants.TAG,
-                            "getConversationsAfter: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        Utils.post(() -> {
+                            Log.d(Constants.TAG,
+                                    "getConversationsAfter: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage());
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
                 });
-            }
-        });
     }
 
     /**
@@ -1088,7 +1094,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.getTotalUnread(new CallbackListener<>() {
+        client.getTotalUnread(new CallbackListener<Integer>() {
             @Override
             public void onSuccess(final Integer integer) {
                 Utils.post(() -> {
@@ -1122,7 +1128,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * Get chat profile
      */
     public void getChatProfile(String key, final Result result) {
-        client.getChatProfile(key, new CallbackListener<>() {
+        client.getChatProfile(key, new CallbackListener<ChatProfile>() {
             @Override
             public void onSuccess(final ChatProfile chatProfile) {
                 Utils.post(() -> {
@@ -1156,7 +1162,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
      * Get live chat token
      */
     public void getLiveChatToken(String key, String name, String email, final Result result) {
-        client.getLiveChatToken(key, name, email, new CallbackListener<>() {
+        client.getLiveChatToken(key, name, email, new CallbackListener<String>() {
             @Override
             public void onSuccess(final String token) {
                 Utils.post(() -> {
@@ -1246,7 +1252,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
             return;
         }
 
-        client.createLiveChat(queueId, customData, new CallbackListener<>() {
+        client.createLiveChat(queueId, customData, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 Utils.post(() -> {

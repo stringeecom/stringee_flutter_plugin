@@ -26,7 +26,7 @@ import java.util.Map;
 public class ChatUtils {
     public static void getConversation(@NonNull StringeeClient client, @NonNull String convId,
                                        @NonNull final CallbackListener<Conversation> callbackListener) {
-        client.getConversationFromServer(convId, new CallbackListener<>() {
+        client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(final Conversation conversation) {
                 Utils.post(() -> callbackListener.onSuccess(conversation));
@@ -43,26 +43,27 @@ public class ChatUtils {
     public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId,
                                   @NonNull final String[] msgId,
                                   @NonNull final CallbackListener<Message> callbackListener) {
-        getConversation(client, convId, new CallbackListener<>() {
+        getConversation(client, convId, new CallbackListener<Conversation>() {
             @Override
             public void onSuccess(Conversation conversation) {
                 Utils.post(new Runnable() {
                     @Override
                     public void run() {
-                        conversation.getMessages(client, msgId, new CallbackListener<>() {
-                            @Override
-                            public void onSuccess(List<Message> messages) {
-                                if (messages != null && !messages.isEmpty()) {
-                                    callbackListener.onSuccess(messages.get(0));
-                                }
-                            }
+                        conversation.getMessages(client, msgId,
+                                new CallbackListener<List<Message>>() {
+                                    @Override
+                                    public void onSuccess(List<Message> messages) {
+                                        if (messages != null && !messages.isEmpty()) {
+                                            callbackListener.onSuccess(messages.get(0));
+                                        }
+                                    }
 
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                callbackListener.onError(stringeeError);
-                            }
-                        });
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        callbackListener.onError(stringeeError);
+                                    }
+                                });
                     }
                 });
             }
@@ -78,7 +79,7 @@ public class ChatUtils {
     public static void getChatRequest(@NonNull final StringeeClient client,
                                       @NonNull final String convId,
                                       @NonNull CallbackListener<ChatRequest> callbackListener) {
-        client.getChatRequests(new CallbackListener<>() {
+        client.getChatRequests(new CallbackListener<List<ChatRequest>>() {
             @Override
             public void onSuccess(List<ChatRequest> chatRequestList) {
                 Utils.post(() -> {
