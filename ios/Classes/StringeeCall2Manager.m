@@ -306,11 +306,19 @@
 #pragma mark - Call Delegate
 
 - (void)didChangeMediaState2:(StringeeCall2 *)stringeeCall2 mediaState:(MediaState)mediaState {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(mediaState) }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeMediaState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(mediaState) }});
+        }
+    });
 }
 
 - (void)didChangeSignalingState2:(StringeeCall2 *)stringeeCall2 signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState) }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidChangeSignalingState, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState) }});
+        }
+    });
     if (signalingState == SignalingStateBusy || signalingState == SignalingStateEnded) {
         [[StringeeManager instance].call2s removeObjectForKey:stringeeCall2.callId];
         [[StringeeManager instance] removeTrackForCall2:stringeeCall2.callId];
@@ -318,21 +326,36 @@
 }
 
 - (void)didReceiveLocalStream2:(StringeeCall2 *)stringeeCall2 {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveLocalStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+        }
+    });
 }
 
 - (void)didReceiveRemoteStream2:(StringeeCall2 *)stringeeCall2 {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveRemoteStream, STEBody : @{ @"callId" : stringeeCall2.callId }});
+        }
+    });
 }
 
 - (void)didAddTrack2:(StringeeCall2 *)stringeeCall2 track:(StringeeVideoTrack *)track {
     [[StringeeManager instance] addTrackForCall2:track callId:stringeeCall2.callId];
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidAddVideoTrack, STEBody : @{ @"callId" : stringeeCall2.callId, @"videoTrack" : [StringeeHelper StringeeVideoTrack:track] }});
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidAddVideoTrack, STEBody : @{ @"callId" : stringeeCall2.callId, @"videoTrack" : [StringeeHelper StringeeVideoTrack:track] }});
+        }
+    });
 }
 
 - (void)didHandleOnAnotherDevice2:(StringeeCall2 *)stringeeCall2 signalingState:(SignalingState)signalingState reason:(NSString *)reason sipCode:(int)sipCode sipReason:(NSString *)sipReason {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState), @"description" : reason }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState), @"description" : reason }});
+        }
+    });
 }
 
 @end
