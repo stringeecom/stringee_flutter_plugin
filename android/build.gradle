@@ -30,6 +30,7 @@ android {
 
     defaultConfig {
         minSdk = 21
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     lintOptions {
@@ -45,8 +46,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
     implementation 'androidx.annotation:annotation:1.9.1'
-    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.4'
-//    implementation 'com.stringee.sdk.android:stringee-android-sdk-dev:2.1.4.1'
+    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.5'
+//    implementation 'com.stringee.sdk.android:stringee-android-sdk-dev:2.1.5'
     implementation 'io.github.webrtc-sdk:android:137.7151.03'
     implementation 'com.android.volley:volley:1.2.1'
 }
