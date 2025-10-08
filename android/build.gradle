@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.0")
+        classpath("com.android.tools.build:gradle:8.13.0")
     }
 }
 
@@ -26,10 +26,11 @@ android {
         namespace = "com.stringee.stringeeflutterplugin"
     }
 
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     lintOptions {
@@ -45,8 +46,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
     implementation 'androidx.annotation:annotation:1.9.1'
-    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.2'
+    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.5'
+//    implementation 'com.stringee.sdk.android:stringee-android-sdk-dev:2.1.5'
+    implementation 'io.github.webrtc-sdk:android:137.7151.03'
     implementation 'com.android.volley:volley:1.2.1'
-//    implementation 'com.stringee.sdk.android:stringee-android-sdk-dev:2.1.1'
-//    implementation 'io.github.webrtc-sdk:android:125.6422.05'
 }

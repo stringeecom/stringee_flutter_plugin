@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import '../stringee_plugin.dart';
 
 /// Events for StringeeClient
 enum StringeeClientEvents {
@@ -27,7 +28,6 @@ enum StringeeCallEvents {
   didHandleOnAnotherDevice,
   didReceiveLocalStream,
   didReceiveRemoteStream,
-  didChangeAudioDevice
 }
 
 /// Events for StringeeCall2
@@ -40,7 +40,6 @@ enum StringeeCall2Events {
   didReceiveRemoteStream,
   didAddVideoTrack,
   didRemoveVideoTrack,
-  didChangeAudioDevice
 }
 
 /// Events for StringeeChat
@@ -404,7 +403,7 @@ class StringeeServerAddress {
   }
 }
 
-///Class represents server address
+///Class represents options for create/subscribe a [StringeeVideoTrack]
 class StringeeVideoTrackOption {
   late bool _audio;
   late bool _video;
@@ -464,6 +463,36 @@ enum StringeeVideoDimensions {
   dimesion_480,
   dimesion_288,
 }
+
+/// Type of audio device
+enum AudioType {
+  speakerPhone,
+  wiredHeadset,
+  earpiece,
+  bluetooth,
+  other,
+  none,
+}
+
+extension AudioTypeX on AudioType {
+  static AudioType fromValue(int? value) {
+    switch (value) {
+      case 0:
+        return AudioType.speakerPhone;
+      case 1:
+        return AudioType.wiredHeadset;
+      case 2:
+        return AudioType.earpiece;
+      case 3:
+        return AudioType.bluetooth;
+      case 4:
+        return AudioType.other;
+      default:
+        return AudioType.none;
+    }
+  }
+}
+
 
 class GUIDGen {
   static String generate() {
