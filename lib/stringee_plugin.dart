@@ -4,7 +4,6 @@ export 'src/StringeeVideoView.dart';
 /// Helper
 export 'src/StringeeConstants.dart';
 export 'src/helper/result.dart';
-export 'src/helper/audio_type.dart';
 
 /// Call
 export 'src/call/StringeeCall.dart';

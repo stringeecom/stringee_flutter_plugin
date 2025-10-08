@@ -1,7 +1,6 @@
 package com.stringee.stringeeflutterplugin.conference;
 
 import com.stringee.video.StringeeScreenCapture;
-import com.stringee.video.StringeeScreenCapture.Builder;
 
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
@@ -19,7 +18,7 @@ public class ScreenCaptureManager {
             return false;
         });
 
-        screenCapture = new Builder().buildWithActivity(binding.getActivity());
+        screenCapture = new StringeeScreenCapture(binding.getActivity());
     }
 
     public static ScreenCaptureManager getInstance(ActivityPluginBinding binding) {

@@ -11,6 +11,7 @@ import com.stringee.call.StringeeCall2.MediaState;
 import com.stringee.call.StringeeCall2.SignalingState;
 import com.stringee.exception.StringeeError;
 import com.stringee.listener.StatusListener;
+import com.stringee.messaging.listeners.CallbackListener;
 import com.stringee.stringeeflutterplugin.ClientWrapper;
 import com.stringee.stringeeflutterplugin.StringeeFlutterPlugin;
 import com.stringee.stringeeflutterplugin.common.Constants;
@@ -315,13 +316,18 @@ public class Call2Wrapper extends StringeeCallWrapper implements StringeeCall2.S
                         StringeeManager.getInstance()
                                 .getCaptureManager()
                                 .getScreenCapture()
-                                .createCapture(data);
+                                .createCapture(data, new CallbackListener<StringeeVideoTrack>() {
+                                    @Override
+                                    public void onSuccess(StringeeVideoTrack var1) {
+
+                                    }
+                                });
                     }
                     return false;
                 });
 
         call2.startCaptureScreen(
-                StringeeManager.getInstance().getCaptureManager().getScreenCapture(), REQUEST_CODE,
+                StringeeManager.getInstance().getCaptureManager().getScreenCapture(),
                 new StatusListener() {
                     @Override
                     public void onSuccess() {

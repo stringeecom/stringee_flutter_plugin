@@ -123,46 +123,42 @@ public class VideoConferenceManager {
                         StringeeManager.getInstance()
                                 .getCaptureManager()
                                 .getScreenCapture()
-                                .createCapture(data);
+                                .createCapture(data, new CallbackListener<StringeeVideoTrack>() {
+                                    @Override
+                                    public void onSuccess(StringeeVideoTrack videoTrack) {
+                                        String localId = ConferenceUtils.createLocalId();
+                                        VideoTrackManager videoTrackManager =
+                                                new VideoTrackManager(clientWrapper, videoTrack,
+                                                        localId, false);
+                                        StringeeManager.getInstance()
+                                                .getTracksMap()
+                                                .put(localId, videoTrackManager);
+                                        Log.d(Constants.TAG, "createCaptureScreenTrack: success");
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("status", true);
+                                        map.put("code", 0);
+                                        map.put("message", "Success");
+                                        map.put("body", ConferenceUtils.convertLocalVideoTrackToMap(
+                                                videoTrackManager,
+                                                clientWrapper.getClient().getUserId()));
+                                        result.success(map);
+                                    }
+
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Log.d(Constants.TAG, "createCaptureScreenTrack: false - " +
+                                                stringeeError.getCode() + " - " +
+                                                stringeeError.getMessage());
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("status", false);
+                                        map.put("code", stringeeError.getCode());
+                                        map.put("message", stringeeError.getMessage());
+                                        result.success(map);
+                                    }
+                                });
                     }
                     return false;
-                });
-
-        StringeeManager.getInstance()
-                .getCaptureManager()
-                .getScreenCapture()
-                .startCapture(REQUEST_CODE, new CallbackListener<>() {
-                    @Override
-                    public void onSuccess(StringeeVideoTrack videoTrack) {
-                        String localId = ConferenceUtils.createLocalId();
-                        VideoTrackManager videoTrackManager =
-                                new VideoTrackManager(clientWrapper, videoTrack, localId, false);
-                        StringeeManager.getInstance()
-                                .getTracksMap()
-                                .put(localId, videoTrackManager);
-                        Log.d(Constants.TAG, "createCaptureScreenTrack: success");
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        map.put("body",
-                                ConferenceUtils.convertLocalVideoTrackToMap(videoTrackManager,
-                                        clientWrapper.getClient().getUserId()));
-                        result.success(map);
-                    }
-
-                    @Override
-                    public void onError(StringeeError stringeeError) {
-                        super.onError(stringeeError);
-                        Log.d(Constants.TAG,
-                                "createCaptureScreenTrack: false - " + stringeeError.getCode() +
-                                        " - " + stringeeError.getMessage());
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
-                    }
                 });
     }
 

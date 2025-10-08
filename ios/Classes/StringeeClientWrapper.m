@@ -250,59 +250,107 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 #pragma mark - Client Delegate
 
 - (void)didConnect:(StringeeClient *)stringeeClient isReconnecting:(BOOL)isReconnecting {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
+        }
+    });
 }
 
 - (void)didDisConnect:(StringeeClient *)stringeeClient isReconnecting:(BOOL)isReconnecting {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidDisConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidDisConnect, STEBody : @{@"userId" : stringeeClient.userId, @"projectId" : stringeeClient.projectId, @"isReconnecting" : @(isReconnecting)}});
+        }
+    });
 }
 
 - (void)didFailWithError:(StringeeClient *)stringeeClient code:(int)code message:(NSString *)message {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidFailWithError, STEBody : @{ @"userId" : stringeeClient.userId, @"code" : @(code), @"message" : message }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidFailWithError, STEBody : @{ @"userId" : stringeeClient.userId, @"code" : @(code), @"message" : message }});
+        }
+    });
 }
 
 - (void)requestAccessToken:(StringeeClient *)stringeeClient {
     isConnecting = NO;
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STERequestAccessToken, STEBody : @{ @"userId" : stringeeClient.userId }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STERequestAccessToken, STEBody : @{ @"userId" : stringeeClient.userId }});
+        }
+    });
 }
 
 - (void)didReceiveCustomMessage:(StringeeClient *)stringeeClient message:(NSDictionary *)message fromUserId:(NSString *)userId {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveCustomMessage, STEBody : @{ @"fromUserId" : userId, @"message" : message }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveCustomMessage, STEBody : @{ @"fromUserId" : userId, @"message" : message }});
+        }
+    });
 }
 
 - (void)incomingCallWithStringeeClient:(StringeeClient *)stringeeClient stringeeCall:(StringeeCall *)stringeeCall {
     stringeeCall.delegate = _callManager;
     [[StringeeManager instance].calls setObject:stringeeCall forKey:stringeeCall.callId];
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall, STEBody : [StringeeHelper StringeeCall:stringeeCall] });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall, STEBody : [StringeeHelper StringeeCall:stringeeCall] });
+        }
+    });
 }
 
 - (void)incomingCallWithStringeeClient:(StringeeClient *)stringeeClient stringeeCall2:(StringeeCall2 *)stringeeCall2 {
     stringeeCall2.delegate = _call2Manager;
     [[StringeeManager instance].call2s setObject:stringeeCall2 forKey:stringeeCall2.callId];
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall2, STEBody : [StringeeHelper StringeeCall2:stringeeCall2] });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEIncomingCall2, STEBody : [StringeeHelper StringeeCall2:stringeeCall2] });
+        }
+    });
 }
 
 - (void)didReceiveChatRequest:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+        }
+    });
 }
 
 - (void)didReceiveTransferChatRequest:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveTransferChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEDidReceiveTransferChatRequest, STEBody : [StringeeHelper StringeeChatRequest:request] });
+        }
+    });
 }
 
 - (void)timeoutAnswerChat:(StringeeClient *)stringeeClient request:(StringeeChatRequest *)request {
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutAnswerChat, STEBody : [StringeeHelper StringeeChatRequest:request] });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutAnswerChat, STEBody : [StringeeHelper StringeeChatRequest:request] });
+        }
+    });
 }
 
 - (void)timeoutInQueue:(StringeeClient *)stringeeClient info:(NSDictionary *)info {
     NSLog(@"timeoutInQueue %@", info);
     id rInfo = info != nil ? info : [NSNull null];
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutInQueue, STEBody : rInfo });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETimeoutInQueue, STEBody : rInfo });
+        }
+    });
 }
 
 - (void)conversationEnded:(StringeeClient *)stringeeClient info:(NSDictionary *)info {
     id rInfo = info != nil ? info : [NSNull null];
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEConversationEnded, STEBody : rInfo });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEConversationEnded, STEBody : rInfo });
+        }
+    });
 }
 
 #pragma mark - Chat Event
@@ -347,7 +395,11 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 
     id returnObjects = jsObjectDatas ? jsObjectDatas : [NSNull null];
 
-    _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(objectType), @"objects" : returnObjects, @"changeType" : @(firstObjectChange.type) }});
+        }
+    });
 }
 
 - (void)handleNewMessageNotification:(NSNotification *)notification {
@@ -365,7 +417,11 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
             return;
         }
 
-        self->_eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self->_eventSink) {
+                self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeChat), STEEvent : STEDidReceiveChangeEvent, STEBody : @{ @"objectType" : @(0), @"objects" : @[[StringeeHelper Conversation:conversation]], @"changeType" : @(StringeeObjectChangeTypeUpdate) }});
+            }
+        });
     }];
 }
 
@@ -383,13 +439,17 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
                             @"userId" : userId,
                             @"displayName" : displayName
                             };
-    if (begin) {
-        // begin
-        _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserBeginTyping, STEBody : infos });
-    } else {
-        // end
-        _eventSink(@{STEUuid : _identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserEndTyping, STEBody : infos });
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            if (begin) {
+                // begin
+                self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserBeginTyping, STEBody : infos });
+            } else {
+                // end
+                self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STEUserEndTyping, STEBody : infos });
+            }
+        }
+    });
 }
 
 @end
