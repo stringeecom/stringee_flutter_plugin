@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)getCallStats:(id)arguments result:(FlutterResult)result;
 
+- (void)sendCallInfo:(id)arguments result:(FlutterResult)result;
+
 @end
 
 NS_ASSUME_NONNULL_END

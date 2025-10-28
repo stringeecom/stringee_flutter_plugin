@@ -174,6 +174,9 @@
     else if ([call.method isEqualToString:@"getCallStats2"]) {
         [wrapper.call2Manager getCallStats:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"sendCallInfo2"]) {
+        [wrapper.call2Manager sendCallInfo:call.arguments result:result];
+    }
 
     // Conversation
     else if ([call.method isEqualToString:@"createConversation"]) {
