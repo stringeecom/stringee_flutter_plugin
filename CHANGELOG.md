@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.18
+
+- Bugfix: Fix issue crash on some video call in iOS.
+
 ## 1.2.17
 
 - Update iOS WebRTC version
