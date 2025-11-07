@@ -1,6 +1,19 @@
 
 # Changelog
 
+## 1.2.18
+
+- Bugfix: Fix issue crash on some video call in iOS.
+
+## 1.2.17
+
+- Update iOS WebRTC version
+- Add func sendCallInfo to StringeeCall2 on iOS
+
+## 1.2.16
+
+- Update Android WebRTC version
+
 ## 1.2.15
 
 - Bugfix: Crash on some iOS devices

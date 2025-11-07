@@ -303,6 +303,43 @@
     }];
 }
 
+- (void)sendCallInfo:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = [data objectForKey:@"callId"];
+    NSDictionary *callInfo = [data objectForKey:@"callInfo"];
+
+    if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"Failed to send. The callId is invalid."});
+        return;
+    }
+
+    if (!callInfo || ![callInfo isKindOfClass:[NSDictionary class]]) {
+        result(@{STEStatus : @(NO), STECode : @(-4), STEMessage: @"The call info is invalid."});
+        return;
+    }
+
+
+    StringeeCall2 *call = [[StringeeManager instance].call2s objectForKey:callId];
+
+    if (!call) {
+        result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"Failed to send. The call is not found."});
+        return;
+    }
+
+    [call sendCallInfo:data completionHandler:^(BOOL status, int code, NSString *message) {
+        if (status) {
+            result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Sends successfully"});
+        } else {
+            result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"Failed to send. The client is not connected to Stringee Server."});
+        }
+    }];
+}
+
 #pragma mark - Call Delegate
 
 - (void)didChangeMediaState2:(StringeeCall2 *)stringeeCall2 mediaState:(MediaState)mediaState {
@@ -354,6 +391,14 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self->_eventSink) {
             self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidHandleOnAnotherDevice, STEBody : @{ @"callId" : stringeeCall2.callId, @"code" : @(signalingState), @"description" : reason }});
+        }
+    });
+}
+
+- (void)didReceiveCallInfo2:(StringeeCall2 *)stringeeCall2 info:(NSDictionary *)info {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeCall2), STEEvent : STEDidReceiveCallInfo, STEBody : @{ @"callId" : stringeeCall2.callId, @"data" : info }});
         }
     });
 }
