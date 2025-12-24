@@ -112,68 +112,58 @@ public class VideoConferenceManager {
             return;
         }
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            final int REQUEST_CODE = new Random().nextInt(65536);
+        final int REQUEST_CODE = new Random().nextInt(65536);
 
-            StringeeManager.getInstance()
-                    .getCaptureManager()
-                    .getActivityResult((requestCode, resultCode, data) -> {
-                        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                            StringeeManager.getInstance()
-                                    .getCaptureManager()
-                                    .getScreenCapture()
-                                    .createCapture(data,
-                                            new CallbackListener<StringeeVideoTrack>() {
-                                                @Override
-                                                public void onSuccess(
-                                                        StringeeVideoTrack videoTrack) {
-                                                    String localId = Utils.createLocalId();
-                                                    VideoTrackManager videoTrackManager =
-                                                            new VideoTrackManager(clientWrapper,
-                                                                    videoTrack, localId, false);
-                                                    StringeeManager.getInstance()
-                                                            .getTracksMap()
-                                                            .put(localId, videoTrackManager);
-                                                    Log.d(TAG, "createCaptureScreenTrack: success");
-                                                    Map<String, Object> map = new HashMap<>();
-                                                    map.put("status", true);
-                                                    map.put("code", 0);
-                                                    map.put("message", "Success");
-                                                    map.put("body",
-                                                            Utils.convertLocalVideoTrackToMap(
-                                                                    videoTrackManager,
-                                                                    clientWrapper.getClient()
-                                                                            .getUserId()));
-                                                    result.success(map);
-                                                }
+        StringeeManager.getInstance()
+                .getCaptureManager()
+                .getActivityResult((requestCode, resultCode, data) -> {
+                    if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                        StringeeManager.getInstance()
+                                .getCaptureManager()
+                                .getScreenCapture()
+                                .createCapture(data,
+                                        new CallbackListener<StringeeVideoTrack>() {
+                                            @Override
+                                            public void onSuccess(
+                                                    StringeeVideoTrack videoTrack) {
+                                                String localId = Utils.createLocalId();
+                                                VideoTrackManager videoTrackManager =
+                                                        new VideoTrackManager(clientWrapper,
+                                                                videoTrack, localId, false);
+                                                StringeeManager.getInstance()
+                                                        .getTracksMap()
+                                                        .put(localId, videoTrackManager);
+                                                Log.d(TAG, "createCaptureScreenTrack: success");
+                                                Map<String, Object> map = new HashMap<>();
+                                                map.put("status", true);
+                                                map.put("code", 0);
+                                                map.put("message", "Success");
+                                                map.put("body",
+                                                        Utils.convertLocalVideoTrackToMap(
+                                                                videoTrackManager,
+                                                                clientWrapper.getClient()
+                                                                        .getUserId()));
+                                                result.success(map);
+                                            }
 
-                                                @Override
-                                                public void onError(StringeeError stringeeError) {
-                                                    super.onError(stringeeError);
-                                                    Log.d(TAG,
-                                                            "createCaptureScreenTrack: false - " +
-                                                                    stringeeError.getCode() +
-                                                                    " - " +
-                                                                    stringeeError.getMessage());
-                                                    Map<String, Object> map = new HashMap<>();
-                                                    map.put("status", false);
-                                                    map.put("code", stringeeError.getCode());
-                                                    map.put("message", stringeeError.getMessage());
-                                                    result.success(map);
-                                                }
-                                            });
-                        }
-                        return false;
-                    });
-        } else {
-            Log.d(TAG,
-                    "createCaptureScreenTrack: false - -5 - This feature requires android api level >= 21");
-            Map<String, Object> map = new HashMap<>();
-            map.put("status", false);
-            map.put("code", -5);
-            map.put("message", "This feature requires android api level >= 21");
-            result.success(map);
-        }
+                                            @Override
+                                            public void onError(StringeeError stringeeError) {
+                                                super.onError(stringeeError);
+                                                Log.d(TAG,
+                                                        "createCaptureScreenTrack: false - " +
+                                                                stringeeError.getCode() +
+                                                                " - " +
+                                                                stringeeError.getMessage());
+                                                Map<String, Object> map = new HashMap<>();
+                                                map.put("status", false);
+                                                map.put("code", stringeeError.getCode());
+                                                map.put("message", stringeeError.getMessage());
+                                                result.success(map);
+                                            }
+                                        });
+                    }
+                    return false;
+                });
     }
 
     /**

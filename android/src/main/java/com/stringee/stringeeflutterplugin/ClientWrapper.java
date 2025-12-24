@@ -506,6 +506,22 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     }
 
     /**
+     * Set trust all ssl
+     *
+     * @param trustAll
+     * @param result
+     */
+    public void setTrustAllSsl(final boolean trustAll, final Result result) {
+        client.setTrustAllSsl(trustAll);
+        Log.d(TAG, "setTrustAllSsl: success");
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", true);
+        map.put("code", 0);
+        map.put("message", "Success");
+        result.success(map);
+    }
+
+    /**
      * Register push notification
      *
      * @param registrationToken

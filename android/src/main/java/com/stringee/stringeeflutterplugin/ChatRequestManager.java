@@ -67,16 +67,13 @@ public class ChatRequestManager {
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
-                        Utils.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
-                            }
+                        Utils.post(() -> {
+                            Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
                         });
                     }
                 });

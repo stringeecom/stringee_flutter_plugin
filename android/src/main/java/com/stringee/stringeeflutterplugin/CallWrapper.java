@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 
+import com.stringee.call.CallType;
 import com.stringee.call.StringeeCall;
 import com.stringee.call.StringeeCall.MediaState;
 import com.stringee.call.StringeeCall.SignalingState;
@@ -249,7 +250,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
      * @param callInfo
      * @param result
      */
-    public void sendCallInfo(final Map callInfo, final Result result) {
+    public void sendCallInfo(final Map<String, Object> callInfo, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "sendCallInfo: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -555,9 +556,9 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                 if (!stringeeCall.getFrom().equals(clientWrapper.getClient().getUserId())) {
                     callType = 1;
                 }
-                if (stringeeCall.isAppToPhoneCall()) {
+                if (stringeeCall.getCallType() == CallType.APP_TO_PHONE) {
                     callType = 2;
-                } else if (stringeeCall.isPhoneToAppCall()) {
+                } else if (stringeeCall.getCallType() == CallType.PHONE_TO_APP) {
                     callType = 3;
                 }
                 callInfoMap.put("callType", callType);
