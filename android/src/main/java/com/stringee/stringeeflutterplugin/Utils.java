@@ -19,7 +19,6 @@ import com.stringee.messaging.Queue;
 import com.stringee.messaging.User;
 import com.stringee.messaging.User.Role;
 import com.stringee.messaging.listeners.CallbackListener;
-import com.stringee.stringeeflutterplugin.common.enumeration.UserRole;
 import com.stringee.video.RemoteParticipant;
 import com.stringee.video.StringeeRoom;
 import com.stringee.video.StringeeVideoTrack;
@@ -175,14 +174,14 @@ public class Utils {
         List<User> list = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             JSONObject object = (JSONObject) array.get(i);
-            User user = new User(object.optString("userId", null));
-            user.setName(object.optString("name", null));
-            user.setAvatarUrl(object.optString("avatarUrl", null));
+            User user = new User(object.optString("userId", ""));
+            user.setName(object.optString("name", ""));
+            user.setAvatarUrl(object.optString("avatarUrl", ""));
             if (object.has("role")) {
                 short role = (short) object.getInt("role");
-                if (role == UserRole.ADMIN.getValue()) {
+                if (role == 0) {
                     user.setRole(Role.ADMIN);
-                } else if (role == UserRole.MEMBER.getValue()) {
+                } else if (role == 1) {
                     user.setRole(Role.MEMBER);
                 }
             }
@@ -216,18 +215,18 @@ public class Utils {
                 text = conversation.getText();
             }
             conversationMap.put("text", text);
-            conversationMap.put("lastMsgSender", conversation.getLastMsgSender());
-            conversationMap.put("lastMsgType", conversation.getLastMsgType().getValue());
-            conversationMap.put("lastMsgId", conversation.getLastMsgId());
+            conversationMap.put("lastMsgSender", conversation.getLastMessage().getSender());
+            conversationMap.put("lastMsgType", conversation.getLastMessage().getMsgType().getValue());
+            conversationMap.put("lastMsgId", conversation.getLastMessage().getId());
             conversationMap.put("lastMsgSeqReceived", conversation.getLastMsgSeqReceived());
             conversationMap.put("lastTimeNewMsg", conversation.getLastTimeNewMsg());
-            conversationMap.put("lastMsgState", conversation.getLastMsgState().getValue());
+            conversationMap.put("lastMsgState", conversation.getLastMessage().getState().getValue());
 
             if (conversation.getLastMsg() != null) {
                 String lastMsg = conversation.getLastMsg();
                 if (!isEmpty(lastMsg)) {
                     JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
-                    conversationMap.put("text", convertLastMessageToMap(lastMsgMap, conversation.getLastMsgType()));
+                    conversationMap.put("text", convertLastMessageToMap(lastMsgMap, conversation.getLastMessage().getType()));
                 }
             }
             conversationMap.put("pinnedMsgId", conversation.getPinnedMsgId());
@@ -356,7 +355,7 @@ public class Utils {
             msgMap.put("id", message.getId());
             msgMap.put("localId", message.getLocalId());
             msgMap.put("convId", message.getConversationId());
-            msgMap.put("senderId", message.getSenderId());
+            msgMap.put("senderId", message.getSender().getUserId());
             msgMap.put("createdAt", message.getCreatedAt());
             msgMap.put("sequence", message.getSequence());
             msgMap.put("customData", convertJsonToMap(message.getCustomData()));
@@ -465,7 +464,7 @@ public class Utils {
                     User addUser = new User(notifyObject.getString("addedby"));
                     JSONObject addedInfoObject = notifyObject.optJSONObject("addedInfo");
                     if (addedInfoObject != null) {
-                        addUser.setName(addedInfoObject.optString("displayName", null));
+                        addUser.setName(addedInfoObject.optString("displayName", ""));
                     }
                     addUser.setAvatarUrl(null);
                     contentMap.put("addedInfo", convertUserToMap(addUser));
@@ -475,7 +474,7 @@ public class Utils {
                     User removeUser = new User(notifyObject.getString("removedBy"));
                     JSONObject removedInfoObject = notifyObject.optJSONObject("removedInfo");
                     if (removedInfoObject != null) {
-                        removeUser.setName(removedInfoObject.optString("displayName", null));
+                        removeUser.setName(removedInfoObject.optString("displayName", ""));
                     }
                     removeUser.setAvatarUrl(null);
                     contentMap.put("removedInfo", convertUserToMap(removeUser));
@@ -593,8 +592,8 @@ public class Utils {
                 JSONObject userObject = participantsArray.getJSONObject(i);
 
                 User user = new User(userObject.getString("user"));
-                user.setName(userObject.optString("displayName", null));
-                user.setAvatarUrl(userObject.optString("avatarUrl", null));
+                user.setName(userObject.optString("displayName", ""));
+                user.setAvatarUrl(userObject.optString("avatarUrl", ""));
                 user.setRole(Role.getRole(userObject.optString("role")));
 
                 resultArray.add(convertUserToMap(user));

@@ -213,6 +213,23 @@ class StringeeClient {
     return await methodChannel.invokeMethod('existCall', params);
   }
 
+  /// Set trust all ssl (for Android only)
+  Future<Map<dynamic, dynamic>> setTrustAllSsl(bool trustAll) async {
+    if (Platform.isAndroid) {
+      final params = {'trustAll': trustAll, 'uuid': _uuid};
+
+      return await StringeeClient.methodChannel
+          .invokeMethod('setTrustAllSsl', params);
+    } else {
+      Map<dynamic, dynamic> result = {
+        'status': false,
+        'code': -1,
+        'message': 'This function is only available in Android',
+      };
+      return result;
+    }
+  }
+
   /// Begin handle events
 
   void _handleDidConnectEvent(Map<dynamic, dynamic> map) {

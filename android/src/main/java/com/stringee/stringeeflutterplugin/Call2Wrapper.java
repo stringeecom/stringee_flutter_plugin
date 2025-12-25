@@ -1,8 +1,6 @@
 package com.stringee.stringeeflutterplugin;
 
 import android.app.Activity;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -214,7 +212,7 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
      * @param callInfo
      * @param result
      */
-    public void sendCallInfo(final Map callInfo, final Result result) {
+    public void sendCallInfo(final Map<String, Object> callInfo, final Result result) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "sendCallInfo: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -505,65 +503,56 @@ public class Call2Wrapper implements StringeeCall2.StringeeCallListener {
             return;
         }
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            final int REQUEST_CODE = new Random().nextInt(65536);
+        final int REQUEST_CODE = new Random().nextInt(65536);
 
-            StringeeManager.getInstance()
-                    .getCaptureManager()
-                    .getActivityResult((requestCode, resultCode, data) -> {
-                        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                            StringeeManager.getInstance()
-                                    .getCaptureManager()
-                                    .getScreenCapture()
-                                    .createCapture(data,
-                                            new CallbackListener<StringeeVideoTrack>() {
-                                                @Override
-                                                public void onSuccess(StringeeVideoTrack var1) {
+        StringeeManager.getInstance()
+                .getCaptureManager()
+                .getActivityResult((requestCode, resultCode, data) -> {
+                    if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                        StringeeManager.getInstance()
+                                .getCaptureManager()
+                                .getScreenCapture()
+                                .createCapture(data,
+                                        new CallbackListener<StringeeVideoTrack>() {
+                                            @Override
+                                            public void onSuccess(StringeeVideoTrack var1) {
 
-                                                }
-                                            });
-                        }
-                        return false;
-                    });
+                                            }
+                                        });
+                    }
+                    return false;
+                });
 
-            call2.startCaptureScreen(
-                    StringeeManager.getInstance().getCaptureManager().getScreenCapture(),
-                    new StatusListener() {
-                        @Override
-                        public void onSuccess() {
-                            Utils.post(() -> {
-                                Log.d(TAG, "startCapture: success");
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("status", true);
-                                map.put("code", 0);
-                                map.put("message", "Success");
-                                result.success(map);
-                            });
-                        }
+        call2.startCaptureScreen(
+                StringeeManager.getInstance().getCaptureManager().getScreenCapture(),
+                new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "startCapture: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
 
-                        @Override
-                        public void onError(StringeeError stringeeError) {
-                            super.onError(stringeeError);
-                            Utils.post(() -> {
-                                Log.d(TAG,
-                                        "startCapture: false - " + stringeeError.getCode() + " - " +
-                                                stringeeError.getMessage());
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("status", false);
-                                map.put("code", stringeeError.getCode());
-                                map.put("message", stringeeError.getMessage());
-                                result.success(map);
-                            });
-                        }
-                    });
-        } else {
-            Log.d(TAG, "startCapture: false - -5 - This feature requires android api level >= 21");
-            Map<String, Object> map = new HashMap<>();
-            map.put("status", false);
-            map.put("code", -5);
-            map.put("message", "This feature requires android api level >= 21");
-            result.success(map);
-        }
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(TAG,
+                                    "startCapture: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage());
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                });
     }
 
     /**
