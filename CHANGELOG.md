@@ -1,9 +1,18 @@
 
 # Changelog
 
+## 1.2.20
+
+- Bugfix: Fix issue crash on Android tablet
+
+## 1.2.19
+
+- Upgrade android sdk version
+- Allow to set trust all certificate in android
+
 ## 1.2.18
 
-- Bugfix: Fix issue crash on some video call in iOS.
+- Bugfix: Fix issue crash on some video call in iOS
 
 ## 1.2.17
 
