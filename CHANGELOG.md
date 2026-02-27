@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.0
+
+- Update core android sdk and ios sdk
+
 ## 1.2.20
 
 - Bugfix: Fix issue crash on Android tablet
