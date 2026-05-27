@@ -5,8 +5,8 @@
 //  Created by HoangDuoc on 1/15/22.
 //
 
-#import "StringeeVideoConferenceManager.h"
-#import "StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeVideoConferenceManager.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
 
 static NSMutableDictionary<NSString *, StringeeVideoRoom *> *_rooms;
 static NSMutableDictionary<NSString *, StringeeVideoTrack *> *_localTracks; // key la localId

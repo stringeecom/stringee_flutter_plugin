@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.3.1
+
+- Add iOS Swift Package Manager support using Stringee iOS SDK 2.0.3.
+- Keep iOS CocoaPods compatibility on the existing Stringee `~> 2.0.2` pod distribution.
+
 ## 1.3.0
 
 - Update core android sdk and ios sdk

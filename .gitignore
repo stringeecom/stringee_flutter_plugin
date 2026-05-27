@@ -6,6 +6,8 @@ pubspec.lock
 
 # Ignore build directories
 build/
+.build/
+.swiftpm/
 example/.flutter-plugins-dependencies
 example/android/app/release/
 

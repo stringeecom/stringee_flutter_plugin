@@ -5,7 +5,7 @@
 //  Created by HoangDuoc on 1/14/21.
 //
 
-#import "StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
 
 @implementation StringeeHelper
 

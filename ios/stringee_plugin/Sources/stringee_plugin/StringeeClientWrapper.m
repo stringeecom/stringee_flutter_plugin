@@ -5,9 +5,9 @@
 //  Created by HoangDuoc on 6/19/21.
 //
 
-#import "StringeeClientWrapper.h"
-#import "StringeeHelper.h"
-#import "StringeeManager.h"
+#import "./include/stringee_plugin/StringeeClientWrapper.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeManager.h"
 
 static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
 

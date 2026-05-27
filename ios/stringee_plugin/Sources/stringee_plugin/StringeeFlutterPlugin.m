@@ -1,13 +1,13 @@
-#import "StringeeFlutterPlugin.h"
-#import "StringeeVideoViewFactory.h"
-#import "StringeeManager.h"
-#import "StringeeCallManager.h"
-#import "StringeeCall2Manager.h"
-#import "StringeeConversationManager.h"
-#import "StringeeMessageManager.h"
-#import "StringeeHelper.h"
-#import "StringeeClientWrapper.h"
-#import "StringeeFlutterAudioManager.h"
+#import "./include/stringee_plugin/StringeeFlutterPlugin.h"
+#import "./include/stringee_plugin/StringeeVideoViewFactory.h"
+#import "./include/stringee_plugin/StringeeManager.h"
+#import "./include/stringee_plugin/StringeeCallManager.h"
+#import "./include/stringee_plugin/StringeeCall2Manager.h"
+#import "./include/stringee_plugin/StringeeConversationManager.h"
+#import "./include/stringee_plugin/StringeeMessageManager.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeClientWrapper.h"
+#import "./include/stringee_plugin/StringeeFlutterAudioManager.h"
 
 @interface StringeeFlutterPlugin ()
 

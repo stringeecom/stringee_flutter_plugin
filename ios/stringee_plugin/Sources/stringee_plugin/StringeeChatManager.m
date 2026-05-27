@@ -5,8 +5,8 @@
 //  Created by HoangDuoc on 9/1/21.
 //
 
-#import "StringeeChatManager.h"
-#import "StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeChatManager.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
 
 @implementation StringeeChatManager {
     StringeeClient *_client;

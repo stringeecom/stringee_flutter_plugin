@@ -1,9 +1,9 @@
 
-#import "StringeeNativeVideoView.h"
+#import "./include/stringee_plugin/StringeeNativeVideoView.h"
 #import <Stringee/Stringee.h>
-#import "StringeeManager.h"
-#import "StringeeHelper.h"
-#import "StringeeVideoConferenceManager.h"
+#import "./include/stringee_plugin/StringeeManager.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeVideoConferenceManager.h"
 
 @implementation StringeeNativeVideoView {
     UIView *_view;

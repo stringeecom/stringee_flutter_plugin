@@ -5,10 +5,10 @@
 //  Created by HoangDuoc on 1/8/21.
 //
 
-#import "StringeeCallManager.h"
-#import "StringeeFlutterPlugin.h"
-#import "StringeeManager.h"
-#import "StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeCallManager.h"
+#import "./include/stringee_plugin/StringeeFlutterPlugin.h"
+#import "./include/stringee_plugin/StringeeManager.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
 
 @implementation StringeeCallManager {
     StringeeClient *_client;

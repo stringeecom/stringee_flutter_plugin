@@ -26,6 +26,20 @@ dependencies:
 
 Replace `$version` with the plugin version you want to use. See a list of versions in [Changelog](CHANGELOG.md).
 
+## iOS dependency managers
+
+This plugin supports both CocoaPods and Swift Package Manager on iOS.
+
+CocoaPods remains the default path for older Flutter projects. It intentionally stays on the native `Stringee` CocoaPods distribution declared in `ios/stringee_plugin.podspec` (`~> 2.0.2`).
+
+Swift Package Manager is available for Flutter SDKs that support Flutter plugin SPM integration. To opt in:
+
+```sh
+flutter config --enable-swift-package-manager
+```
+
+In SPM mode, the plugin resolves `Stringee-iOS-SDK-SPM` exact `2.0.3`. That package also resolves its native WebRTC dependency.
+
 Check out our getting started guide at here:
 
 - [Getting started with Stringee Call API using Flutter Plugin](https://asia-1.console.stringee.com/docs/getting-started-flutter)

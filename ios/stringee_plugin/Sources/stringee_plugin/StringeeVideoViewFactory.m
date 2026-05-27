@@ -1,6 +1,6 @@
 
-#import "StringeeVideoViewFactory.h"
-#import "StringeeNativeVideoView.h"
+#import "./include/stringee_plugin/StringeeVideoViewFactory.h"
+#import "./include/stringee_plugin/StringeeNativeVideoView.h"
 
 @implementation StringeeVideoViewFactory {
     NSObject<FlutterBinaryMessenger>* _messenger;

@@ -1,5 +1,5 @@
-#import "StringeeFlutterAudioManager.h"
-#import "StringeeHelper.h"
+#import "./include/stringee_plugin/StringeeFlutterAudioManager.h"
+#import "./include/stringee_plugin/StringeeHelper.h"
 #import <AVFoundation/AVFoundation.h>
 
 @interface CustomPortDescription : NSObject

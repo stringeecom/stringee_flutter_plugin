@@ -12,8 +12,8 @@ Stringee plugin for flutter.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Stringee' => 'info@stringee.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'stringee_plugin/Sources/stringee_plugin/**/*.{h,m}'
+  s.public_header_files = 'stringee_plugin/Sources/stringee_plugin/include/**/*.h'
 
   s.dependency 'Flutter'
   s.dependency 'Stringee', '~> 2.0.2'
@@ -21,4 +21,3 @@ Stringee plugin for flutter.
 
   s.ios.deployment_target = '13.0'
 end
-
