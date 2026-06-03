@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeChat {
   late StringeeClient _client;
@@ -170,7 +171,7 @@ class StringeeChat {
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getLocalConversations', params);
     if (result['status']) {
-      List<dynamic> list = result['body'];
+      List<dynamic> list = StringeeValueParser.toList(result['body']);
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
@@ -196,7 +197,7 @@ class StringeeChat {
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getLastConversation', param);
     if (result['status']) {
-      List<dynamic> list = result['body'];
+      List<dynamic> list = StringeeValueParser.toList(result['body']);
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
@@ -223,7 +224,7 @@ class StringeeChat {
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getConversationsBefore', param);
     if (result['status']) {
-      List<dynamic> list = result['body'];
+      List<dynamic> list = StringeeValueParser.toList(result['body']);
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
@@ -250,7 +251,7 @@ class StringeeChat {
     Map<dynamic, dynamic> result = await StringeeClient.methodChannel
         .invokeMethod('getConversationsAfter', param);
     if (result['status']) {
-      List<dynamic> list = result['body'];
+      List<dynamic> list = StringeeValueParser.toList(result['body']);
       List<StringeeConversation> conversations = [];
       for (int i = 0; i < list.length; i++) {
         conversations.add(StringeeConversation.fromJson(list[i], _client));
@@ -286,21 +287,29 @@ class StringeeChat {
   }
 
   void _handleReceiveChangeEvent(Map<dynamic, dynamic> map) {
-    ChangeType changeType = ChangeType.values[map['changeType']];
-    ObjectType objectType = ObjectType.values[map['objectType']];
-    List<dynamic>? objectDatas = map['objects'];
+    ChangeType changeType = StringeeValueParser.enumValue(
+      ChangeType.values,
+      map['changeType'],
+      ChangeType.update,
+    );
+    ObjectType objectType = StringeeValueParser.enumValue(
+      ObjectType.values,
+      map['objectType'],
+      ObjectType.conversation,
+    );
+    List<dynamic> objectDatas = StringeeValueParser.toList(map['objects']);
     List<dynamic> objects = [];
 
     switch (objectType) {
       case ObjectType.conversation:
-        for (int i = 0; i < objectDatas!.length; i++) {
+        for (int i = 0; i < objectDatas.length; i++) {
           StringeeConversation conv =
               new StringeeConversation.fromJson(objectDatas[i], _client);
           objects.add(conv);
         }
         break;
       case ObjectType.message:
-        for (int i = 0; i < objectDatas!.length; i++) {
+        for (int i = 0; i < objectDatas.length; i++) {
           StringeeMessage msg =
               new StringeeMessage.fromJson(objectDatas[i], _client);
           objects.add(msg);

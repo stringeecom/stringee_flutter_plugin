@@ -1,4 +1,5 @@
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeUser {
   String? _userId;
@@ -35,11 +36,11 @@ class StringeeUser {
   }
 
   StringeeUser.fromJson(Map<dynamic, dynamic> json) {
-    this._userId = json['user'];
-    this._name = json['displayName'];
-    this._avatarUrl = json['avatarUrl'];
+    this._userId = StringeeValueParser.toStringValue(json['user']);
+    this._name = StringeeValueParser.toStringValue(json['displayName']);
+    this._avatarUrl = StringeeValueParser.toStringValue(json['avatarUrl']);
     if (json.containsKey('role')) {
-      String? role = json['role'];
+      String? role = StringeeValueParser.toStringValue(json['role']);
       switch (role) {
         case 'member':
           this._role = UserRole.member;

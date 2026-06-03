@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeVideoTrack {
   late String _id;
@@ -36,13 +37,15 @@ class StringeeVideoTrack {
     Map<dynamic, dynamic> info,
   ) {
     this._client = client;
-    this._id = info['id'];
-    this._localId = info['localId'];
-    this._audioEnable = info['audio'];
-    this._videoEnable = info['video'];
-    this._isScreenCapture = info['screen'];
-    this._isLocal = info['isLocal'];
-    this._publisher = StringeeRoomUser(info['publisher']);
+    this._id = StringeeValueParser.toStringValue(info['id']) ?? '';
+    this._localId = StringeeValueParser.toStringValue(info['localId']) ?? '';
+    this._audioEnable = StringeeValueParser.toBool(info['audio']) ?? false;
+    this._videoEnable = StringeeValueParser.toBool(info['video']) ?? false;
+    this._isScreenCapture = StringeeValueParser.toBool(info['screen']) ?? false;
+    this._isLocal = StringeeValueParser.toBool(info['isLocal']) ?? false;
+    this._publisher = StringeeRoomUser(
+      StringeeValueParser.toMap(info['publisher']) ?? {},
+    );
   }
 
   StringeeVideoTrackInfo getInfo() {

@@ -1,4 +1,5 @@
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class AudioDevice {
   late String? _uuid;
@@ -30,8 +31,11 @@ class AudioDevice {
   }
 
   static fromJson(dynamic json) {
-    AudioType audioType = AudioTypeX.fromValue(json['type']);
-    String? name = json['name'];
+    final map = StringeeValueParser.toMap(json) ?? {};
+    AudioType audioType = AudioTypeX.fromValue(
+      StringeeValueParser.toInt(map['type']),
+    );
+    String? name = StringeeValueParser.toStringValue(map['name']);
     if (name == null) {
       switch (audioType) {
         case AudioType.speakerPhone:
@@ -57,7 +61,7 @@ class AudioDevice {
     return AudioDevice(
       audioType: audioType,
       name: name,
-      uuid: json['uuid'],
+      uuid: StringeeValueParser.toStringValue(map['uuid']),
     );
   }
 

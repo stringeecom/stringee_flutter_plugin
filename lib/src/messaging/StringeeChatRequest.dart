@@ -1,4 +1,5 @@
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeChatRequest {
   late String _convId;
@@ -20,11 +21,20 @@ class StringeeChatRequest {
   late StringeeClient _client;
 
   StringeeChatRequest(Map<dynamic, dynamic> data, StringeeClient client) {
-    _convId = data["convId"];
-    _customerId = data["customerId"];
-    _customerName = data["customerName"];
-    _channelType = StringeeChannelType.values[data["channelType"]];
-    _type = StringeeChatRequestType.values[data["type"]];
+    _convId = StringeeValueParser.toStringValue(data["convId"]) ?? '';
+    _customerId = StringeeValueParser.toStringValue(data["customerId"]) ?? '';
+    _customerName =
+        StringeeValueParser.toStringValue(data["customerName"]) ?? '';
+    _channelType = StringeeValueParser.enumValue(
+      StringeeChannelType.values,
+      data["channelType"],
+      StringeeChannelType.livechat,
+    );
+    _type = StringeeValueParser.enumValue(
+      StringeeChatRequestType.values,
+      data["type"],
+      StringeeChatRequestType.normal,
+    );
     _client = client;
   }
 

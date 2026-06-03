@@ -1,4 +1,5 @@
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeVideo {
   late StringeeClient _client;
@@ -19,22 +20,35 @@ class StringeeVideo {
         .invokeMethod('video.joinRoom', params);
 
     if (result['status']) {
-      StringeeVideoRoom room =
-          StringeeVideoRoom(_client, result['body']['room']);
-      result['body']['room'] = room;
+      final body = StringeeValueParser.toMap(result['body']) ?? {};
+      StringeeVideoRoom room = StringeeVideoRoom(
+        _client,
+        StringeeValueParser.toMap(body['room']) ?? {},
+      );
+      body['room'] = room;
 
       List<StringeeVideoTrackInfo> videoTrackList = [];
-      List<dynamic> tracksData = result['body']['videoTrackInfos'];
+      List<dynamic> tracksData = StringeeValueParser.toList(
+        body['videoTrackInfos'],
+      );
       if (tracksData.length > 0)
-        videoTrackList =
-            tracksData.map((info) => StringeeVideoTrackInfo(info)).toList();
-      result['body']['videoTrackInfos'] = videoTrackList;
+        videoTrackList = tracksData
+            .map((info) => StringeeVideoTrackInfo(
+                  StringeeValueParser.toMap(info) ?? {},
+                ))
+            .toList();
+      body['videoTrackInfos'] = videoTrackList;
 
       List<StringeeRoomUser> userList = [];
-      List<dynamic> usersData = result['body']['users'];
+      List<dynamic> usersData = StringeeValueParser.toList(body['users']);
       if (usersData.length > 0)
-        userList = usersData.map((info) => StringeeRoomUser(info)).toList();
-      result['body']['users'] = userList;
+        userList = usersData
+            .map((info) => StringeeRoomUser(
+                  StringeeValueParser.toMap(info) ?? {},
+                ))
+            .toList();
+      body['users'] = userList;
+      result['body'] = body;
     }
     return result;
   }
@@ -51,8 +65,10 @@ class StringeeVideo {
         .invokeMethod('video.createLocalVideoTrack', params);
 
     if (result['status']) {
-      StringeeVideoTrack videoTrack =
-          StringeeVideoTrack(_client, result['body']);
+      StringeeVideoTrack videoTrack = StringeeVideoTrack(
+        _client,
+        StringeeValueParser.toMap(result['body']) ?? {},
+      );
       result['body'] = videoTrack;
     }
     return result;
