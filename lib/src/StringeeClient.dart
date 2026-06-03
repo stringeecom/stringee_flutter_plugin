@@ -207,10 +207,13 @@ class StringeeClient {
   }
 
   /// Checks whether a call exists on the Stringee server by [callId].
-  Future<Map<dynamic, dynamic>> existCall(String callId) async {
-    if (callId.trim().isEmpty) return await reportInvalidValue('callId');
+  Future<Result> existCall(String callId) async {
+    if (callId.trim().isEmpty) {
+      return Result.fromJson(await reportInvalidValue('callId'));
+    }
     final params = {'callId': callId.trim(), 'uuid': _uuid};
-    return await methodChannel.invokeMethod('existCall', params);
+    return Result.fromJson(
+        await methodChannel.invokeMethod('existCall', params));
   }
 
   /// Enables or disables trusting all SSL certificates on Android.
