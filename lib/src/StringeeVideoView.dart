@@ -11,7 +11,7 @@ import '../stringee_plugin.dart';
 class StringeeVideoView extends StatelessWidget {
   late final String? callId;
   late final String? trackId;
-  bool isLocal = true;
+  final bool isLocal;
   final bool? isMirror;
   final EdgeInsetsGeometry? margin;
   final AlignmentGeometry? alignment;
@@ -54,7 +54,8 @@ class StringeeVideoView extends StatelessWidget {
     this.child,
     this.scalingType = ScalingType.fill,
     this.borderRadius,
-  })  : assert(margin == null || margin.isNonNegative),
+  })  : isLocal = true,
+        assert(margin == null || margin.isNonNegative),
         assert(padding == null || padding.isNonNegative),
         super(key: key) {
     forCall = false;
@@ -124,7 +125,7 @@ class StringeeVideoView extends StatelessWidget {
           },
         );
       case TargetPlatform.iOS:
-        // Co loi FlutterPlatformView chua duoc fix => dung tam cach nay
+        // Work around the current iOS FlutterPlatformView sizing issue.
         if (width == null) {
           creationParams['width'] = MediaQuery.of(context).size.width;
         }
@@ -149,7 +150,7 @@ class StringeeVideoView extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> childrenWidget = <Widget>[createVideoView(context)];
 
-    /// Create Container with height and width
+    // Create a container with the configured size.
     Widget current = Container(
       height: height,
       width: width,
@@ -158,11 +159,11 @@ class StringeeVideoView extends StatelessWidget {
       ),
     );
 
-    /// Add child widget
+    // Overlay the optional child widget on top of the video view.
     if (child != null) {
       Widget? child = this.child;
 
-      /// Set child widget padding
+      // Apply child padding.
       if (padding != null) {
         child = Padding(padding: padding!, child: child);
       }
@@ -170,7 +171,7 @@ class StringeeVideoView extends StatelessWidget {
       childrenWidget.add(child!);
     }
 
-    /// Set border
+    // Apply border radius.
     if (borderRadius != null) {
       current = new ClipRRect(
         clipBehavior: Clip.hardEdge,
@@ -179,12 +180,12 @@ class StringeeVideoView extends StatelessWidget {
       );
     }
 
-    /// Set margin
+    // Apply margin.
     if (margin != null) {
       current = Padding(padding: margin!, child: current);
     }
 
-    /// Set alignment
+    // Apply alignment.
     if (alignment != null) {
       current = Align(alignment: alignment!, child: current);
     }

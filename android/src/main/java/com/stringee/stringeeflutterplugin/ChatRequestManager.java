@@ -14,6 +14,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ChatRequestManager {
+
     private final ClientWrapper clientWrapper;
     private static final String TAG = "StringeeSDK";
 
@@ -22,10 +23,12 @@ public class ChatRequestManager {
     }
 
     /**
-     * accept chat request
+     * Accepts a pending live chat request for a conversation.
      *
      * @param convId
+     *         Conversation id associated with the chat request.
      * @param result
+     *         Flutter method result.
      */
     public void acceptChatRequest(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -48,27 +51,52 @@ public class ChatRequestManager {
             return;
         }
 
-        Utils.getChatRequest(clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
-            @Override
-            public void onSuccess(ChatRequest chatRequest) {
-                chatRequest.accept(clientWrapper.getClient(), new CallbackListener<Conversation>() {
+        Utils.getChatRequest(
+                clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
                     @Override
-                    public void onSuccess(Conversation conversation) {
-                        Utils.post(() -> {
-                            Log.d(TAG, "acceptChatRequest: success");
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            result.success(map);
-                        });
+                    public void onSuccess(ChatRequest chatRequest) {
+                        chatRequest.accept(
+                                clientWrapper.getClient(), new CallbackListener<Conversation>() {
+                                    @Override
+                                    public void onSuccess(Conversation conversation) {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "acceptChatRequest: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG, "acceptChatRequest: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "acceptChatRequest: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -76,29 +104,17 @@ public class ChatRequestManager {
                             result.success(map);
                         });
                     }
-                });
-            }
-
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "acceptChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                }
+        );
     }
 
     /**
-     * Reject chat request
+     * Rejects a pending live chat request for a conversation.
      *
      * @param convId
+     *         Conversation id associated with the chat request.
      * @param result
+     *         Flutter method result.
      */
     public void rejectChatRequest(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -121,27 +137,52 @@ public class ChatRequestManager {
             return;
         }
 
-        Utils.getChatRequest(clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
-            @Override
-            public void onSuccess(ChatRequest chatRequest) {
-                chatRequest.reject(clientWrapper.getClient(), new StatusListener() {
+        Utils.getChatRequest(
+                clientWrapper.getClient(), convId, new CallbackListener<ChatRequest>() {
                     @Override
-                    public void onSuccess() {
-                        Utils.post(() -> {
-                            Log.d(TAG, "rejectChatRequest: success");
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            result.success(map);
-                        });
+                    public void onSuccess(ChatRequest chatRequest) {
+                        chatRequest.reject(
+                                clientWrapper.getClient(), new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "rejectChatRequest: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG, "rejectChatRequest: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "rejectChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "rejectChatRequest: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -149,21 +190,7 @@ public class ChatRequestManager {
                             result.success(map);
                         });
                     }
-                });
-            }
-
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "rejectChatRequest: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                }
+        );
     }
 }

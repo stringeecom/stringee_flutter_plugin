@@ -22,6 +22,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class RoomManager implements StringeeRoomListener {
+
     private final ClientWrapper clientWrapper;
     private final VideoConferenceManager videoConferenceManager;
     private StringeeRoom stringeeRoom;
@@ -34,188 +35,279 @@ public class RoomManager implements StringeeRoomListener {
         this.videoConferenceManager = videoConferenceManager;
     }
 
+    /**
+     * Connects the client to a Stringee video room.
+     *
+     * @param roomToken
+     *         Video room token.
+     * @param result
+     *         Flutter method result.
+     */
     public void connect(final String roomToken, final Result result) {
         connectRoomResult = result;
         stringeeRoom = StringeeVideo.connect(clientWrapper.getClient(), roomToken, this);
     }
 
+    /**
+     * Publishes a local video track to this room.
+     *
+     * @param trackManager
+     *         Local track manager.
+     * @param result
+     *         Flutter method result.
+     */
     public void publish(final VideoTrackManager trackManager, final Result result) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
-        stringeeRoom.publish(videoTrack, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    Log.d(TAG, "publish: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", Utils.convertVideoTrackToMap(trackManager));
-                    result.success(map);
-                });
-            }
+        stringeeRoom.publish(
+                videoTrack, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "publish: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", Utils.convertVideoTrackToMap(trackManager));
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "publish: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "publish: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
     }
 
+    /**
+     * Unpublishes a local video track from this room.
+     *
+     * @param videoTrack
+     *         Track to unpublish.
+     * @param result
+     *         Flutter method result.
+     */
     public void unpublish(final StringeeVideoTrack videoTrack, final Result result) {
-        stringeeRoom.unpublish(videoTrack, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    videoTrack.release();
-                    Log.d(TAG, "unpublish: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                });
-            }
+        stringeeRoom.unpublish(
+                videoTrack, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            videoTrack.release();
+                            Log.d(TAG, "unpublish: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "unpublish: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "unpublish: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
     }
 
-    public void subscribe(final VideoTrackManager trackManager, final StringeeVideoTrack.Options options, final Result result) {
-        stringeeRoom.subscribe(trackManager.getVideoTrack(), options, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    Log.d(TAG, "subscribe: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    map.put("body", Utils.convertVideoTrackToMap(trackManager));
-                    result.success(map);
-                });
-            }
+    /**
+     * Subscribes to a remote video track in this room.
+     *
+     * @param trackManager
+     *         Remote track manager.
+     * @param options
+     *         Subscription options.
+     * @param result
+     *         Flutter method result.
+     */
+    public void subscribe(
+            final VideoTrackManager trackManager,
+            final StringeeVideoTrack.Options options, final Result result
+    ) {
+        stringeeRoom.subscribe(
+                trackManager.getVideoTrack(), options, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "subscribe: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            map.put("body", Utils.convertVideoTrackToMap(trackManager));
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "subscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "subscribe: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
     }
 
+    /**
+     * Unsubscribes from a remote video track in this room.
+     *
+     * @param videoTrack
+     *         Track to unsubscribe from.
+     * @param result
+     *         Flutter method result.
+     */
     public void unsubscribe(final StringeeVideoTrack videoTrack, final Result result) {
-        stringeeRoom.unsubscribe(videoTrack, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    Log.d(TAG, "unsubscribe: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                });
-            }
+        stringeeRoom.unsubscribe(
+                videoTrack, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "unsubscribe: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "unsubscribe: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "unsubscribe: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
     }
 
+    /**
+     * Leaves this video room.
+     *
+     * @param allClient
+     *         True to leave for all clients.
+     * @param result
+     *         Flutter method result.
+     */
     public void leave(final boolean allClient, final Result result) {
-        stringeeRoom.leave(allClient, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    StringeeVideo.release(stringeeRoom);
-                    Log.d(TAG, "leave: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                });
-            }
+        stringeeRoom.leave(
+                allClient, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            StringeeVideo.release(stringeeRoom);
+                            Log.d(TAG, "leave: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "leave: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "leave: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
     }
 
+    /**
+     * Sends a data message in this room.
+     *
+     * @param msg
+     *         Message payload.
+     * @param result
+     *         Flutter method result.
+     */
     public void sendMessage(final JSONObject msg, final Result result) {
-        stringeeRoom.sendMessage(msg, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    Log.d(TAG, "sendMessage: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                });
-            }
+        stringeeRoom.sendMessage(
+                msg, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "sendMessage: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                    @Override
+                    public void onError(StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "sendMessage: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
     }
 
     @Override
@@ -229,8 +321,10 @@ public class RoomManager implements StringeeRoomListener {
                 users.add(Utils.convertRoomUserToMap(participant));
                 for (int j = 0; j < participant.getVideoTracks().size(); j++) {
                     StringeeVideoTrack videoTrack = participant.getVideoTracks().get(j);
-                    VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, videoTrack, "", false);
-                    StringeeManager.getInstance().getTracksMap().put(videoTrack.getId(), videoTrackManager);
+                    VideoTrackManager videoTrackManager = new VideoTrackManager(
+                            clientWrapper, videoTrack, "", false);
+                    StringeeManager.getInstance().getTracksMap().put(
+                            videoTrack.getId(), videoTrackManager);
                     videoTracks.add(Utils.convertVideoTrackInfoToMap(videoTrackManager));
                 }
             }
@@ -259,7 +353,10 @@ public class RoomManager implements StringeeRoomListener {
     @Override
     public void onError(StringeeRoom stringeeRoom, StringeeError stringeeError) {
         Utils.post(() -> {
-            Log.d(TAG, "Room connect: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+            Log.d(
+                    TAG, "Room connect: false - " + stringeeError.getCode() + " - " +
+                            stringeeError.getMessage()
+            );
             Map<String, Object> map = new HashMap<>();
             map.put("status", false);
             map.put("code", stringeeError.getCode());
@@ -269,7 +366,10 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     @Override
-    public void onParticipantConnected(StringeeRoom stringeeRoom, RemoteParticipant remoteParticipant) {
+    public void onParticipantConnected(
+            StringeeRoom stringeeRoom,
+            RemoteParticipant remoteParticipant
+    ) {
         Utils.post(() -> {
             Log.d(TAG, "didJoinRoom: " + remoteParticipant.getId());
             Map<String, Object> map = new HashMap<>();
@@ -285,7 +385,10 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     @Override
-    public void onParticipantDisconnected(StringeeRoom stringeeRoom, RemoteParticipant remoteParticipant) {
+    public void onParticipantDisconnected(
+            StringeeRoom stringeeRoom,
+            RemoteParticipant remoteParticipant
+    ) {
         Utils.post(() -> {
             Log.d(TAG, "didLeaveRoom: " + remoteParticipant.getId());
             Map<String, Object> map = new HashMap<>();
@@ -301,11 +404,16 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     @Override
-    public void onVideoTrackAdded(StringeeRoom stringeeRoom, StringeeVideoTrack stringeeVideoTrack) {
+    public void onVideoTrackAdded(
+            StringeeRoom stringeeRoom,
+            StringeeVideoTrack stringeeVideoTrack
+    ) {
         Utils.post(() -> {
             Log.d(TAG, "didAddVideoTrack: " + stringeeVideoTrack.getId());
-            VideoTrackManager videoTrackManager = new VideoTrackManager(clientWrapper, stringeeVideoTrack, "", false);
-            StringeeManager.getInstance().getTracksMap().put(stringeeVideoTrack.getId(), videoTrackManager);
+            VideoTrackManager videoTrackManager = new VideoTrackManager(
+                    clientWrapper, stringeeVideoTrack, "", false);
+            StringeeManager.getInstance().getTracksMap().put(
+                    stringeeVideoTrack.getId(), videoTrackManager);
             Map<String, Object> map = new HashMap<>();
             map.put("nativeEventType", StringeeEventType.ROOM_EVENT.getValue());
             map.put("event", "didAddVideoTrack");
@@ -319,7 +427,10 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     @Override
-    public void onVideoTrackRemoved(StringeeRoom stringeeRoom, StringeeVideoTrack stringeeVideoTrack) {
+    public void onVideoTrackRemoved(
+            StringeeRoom stringeeRoom,
+            StringeeVideoTrack stringeeVideoTrack
+    ) {
         Utils.post(() -> {
             if (!stringeeVideoTrack.isLocal()) {
                 Log.d(TAG, "didRemoveVideoTrack: " + stringeeVideoTrack.getId());
@@ -329,9 +440,11 @@ public class RoomManager implements StringeeRoomListener {
                 map.put("uuid", clientWrapper.getId());
                 Map<String, Object> bodyMap = new HashMap<>();
                 bodyMap.put("roomId", stringeeRoom.getId());
-                VideoTrackManager videoTrackManager = StringeeManager.getInstance().getTracksMap().get(stringeeVideoTrack.getId());
+                VideoTrackManager videoTrackManager = StringeeManager.getInstance().getTracksMap().get(
+                        stringeeVideoTrack.getId());
                 if (videoTrackManager != null) {
-                    bodyMap.put("videoTrackInfo", Utils.convertVideoTrackInfoToMap(videoTrackManager));
+                    bodyMap.put(
+                            "videoTrackInfo", Utils.convertVideoTrackInfoToMap(videoTrackManager));
                 }
                 map.put("body", bodyMap);
                 StringeeFlutterPlugin.eventSink.success(map);
@@ -340,10 +453,16 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     @Override
-    public void onMessage(StringeeRoom stringeeRoom, JSONObject jsonObject, RemoteParticipant remoteParticipant) {
+    public void onMessage(
+            StringeeRoom stringeeRoom, JSONObject jsonObject,
+            RemoteParticipant remoteParticipant
+    ) {
         Utils.post(() -> {
             try {
-                Log.d(TAG, "didReceiveRoomMessage: " + jsonObject.toString() + " from: " + remoteParticipant.getId());
+                Log.d(
+                        TAG, "didReceiveRoomMessage: " + jsonObject.toString() + " from: " +
+                                remoteParticipant.getId()
+                );
                 Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", StringeeEventType.ROOM_EVENT.getValue());
                 map.put("event", "didReceiveRoomMessage");
@@ -361,7 +480,10 @@ public class RoomManager implements StringeeRoomListener {
     }
 
     @Override
-    public void onVideoTrackNotification(RemoteParticipant remoteParticipant, StringeeVideoTrack stringeeVideoTrack, StringeeVideoTrack.MediaType mediaType) {
+    public void onVideoTrackNotification(
+            RemoteParticipant remoteParticipant, StringeeVideoTrack stringeeVideoTrack,
+            StringeeVideoTrack.MediaType mediaType
+    ) {
 //        Utils.post(new Runnable() {
 //            @Override
 //            public void run() {

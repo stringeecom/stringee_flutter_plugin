@@ -7,14 +7,14 @@ import 'package:flutter/services.dart';
 import '../stringee_plugin.dart';
 
 class StringeeClient {
-  // Native
+  // Native channels shared by plugin APIs.
   static const MethodChannel methodChannel =
       MethodChannel('com.stringee.flutter.methodchannel');
   static const EventChannel eventChannel =
       EventChannel('com.stringee.flutter.eventchannel');
   static Stream broadcastStream = eventChannel.receiveBroadcastStream();
 
-  // Flutter
+  // Flutter event stream.
   StreamController<dynamic> _eventStreamController =
       StreamController.broadcast();
 
@@ -23,7 +23,7 @@ class StringeeClient {
   bool _hasConnected = false;
   bool _isReconnecting = true;
 
-  // Multi Client
+  // Multi-client configuration.
   List<StringeeServerAddress>? _serverAddresses;
   final String _uuid = GUIDGen.generate();
 
@@ -45,14 +45,14 @@ class StringeeClient {
 
     final params = {'uuid': _uuid, 'baseAPIUrl': baseAPIUrl};
 
-    // Config client
+    // Configure the native client instance.
     methodChannel.invokeMapMethod('setupClient', params);
 
-    // Handle events received from native
+    // Listen for native events.
     broadcastStream.listen(this._listener);
   }
 
-  ///send StringeeClient event
+  // Dispatches native client events to this client's event stream.
   void _listener(dynamic event) {
     assert(event != null);
     final Map<dynamic, dynamic> map = event;
@@ -107,7 +107,7 @@ class StringeeClient {
     }
   }
 
-  /// Connect to [StringeeClient] by [token]
+  /// Connects this client with an access [token].
   Future<Map<dynamic, dynamic>> connect(String token) async {
     if (token.trim().isEmpty) return await reportInvalidValue('token');
 
@@ -125,7 +125,7 @@ class StringeeClient {
     return rData;
   }
 
-  /// Disconnect from [StringeeClient]
+  /// Disconnects this client from Stringee.
   Future<Map<dynamic, dynamic>> disconnect() async {
     final params = {'uuid': _uuid};
 
@@ -138,7 +138,7 @@ class StringeeClient {
     return rData;
   }
 
-  /// Register push from Stringee by [deviceToken]
+  /// Registers a push notification [deviceToken].
   Future<Map<dynamic, dynamic>> registerPush(
     String deviceToken, {
     bool? isProduction,
@@ -159,7 +159,7 @@ class StringeeClient {
     return await methodChannel.invokeMethod('registerPush', params);
   }
 
-  /// Register push from Stringee by [deviceToken] and delete another [deviceToken] of other package by [packageNames]
+  /// Registers a push notification [deviceToken] and removes tokens from [packageNames].
   Future<Map<dynamic, dynamic>> registerPushAndDeleteOthers(
     String deviceToken,
     List<String> packageNames, {
@@ -185,7 +185,7 @@ class StringeeClient {
         'registerPushAndDeleteOthers', params);
   }
 
-  /// Unregister push from Stringee by [deviceToken[
+  /// Unregisters a push notification [deviceToken].
   Future<Map<dynamic, dynamic>> unregisterPush(String deviceToken) async {
     if (deviceToken.trim().isEmpty)
       return await reportInvalidValue('deviceToken');
@@ -198,7 +198,7 @@ class StringeeClient {
     return await methodChannel.invokeMethod('unregisterPush', params);
   }
 
-  /// Send a [customData] to [userId]
+  /// Sends [customData] to a Stringee user identified by [userId].
   Future<Map<dynamic, dynamic>> sendCustomMessage(
       String userId, Map<dynamic, dynamic> customData) async {
     if (userId.trim().isEmpty) return await reportInvalidValue('userId');
@@ -206,14 +206,14 @@ class StringeeClient {
     return await methodChannel.invokeMethod('sendCustomMessage', params);
   }
 
-  /// Check if stringee call is exist by [callId]
+  /// Checks whether a call exists on the Stringee server by [callId].
   Future<Map<dynamic, dynamic>> existCall(String callId) async {
     if (callId.trim().isEmpty) return await reportInvalidValue('callId');
     final params = {'callId': callId.trim(), 'uuid': _uuid};
     return await methodChannel.invokeMethod('existCall', params);
   }
 
-  /// Set trust all ssl (for Android only)
+  /// Enables or disables trusting all SSL certificates on Android.
   Future<Map<dynamic, dynamic>> setTrustAllSsl(bool trustAll) async {
     if (Platform.isAndroid) {
       final params = {'trustAll': trustAll, 'uuid': _uuid};
@@ -230,7 +230,7 @@ class StringeeClient {
     }
   }
 
-  /// Begin handle events
+  // Native client event handlers.
 
   void _handleDidConnectEvent(Map<dynamic, dynamic> map) {
     _userId = map['userId'];
@@ -329,5 +329,5 @@ class StringeeClient {
         .add({"eventType": StringeeClientEvents.userEndTyping, "body": map});
   }
 
-  /// End handle events
+  // End native client event handlers.
 }

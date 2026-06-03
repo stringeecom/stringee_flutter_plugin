@@ -1,7 +1,7 @@
 import '../../stringee_plugin.dart';
 
 class StringeeMessage {
-  /// Base
+  // Base fields.
   String? _id;
   String? _localId;
   String? _convId;
@@ -12,33 +12,33 @@ class StringeeMessage {
   MsgType? _type;
   String? _text;
 
-  /// Photo
+  // Photo fields.
   String? _thumbnail;
   String? _filePath;
   String? _fileUrl;
 
-  /// Location
+  // Location fields.
   double? _latitude;
   double? _longitude;
 
-  /// File
+  // File fields.
   String? _fileName;
   int? _fileLength;
 
-  /// Audio + Video
+  // Audio and video fields.
   double? _duration;
   double? _ratio;
 
   String? _vcard;
 
-  /// Sticker
+  // Sticker fields.
   String? _stickerCategory;
   String? _stickerName;
 
   Map<dynamic, dynamic>? _customData;
   Map<dynamic, dynamic>? _notiContent;
 
-  // Multi Client
+  // Owning client instance.
   late StringeeClient _client;
 
   @override
@@ -604,11 +604,16 @@ class StringeeMessage {
           params['stickerCategory'] = _stickerCategory!.trim();
         if (_stickerName != null) params['stickerName'] = _stickerName!.trim();
         break;
+      case MsgType.createConversation:
+      case MsgType.renameConversation:
+      case MsgType.notification:
+      case null:
+        break;
     }
     return params;
   }
 
-  /// Edit [StringeeMessage.typeText]
+  /// Edits this message text content.
   Future<Map<dynamic, dynamic>> edit(String content) async {
     assert(content.trim().isNotEmpty);
     final params = {
@@ -620,7 +625,7 @@ class StringeeMessage {
     return await StringeeClient.methodChannel.invokeMethod('editMsg', params);
   }
 
-  /// Pin/Un pin [StringeeMessage]
+  /// Pins or unpins this message.
   Future<Map<dynamic, dynamic>> pinOrUnPin(bool pinOrUnPin) async {
     final params = {
       'convId': this._convId!.trim(),

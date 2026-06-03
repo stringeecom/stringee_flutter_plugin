@@ -1,6 +1,7 @@
 package com.stringee.stringeeflutterplugin.common;
 
 public class Constants {
+
     public static String methodChannel = "com.stringee.flutter.methodchannel";
     public static String eventChannel = "com.stringee.flutter.eventchannel";
 

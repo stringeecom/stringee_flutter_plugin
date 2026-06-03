@@ -9,6 +9,7 @@ import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
 @SuppressLint("NewApi")
 public class ScreenCaptureManager {
+
     private static ScreenCaptureManager instance;
     private final StringeeScreenCapture screenCapture;
     private ActivityResultListener listener;

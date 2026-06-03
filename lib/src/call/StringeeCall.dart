@@ -149,7 +149,7 @@ class StringeeCall {
     });
   }
 
-  /// Make a new coll with custom [parameters]
+  /// Makes an outgoing call with custom [parameters].
   Future<Map<dynamic, dynamic>> makeCall(
       Map<dynamic, dynamic> parameters) async {
     if (!parameters.containsKey('from') ||
@@ -211,7 +211,7 @@ class StringeeCall {
     return resultDatas;
   }
 
-  /// Make a new coll with [MakeCallParams]
+  /// Makes an outgoing call with typed [MakeCallParams].
   Future<Map<dynamic, dynamic>> makeCallFromParams(
       MakeCallParams params) async {
     Map<dynamic, dynamic> parameters = {
@@ -224,35 +224,35 @@ class StringeeCall {
     return await makeCall(parameters);
   }
 
-  /// Init an answer from incoming call
+  /// Sends ringing state before answering an incoming call.
   Future<Map<dynamic, dynamic>> initAnswer() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
 
     return await StringeeClient.methodChannel.invokeMethod('initAnswer', param);
   }
 
-  /// Answer a call
+  /// Answers the current incoming call.
   Future<Map<dynamic, dynamic>> answer() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
 
     return await StringeeClient.methodChannel.invokeMethod('answer', param);
   }
 
-  /// Hang up a call
+  /// Hangs up the current call.
   Future<Map<dynamic, dynamic>> hangup() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
 
     return await StringeeClient.methodChannel.invokeMethod('hangup', param);
   }
 
-  /// Reject a call
+  /// Rejects the current incoming call.
   Future<Map<dynamic, dynamic>> reject() async {
     final param = {'uuid': _client.uuid, 'callId': this._id};
 
     return await StringeeClient.methodChannel.invokeMethod('reject', param);
   }
 
-  /// Send a [dtmf]
+  /// Sends DTMF digits during the current call.
   Future<Map<dynamic, dynamic>> sendDtmf(String dtmf) async {
     if (dtmf.trim().isEmpty) return await reportInvalidValue('dtmf');
     final params = {
@@ -263,7 +263,7 @@ class StringeeCall {
     return await StringeeClient.methodChannel.invokeMethod('sendDtmf', params);
   }
 
-  /// Send a call info
+  /// Sends custom [callInfo] to the remote participant.
   Future<Map<dynamic, dynamic>> sendCallInfo(
       Map<dynamic, dynamic> callInfo) async {
     final params = {
@@ -275,7 +275,7 @@ class StringeeCall {
         .invokeMethod('sendCallInfo', params);
   }
 
-  /// Get call stats
+  /// Gets media statistics for the current call.
   Future<Map<dynamic, dynamic>> getCallStats() async {
     final params = {
       'callId': this._id,
@@ -286,7 +286,7 @@ class StringeeCall {
         .invokeMethod('getCallStats', params);
   }
 
-  /// Mute/Unmute
+  /// Mutes or unmutes the local audio stream.
   Future<Map<dynamic, dynamic>> mute(bool mute) async {
     final params = {
       'callId': this._id,
@@ -296,7 +296,7 @@ class StringeeCall {
     return await StringeeClient.methodChannel.invokeMethod('mute', params);
   }
 
-  /// Enable/ Disable video
+  /// Enables or disables the local video stream.
   Future<Map<dynamic, dynamic>> enableVideo(bool enableVideo) async {
     final params = {
       'callId': this._id,
@@ -307,7 +307,7 @@ class StringeeCall {
         .invokeMethod('enableVideo', params);
   }
 
-  /// Switch camera
+  /// Switches to another camera.
   Future<Map<dynamic, dynamic>> switchCamera({String? cameraId}) async {
     Map params = {
       'callId': this._id,
@@ -318,13 +318,13 @@ class StringeeCall {
         .invokeMethod('switchCamera', params);
   }
 
-  /// Resume local video
+  /// Resumes the local video stream on Android.
   Future<Map<dynamic, dynamic>> resumeVideo() async {
     if (Platform.isIOS) {
       final params = {
         'status': false,
         "code": '-4',
-        "message": "This function work only for Android",
+        "message": "This function works only for Android",
       };
       return params;
     } else {
@@ -337,13 +337,13 @@ class StringeeCall {
     }
   }
 
-  /// Set stream like a mirror
+  /// Sets mirror mode for the local or remote video renderer on Android.
   Future<Map<dynamic, dynamic>> setMirror(bool isLocal, bool isMirror) async {
     if (Platform.isIOS) {
       final params = {
         'status': false,
         "code": '-4',
-        "message": "This function work only for Android",
+        "message": "This function works only for Android",
       };
       return params;
     } else {
@@ -358,7 +358,7 @@ class StringeeCall {
     }
   }
 
-  /// close event stream
+  /// Cancels native event subscription and closes the call event stream.
   void destroy() {
     _subscriber.cancel();
     _eventStreamController.close();

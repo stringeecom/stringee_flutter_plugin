@@ -9,7 +9,7 @@ class StringeeAudioManager {
 
   factory StringeeAudioManager() => _instance;
 
-  // Native
+  // Native channels.
   static const MethodChannel methodChannel =
       MethodChannel('com.stringee.flutter.audio.method_channel');
   static const EventChannel eventChannel =
@@ -45,27 +45,27 @@ class StringeeAudioManager {
     );
   }
 
-  /// Add a listener to the list of listeners
+  /// Adds [event] to audio device change listeners.
   void addListener(StringeeAudioEvent event) {
     _events.add(event);
   }
 
-  /// Remove a listener from the list of listeners
+  /// Removes a matching audio device change [event] listener.
   void removeListener(StringeeAudioEvent event) {
     _events.removeWhere((e) => e.key == event.key);
   }
 
-  /// Start the audio manager
+  /// Starts audio device management on the native side.
   Future<Result> start() async {
     return Result.fromJson(await methodChannel.invokeMethod('start'));
   }
 
-  /// Stop the audio manager
+  /// Stops audio device management on the native side.
   Future<Result> stop() async {
     return Result.fromJson(await methodChannel.invokeMethod('stop'));
   }
 
-  /// Select an audio device
+  /// Selects an available audio [device].
   Future<Result> selectDevice(AudioDevice device) async {
     if (kDebugMode) {
       print('Selected device: $device');

@@ -130,7 +130,7 @@ class StringeeVideoRoom {
   //   });
   // }
 
-  /// Publish local [StringeeVideoTrack]
+  /// Publishes a local [videoTrack] to this room.
   Future<Map<dynamic, dynamic>> publish(StringeeVideoTrack videoTrack) async {
     final params = {
       'roomId': _id,
@@ -146,7 +146,7 @@ class StringeeVideoRoom {
     return result;
   }
 
-  /// Un publish local [StringeeVideoTrack]
+  /// Unpublishes a local [videoTrack] from this room.
   Future<Map<dynamic, dynamic>> unpublish(StringeeVideoTrack videoTrack) async {
     final params = {
       'roomId': _id,
@@ -157,7 +157,7 @@ class StringeeVideoRoom {
         .invokeMethod('room.unpublish', params);
   }
 
-  /// Subscribe [StringeeVideoTrackInfo]
+  /// Subscribes to a remote [trackInfo] with [option].
   Future<Map<dynamic, dynamic>> subscribe(
       StringeeVideoTrackInfo trackInfo, StringeeVideoTrackOption option) async {
     final params = {
@@ -177,7 +177,7 @@ class StringeeVideoRoom {
     return result;
   }
 
-  /// Un subscribe [StringeeVideoTrack]
+  /// Unsubscribes from a remote [trackInfo].
   Future<Map<dynamic, dynamic>> unsubscribe(
       StringeeVideoTrackInfo trackInfo) async {
     final params = {
@@ -189,7 +189,7 @@ class StringeeVideoRoom {
         .invokeMethod('room.unsubscribe', params);
   }
 
-  /// Leave [StringeeVideoRoom]
+  /// Leaves this room.
   Future<Map<dynamic, dynamic>> leave({
     required bool allClient,
   }) async {
@@ -202,7 +202,7 @@ class StringeeVideoRoom {
         .invokeMethod('room.leave', params);
   }
 
-  /// Send a message to [StringeeVideoRoom]
+  /// Sends a data [msg] to this room.
   Future<Map<dynamic, dynamic>> sendMessage(Map<dynamic, dynamic> msg) async {
     final params = {
       'roomId': _id,
@@ -213,7 +213,7 @@ class StringeeVideoRoom {
         .invokeMethod('room.sendMessage', params);
   }
 
-  /// close event stream
+  /// Cancels native event subscription and closes the room event stream.
   void destroy() {
     _subscriber.cancel();
     _eventStreamController.close();

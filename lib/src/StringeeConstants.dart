@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import '../stringee_plugin.dart';
 
-/// Events for StringeeClient
+/// Events emitted by [StringeeClient].
 enum StringeeClientEvents {
   didConnect,
   didDisconnect,
@@ -20,7 +20,7 @@ enum StringeeClientEvents {
   userEndTyping
 }
 
-/// Events for StringeeCall
+/// Events emitted by [StringeeCall].
 enum StringeeCallEvents {
   didChangeSignalingState,
   didChangeMediaState,
@@ -30,7 +30,7 @@ enum StringeeCallEvents {
   didReceiveRemoteStream,
 }
 
-/// Events for StringeeCall2
+/// Events emitted by [StringeeCall2].
 enum StringeeCall2Events {
   didChangeSignalingState,
   didChangeMediaState,
@@ -42,12 +42,12 @@ enum StringeeCall2Events {
   didRemoveVideoTrack,
 }
 
-/// Events for StringeeChat
+/// Events emitted by [StringeeChat].
 enum StringeeChatEvents {
   didReceiveObjectChange,
 }
 
-/// Events for StringeeChat
+/// Events emitted by [StringeeVideoRoom].
 enum StringeeRoomEvents {
   didJoinRoom,
   didLeaveRoom,
@@ -70,7 +70,7 @@ enum StringeeChatRequestType {
   transfer,
 }
 
-/// Type of event
+/// Native object event type.
 enum StringeeObjectEventType {
   client,
   call,
@@ -79,11 +79,11 @@ enum StringeeObjectEventType {
   room,
 }
 
-/// Error code and message in flutter:
-/// -1 : StringeeClient is not initialized or disconnected
-/// -2 : value is invalid
-/// -3 : Object is not found
-/// -4 : This function work only for Android
+/// Error codes returned by Flutter-side validation:
+/// -1: StringeeClient is not initialized or disconnected.
+/// -2: Value is invalid.
+/// -3: Object is not found.
+/// -4: This function works only on Android.
 Future<Map<String, dynamic>> reportInvalidValue(String value) async {
   Map<String, dynamic> params = {
     'status': false,
@@ -93,7 +93,7 @@ Future<Map<String, dynamic>> reportInvalidValue(String value) async {
   return params;
 }
 
-/// Type of Call
+/// Call direction and call endpoint type.
 enum StringeeCallType {
   appToAppOutgoing,
   appToAppIncoming,
@@ -101,7 +101,7 @@ enum StringeeCallType {
   phoneToApp,
 }
 
-/// Type of Signaling State
+/// Call signaling state.
 enum StringeeSignalingState {
   calling,
   ringing,
@@ -110,26 +110,26 @@ enum StringeeSignalingState {
   ended,
 }
 
-/// Type of Media State
+/// Call media state.
 enum StringeeMediaState {
   connected,
   disconnected,
 }
 
-/// Type of Video Quality
+/// Video quality used for outgoing calls.
 enum VideoQuality {
   normal,
   hd,
   fullHd,
 }
 
-///Type of Scaling type
+/// Video view scaling mode.
 enum ScalingType {
   fit,
   fill,
 }
 
-///Class represents options for make a call
+/// Options used to make an outgoing call.
 class MakeCallParams {
   String? _from;
   String? _to;
@@ -190,26 +190,26 @@ class MakeCallParams {
   }
 }
 
-/// Chat object type
+/// Chat object type.
 enum ObjectType {
   conversation,
   message,
 }
 
-/// Chat change type
+/// Chat object change type.
 enum ChangeType {
   insert,
   update,
   delete,
 }
 
-/// Role of user
+/// Conversation user role.
 enum UserRole {
   admin,
   member,
 }
 
-/// [message]'s State
+/// Message delivery state.
 enum MsgState {
   initialize,
   sending,
@@ -218,7 +218,7 @@ enum MsgState {
   read,
 }
 
-/// Type of [message]
+/// Message content type.
 enum MsgType {
   text,
   photo,
@@ -302,7 +302,7 @@ extension MsgTypeExtension on int? {
   }
 }
 
-/// Type of noti [message]
+/// Notification message subtype.
 enum MsgNotifyType {
   addParticipants,
   removeParticipants,
@@ -325,7 +325,7 @@ extension MsgNotifyTypeExtension on int? {
   }
 }
 
-///Class represents options for create a new [StringeeConversation]
+/// Options used to create a new [StringeeConversation].
 class StringeeConversationOption {
   String? _name;
   bool _isGroup = false;
@@ -361,7 +361,7 @@ class StringeeConversationOption {
   }
 }
 
-/// Class represents the change of [StringeeConversation] and [StringeeMessage]
+/// Change event for [StringeeConversation] and [StringeeMessage] objects.
 class StringeeObjectChange {
   ChangeType? _type;
   ObjectType? _objectType;
@@ -381,7 +381,7 @@ class StringeeObjectChange {
   }
 }
 
-///Class represents server address
+/// Server address used by native Stringee SDK.
 class StringeeServerAddress {
   String? _host;
   int? _port;
@@ -403,7 +403,7 @@ class StringeeServerAddress {
   }
 }
 
-///Class represents options for create/subscribe a [StringeeVideoTrack]
+/// Options used to create or subscribe to a [StringeeVideoTrack].
 class StringeeVideoTrackOption {
   late bool _audio;
   late bool _video;
@@ -456,7 +456,7 @@ class StringeeVideoTrackOption {
   }
 }
 
-/// Dimension of [StringeeVideoTrack]
+/// Video dimension for a [StringeeVideoTrack].
 enum StringeeVideoDimensions {
   dimesion_1080,
   dimesion_720,
@@ -464,7 +464,7 @@ enum StringeeVideoDimensions {
   dimesion_288,
 }
 
-/// Type of audio device
+/// Audio device type.
 enum AudioType {
   speakerPhone,
   wiredHeadset,
@@ -492,7 +492,6 @@ extension AudioTypeX on AudioType {
     }
   }
 }
-
 
 class GUIDGen {
   static String generate() {

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StringeeManager {
+
     private static StringeeManager instance;
     private final Map<String, ClientWrapper> clientMap = new HashMap<>();
     private final Map<String, CallWrapper> callsMap = new HashMap<>();

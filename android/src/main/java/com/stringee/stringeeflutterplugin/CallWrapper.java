@@ -24,6 +24,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class CallWrapper implements StringeeCall.StringeeCallListener {
+
     private final ClientWrapper clientWrapper;
     private final StringeeCall call;
     private Result makeCallResult;
@@ -57,7 +58,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Make a new call
+     * Starts the outgoing {@link StringeeCall}.
      */
     public void makeCall() {
         if (!clientWrapper.isConnected()) {
@@ -80,9 +81,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Init an answer
+     * Sends ringing state before answering an incoming call.
      *
      * @param result
+     *         Flutter method result.
      */
     public void initAnswer(final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -112,7 +114,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
             @Override
             public void onError(final StringeeError stringeeError) {
                 Utils.post(() -> {
-                    Log.d(TAG, "initAnswer: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                    Log.d(
+                            TAG, "initAnswer: false - " + stringeeError.getCode() + " - " +
+                                    stringeeError.getMessage()
+                    );
                     Map<String, Object> map = new HashMap<>();
                     map.put("status", false);
                     map.put("code", stringeeError.getCode());
@@ -124,9 +129,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Answer a call
+     * Answers the current incoming call.
      *
      * @param result
+     *         Flutter method result.
      */
     public void answer(final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -153,9 +159,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Hang up call
+     * Hangs up the current call and clears local call state.
      *
      * @param result
+     *         Flutter method result.
      */
     public void hangup(final Result result) {
         mediaState = null;
@@ -177,9 +184,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Reject a call
+     * Rejects the current incoming call and clears local call state.
      *
      * @param result
+     *         Flutter method result.
      */
     public void reject(final Result result) {
         mediaState = null;
@@ -201,10 +209,12 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Send a DTMF
+     * Sends DTMF digits during the current call.
      *
      * @param dtmf
+     *         DTMF digits to send.
      * @param result
+     *         Flutter method result.
      */
     public void sendDTMF(final String dtmf, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -217,38 +227,45 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
             return;
         }
 
-        call.sendDTMF(dtmf, new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    Log.d(TAG, "sendDtmf: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                });
-            }
+        call.sendDTMF(
+                dtmf, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "sendDtmf: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(final StringeeError error) {
-                Utils.post(() -> {
-                    Log.d(TAG, "sendDtmf: false - " + error.getCode() + " - " + error.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", error.getCode());
-                    map.put("message", error.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                    @Override
+                    public void onError(final StringeeError error) {
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "sendDtmf: false - " + error.getCode() + " - " +
+                                            error.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", error.getCode());
+                            map.put("message", error.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
     }
 
     /**
-     * Send call info
+     * Sends custom call info to the remote participant.
      *
      * @param callInfo
+     *         Custom call info payload.
      * @param result
+     *         Flutter method result.
      */
     public void sendCallInfo(final Map<String, Object> callInfo, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -263,31 +280,37 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
 
         try {
             JSONObject jsonObject = Utils.convertMapToJson(callInfo);
-            call.sendCallInfo(jsonObject, new StatusListener() {
-                @Override
-                public void onSuccess() {
-                    Utils.post(() -> {
-                        Log.d(TAG, "sendCallInfo: success");
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("status", true);
-                        map.put("code", 0);
-                        map.put("message", "Success");
-                        result.success(map);
-                    });
-                }
+            call.sendCallInfo(
+                    jsonObject, new StatusListener() {
+                        @Override
+                        public void onSuccess() {
+                            Utils.post(() -> {
+                                Log.d(TAG, "sendCallInfo: success");
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("status", true);
+                                map.put("code", 0);
+                                map.put("message", "Success");
+                                result.success(map);
+                            });
+                        }
 
-                @Override
-                public void onError(final StringeeError stringeeError) {
-                    Utils.post(() -> {
-                        Log.d(TAG, "sendCallInfo: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("status", false);
-                        map.put("code", stringeeError.getCode());
-                        map.put("message", stringeeError.getMessage());
-                        result.success(map);
-                    });
-                }
-            });
+                        @Override
+                        public void onError(final StringeeError stringeeError) {
+                            Utils.post(() -> {
+                                Log.d(
+                                        TAG,
+                                        "sendCallInfo: false - " + stringeeError.getCode() + " - " +
+                                                stringeeError.getMessage()
+                                );
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("status", false);
+                                map.put("code", stringeeError.getCode());
+                                map.put("message", stringeeError.getMessage());
+                                result.success(map);
+                            });
+                        }
+                    }
+            );
         } catch (final JSONException e) {
             Utils.reportException(CallWrapper.class, e);
             Utils.post(() -> {
@@ -302,10 +325,12 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Mute or unmute
+     * Mutes or unmutes the local audio stream.
      *
      * @param mute
+     *         True to mute; false to unmute.
      * @param result
+     *         Flutter method result.
      */
     public void mute(final boolean mute, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -328,10 +353,12 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * enable Video
+     * Enables or disables the local video stream.
      *
      * @param enable
+     *         True to enable video; false to disable it.
      * @param result
+     *         Flutter method result.
      */
     public void enableVideo(final boolean enable, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -354,9 +381,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Switch Camera
+     * Switches to the next available camera.
      *
      * @param result
+     *         Flutter method result.
      */
     public void switchCamera(final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -386,7 +414,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
             public void onError(final StringeeError stringeeError) {
                 super.onError(stringeeError);
                 Utils.post(() -> {
-                    Log.d(TAG, "switchCamera: false - code: " + stringeeError.getCode() + " - message: " + stringeeError.getMessage());
+                    Log.d(
+                            TAG, "switchCamera: false - code: " + stringeeError.getCode() +
+                                    " - message: " + stringeeError.getMessage()
+                    );
                     Map<String, Object> map = new HashMap<>();
                     map.put("status", false);
                     map.put("code", stringeeError.getCode());
@@ -398,10 +429,12 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Switch Camera
+     * Switches to a specific camera by name or identifier.
      *
-     * @param result
      * @param cameraName
+     *         Camera name or identifier.
+     * @param result
+     *         Flutter method result.
      */
     public void switchCamera(String cameraName, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -414,38 +447,44 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
             return;
         }
 
-        call.switchCamera(new StatusListener() {
-            @Override
-            public void onSuccess() {
-                Utils.post(() -> {
-                    Log.d(TAG, "switchCamera: success");
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", true);
-                    map.put("code", 0);
-                    map.put("message", "Success");
-                    result.success(map);
-                });
-            }
+        call.switchCamera(
+                new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "switchCamera: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
 
-            @Override
-            public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "switchCamera: false - code: " + stringeeError.getCode() + " - message: " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        }, cameraName);
+                    @Override
+                    public void onError(final StringeeError stringeeError) {
+                        super.onError(stringeeError);
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "switchCamera: false - code: " + stringeeError.getCode() +
+                                            " - message: " + stringeeError.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", stringeeError.getCode());
+                            map.put("message", stringeeError.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }, cameraName
+        );
     }
 
     /**
-     * Resume Video
+     * Resumes the local video stream after it was interrupted.
      *
      * @param result
+     *         Flutter method result.
      */
     public void resumeVideo(final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -468,13 +507,19 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Get call statistic
+     * Gets media statistics for the current call.
      *
      * @param result
+     *         Flutter method result.
      */
     public void getCallStats(final Result result) {
         call.getStats(stringeeCallStats -> Utils.post(() -> {
-            Log.d(TAG, "getCallStats: callBytesReceived: " + stringeeCallStats.callBytesReceived + " - callPacketsLost: " + stringeeCallStats.callPacketsLost + " - callPacketsReceived: " + stringeeCallStats.callPacketsReceived + " - timeStamp: " + stringeeCallStats.timeStamp);
+            Log.d(
+                    TAG, "getCallStats: callBytesReceived: " + stringeeCallStats.callBytesReceived +
+                            " - callPacketsLost: " + stringeeCallStats.callPacketsLost +
+                            " - callPacketsReceived: " + stringeeCallStats.callPacketsReceived +
+                            " - timeStamp: " + stringeeCallStats.timeStamp
+            );
             Map<String, Object> map = new HashMap<>();
             map.put("status", true);
             map.put("code", 0);
@@ -490,9 +535,14 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
-     * Set local stream is mirror or not
+     * Sets mirror mode for the local or remote video renderer.
      *
+     * @param isLocal
+     *         True for local renderer; false for remote renderer.
+     * @param isMirror
+     *         True to mirror the selected renderer.
      * @param result
+     *         Flutter method result.
      */
     public void setMirror(final boolean isLocal, final boolean isMirror, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -536,11 +586,16 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onSignalingStateChange(final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState, final String s, final int i, final String s1) {
+    public void onSignalingStateChange(
+            final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState,
+            final String s, final int i, final String s1
+    ) {
         Utils.post(() -> {
-            if (signalingState == SignalingState.CALLING || signalingState == SignalingState.RINGING) {
+            if (signalingState == SignalingState.CALLING ||
+                    signalingState == SignalingState.RINGING) {
                 Log.d(TAG, "makeCall: success");
-                StringeeManager.getInstance().getCallsMap().put(stringeeCall.getCallId(), CallWrapper.this);
+                StringeeManager.getInstance().getCallsMap().put(
+                        stringeeCall.getCallId(), CallWrapper.this);
                 Map<String, Object> map = new HashMap<>();
                 map.put("status", true);
                 map.put("code", 0);
@@ -563,7 +618,8 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                 }
                 callInfoMap.put("callType", callType);
                 callInfoMap.put("isVideoCall", stringeeCall.isVideoCall());
-                callInfoMap.put("customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
+                callInfoMap.put(
+                        "customDataFromYourServer", stringeeCall.getCustomDataFromYourServer());
                 map.put("callInfo", callInfoMap);
                 if (makeCallResult != null) {
                     makeCallResult.success(map);
@@ -615,9 +671,15 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onHandledOnAnotherDevice(final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState, final String description) {
+    public void onHandledOnAnotherDevice(
+            final StringeeCall stringeeCall, final StringeeCall.SignalingState signalingState,
+            final String description
+    ) {
         Utils.post(() -> {
-            Log.d(TAG, "onHandledOnAnotherDevice:" + "\nsignalingState: " + signalingState + " - description: " + description);
+            Log.d(
+                    TAG, "onHandledOnAnotherDevice:" + "\nsignalingState: " + signalingState +
+                            " - description: " + description
+            );
             Map<String, Object> map = new HashMap<>();
             map.put("nativeEventType", StringeeEventType.CALL_EVENT.getValue());
             map.put("event", "didHandleOnAnotherDevice");
@@ -632,7 +694,10 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     @Override
-    public void onMediaStateChange(final StringeeCall stringeeCall, final StringeeCall.MediaState mediaState) {
+    public void onMediaStateChange(
+            final StringeeCall stringeeCall,
+            final StringeeCall.MediaState mediaState
+    ) {
         Utils.post(() -> {
             this.mediaState = mediaState;
             Log.d(TAG, "onMediaStateChange: " + mediaState);
@@ -646,7 +711,8 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
             map.put("body", bodyMap);
             StringeeFlutterPlugin.eventSink.success(map);
 
-            if (this.mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed && stringeeCall.isVideoCall()) {
+            if (this.mediaState == MediaState.CONNECTED && hasRemoteStream && !remoteStreamShowed &&
+                    stringeeCall.isVideoCall()) {
                 remoteStreamShowed = true;
                 Map<String, Object> map1 = new HashMap<>();
                 map1.put("nativeEventType", StringeeEventType.CALL_EVENT.getValue());
@@ -673,17 +739,20 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                 bodyMap.put("callId", stringeeCall.getCallId());
                 map.put("body", bodyMap);
                 if (localStreamShowed) {
-                    Map<String, Object> localViewOptions = StringeeManager.getInstance().getLocalViewOptions().get(stringeeCall.getCallId());
+                    Map<String, Object> localViewOptions = StringeeManager.getInstance().getLocalViewOptions().get(
+                            stringeeCall.getCallId());
                     if (localViewOptions != null) {
-                        FrameLayout  localView = (FrameLayout) localViewOptions.get("layout");
-                        boolean isMirror =  Boolean.TRUE.equals(localViewOptions.get("isMirror"));
+                        FrameLayout localView = (FrameLayout) localViewOptions.get("layout");
+                        boolean isMirror = Boolean.TRUE.equals(localViewOptions.get("isMirror"));
                         ScalingType scalingType = (ScalingType) localViewOptions.get("scalingType");
                         if (localView != null) {
                             localView.removeAllViews();
                             if (getLocalView().getParent() != null) {
-                                ((FrameLayout) getLocalView().getParent()).removeView(getLocalView());
+                                ((FrameLayout) getLocalView().getParent()).removeView(
+                                        getLocalView());
                             }
-                            LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                            LayoutParams layoutParams = new LayoutParams(
+                                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                             layoutParams.gravity = Gravity.CENTER;
                             localView.addView(getLocalView(), layoutParams);
                             renderLocalView(scalingType);
@@ -717,7 +786,8 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                     hasRemoteStream = true;
                 }
 
-                Map<String, Object> remoteViewOptions = StringeeManager.getInstance().getRemoteViewOptions().get(stringeeCall.getCallId());
+                Map<String, Object> remoteViewOptions = StringeeManager.getInstance().getRemoteViewOptions().get(
+                        stringeeCall.getCallId());
                 if (remoteViewOptions != null) {
                     FrameLayout remoteView = (FrameLayout) remoteViewOptions.get("layout");
                     boolean isMirror = Boolean.TRUE.equals(remoteViewOptions.get("isMirror"));
@@ -727,7 +797,8 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                         if (getRemoteView().getParent() != null) {
                             ((FrameLayout) getRemoteView().getParent()).removeView(getRemoteView());
                         }
-                        LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                        LayoutParams layoutParams = new LayoutParams(
+                                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                         layoutParams.gravity = Gravity.CENTER;
                         remoteView.addView(getRemoteView(), layoutParams);
                         renderRemoteView(scalingType);
