@@ -19,6 +19,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class ConversationManager {
+
     private final ClientWrapper clientWrapper;
 
     private static final String TAG = "StringeeSDK";
@@ -28,10 +29,12 @@ public class ConversationManager {
     }
 
     /**
-     * Delete conversation
+     * Deletes a conversation.
      *
      * @param convId
+     *         Conversation id to delete.
      * @param result
+     *         Flutter method result.
      */
     public void delete(final String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -54,44 +57,50 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.delete(clientWrapper.getClient(), new StatusListener() {
-                            @Override
-                            public void onSuccess() {
-                                Utils.post(() -> {
-                                    Log.d(TAG, "deleteConversation: success");
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    result.success(map);
-                                });
-                            }
+                        conversation.delete(
+                                clientWrapper.getClient(), new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "deleteConversation: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
 
-                            @Override
-                            public void onError(final StringeeError stringeeError) {
-                                Utils.post(() -> {
-                                    Log.d(TAG, "deleteConversation: false - " +
-                                            stringeeError.getCode() + " - " +
-                                            stringeeError.getMessage());
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", false);
-                                    map.put("code", stringeeError.getCode());
-                                    map.put("message", stringeeError.getMessage());
-                                    result.success(map);
-                                });
-                            }
-                        });
+                                    @Override
+                                    public void onError(final StringeeError stringeeError) {
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG, "deleteConversation: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         Utils.post(() -> {
-                            Log.d(TAG, "deleteConversation: false - " + stringeeError.getCode() +
-                                    " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "deleteConversation: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -99,18 +108,24 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Add participants
+     * Adds participants to a conversation.
      *
      * @param convId
+     *         Conversation id to update.
      * @param participants
+     *         Users to add.
      * @param result
+     *         Flutter method result.
      */
-    public void addParticipants(final String convId, final List<User> participants,
-                                final Result result) {
+    public void addParticipants(
+            final String convId, final List<User> participants,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "addParticipants: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -131,19 +146,19 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.addParticipants(clientWrapper.getClient(), participants,
+                        conversation.addParticipants(
+                                clientWrapper.getClient(), participants,
                                 new CallbackListener<List<User>>() {
                                     @Override
                                     public void onSuccess(final List<User> users) {
                                         Utils.post(() -> {
                                             Log.d(TAG, "addParticipants: success");
                                             Map<String, Object> map = new HashMap<>();
-                                            List<Map<String, Object>> participantsArray =
-                                                    new ArrayList<>();
+                                            List<Map<String, Object>> participantsArray = new ArrayList<>();
                                             for (int j = 0; j < users.size(); j++) {
                                                 participantsArray.add(
                                                         Utils.convertUserToMap(users.get(j)));
@@ -159,9 +174,11 @@ public class ConversationManager {
                                     @Override
                                     public void onError(final StringeeError stringeeError) {
                                         Utils.post(() -> {
-                                            Log.d(TAG, "addParticipants: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "addParticipants: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -169,15 +186,18 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         Utils.post(() -> {
-                            Log.d(TAG,
+                            Log.d(
+                                    TAG,
                                     "addParticipants: false - " + stringeeError.getCode() + " - " +
-                                            stringeeError.getMessage());
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -185,18 +205,24 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Remove participants
+     * Removes participants from a conversation.
      *
      * @param convId
+     *         Conversation id to update.
      * @param participants
+     *         Users to remove.
      * @param result
+     *         Flutter method result.
      */
-    public void removeParticipants(final String convId, final List<User> participants,
-                                   final Result result) {
+    public void removeParticipants(
+            final String convId, final List<User> participants,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "removeParticipants: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -217,19 +243,19 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.removeParticipants(clientWrapper.getClient(), participants,
+                        conversation.removeParticipants(
+                                clientWrapper.getClient(), participants,
                                 new CallbackListener<List<User>>() {
                                     @Override
                                     public void onSuccess(final List<User> users) {
                                         Utils.post(() -> {
                                             Log.d(TAG, "removeParticipants: success");
                                             Map<String, Object> map = new HashMap<>();
-                                            List<Map<String, Object>> participantsArray =
-                                                    new ArrayList<>();
+                                            List<Map<String, Object>> participantsArray = new ArrayList<>();
                                             for (int j = 0; j < users.size(); j++) {
                                                 participantsArray.add(
                                                         Utils.convertUserToMap(users.get(j)));
@@ -245,9 +271,11 @@ public class ConversationManager {
                                     @Override
                                     public void onError(final StringeeError stringeeError) {
                                         Utils.post(() -> {
-                                            Log.d(TAG, "removeParticipants: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "removeParticipants: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -255,14 +283,17 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         Utils.post(() -> {
-                            Log.d(TAG, "removeParticipants: false - " + stringeeError.getCode() +
-                                    " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "removeParticipants: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -270,14 +301,19 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Send message
+     * Sends a message to a conversation.
      *
+     * @param convId
+     *         Conversation id.
      * @param message
+     *         Message payload.
      * @param result
+     *         Flutter method result.
      */
     public void sendMessage(final String convId, final Message message, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -300,12 +336,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.sendMessage(clientWrapper.getClient(), message,
-                                new StatusListener() {
+                        conversation.sendMessage(
+                                clientWrapper.getClient(), message, new StatusListener() {
                                     @Override
                                     public void onSuccess() {
                                         Utils.post(() -> {
@@ -321,9 +357,11 @@ public class ConversationManager {
                                     @Override
                                     public void onError(final StringeeError stringeeError) {
                                         Utils.post(() -> {
-                                            Log.d(TAG, "sendMessage: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "sendMessage: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -331,14 +369,17 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         Utils.post(() -> {
-                            Log.d(TAG, "sendMessage: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "sendMessage: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -346,15 +387,19 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Get messages with Id
+     * Gets messages by message id.
      *
      * @param convId
+     *         Conversation id.
      * @param msgIds
+     *         Message ids to fetch.
      * @param result
+     *         Flutter method result.
      */
     public void getMessages(String convId, final String[] msgIds, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -377,11 +422,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.getMessages(clientWrapper.getClient(), msgIds,
+                        conversation.getMessages(
+                                clientWrapper.getClient(), msgIds,
                                 new CallbackListener<List<Message>>() {
                                     @Override
                                     public void onSuccess(final List<Message> messages) {
@@ -404,9 +450,11 @@ public class ConversationManager {
                                     @Override
                                     public void onError(final StringeeError stringeeError) {
                                         Utils.post(() -> {
-                                            Log.d(TAG, "getMessages: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "getMessages: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -414,14 +462,17 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         Utils.post(() -> {
-                            Log.d(TAG, "getMessages: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "getMessages: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -429,15 +480,19 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Get local messages
+     * Gets messages from the local database.
      *
      * @param convId
+     *         Conversation id.
      * @param count
+     *         Maximum number of messages.
      * @param result
+     *         Flutter method result.
      */
     public void getLocalMessages(String convId, final int count, final Result result) {
         if (Utils.isEmpty(convId)) {
@@ -450,11 +505,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.getLocalMessages(clientWrapper.getClient(), count,
+                        conversation.getLocalMessages(
+                                clientWrapper.getClient(), count,
                                 new CallbackListener<List<Message>>() {
                                     @Override
                                     public void onSuccess(final List<Message> messages) {
@@ -479,25 +535,30 @@ public class ConversationManager {
                                         super.onError(stringeeError);
                                         Utils.post(() -> {
                                             Map<String, Object> map = new HashMap<>();
-                                            Log.d(TAG, "getLocalMessages: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "getLocalMessages: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
                                             map.put("message", stringeeError.getMessage());
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG,
+                            Log.d(
+                                    TAG,
                                     "getLocalMessages: false - " + stringeeError.getCode() + " - " +
-                                            stringeeError.getMessage());
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -505,15 +566,19 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Get last messages
+     * Gets the latest messages from the server.
      *
      * @param convId
+     *         Conversation id.
      * @param count
+     *         Maximum number of messages.
      * @param result
+     *         Flutter method result.
      */
     public void getLastMessages(String convId, final int count, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -536,11 +601,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.getLastMessages(clientWrapper.getClient(), count,
+                        conversation.getLastMessages(
+                                clientWrapper.getClient(), count,
                                 new CallbackListener<List<Message>>() {
                                     @Override
                                     public void onSuccess(final List<Message> messages) {
@@ -564,9 +630,11 @@ public class ConversationManager {
                                     public void onError(final StringeeError stringeeError) {
                                         super.onError(stringeeError);
                                         Utils.post(() -> {
-                                            Log.d(TAG, "getLastMessages: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "getLastMessages: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -574,16 +642,19 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG,
+                            Log.d(
+                                    TAG,
                                     "getLastMessages: false - " + stringeeError.getCode() + " - " +
-                                            stringeeError.getMessage());
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -591,19 +662,26 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Get messages which have sequence greater than seq
+     * Gets messages whose sequence is greater than the provided sequence.
      *
      * @param convId
+     *         Conversation id.
      * @param seq
+     *         Reference sequence.
      * @param count
+     *         Maximum number of messages.
      * @param result
+     *         Flutter method result.
      */
-    public void getMessagesAfter(String convId, final long seq, final int count,
-                                 final Result result) {
+    public void getMessagesAfter(
+            String convId, final long seq, final int count,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "getMessagesAfter: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -624,11 +702,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.getMessagesAfter(clientWrapper.getClient(), seq, count,
+                        conversation.getMessagesAfter(
+                                clientWrapper.getClient(), seq, count,
                                 new CallbackListener<List<Message>>() {
                                     @Override
                                     public void onSuccess(final List<Message> messages) {
@@ -652,9 +731,11 @@ public class ConversationManager {
                                     public void onError(final StringeeError stringeeError) {
                                         super.onError(stringeeError);
                                         Utils.post(() -> {
-                                            Log.d(TAG, "getMessagesAfter: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "getMessagesAfter: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -662,16 +743,19 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG,
+                            Log.d(
+                                    TAG,
                                     "getMessagesAfter: false - " + stringeeError.getCode() + " - " +
-                                            stringeeError.getMessage());
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -679,19 +763,26 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Get messages which have sequence smaller than seq
+     * Gets messages whose sequence is smaller than the provided sequence.
      *
      * @param convId
+     *         Conversation id.
      * @param seq
+     *         Reference sequence.
      * @param count
+     *         Maximum number of messages.
      * @param result
+     *         Flutter method result.
      */
-    public void getMessagesBefore(String convId, final long seq, final int count,
-                                  final Result result) {
+    public void getMessagesBefore(
+            String convId, final long seq, final int count,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "getMessagesBefore: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -712,11 +803,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.getMessagesBefore(clientWrapper.getClient(), seq, count,
+                        conversation.getMessagesBefore(
+                                clientWrapper.getClient(), seq, count,
                                 new CallbackListener<List<Message>>() {
                                     @Override
                                     public void onSuccess(final List<Message> messages) {
@@ -740,9 +832,11 @@ public class ConversationManager {
                                     public void onError(final StringeeError stringeeError) {
                                         super.onError(stringeeError);
                                         Utils.post(() -> {
-                                            Log.d(TAG, "getMessagesBefore: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "getMessagesBefore: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -750,15 +844,18 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "getMessagesBefore: false - " + stringeeError.getCode() +
-                                    " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "getMessagesBefore: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -766,19 +863,26 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Update conversation
+     * Updates conversation profile fields.
      *
      * @param convId
+     *         Conversation id to update.
      * @param name
+     *         New conversation name.
      * @param avatar
+     *         New conversation avatar URL.
      * @param result
+     *         Flutter method result.
      */
-    public void updateConversation(String convId, final String name, final String avatar,
-                                   final Result result) {
+    public void updateConversation(
+            String convId, final String name, final String avatar,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "updateConversation: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -799,12 +903,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.updateConversation(clientWrapper.getClient(), name, avatar,
-                                new StatusListener() {
+                        conversation.updateConversation(
+                                clientWrapper.getClient(), name, avatar, new StatusListener() {
                                     @Override
                                     public void onSuccess() {
                                         Utils.post(() -> {
@@ -821,9 +925,11 @@ public class ConversationManager {
                                     public void onError(final StringeeError stringeeError) {
                                         super.onError(stringeeError);
                                         Utils.post(() -> {
-                                            Log.d(TAG, "updateConversation: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "updateConversation: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -831,15 +937,18 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "updateConversation: false - " + stringeeError.getCode() +
-                                    " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "updateConversation: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -847,19 +956,26 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Set role of participant
+     * Updates a participant role in a conversation.
      *
      * @param convId
+     *         Conversation id.
      * @param userId
+     *         Participant user id.
      * @param role
+     *         New role.
      * @param result
+     *         Flutter method result.
      */
-    public void setRole(String convId, final String userId, final User.Role role,
-                        final Result result) {
+    public void setRole(
+            String convId, final String userId, final User.Role role,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "setRole: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -880,12 +996,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.setRole(clientWrapper.getClient(), userId, role,
-                                new StatusListener() {
+                        conversation.setRole(
+                                clientWrapper.getClient(), userId, role, new StatusListener() {
                                     @Override
                                     public void onSuccess() {
                                         Utils.post(() -> {
@@ -902,9 +1018,11 @@ public class ConversationManager {
                                     public void onError(final StringeeError stringeeError) {
                                         super.onError(stringeeError);
                                         Utils.post(() -> {
-                                            Log.d(TAG,
+                                            Log.d(
+                                                    TAG,
                                                     "setRole: false - " + stringeeError.getCode() +
-                                                            " - " + stringeeError.getMessage());
+                                                            " - " + stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -912,15 +1030,18 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "setRole: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "setRole: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -928,15 +1049,19 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Delete messages
+     * Deletes messages in a conversation.
      *
      * @param convId
+     *         Conversation id.
      * @param msgIdArray
+     *         Message ids to delete.
      * @param result
+     *         Flutter method result.
      */
     public void deleteMessages(String convId, JSONArray msgIdArray, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -969,12 +1094,12 @@ public class ConversationManager {
             return;
         }
 
-        clientWrapper.getClient()
-                .getConversationFromServer(convId, new CallbackListener<Conversation>() {
+        clientWrapper.getClient().getConversationFromServer(
+                convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.deleteMessages(clientWrapper.getClient(), msgIdArray,
-                                new StatusListener() {
+                        conversation.deleteMessages(
+                                clientWrapper.getClient(), msgIdArray, new StatusListener() {
                                     @Override
                                     public void onSuccess() {
                                         Utils.post(() -> {
@@ -990,9 +1115,11 @@ public class ConversationManager {
                                     @Override
                                     public void onError(final StringeeError stringeeError) {
                                         Utils.post(() -> {
-                                            Log.d(TAG, "deleteMessages: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "deleteMessages: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -1000,16 +1127,19 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG,
+                            Log.d(
+                                    TAG,
                                     "deleteMessages: false - " + stringeeError.getCode() + " - " +
-                                            stringeeError.getMessage());
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -1017,11 +1147,26 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
-    public void revokeMessages(String convId, JSONArray msgIdArray, boolean deleted,
-                               final Result result) {
+    /**
+     * Revokes messages in a conversation.
+     *
+     * @param convId
+     *         Conversation id.
+     * @param msgIdArray
+     *         Message ids to revoke.
+     * @param deleted
+     *         True to mark revoked messages as deleted.
+     * @param result
+     *         Flutter method result.
+     */
+    public void revokeMessages(
+            String convId, JSONArray msgIdArray, boolean deleted,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "revokeMessages: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -1060,12 +1205,12 @@ public class ConversationManager {
             return;
         }
 
-        clientWrapper.getClient()
-                .getConversationFromServer(convId, new CallbackListener<Conversation>() {
+        clientWrapper.getClient().getConversationFromServer(
+                convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.revokeMessages(clientWrapper.getClient(), idList, deleted,
-                                new StatusListener() {
+                        conversation.revokeMessages(
+                                clientWrapper.getClient(), idList, deleted, new StatusListener() {
                                     @Override
                                     public void onSuccess() {
                                         Utils.post(() -> {
@@ -1081,9 +1226,11 @@ public class ConversationManager {
                                     @Override
                                     public void onError(final StringeeError stringeeError) {
                                         Utils.post(() -> {
-                                            Log.d(TAG, "revokeMessages: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "revokeMessages: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -1091,16 +1238,19 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG,
+                            Log.d(
+                                    TAG,
                                     "revokeMessages: false - " + stringeeError.getCode() + " - " +
-                                            stringeeError.getMessage());
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -1108,14 +1258,17 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Mark conversation readed
+     * Marks all messages in a conversation as read.
      *
      * @param convId
+     *         Conversation id.
      * @param result
+     *         Flutter method result.
      */
     public void markAsRead(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -1138,45 +1291,52 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.markAllAsRead(clientWrapper.getClient(), new StatusListener() {
-                            @Override
-                            public void onSuccess() {
-                                Utils.post(() -> {
-                                    Log.d(TAG, "markAsRead: success");
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    result.success(map);
-                                });
-                            }
+                        conversation.markAllAsRead(
+                                clientWrapper.getClient(), new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "markAsRead: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
 
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                Utils.post(() -> {
-                                    Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() +
-                                            " - " + stringeeError.getMessage());
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", false);
-                                    map.put("code", stringeeError.getCode());
-                                    map.put("message", stringeeError.getMessage());
-                                    result.success(map);
-                                });
-                            }
-                        });
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG, "markAsRead: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "markAsRead: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "markAsRead: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -1184,19 +1344,26 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Send chat transcript
+     * Sends a live chat transcript to an email address.
      *
      * @param convId
+     *         Conversation id.
      * @param email
+     *         Destination email.
      * @param domain
+     *         Domain used by the transcript request.
      * @param result
+     *         Flutter method result.
      */
-    public void sendChatTranscript(String convId, String email, String domain,
-                                   final Result result) {
+    public void sendChatTranscript(
+            String convId, String email, String domain,
+            final Result result
+    ) {
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "sendChatTranscript: false - -1 - StringeeClient is disconnected");
             Map<String, Object> map = new HashMap<>();
@@ -1217,12 +1384,12 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.sendChatTranscriptTo(clientWrapper.getClient(), email, domain,
-                                new StatusListener() {
+                        conversation.sendChatTranscriptTo(
+                                clientWrapper.getClient(), email, domain, new StatusListener() {
                                     @Override
                                     public void onSuccess() {
                                         Utils.post(() -> {
@@ -1239,9 +1406,11 @@ public class ConversationManager {
                                     public void onError(StringeeError stringeeError) {
                                         super.onError(stringeeError);
                                         Utils.post(() -> {
-                                            Log.d(TAG, "sendChatTranscript: false - " +
-                                                    stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
+                                            Log.d(
+                                                    TAG, "sendChatTranscript: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("status", false);
                                             map.put("code", stringeeError.getCode());
@@ -1249,15 +1418,18 @@ public class ConversationManager {
                                             result.success(map);
                                         });
                                     }
-                                });
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "sendChatTranscript: false - " + stringeeError.getCode() +
-                                    " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "sendChatTranscript: false - " + stringeeError.getCode() +
+                                            " - " + stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -1265,14 +1437,17 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * End chat
+     * Ends a live chat conversation.
      *
      * @param convId
+     *         Conversation id.
      * @param result
+     *         Flutter method result.
      */
     public void endChat(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -1295,46 +1470,52 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.endChat(clientWrapper.getClient(), new StatusListener() {
-                            @Override
-                            public void onSuccess() {
-                                Utils.post(() -> {
-                                    Log.d(TAG, "endChat: success");
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    result.success(map);
-                                });
-                            }
+                        conversation.endChat(
+                                clientWrapper.getClient(), new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "endChat: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
 
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                Utils.post(() -> {
-                                    Log.d(TAG,
-                                            "endChat: false - " + stringeeError.getCode() + " - " +
-                                                    stringeeError.getMessage());
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", false);
-                                    map.put("code", stringeeError.getCode());
-                                    map.put("message", stringeeError.getMessage());
-                                    result.success(map);
-                                });
-                            }
-                        });
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG,
+                                                    "endChat: false - " + stringeeError.getCode() +
+                                                            " - " + stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "endChat: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "endChat: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -1342,14 +1523,17 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Send state begin typing
+     * Sends a begin-typing state for a conversation.
      *
      * @param convId
+     *         Conversation id.
      * @param result
+     *         Flutter method result.
      */
     public void beginTyping(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -1372,45 +1556,52 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.beginTyping(clientWrapper.getClient(), new StatusListener() {
-                            @Override
-                            public void onSuccess() {
-                                Utils.post(() -> {
-                                    Log.d(TAG, "beginTyping: success");
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    result.success(map);
-                                });
-                            }
+                        conversation.beginTyping(
+                                clientWrapper.getClient(), new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "beginTyping: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
 
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                Utils.post(() -> {
-                                    Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() +
-                                            " - " + stringeeError.getMessage());
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", false);
-                                    map.put("code", stringeeError.getCode());
-                                    map.put("message", stringeeError.getMessage());
-                                    result.success(map);
-                                });
-                            }
-                        });
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG, "beginTyping: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "beginTyping: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "beginTyping: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -1418,14 +1609,17 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 
     /**
-     * Send state end typing
+     * Sends an end-typing state for a conversation.
      *
      * @param convId
+     *         Conversation id.
      * @param result
+     *         Flutter method result.
      */
     public void endTyping(String convId, final Result result) {
         if (!clientWrapper.isConnected()) {
@@ -1448,45 +1642,52 @@ public class ConversationManager {
             return;
         }
 
-        Utils.getConversation(clientWrapper.getClient(), convId,
-                new CallbackListener<Conversation>() {
+        Utils.getConversation(
+                clientWrapper.getClient(), convId, new CallbackListener<Conversation>() {
                     @Override
                     public void onSuccess(Conversation conversation) {
-                        conversation.endTyping(clientWrapper.getClient(), new StatusListener() {
-                            @Override
-                            public void onSuccess() {
-                                Utils.post(() -> {
-                                    Log.d(TAG, "endTyping: success");
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", true);
-                                    map.put("code", 0);
-                                    map.put("message", "Success");
-                                    result.success(map);
-                                });
-                            }
+                        conversation.endTyping(
+                                clientWrapper.getClient(), new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "endTyping: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
 
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                Utils.post(() -> {
-                                    Log.d(TAG, "endTyping: false - " + stringeeError.getCode() +
-                                            " - " + stringeeError.getMessage());
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", false);
-                                    map.put("code", stringeeError.getCode());
-                                    map.put("message", stringeeError.getMessage());
-                                    result.success(map);
-                                });
-                            }
-                        });
+                                    @Override
+                                    public void onError(StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG, "endTyping: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "endTyping: false - " + stringeeError.getCode() + " - " +
-                                    stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "endTyping: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -1494,6 +1695,7 @@ public class ConversationManager {
                             result.success(map);
                         });
                     }
-                });
+                }
+        );
     }
 }

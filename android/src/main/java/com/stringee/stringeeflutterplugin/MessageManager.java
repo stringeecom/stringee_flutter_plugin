@@ -13,6 +13,7 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class MessageManager {
+
     private final ClientWrapper clientWrapper;
 
     private static final String TAG = "StringeeSDK";
@@ -22,11 +23,16 @@ public class MessageManager {
     }
 
     /**
-     * Edit message
+     * Edits the content of an existing message.
      *
+     * @param convId
+     *         Conversation id containing the message.
      * @param msgId
+     *         Message id to edit.
      * @param content
+     *         New message content.
      * @param result
+     *         Flutter method result.
      */
     public void edit(String convId, String msgId, final String content, final Result result) {
         Map<String, Object> map = new HashMap<>();
@@ -57,60 +63,78 @@ public class MessageManager {
             return;
         }
 
-        Utils.getMessage(clientWrapper.getClient(), convId, new String[]{msgId}, new CallbackListener<Message>() {
-            @Override
-            public void onSuccess(Message message) {
-                message.edit(clientWrapper.getClient(), content, new StatusListener() {
+        Utils.getMessage(
+                clientWrapper.getClient(), convId, new String[]{msgId},
+                new CallbackListener<Message>() {
                     @Override
-                    public void onSuccess() {
-                        Utils.post(() -> {
-                            Log.d(TAG, "edit: success");
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            result.success(map);
-                        });
+                    public void onSuccess(Message message) {
+                        message.edit(
+                                clientWrapper.getClient(), content, new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "edit: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onError(final StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG,
+                                                    "edit: false - " + stringeeError.getCode() +
+                                                            " - " + stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map1 = new HashMap<>();
+                                            map1.put("status", false);
+                                            map1.put("code", stringeeError.getCode());
+                                            map1.put("message", stringeeError.getMessage());
+                                            result.success(map1);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "edit: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                            Map<String, Object> map1 = new HashMap<>();
-                            map1.put("status", false);
-                            map1.put("code", stringeeError.getCode());
-                            map1.put("message", stringeeError.getMessage());
-                            result.success(map1);
+                            Log.d(
+                                    TAG, "edit: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
+                            Map<String, Object> map2 = new HashMap<>();
+                            map2.put("status", false);
+                            map2.put("code", stringeeError.getCode());
+                            map2.put("message", stringeeError.getMessage());
+                            result.success(map2);
                         });
                     }
-                });
-            }
-
-            @Override
-            public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "edit: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map2 = new HashMap<>();
-                    map2.put("status", false);
-                    map2.put("code", stringeeError.getCode());
-                    map2.put("message", stringeeError.getMessage());
-                    result.success(map2);
-                });
-            }
-        });
+                }
+        );
     }
 
     /**
-     * Pin/Unpin message
+     * Pins or unpins an existing message.
      *
+     * @param convId
+     *         Conversation id containing the message.
      * @param msgId
+     *         Message id to update.
      * @param pinOrUnPin
+     *         True to pin; false to unpin.
      * @param result
+     *         Flutter method result.
      */
-    public void pinOrUnPin(String convId, String msgId, final boolean pinOrUnPin, final Result result) {
+    public void pinOrUnPin(
+            String convId, String msgId, final boolean pinOrUnPin, final Result result) {
         Map<String, Object> map = new HashMap<>();
         if (!clientWrapper.isConnected()) {
             Log.d(TAG, "pinOrUnPin: false - -1 - StringeeClient is disconnected");
@@ -139,27 +163,53 @@ public class MessageManager {
             return;
         }
 
-        Utils.getMessage(clientWrapper.getClient(), convId, new String[]{msgId}, new CallbackListener<Message>() {
-            @Override
-            public void onSuccess(Message message) {
-                message.pinOrUnpin(clientWrapper.getClient(), pinOrUnPin, new StatusListener() {
+        Utils.getMessage(
+                clientWrapper.getClient(), convId, new String[]{msgId},
+                new CallbackListener<Message>() {
                     @Override
-                    public void onSuccess() {
-                        Utils.post(() -> {
-                            Log.d(TAG, "pinOrUnPin: success");
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("status", true);
-                            map.put("code", 0);
-                            map.put("message", "Success");
-                            result.success(map);
-                        });
+                    public void onSuccess(Message message) {
+                        message.pinOrUnpin(
+                                clientWrapper.getClient(), pinOrUnPin, new StatusListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Utils.post(() -> {
+                                            Log.d(TAG, "pinOrUnPin: success");
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", true);
+                                            map.put("code", 0);
+                                            map.put("message", "Success");
+                                            result.success(map);
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onError(final StringeeError stringeeError) {
+                                        super.onError(stringeeError);
+                                        Utils.post(() -> {
+                                            Log.d(
+                                                    TAG, "pinOrUnPin: false - " +
+                                                            stringeeError.getCode() + " - " +
+                                                            stringeeError.getMessage()
+                                            );
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", false);
+                                            map.put("code", stringeeError.getCode());
+                                            map.put("message", stringeeError.getMessage());
+                                            result.success(map);
+                                        });
+                                    }
+                                }
+                        );
                     }
 
                     @Override
                     public void onError(final StringeeError stringeeError) {
                         super.onError(stringeeError);
                         Utils.post(() -> {
-                            Log.d(TAG, "pinOrUnPin: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
+                            Log.d(
+                                    TAG, "pinOrUnPin: false - " + stringeeError.getCode() + " - " +
+                                            stringeeError.getMessage()
+                            );
                             Map<String, Object> map = new HashMap<>();
                             map.put("status", false);
                             map.put("code", stringeeError.getCode());
@@ -167,21 +217,7 @@ public class MessageManager {
                             result.success(map);
                         });
                     }
-                });
-            }
-
-            @Override
-            public void onError(final StringeeError stringeeError) {
-                super.onError(stringeeError);
-                Utils.post(() -> {
-                    Log.d(TAG, "pinOrUnPin: false - " + stringeeError.getCode() + " - " + stringeeError.getMessage());
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", false);
-                    map.put("code", stringeeError.getCode());
-                    map.put("message", stringeeError.getMessage());
-                    result.success(map);
-                });
-            }
-        });
+                }
+        );
     }
 }

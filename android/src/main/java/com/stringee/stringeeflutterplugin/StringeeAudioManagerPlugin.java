@@ -22,9 +22,11 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChannel.StreamHandler, StringeeAudioManager.AudioManagerEvents {
+
     private static volatile StringeeAudioManagerPlugin instance;
     private EventSink eventSink;
-    private Context context;
+    @SuppressLint("StaticFieldLeak")
+    private Context applicationContext;
     private final List<StringeeAudioManager.AudioDevice> audioDevices = new ArrayList<>();
 
     private StringeeAudioManager audioManager;
@@ -64,7 +66,17 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
             case "start":
                 Utils.post(() -> {
                     if (audioManager == null) {
-                        audioManager = new StringeeAudioManager(context);
+                        Context applicationContext = getApplicationContext();
+                        if (applicationContext == null) {
+                            Log.d(TAG, "start: false - -1 - Android context is not available");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", -1);
+                            map.put("message", "Android context is not available");
+                            result.success(map);
+                            return;
+                        }
+                        audioManager = new StringeeAudioManager(applicationContext);
                     }
                     audioManager.start(this);
                     Log.d(TAG, "start: true - 0 - Start audio manager success");
@@ -137,11 +149,18 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
     }
 
     private void setContext(Context context) {
-        this.context = context.getApplicationContext();
+        applicationContext = context.getApplicationContext();
+    }
+
+    private Context getApplicationContext() {
+        return applicationContext;
     }
 
     @Override
-    public void onAudioDeviceChanged(StringeeAudioManager.AudioDevice selectedAudioDevice, Set<StringeeAudioManager.AudioDevice> availableAudioDevices) {
+    public void onAudioDeviceChanged(
+            StringeeAudioManager.AudioDevice selectedAudioDevice,
+            Set<StringeeAudioManager.AudioDevice> availableAudioDevices
+    ) {
         audioDevices.clear();
         audioDevices.add(StringeeAudioManager.AudioDevice.SPEAKER_PHONE);
         if (availableAudioDevices.contains(StringeeAudioManager.AudioDevice.BLUETOOTH)) {
@@ -154,7 +173,10 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
                 audioDevices.add(StringeeAudioManager.AudioDevice.EARPIECE);
             }
         }
-        Log.d(TAG, "onAudioManagerDevicesChanged: " + audioDevices + ", " + "selected: " + selectedAudioDevice);
+        Log.d(
+                TAG, "onAudioManagerDevicesChanged: " + audioDevices + ", " + "selected: " +
+                        selectedAudioDevice
+        );
         List<Map<String, Object>> devices = new ArrayList<>();
         for (int i = 0; i < audioDevices.size(); i++) {
             Map<String, Object> map = new HashMap<>();
@@ -173,6 +195,9 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
 
     @SuppressLint("NewApi")
     private boolean hasEarpiece() {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
+        Context applicationContext = getApplicationContext();
+        return applicationContext != null &&
+                applicationContext.getPackageManager().hasSystemFeature(
+                        PackageManager.FEATURE_TELEPHONY);
     }
 }

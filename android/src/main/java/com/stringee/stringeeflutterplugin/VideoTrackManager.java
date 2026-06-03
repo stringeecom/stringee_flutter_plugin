@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VideoTrackManager implements Listener {
+
     private final ClientWrapper clientWrapper;
     private final String localId;
     private final StringeeVideoTrack videoTrack;
@@ -19,7 +20,10 @@ public class VideoTrackManager implements Listener {
     private Listener listener;
     private static final String TAG = "StringeeSDK";
 
-    public VideoTrackManager(ClientWrapper clientWrapper, StringeeVideoTrack videoTrack, String localId, boolean forCall) {
+    public VideoTrackManager(
+            ClientWrapper clientWrapper, StringeeVideoTrack videoTrack, String localId,
+            boolean forCall
+    ) {
         this.clientWrapper = clientWrapper;
         this.videoTrack = videoTrack;
         this.localId = localId;
@@ -59,7 +63,10 @@ public class VideoTrackManager implements Listener {
                 listener.onMediaAvailable();
             }
 
-            Log.d(TAG, "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId()));
+            Log.d(
+                    TAG,
+                    "trackReadyToPlay: " + (videoTrack.isLocal() ? localId : videoTrack.getId())
+            );
             if (!forCall) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("nativeEventType", StringeeEventType.ROOM_EVENT.getValue());

@@ -38,6 +38,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 @SuppressLint("NewApi")
 public class Utils {
+
     private static final String TAG = "StringeeSDK";
 
     public static void post(Runnable runnable) {
@@ -216,17 +217,24 @@ public class Utils {
             }
             conversationMap.put("text", text);
             conversationMap.put("lastMsgSender", conversation.getLastMessage().getSender());
-            conversationMap.put("lastMsgType", conversation.getLastMessage().getMsgType().getValue());
+            conversationMap.put(
+                    "lastMsgType", conversation.getLastMessage().getMsgType().getValue());
             conversationMap.put("lastMsgId", conversation.getLastMessage().getId());
             conversationMap.put("lastMsgSeqReceived", conversation.getLastMsgSeqReceived());
             conversationMap.put("lastTimeNewMsg", conversation.getLastTimeNewMsg());
-            conversationMap.put("lastMsgState", conversation.getLastMessage().getState().getValue());
+            conversationMap.put(
+                    "lastMsgState", conversation.getLastMessage().getState().getValue());
 
             if (conversation.getLastMsg() != null) {
                 String lastMsg = conversation.getLastMsg();
                 if (!isEmpty(lastMsg)) {
                     JSONObject lastMsgMap = new JSONObject(conversation.getLastMsg());
-                    conversationMap.put("text", convertLastMessageToMap(lastMsgMap, conversation.getLastMessage().getType()));
+                    conversationMap.put(
+                            "text", convertLastMessageToMap(
+                                    lastMsgMap,
+                                    conversation.getLastMessage().getType()
+                            )
+                    );
                 }
             }
             conversationMap.put("pinnedMsgId", conversation.getPinnedMsgId());
@@ -245,7 +253,8 @@ public class Utils {
         return conversationMap;
     }
 
-    public static Map<String, Object> convertLastMessageToMap(@NonNull JSONObject msgObj, Type type) {
+    public static Map<String, Object> convertLastMessageToMap(
+            @NonNull JSONObject msgObj, Type type) {
         Map<String, Object> msgMap = new HashMap<>();
         try {
             if (msgObj.has("metadata")) {
@@ -468,7 +477,10 @@ public class Utils {
                     }
                     addUser.setAvatarUrl(null);
                     contentMap.put("addedInfo", convertUserToMap(addUser));
-                    contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
+                    contentMap.put(
+                            "participants", getParticipantsFromNotify(
+                                    notifyObject.getJSONArray("participants"))
+                    );
                     break;
                 case 2:
                     User removeUser = new User(notifyObject.getString("removedBy"));
@@ -478,7 +490,10 @@ public class Utils {
                     }
                     removeUser.setAvatarUrl(null);
                     contentMap.put("removedInfo", convertUserToMap(removeUser));
-                    contentMap.put("participants", getParticipantsFromNotify(notifyObject.getJSONArray("participants")));
+                    contentMap.put(
+                            "participants", getParticipantsFromNotify(
+                                    notifyObject.getJSONArray("participants"))
+                    );
                     break;
                 case 3:
                     contentMap.put("groupName", notifyObject.get("groupName"));
@@ -537,7 +552,8 @@ public class Utils {
         return userMap;
     }
 
-    public static Map<String, Object> convertLocalVideoTrackToMap(@NonNull VideoTrackManager trackManager, String clientId) {
+    public static Map<String, Object> convertLocalVideoTrackToMap(
+            @NonNull VideoTrackManager trackManager, String clientId) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
         Map<String, Object> trackMap = new HashMap<>();
         trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
@@ -552,7 +568,9 @@ public class Utils {
         return trackMap;
     }
 
-    public static Map<String, Object> convertVideoTrackToMap(@NonNull VideoTrackManager trackManager) {
+    public static Map<String, Object> convertVideoTrackToMap(
+            @NonNull VideoTrackManager trackManager
+    ) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
         Map<String, Object> trackMap = new HashMap<>();
         trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
@@ -567,7 +585,9 @@ public class Utils {
         return trackMap;
     }
 
-    public static Map<String, Object> convertVideoTrackInfoToMap(@NonNull VideoTrackManager trackManager) {
+    public static Map<String, Object> convertVideoTrackInfoToMap(
+            @NonNull VideoTrackManager trackManager
+    ) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
         Map<String, Object> trackMap = new HashMap<>();
         trackMap.put("id", videoTrack.getId() != null ? videoTrack.getId() : "");
@@ -585,7 +605,9 @@ public class Utils {
         return "android-" + UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
     }
 
-    public static List<Map<String, Object>> getParticipantsFromNotify(@NonNull JSONArray participantsArray) {
+    public static List<Map<String, Object>> getParticipantsFromNotify(
+            @NonNull JSONArray participantsArray
+    ) {
         List<Map<String, Object>> resultArray = new ArrayList<>();
         try {
             for (int i = 0; i < participantsArray.length(); i++) {
@@ -604,55 +626,71 @@ public class Utils {
         return resultArray;
     }
 
-    public static void getConversation(@NonNull StringeeClient client, @NonNull String convId, @NonNull final CallbackListener<Conversation> callbackListener) {
-        client.getConversationFromServer(convId, new CallbackListener<Conversation>() {
-            @Override
-            public void onSuccess(final Conversation conversation) {
-                post(() -> callbackListener.onSuccess(conversation));
-            }
+    public static void getConversation(
+            @NonNull StringeeClient client, @NonNull String convId,
+            @NonNull final CallbackListener<Conversation> callbackListener
+    ) {
+        client.getConversationFromServer(
+                convId, new CallbackListener<Conversation>() {
+                    @Override
+                    public void onSuccess(final Conversation conversation) {
+                        post(() -> callbackListener.onSuccess(conversation));
+                    }
 
-            @Override
-            public void onError(final StringeeError error) {
-                super.onError(error);
-                post(() -> callbackListener.onError(error));
-            }
-        });
+                    @Override
+                    public void onError(final StringeeError error) {
+                        super.onError(error);
+                        post(() -> callbackListener.onError(error));
+                    }
+                }
+        );
     }
 
-    public static void getMessage(@NonNull final StringeeClient client, @NonNull String convId, @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener) {
-        getConversation(client, convId, new CallbackListener<Conversation>() {
-            @Override
-            public void onSuccess(Conversation conversation) {
-                post(new Runnable() {
+    public static void getMessage(
+            @NonNull final StringeeClient client, @NonNull String convId,
+            @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener
+    ) {
+        getConversation(
+                client, convId, new CallbackListener<Conversation>() {
                     @Override
-                    public void run() {
-                        conversation.getMessages(client, msgId, new CallbackListener<List<Message>>() {
+                    public void onSuccess(Conversation conversation) {
+                        post(new Runnable() {
                             @Override
-                            public void onSuccess(List<Message> messages) {
-                                if (messages != null && !messages.isEmpty()) {
-                                    callbackListener.onSuccess(messages.get(0));
-                                }
-                            }
+                            public void run() {
+                                conversation.getMessages(
+                                        client, msgId, new CallbackListener<List<Message>>() {
+                                            @Override
+                                            public void onSuccess(List<Message> messages) {
+                                                if (messages != null && !messages.isEmpty()) {
+                                                    callbackListener.onSuccess(messages.get(0));
+                                                }
+                                            }
 
-                            @Override
-                            public void onError(StringeeError stringeeError) {
-                                super.onError(stringeeError);
-                                callbackListener.onError(stringeeError);
+                                            @Override
+                                            public void onError(StringeeError stringeeError) {
+                                                super.onError(stringeeError);
+                                                callbackListener.onError(stringeeError);
+                                            }
+                                        }
+                                );
                             }
                         });
                     }
-                });
-            }
 
-            @Override
-            public void onError(final StringeeError error) {
-                super.onError(error);
-                post(() -> callbackListener.onError(error));
-            }
-        });
+                    @Override
+                    public void onError(final StringeeError error) {
+                        super.onError(error);
+                        post(() -> callbackListener.onError(error));
+                    }
+                }
+        );
     }
 
-    public static void getChatRequest(@NonNull final StringeeClient client, @NonNull final String convId, @NonNull CallbackListener<ChatRequest> callbackListener) {
+    public static void getChatRequest(
+            @NonNull final StringeeClient client,
+            @NonNull final String convId,
+            @NonNull CallbackListener<ChatRequest> callbackListener
+    ) {
         client.getChatRequests(new CallbackListener<List<ChatRequest>>() {
             @Override
             public void onSuccess(List<ChatRequest> chatRequestList) {

@@ -29,9 +29,9 @@ class StringeeChat {
     }
   }
 
-  /// ====================== BEGIN LIVE CHAT =======================
+  // Live chat APIs.
 
-  /// Get chat profile which contain portal info and list of queues
+  /// Gets a chat profile containing portal info and queue list.
   Future<Map<dynamic, dynamic>> getChatProfile(String key) async {
     if (key.trim().isEmpty) return await reportInvalidValue('key');
 
@@ -41,7 +41,7 @@ class StringeeChat {
         .invokeMethod('getChatProfile', params);
   }
 
-  /// Get live-chat token
+  /// Gets a live chat token for a visitor.
   Future<Map<dynamic, dynamic>> getLiveChatToken(
     String key,
     String name,
@@ -62,7 +62,7 @@ class StringeeChat {
         .invokeMethod('getLiveChatToken', params);
   }
 
-  /// Update user info
+  /// Updates live chat visitor information.
   Future<Map<dynamic, dynamic>> updateUserInfo(
       {String? name, String? email, String? avatar, String? phone}) async {
     final params = {
@@ -77,7 +77,7 @@ class StringeeChat {
         .invokeMethod('updateUserInfo', params);
   }
 
-  /// Create live-chat [StringeeConversation]
+  /// Creates a live chat [StringeeConversation] in [queueId].
   Future<Map<dynamic, dynamic>> createLiveChatConversation(
       String queueId) async {
     if (queueId.trim().isEmpty) return await reportInvalidValue('queueId');
@@ -95,7 +95,7 @@ class StringeeChat {
     return result;
   }
 
-  /// Create live-chat ticket
+  /// Creates a live chat ticket.
   Future<Map<dynamic, dynamic>> createLiveChatTicket(
       String key, String name, String email, String description) async {
     if (key.trim().isEmpty) return await reportInvalidValue('key');
@@ -114,9 +114,9 @@ class StringeeChat {
         .invokeMethod('createLiveChatTicket', params);
   }
 
-  /// ====================== END LIVE CHAT =======================
+  // Conversation APIs.
 
-  /// Create new [StringeeConversation] with [options] and [participants]
+  /// Creates a new [StringeeConversation] with [options] and [participants].
   Future<Map<dynamic, dynamic>> createConversation(
       StringeeConversationOption options,
       List<StringeeUser> participants) async {
@@ -134,7 +134,7 @@ class StringeeChat {
     return result;
   }
 
-  /// Get [StringeeConversation] with [StringeeConversation.id] = [convId]
+  /// Gets a [StringeeConversation] by [convId].
   Future<Map<dynamic, dynamic>> getConversationById(String convId) async {
     if (convId.trim().isEmpty) return await reportInvalidValue('convId');
 
@@ -147,7 +147,7 @@ class StringeeChat {
     return result;
   }
 
-  /// Get [StringeeConversation] by [userId] from Stringee server
+  /// Gets a one-to-one [StringeeConversation] by [userId] from the server.
   Future<Map<dynamic, dynamic>> getConversationByUserId(String userId) async {
     if (userId.trim().isEmpty) return await reportInvalidValue('convId');
 
@@ -160,7 +160,7 @@ class StringeeChat {
     return result;
   }
 
-  /// Get local [StringeeConversation]
+  /// Gets locally cached [StringeeConversation] objects.
   Future<Map<dynamic, dynamic>> getLocalConversations({String? oaId}) async {
     final params = {
       if (oaId != null) 'oaId': oaId,
@@ -180,7 +180,7 @@ class StringeeChat {
     return result;
   }
 
-  /// Get [count] of lastest [StringeeConversation] from Stringee server
+  /// Gets the latest [count] conversations from the server.
   Future<Map<dynamic, dynamic>> getLastConversation(
     int count, {
     String? oaId,
@@ -206,7 +206,7 @@ class StringeeChat {
     return result;
   }
 
-  /// Get [count] of [StringeeConversation] before [datetime] from Stringee server
+  /// Gets [count] conversations updated before [datetime] from the server.
   Future<Map<dynamic, dynamic>> getConversationsBefore(
     int count,
     int datetime, {
@@ -233,7 +233,7 @@ class StringeeChat {
     return result;
   }
 
-  /// Get [count] of [StringeeConversation] after [datetime] from Stringee server
+  /// Gets [count] conversations updated after [datetime] from the server.
   Future<Map<dynamic, dynamic>> getConversationsAfter(
     int count,
     int datetime, {
@@ -260,14 +260,14 @@ class StringeeChat {
     return result;
   }
 
-  /// Clear local database
+  /// Clears the local Stringee database.
   Future<Map<dynamic, dynamic>> clearDb() async {
     final param = {'uuid': _client.uuid};
 
     return await StringeeClient.methodChannel.invokeMethod('clearDb', param);
   }
 
-  /// Get total of unread [StringeeConversation]
+  /// Gets the total unread conversation count.
   Future<Map<dynamic, dynamic>> getTotalUnread() async {
     final param = {'uuid': _client.uuid};
 
@@ -275,7 +275,7 @@ class StringeeChat {
         .invokeMethod('getTotalUnread', param);
   }
 
-  /// Join Oa [StringeeConversation]
+  /// Joins an OA [StringeeConversation] by [convId].
   Future<Map<dynamic, dynamic>> joinOaConversation(String convId) async {
     final params = {
       'convId': convId,
@@ -315,6 +315,7 @@ class StringeeChat {
     });
   }
 
+  /// Cancels native event subscription and closes the chat event stream.
   void destroy() {
     _subscriber.cancel();
     _eventStreamController.close();

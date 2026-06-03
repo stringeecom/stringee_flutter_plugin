@@ -7,7 +7,7 @@ class StringeeVideo {
     _client = client;
   }
 
-  /// Connect to [StringeeVideoRoom]
+  /// Joins a [StringeeVideoRoom] with [roomToken].
   Future<Map<dynamic, dynamic>> joinRoom(String roomToken) async {
     if (roomToken.isEmpty) return await reportInvalidValue('roomToken');
     final params = {
@@ -39,7 +39,7 @@ class StringeeVideo {
     return result;
   }
 
-  /// Create local [StringeeVideoTrack]
+  /// Creates a local [StringeeVideoTrack] with [options].
   Future<Map<dynamic, dynamic>> createLocalVideoTrack(
       StringeeVideoTrackOption options) async {
     final params = {
@@ -58,7 +58,7 @@ class StringeeVideo {
     return result;
   }
 
-  /// Create capture screen [StringeeVideoTrack]
+  // Creates a local screen-capture [StringeeVideoTrack].
   // Future<Map<dynamic, dynamic>> createCaptureScreenTrack() async {
   //   if (Platform.isAndroid) {
   //     final params = {

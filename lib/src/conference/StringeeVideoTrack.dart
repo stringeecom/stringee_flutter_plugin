@@ -50,7 +50,7 @@ class StringeeVideoTrack {
     return info;
   }
 
-  /// Mute
+  /// Mutes or unmutes this track's audio stream.
   Future<Map<dynamic, dynamic>> mute(bool mute) async {
     final params = {
       'localId': _localId,
@@ -61,7 +61,7 @@ class StringeeVideoTrack {
         .invokeMethod('track.mute', params);
   }
 
-  /// Enable video
+  /// Enables or disables this track's video stream.
   Future<Map<dynamic, dynamic>> enableVideo(bool enable) async {
     final params = {
       'localId': _localId,
@@ -72,7 +72,7 @@ class StringeeVideoTrack {
         .invokeMethod('track.enableVideo', params);
   }
 
-  /// Switch camera
+  /// Switches this local track to another camera.
   Future<Map<dynamic, dynamic>> switchCamera({String? cameraId}) async {
     final params = {
       'localId': _localId,
@@ -83,7 +83,7 @@ class StringeeVideoTrack {
         .invokeMethod('track.switchCamera', params);
   }
 
-  /// Attach view
+  /// Creates a Flutter view attached to this video track.
   StringeeVideoView attach({
     Key? key,
     bool? isMirror,
