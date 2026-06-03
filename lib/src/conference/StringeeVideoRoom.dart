@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeVideoRoom {
   late String _id;
@@ -17,8 +18,8 @@ class StringeeVideoRoom {
 
   StringeeVideoRoom(StringeeClient client, Map<dynamic, dynamic> info) {
     this._client = client;
-    this._id = info['id'];
-    this._recorded = info['recorded'];
+    this._id = StringeeValueParser.toStringValue(info['id']) ?? '';
+    this._recorded = StringeeValueParser.toBool(info['recorded']) ?? false;
     _subscriber = client.eventStreamController.stream.listen(this._listener);
   }
 
@@ -54,51 +55,55 @@ class StringeeVideoRoom {
   }
 
   void handleDidJoinRoom(Map<dynamic, dynamic> map) {
-    String? roomId = map['roomId'];
+    String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didJoinRoom,
-      "body": StringeeRoomUser(map['user'])
+      "body": StringeeRoomUser(StringeeValueParser.toMap(map['user']) ?? {})
     });
   }
 
   void handleDidLeaveRoom(Map<dynamic, dynamic> map) {
-    String? roomId = map['roomId'];
+    String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didLeaveRoom,
-      "body": StringeeRoomUser(map['user'])
+      "body": StringeeRoomUser(StringeeValueParser.toMap(map['user']) ?? {})
     });
   }
 
   void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
-    String? roomId = map['roomId'];
+    String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didAddVideoTrack,
-      "body": StringeeVideoTrackInfo(map['videoTrackInfo'])
+      "body": StringeeVideoTrackInfo(
+        StringeeValueParser.toMap(map['videoTrackInfo']) ?? {},
+      )
     });
   }
 
   void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
-    String? roomId = map['roomId'];
+    String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didRemoveVideoTrack,
-      "body": StringeeVideoTrackInfo(map['videoTrackInfo'])
+      "body": StringeeVideoTrackInfo(
+        StringeeValueParser.toMap(map['videoTrackInfo']) ?? {},
+      )
     });
   }
 
   void handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
-    String? roomId = map['roomId'];
+    String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
     Map<dynamic, dynamic> bodyMap = {
       'msg': map['msg'],
-      'from': StringeeRoomUser(map['from'])
+      'from': StringeeRoomUser(StringeeValueParser.toMap(map['from']) ?? {})
     };
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.didReceiveRoomMessage,
@@ -107,12 +112,15 @@ class StringeeVideoRoom {
   }
 
   void handleTrackReadyToPlay(Map<dynamic, dynamic> map) {
-    String? roomId = map['roomId'];
+    String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != null && roomId != this._id) return;
 
     _eventStreamController.add({
       "eventType": StringeeRoomEvents.trackReadyToPlay,
-      "body": StringeeVideoTrack(_client, map['track'])
+      "body": StringeeVideoTrack(
+        _client,
+        StringeeValueParser.toMap(map['track']) ?? {},
+      )
     });
   }
 

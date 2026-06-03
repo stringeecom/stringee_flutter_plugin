@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 import '../stringee_plugin.dart';
+import 'helper/value_parser.dart';
 
 class StringeeClient {
   // Native channels shared by plugin APIs.
@@ -236,28 +237,30 @@ class StringeeClient {
   // Native client event handlers.
 
   void _handleDidConnectEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
-    _projectId = map['projectId'];
+    _userId = StringeeValueParser.toStringValue(map['userId']);
+    _projectId = StringeeValueParser.toStringValue(map['projectId']);
     _hasConnected = true;
-    _isReconnecting = map['isReconnecting'];
+    _isReconnecting =
+        StringeeValueParser.toBool(map['isReconnecting']) ?? false;
     _eventStreamController
         .add({"eventType": StringeeClientEvents.didConnect, "body": null});
   }
 
   void _handleDidDisconnectEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
-    _projectId = map['projectId'];
+    _userId = StringeeValueParser.toStringValue(map['userId']);
+    _projectId = StringeeValueParser.toStringValue(map['projectId']);
     _hasConnected = false;
-    _isReconnecting = map['isReconnecting'];
+    _isReconnecting =
+        StringeeValueParser.toBool(map['isReconnecting']) ?? false;
     _eventStreamController
         .add({"eventType": StringeeClientEvents.didDisconnect, "body": null});
   }
 
   void _handleDidFailWithErrorEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
+    _userId = StringeeValueParser.toStringValue(map['userId']);
     Map<dynamic, dynamic> bodyMap = {
-      'code': map['code'],
-      'message': map['message'],
+      'code': StringeeValueParser.toInt(map['code']),
+      'message': StringeeValueParser.toStringValue(map['message']),
     };
     _eventStreamController.add({
       "eventType": StringeeClientEvents.didFailWithError,
@@ -266,7 +269,7 @@ class StringeeClient {
   }
 
   void _handleRequestAccessTokenEvent(Map<dynamic, dynamic> map) {
-    _userId = map['userId'];
+    _userId = StringeeValueParser.toStringValue(map['userId']);
     _eventStreamController.add(
         {"eventType": StringeeClientEvents.requestAccessToken, "body": null});
   }

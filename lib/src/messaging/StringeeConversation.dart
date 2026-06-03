@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeConversation {
   String? _id;
@@ -69,34 +70,46 @@ class StringeeConversation {
     }
     _client = client;
 
-    this._id = convInfor['id'];
-    this._name = convInfor['name'];
-    this._isGroup = convInfor['isGroup'];
-    this._creator = convInfor['creator'];
-    this._createdAt = convInfor['createdAt'];
-    this._updatedAt = convInfor['updatedAt'];
-    this._totalUnread = convInfor['totalUnread'];
-    this._text = convInfor['text'];
+    this._id = StringeeValueParser.toStringValue(convInfor['id']);
+    this._name = StringeeValueParser.toStringValue(convInfor['name']);
+    this._isGroup = StringeeValueParser.toBool(convInfor['isGroup']);
+    this._creator = StringeeValueParser.toStringValue(convInfor['creator']);
+    this._createdAt = StringeeValueParser.toInt(convInfor['createdAt']);
+    this._updatedAt = StringeeValueParser.toInt(convInfor['updatedAt']);
+    this._totalUnread = StringeeValueParser.toInt(convInfor['totalUnread']);
+    this._text = StringeeValueParser.toMap(convInfor['text']);
     this._lastMsg = new StringeeMessage.lstMsg(
-        convInfor['lastMsgId'],
+        StringeeValueParser.toStringValue(convInfor['lastMsgId']),
         this._id,
-        (convInfor['lastMsgType'] as int?).msgType,
-        convInfor['lastMsgSender'],
-        convInfor['lastMsgSeqReceived'],
-        MsgState.values[convInfor['lastMsgState']],
-        convInfor['lastTimeNewMsg'],
+        StringeeValueParser.toInt(convInfor['lastMsgType']).msgType,
+        StringeeValueParser.toStringValue(convInfor['lastMsgSender']),
+        StringeeValueParser.toInt(convInfor['lastMsgSeqReceived']),
+        StringeeValueParser.enumValue(
+          MsgState.values,
+          convInfor['lastMsgState'],
+          MsgState.initialize,
+        ),
+        StringeeValueParser.toInt(convInfor['lastTimeNewMsg']),
         this._text);
-    this._pinnedMsgId = convInfor['pinnedMsgId'];
+    this._pinnedMsgId = StringeeValueParser.toStringValue(
+      convInfor['pinnedMsgId'],
+    );
 
     List<StringeeUser> participants = [];
-    List<dynamic> participantArray = convInfor['participants'];
+    List<dynamic> participantArray = StringeeValueParser.toList(
+      convInfor['participants'],
+    );
     for (int i = 0; i < participantArray.length; i++) {
-      StringeeUser user = StringeeUser.fromJson(participantArray[i]);
-      participants.add(user);
+      final userMap = StringeeValueParser.toMap(participantArray[i]);
+      if (userMap != null) {
+        participants.add(StringeeUser.fromJson(userMap));
+      }
     }
     this._participants = participants;
-    this._oaId = convInfor['oaId'];
-    this._customData = convInfor['customData'];
+    this._oaId = StringeeValueParser.toStringValue(convInfor['oaId']);
+    this._customData = StringeeValueParser.toStringValue(
+      convInfor['customData'],
+    );
   }
 
   // Live chat APIs.
@@ -166,10 +179,14 @@ class StringeeConversation {
         .invokeMethod('addParticipants', params);
     if (result['status']) {
       List<StringeeUser> addedParticipants = [];
-      List<dynamic> participantArray = result['body'];
+      List<dynamic> participantArray = StringeeValueParser.toList(
+        result['body'],
+      );
       for (int i = 0; i < participantArray.length; i++) {
-        StringeeUser user = StringeeUser.fromJson(participantArray[i]);
-        addedParticipants.add(user);
+        final userMap = StringeeValueParser.toMap(participantArray[i]);
+        if (userMap != null) {
+          addedParticipants.add(StringeeUser.fromJson(userMap));
+        }
       }
       result['body'] = addedParticipants;
     }
@@ -190,10 +207,14 @@ class StringeeConversation {
         .invokeMethod('removeParticipants', params);
     if (result['status']) {
       List<StringeeUser> removedParticipants = [];
-      List<dynamic> participantArray = result['body'];
+      List<dynamic> participantArray = StringeeValueParser.toList(
+        result['body'],
+      );
       for (int i = 0; i < participantArray.length; i++) {
-        StringeeUser user = StringeeUser.fromJson(participantArray[i]);
-        removedParticipants.add(user);
+        final userMap = StringeeValueParser.toMap(participantArray[i]);
+        if (userMap != null) {
+          removedParticipants.add(StringeeUser.fromJson(userMap));
+        }
       }
       result['body'] = removedParticipants;
     }
@@ -220,7 +241,7 @@ class StringeeConversation {
         await StringeeClient.methodChannel.invokeMethod('getMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = result['body'];
+      List<dynamic> msgArray = StringeeValueParser.toList(result['body']);
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
@@ -238,7 +259,7 @@ class StringeeConversation {
         .invokeMethod('getLocalMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = result['body'];
+      List<dynamic> msgArray = StringeeValueParser.toList(result['body']);
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
@@ -256,7 +277,7 @@ class StringeeConversation {
         .invokeMethod('getLastMessages', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = result['body'];
+      List<dynamic> msgArray = StringeeValueParser.toList(result['body']);
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
@@ -281,7 +302,7 @@ class StringeeConversation {
         .invokeMethod('getMessagesAfter', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = result['body'];
+      List<dynamic> msgArray = StringeeValueParser.toList(result['body']);
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);
@@ -306,7 +327,7 @@ class StringeeConversation {
         .invokeMethod('getMessagesBefore', params);
     if (result['status']) {
       List<StringeeMessage> messages = [];
-      List<dynamic> msgArray = result['body'];
+      List<dynamic> msgArray = StringeeValueParser.toList(result['body']);
       for (int i = 0; i < msgArray.length; i++) {
         StringeeMessage msg = StringeeMessage.fromJson(msgArray[i], _client);
         messages.add(msg);

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../stringee_plugin.dart';
+import '../helper/value_parser.dart';
 
 class StringeeCall2 {
   String? _id;
@@ -55,15 +56,22 @@ class StringeeCall2 {
       return;
     }
 
-    this._id = callInfo['callId'];
-    this._serial = callInfo['serial'];
-    this._from = callInfo['from'];
-    this._to = callInfo['to'];
-    this._fromAlias = callInfo['fromAlias'];
-    this._toAlias = callInfo['toAlias'];
-    this._isVideoCall = callInfo['isVideoCall'];
-    this._customDataFromYourServer = callInfo['customDataFromYourServer'];
-    this._callType = StringeeCallType.values[callInfo['callType']];
+    this._id = StringeeValueParser.toStringValue(callInfo['callId']);
+    this._serial = StringeeValueParser.toInt(callInfo['serial']);
+    this._from = StringeeValueParser.toStringValue(callInfo['from']);
+    this._to = StringeeValueParser.toStringValue(callInfo['to']);
+    this._fromAlias = StringeeValueParser.toStringValue(callInfo['fromAlias']);
+    this._toAlias = StringeeValueParser.toStringValue(callInfo['toAlias']);
+    this._isVideoCall =
+        StringeeValueParser.toBool(callInfo['isVideoCall']) ?? false;
+    this._customDataFromYourServer = StringeeValueParser.toStringValue(
+      callInfo['customDataFromYourServer'],
+    );
+    this._callType = StringeeValueParser.enumValue(
+      StringeeCallType.values,
+      callInfo['callType'],
+      StringeeCallType.appToAppOutgoing,
+    );
   }
 
   void _listener(dynamic event) {
@@ -101,11 +109,14 @@ class StringeeCall2 {
   }
 
   void handleDidChangeSignalingState(Map<dynamic, dynamic> map) {
-    String? callId = map['callId'];
+    String? callId = StringeeValueParser.toStringValue(map['callId']);
     if (callId != this._id) return;
 
-    StringeeSignalingState signalingState =
-        StringeeSignalingState.values[map['code']];
+    StringeeSignalingState signalingState = StringeeValueParser.enumValue(
+      StringeeSignalingState.values,
+      map['code'],
+      StringeeSignalingState.ended,
+    );
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didChangeSignalingState,
       "body": signalingState
@@ -113,10 +124,14 @@ class StringeeCall2 {
   }
 
   void handleDidChangeMediaState(Map<dynamic, dynamic> map) {
-    String? callId = map['callId'];
+    String? callId = StringeeValueParser.toStringValue(map['callId']);
     if (callId != this._id) return;
 
-    StringeeMediaState mediaState = StringeeMediaState.values[map['code']];
+    StringeeMediaState mediaState = StringeeValueParser.enumValue(
+      StringeeMediaState.values,
+      map['code'],
+      StringeeMediaState.disconnected,
+    );
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didChangeMediaState,
       "body": mediaState
@@ -124,17 +139,20 @@ class StringeeCall2 {
   }
 
   void handleDidReceiveCallInfo(Map<dynamic, dynamic> map) {
-    String? callId = map['callId'];
+    String? callId = StringeeValueParser.toStringValue(map['callId']);
     if (callId != this._id) return;
 
-    Map<dynamic, dynamic>? data = map['info'];
+    Map<dynamic, dynamic>? data = StringeeValueParser.toMap(map['info']);
     _eventStreamController.add(
         {"eventType": StringeeCall2Events.didReceiveCallInfo, "body": data});
   }
 
   void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
-    StringeeSignalingState signalingState =
-        StringeeSignalingState.values[map['code']];
+    StringeeSignalingState signalingState = StringeeValueParser.enumValue(
+      StringeeSignalingState.values,
+      map['code'],
+      StringeeSignalingState.ended,
+    );
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didHandleOnAnotherDevice,
       "body": signalingState
@@ -144,20 +162,22 @@ class StringeeCall2 {
   void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didReceiveLocalStream,
-      "body": map['callId']
+      "body": StringeeValueParser.toStringValue(map['callId'])
     });
   }
 
   void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didReceiveRemoteStream,
-      "body": map['callId']
+      "body": StringeeValueParser.toStringValue(map['callId'])
     });
   }
 
   void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
-    StringeeVideoTrack videoTrack =
-        StringeeVideoTrack(_client, map['videoTrack']);
+    StringeeVideoTrack videoTrack = StringeeVideoTrack(
+      _client,
+      StringeeValueParser.toMap(map['videoTrack']) ?? {},
+    );
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didAddVideoTrack,
       "body": videoTrack
@@ -165,8 +185,10 @@ class StringeeCall2 {
   }
 
   void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
-    StringeeVideoTrack videoTrack =
-        StringeeVideoTrack(_client, map['videoTrack']);
+    StringeeVideoTrack videoTrack = StringeeVideoTrack(
+      _client,
+      StringeeValueParser.toMap(map['videoTrack']) ?? {},
+    );
     _eventStreamController.add({
       "eventType": StringeeCall2Events.didRemoveVideoTrack,
       "body": videoTrack
@@ -176,16 +198,15 @@ class StringeeCall2 {
   /// Makes an outgoing Call2 call with custom [parameters].
   Future<Map<dynamic, dynamic>> makeCall(
       Map<dynamic, dynamic> parameters) async {
-    if (!parameters.containsKey('from') ||
-        (parameters['from'] as String).trim().isEmpty ||
-        !parameters.containsKey('to') ||
-        (parameters['to'] as String).trim().isEmpty)
+    final from = StringeeValueParser.toStringValue(parameters['from'])?.trim();
+    final to = StringeeValueParser.toStringValue(parameters['to'])?.trim();
+    if (from == null || from.isEmpty || to == null || to.isEmpty)
       return await reportInvalidValue('MakeCallParams');
 
     var params = {};
 
-    params['from'] = (parameters['from'] as String).trim();
-    params['to'] = (parameters['to'] as String).trim();
+    params['from'] = from;
+    params['to'] = to;
     if (parameters.containsKey('customData')) if (parameters['customData'] !=
         null) {
       if (parameters['customData'] is Map) {
@@ -195,9 +216,8 @@ class StringeeCall2 {
       }
     }
     if (parameters.containsKey('isVideoCall')) {
-      params['isVideoCall'] = (parameters['isVideoCall'] != null)
-          ? parameters['isVideoCall']
-          : false;
+      params['isVideoCall'] =
+          StringeeValueParser.toBool(parameters['isVideoCall']) ?? false;
       if (params['isVideoCall']) {
         if (parameters['videoQuality'] != null) {
           switch (parameters['videoQuality']) {
