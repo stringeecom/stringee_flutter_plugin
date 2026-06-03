@@ -309,7 +309,7 @@ class StringeeMessage {
           this._fileUrl = photoMap['fileUrl'];
           this._thumbnail = photoMap['thumbnail'];
           this._ratio =
-              photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
+              photoMap['ratio'] == null ? 0 : double.tryParse(photoMap['ratio'].toString()) ?? 0.0;
         }
         break;
       case MsgType.video:
@@ -319,10 +319,10 @@ class StringeeMessage {
           this._fileUrl = videoMap['fileUrl'];
           this._thumbnail = videoMap['thumbnail'];
           this._ratio =
-              videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
+              videoMap['ratio'] == null ? 0 : double.tryParse(videoMap['ratio'].toString()) ?? 0.0;
           this._duration = videoMap['duration'] == null
               ? 0
-              : videoMap['duration'].toDouble();
+              : double.tryParse(videoMap['duration'].toString()) ?? 0.0;
         }
         break;
       case MsgType.audio:
@@ -332,7 +332,7 @@ class StringeeMessage {
           this._fileUrl = audioMap['fileUrl'];
           this._duration = audioMap['duration'] == null
               ? 0
-              : audioMap['duration'].toDouble();
+              : double.tryParse(audioMap['duration'].toString()) ?? 0.0;
         }
         break;
       case MsgType.file:
@@ -463,7 +463,7 @@ class StringeeMessage {
           this._fileUrl = photoMap['fileUrl'];
           this._thumbnail = photoMap['thumbnail'];
           this._ratio =
-              photoMap['ratio'] == null ? 0 : photoMap['ratio'].toDouble();
+              photoMap['ratio'] == null ? 0 : double.tryParse(photoMap['ratio'].toString()) ?? 0.0;
         }
         break;
       case MsgType.video:
@@ -473,10 +473,10 @@ class StringeeMessage {
           this._fileUrl = videoMap['fileUrl'];
           this._thumbnail = videoMap['thumbnail'];
           this._ratio =
-              videoMap['ratio'] == null ? 0 : videoMap['ratio'].toDouble();
+              videoMap['ratio'] == null ? 0 : double.tryParse(videoMap['ratio'].toString()) ?? 0.0;
           this._duration = videoMap['duration'] == null
               ? 0
-              : videoMap['duration'].toDouble();
+              : double.tryParse(videoMap['duration'].toString()) ?? 0.0;
         }
         break;
       case MsgType.audio:
@@ -486,7 +486,7 @@ class StringeeMessage {
           this._fileUrl = audioMap['fileUrl'];
           this._duration = audioMap['duration'] == null
               ? 0
-              : audioMap['duration'].toDouble();
+              : double.tryParse(audioMap['duration'].toString()) ?? 0.0;
         }
         break;
       case MsgType.file:
