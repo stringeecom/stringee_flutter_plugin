@@ -1,6 +1,18 @@
 
 # Changelog
 
+## 1.3.2
+
+- Upgrade Stringee Android SDK to 2.1.12
+- Upgrade Android WebRTC SDK to 144.7559.09
+- Compile the Android plugin with Android API 36
+- Update the example app and its widget test
+- Refresh the pub.dev package metadata
+
+## 1.3.1
+
+- Use the release build of Stringee Android SDK 2.1.11
+
 ## 1.3.0
 
 - Update core android sdk and ios sdk

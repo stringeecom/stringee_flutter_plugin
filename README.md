@@ -1,7 +1,7 @@
 # Stringee Flutter
 
-A Dart package for all platforms which helps developers with Stringee API services.
-This Dart Package can be integrated into any Flutter application to make use of Stringee API.
+A Flutter plugin for Android and iOS that provides access to Stringee API services.
+It can be integrated into Flutter applications that need Stringee communication features.
 
 ## Features
 
@@ -21,12 +21,26 @@ To use this package, add the dependency to your pubspec.yaml file.
 dependencies:
   flutter:
     sdk: flutter
-  stringee_plugin: $version
+  stringee_plugin: ^1.3.2
 ```
 
-Replace `$version` with the plugin version you want to use. See a list of versions in [Changelog](CHANGELOG.md).
+See the available versions and release notes in the [Changelog](CHANGELOG.md).
 
-Check out our getting started guide at here:
+### Android requirements
+
+- Android `minSdk` 21 or later
+- Android SDK Platform 36 installed
+
+The plugin is compiled with Android API 36. If your application declares its own `compileSdk`, set
+it to 36 or later:
+
+```gradle
+android {
+    compileSdk = 36
+}
+```
+
+Check out our getting-started guides:
 
 - [Getting started with Stringee Call API using Flutter Plugin](https://asia-1.console.stringee.com/docs/getting-started-flutter)
 - [Getting started with Stringee Call2 API using Flutter Plugin](https://developer.stringee.com/docs/getting-started/getting-started-flutter2)
