@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
 
-StringeeClient client = new StringeeClient();
-StringeeChat chat = new StringeeChat(client);
+StringeeClient client = StringeeClient();
+StringeeChat chat = StringeeChat(client);
 
 class AgentPage extends StatefulWidget {
+  const AgentPage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -23,7 +25,7 @@ class AgentPageState extends State<AgentPage>
   bool hasChatRequest = false;
   bool inConv = false;
 
-  List<String> _log = [];
+  final List<String> _log = [];
 
   @override
   void initState() {
@@ -73,7 +75,7 @@ class AgentPageState extends State<AgentPage>
         if (objectChange.objectType == ObjectType.conversation) {
           StringeeConversation conversation = objectChange.objects!.first;
           setState(() {
-            _log.add(conversation.id! + ' ' + objectChange.type.toString());
+            _log.add('${conversation.id!} ${objectChange.type}');
           });
         }
         if (objectChange.objectType == ObjectType.message) {
@@ -81,7 +83,7 @@ class AgentPageState extends State<AgentPage>
           setState(() {
             _log.add((message.id != null)
                 ? message.id!
-                : 'null' + ' ' + objectChange.type.toString());
+                : 'null ${objectChange.type}');
           });
         }
       }
@@ -95,13 +97,14 @@ class AgentPageState extends State<AgentPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // TODO: implement build
     Widget chatRequestAction = Row(
       children: [
-        new Expanded(
+        Expanded(
           child: Container(
-            margin: EdgeInsets.only(right: 10.0),
-            child: new ElevatedButton(
+            margin: const EdgeInsets.only(right: 10.0),
+            child: ElevatedButton(
               onPressed: () {
                 _chatRequest!.accept().then((value) {
                   bool status = value['status'];
@@ -127,17 +130,17 @@ class AgentPageState extends State<AgentPage>
                   }
                 });
               },
-              child: Text(
+              child: const Text(
                 'Accept',
                 textAlign: TextAlign.center,
               ),
             ),
           ),
         ),
-        new Expanded(
+        Expanded(
           child: Container(
-            margin: EdgeInsets.only(left: 10.0),
-            child: new ElevatedButton(
+            margin: const EdgeInsets.only(left: 10.0),
+            child: ElevatedButton(
               onPressed: () {
                 _chatRequest!.reject().then((value) {
                   bool status = value['status'];
@@ -151,7 +154,7 @@ class AgentPageState extends State<AgentPage>
                   }
                 });
               },
-              child: Text(
+              child: const Text(
                 'Reject',
                 textAlign: TextAlign.center,
               ),
@@ -163,10 +166,10 @@ class AgentPageState extends State<AgentPage>
 
     Widget liveChatAction = Row(
       children: [
-        new Expanded(
+        Expanded(
           child: Container(
-            margin: EdgeInsets.only(right: 10.0),
-            child: new ElevatedButton(
+            margin: const EdgeInsets.only(right: 10.0),
+            child: ElevatedButton(
               onPressed: () {
                 StringeeMessage msg = StringeeMessage.typeText(
                   client,
@@ -178,17 +181,17 @@ class AgentPageState extends State<AgentPage>
                   });
                 });
               },
-              child: Text(
+              child: const Text(
                 'Send message',
                 textAlign: TextAlign.center,
               ),
             ),
           ),
         ),
-        new Expanded(
+        Expanded(
           child: Container(
-            margin: EdgeInsets.only(left: 10.0),
-            child: new ElevatedButton(
+            margin: const EdgeInsets.only(left: 10.0),
+            child: ElevatedButton(
               onPressed: () {
                 _conversation.endChat().then((value) {
                   setState(() {
@@ -199,7 +202,7 @@ class AgentPageState extends State<AgentPage>
                   });
                 });
               },
-              child: Text(
+              child: const Text(
                 'End chat',
                 textAlign: TextAlign.center,
               ),
@@ -209,28 +212,28 @@ class AgentPageState extends State<AgentPage>
       ],
     );
 
-    return new Scaffold(
-      body: new Form(
+    return Scaffold(
+      body: Form(
         child: SingleChildScrollView(
-          child: new Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+          child: Container(
+            padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  child: new Text(
+                  child: Text(
                     'Connected as: $userId',
-                    style: new TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 20.0,
                     ),
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 20.0),
+                  padding: const EdgeInsets.only(top: 20.0),
                   alignment: Alignment.topLeft,
-                  child: Text(
+                  child: const Text(
                     'Log',
                     style: TextStyle(
                       color: Colors.black,
@@ -239,7 +242,7 @@ class AgentPageState extends State<AgentPage>
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 20.0),
+                  margin: const EdgeInsets.only(top: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.black,
@@ -252,11 +255,11 @@ class AgentPageState extends State<AgentPage>
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return Container(
-                        margin:
-                            EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+                        margin: const EdgeInsets.only(
+                            top: 10.0, right: 10.0, left: 10.0),
                         child: Text(
                           _log[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 12.0,
                           ),
@@ -265,7 +268,7 @@ class AgentPageState extends State<AgentPage>
                     },
                   ),
                 ),
-                Divider(
+                const Divider(
                   color: Colors.black,
                 ),
                 Center(
@@ -296,7 +299,7 @@ class AgentPageState extends State<AgentPage>
   }
 
   void handleDidFailWithErrorEvent(int code, String message) {
-    print('code: ' + code.toString() + '\nmessage: ' + message);
+    print('code: $code\nmessage: $message');
   }
 
   void handleDidReceiveChatRequestEvent(StringeeChatRequest chatRequest) {

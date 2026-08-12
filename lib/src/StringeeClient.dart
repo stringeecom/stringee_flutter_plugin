@@ -7,12 +7,21 @@ import 'package:flutter/services.dart';
 import '../stringee_plugin.dart';
 import 'helper/value_parser.dart';
 
+/// A connection to the Stringee platform.
+///
+/// Each instance owns an independent native client identified by [uuid]. Listen
+/// to [eventStreamController] for [StringeeClientEvents] and incoming call or
+/// chat events, then call [connect] with a valid access token.
 class StringeeClient {
-  // Native channels shared by plugin APIs.
+  /// Main method channel shared by Stringee Dart APIs.
   static const MethodChannel methodChannel =
       MethodChannel('com.stringee.flutter.methodchannel');
+
+  /// Main event channel shared by Stringee Dart APIs.
   static const EventChannel eventChannel =
       EventChannel('com.stringee.flutter.eventchannel');
+
+  /// Broadcast stream of raw events emitted by the native plugin.
   static Stream broadcastStream = eventChannel.receiveBroadcastStream();
 
   // Flutter event stream.
@@ -28,18 +37,28 @@ class StringeeClient {
   List<StringeeServerAddress>? _serverAddresses;
   final String _uuid = GUIDGen.generate();
 
+  /// The authenticated Stringee user ID, or `null` before connecting.
   String? get userId => _userId;
 
+  /// The Stringee project ID reported by the native SDK.
   String? get projectId => _projectId;
 
+  /// Whether the native client currently has an active connection.
   bool get hasConnected => _hasConnected;
 
+  /// Whether the most recent connection is a reconnection.
   bool get isReconnecting => _isReconnecting;
 
+  /// Broadcasts events belonging to this client and its child objects.
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
+  /// The identifier used to route native events to this client instance.
   String get uuid => _uuid;
 
+  /// Creates and configures a native Stringee client.
+  ///
+  /// [serverAddresses] overrides the default signaling endpoints. [baseAPIUrl]
+  /// overrides the REST API endpoint when using a private deployment.
   StringeeClient(
       {List<StringeeServerAddress>? serverAddresses, String? baseAPIUrl}) {
     _serverAddresses = serverAddresses;

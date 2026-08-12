@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin_example/ui/conversation_info.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
 
-StringeeClient client = new StringeeClient();
-StringeeChat chat = new StringeeChat(client);
+StringeeClient client = StringeeClient();
+StringeeChat chat = StringeeChat(client);
 
 class ChatTab extends StatefulWidget {
+  const ChatTab({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -17,8 +19,8 @@ class ChatTabState extends State<ChatTab> {
   String myUserId = 'Not connected...';
   String token = '';
 
-  List<String> _log = [];
-  List<StringeeConversation> _conversations = [];
+  final List<String> _log = [];
+  final List<StringeeConversation> _conversations = [];
 
   @override
   void initState() {
@@ -64,7 +66,7 @@ class ChatTabState extends State<ChatTab> {
         if (objectChange.objectType == ObjectType.conversation) {
           StringeeConversation conversation = objectChange.objects!.first;
           setState(() {
-            _log.add(conversation.id! + ' ' + objectChange.type.toString());
+            _log.add('${conversation.id!} ${objectChange.type}');
           });
         }
       }
@@ -80,10 +82,10 @@ class ChatTabState extends State<ChatTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 10.0, top: 10.0),
-            child: new Text(
+            padding: const EdgeInsets.only(left: 10.0, top: 10.0),
+            child: Text(
               'Connected as: $myUserId',
-              style: new TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 20.0,
               ),
@@ -91,8 +93,8 @@ class ChatTabState extends State<ChatTab> {
           ),
           Container(
             alignment: Alignment.topLeft,
-            margin: EdgeInsets.only(top: 10.0, left: 10.0),
-            child: Text(
+            margin: const EdgeInsets.only(top: 10.0, left: 10.0),
+            child: const Text(
               'Log',
               style: TextStyle(
                 color: Colors.black,
@@ -101,7 +103,7 @@ class ChatTabState extends State<ChatTab> {
             ),
           ),
           Container(
-            margin: EdgeInsets.all(10.0),
+            margin: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.black,
@@ -114,10 +116,11 @@ class ChatTabState extends State<ChatTab> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return Container(
-                  margin: EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+                  margin:
+                      const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
                   child: Text(
                     _log[index],
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 12.0,
                     ),
@@ -128,8 +131,8 @@ class ChatTabState extends State<ChatTab> {
           ),
           Container(
             alignment: Alignment.topLeft,
-            margin: EdgeInsets.only(left: 10.0),
-            child: Text(
+            margin: const EdgeInsets.only(left: 10.0),
+            child: const Text(
               'Conversation',
               style: TextStyle(
                 color: Colors.black,
@@ -138,7 +141,7 @@ class ChatTabState extends State<ChatTab> {
             ),
           ),
           Container(
-            margin: EdgeInsets.all(10.0),
+            margin: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.black,
@@ -150,7 +153,16 @@ class ChatTabState extends State<ChatTab> {
               itemCount: _conversations.length,
               itemBuilder: (context, index) {
                 return Container(
-                  padding: EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+                  padding:
+                      const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
@@ -170,21 +182,13 @@ class ChatTabState extends State<ChatTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'convId: ' + _conversations[index].id!,
+                              'convId: ${_conversations[index].id!}',
                             ),
                             Text(
-                              'name: ' + _conversations[index].name!,
+                              'name: ${_conversations[index].name!}',
                             ),
                           ],
                         )),
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
                   ),
                 );
               },
@@ -200,10 +204,10 @@ class ChatTabState extends State<ChatTab> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      new Container(
+                      SizedBox(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             List<StringeeUser> participants = [];
                             StringeeUser user1 =
@@ -222,8 +226,8 @@ class ChatTabState extends State<ChatTab> {
                             chat
                                 .createConversation(options, participants)
                                 .then((value) {
-                              print("Flutter - createConversation - result: " +
-                                  value.toString());
+                              print(
+                                  "Flutter - createConversation - result: $value");
                               setState(() {
                                 _log.add('Create conversation: msg:' +
                                     value['message']);
@@ -234,22 +238,22 @@ class ChatTabState extends State<ChatTab> {
                               });
                             });
                           },
-                          child: Text(
+                          child: const Text(
                             'Create Conversation',
                             textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                      new Container(
+                      SizedBox(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             chat
                                 .getConversationById('getConversationById')
                                 .then((value) {
-                              print("Flutter - getConversationById - result: " +
-                                  value.toString());
+                              print(
+                                  "Flutter - getConversationById - result: $value");
 
                               setState(() {
                                 _log.add('Get conversation by Id: msg:' +
@@ -261,7 +265,7 @@ class ChatTabState extends State<ChatTab> {
                               });
                             });
                           },
-                          child: Text(
+                          child: const Text(
                             'Get Conversation by Id',
                             textAlign: TextAlign.center,
                           ),
@@ -270,20 +274,19 @@ class ChatTabState extends State<ChatTab> {
                     ],
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               chat.getConversationByUserId('id2').then((value) {
                                 print(
-                                    "Flutter - getConversationByUserId - result: " +
-                                        value.toString());
+                                    "Flutter - getConversationByUserId - result: $value");
                                 setState(() {
                                   _log.add('Get Conversation by UserId: msg:' +
                                       value['message']);
@@ -294,16 +297,16 @@ class ChatTabState extends State<ChatTab> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get Conversation by UserId',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               chat.getTotalUnread().then((value) {
                                 print(value.toString());
@@ -313,7 +316,7 @@ class ChatTabState extends State<ChatTab> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get total unread',
                               textAlign: TextAlign.center,
                             ),
@@ -323,20 +326,19 @@ class ChatTabState extends State<ChatTab> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               chat.getLocalConversations().then((value) {
                                 print(
-                                    "Flutter - getLocalConversations - result: " +
-                                        value.toString());
+                                    "Flutter - getLocalConversations - result: $value");
                                 setState(() {
                                   _log.add('Get local Conversation: msg:' +
                                       value['message']);
@@ -347,21 +349,20 @@ class ChatTabState extends State<ChatTab> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get local Conversation',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               chat.getLastConversation(50).then((value) {
                                 print(
-                                    "Flutter - getLastConversation - result: " +
-                                        value.toString());
+                                    "Flutter - getLastConversation - result: $value");
                                 setState(() {
                                   _log.add('Get last Conversation: msg:' +
                                       value['message']);
@@ -372,7 +373,7 @@ class ChatTabState extends State<ChatTab> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get last Conversation',
                               textAlign: TextAlign.center,
                             ),
@@ -382,22 +383,21 @@ class ChatTabState extends State<ChatTab> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               chat
                                   .getConversationsBefore(2, 1602215811388)
                                   .then((value) {
                                 print(
-                                    "Flutter - getConversationsBefore - result: " +
-                                        value.toString());
+                                    "Flutter - getConversationsBefore - result: $value");
                                 setState(() {
                                   _log.add('Get Conversation before: msg:' +
                                       value['message']);
@@ -408,23 +408,22 @@ class ChatTabState extends State<ChatTab> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get Conversation before',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               chat
                                   .getConversationsAfter(2, 1602215811388)
                                   .then((value) {
                                 print(
-                                    "Flutter - getConversationsAfter - result: " +
-                                        value.toString());
+                                    "Flutter - getConversationsAfter - result: $value");
                                 setState(() {
                                   if (value['status']) {
                                     _log.add('Get Conversation after: msg:' +
@@ -435,7 +434,7 @@ class ChatTabState extends State<ChatTab> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get Conversation after',
                               textAlign: TextAlign.center,
                             ),
@@ -445,15 +444,15 @@ class ChatTabState extends State<ChatTab> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               chat.clearDb().then((value) {
                                 setState(() {
@@ -462,22 +461,22 @@ class ChatTabState extends State<ChatTab> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Clear database',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               setState(() {
                                 _conversations.clear();
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Clear Console',
                               textAlign: TextAlign.center,
                             ),
@@ -509,10 +508,6 @@ class ChatTabState extends State<ChatTab> {
   }
 
   void handleDidFailWithErrorEvent(int code, String message) {
-    print('code: ' + code.toString() + '\nmessage: ' + message);
+    print('code: $code\nmessage: $message');
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }

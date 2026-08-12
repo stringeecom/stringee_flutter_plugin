@@ -8,21 +8,48 @@ import 'package:flutter/services.dart';
 
 import '../stringee_plugin.dart';
 
+/// Renders a native Stringee call or conference video track in Flutter.
 class StringeeVideoView extends StatelessWidget {
+  /// Call ID rendered by this view, when created with [StringeeVideoView.new].
   late final String? callId;
+
+  /// Track ID rendered by this view, when created with [StringeeVideoView.forTrack].
   late final String? trackId;
+
+  /// Whether this view renders the local side of a call.
   final bool isLocal;
+
+  /// Whether the native renderer mirrors the video horizontally.
   final bool? isMirror;
+
+  /// Space outside the rendered view.
   final EdgeInsetsGeometry? margin;
+
+  /// Alignment of the rendered view within its parent.
   final AlignmentGeometry? alignment;
+
+  /// Space around [child].
   final EdgeInsetsGeometry? padding;
+
+  /// How video is scaled inside the native renderer.
   final ScalingType? scalingType;
+
+  /// Requested view height.
   final double? height;
+
+  /// Requested view width.
   final double? width;
+
+  /// Optional Flutter widget overlaid on the video.
   final Widget? child;
+
+  /// Whether this instance renders a call instead of a conference track.
   late final bool forCall;
+
+  /// Optional clipping radius.
   final BorderRadius? borderRadius;
 
+  /// Creates a renderer for the local or remote side of [callId].
   StringeeVideoView(
     this.callId,
     this.isLocal, {
@@ -42,6 +69,7 @@ class StringeeVideoView extends StatelessWidget {
     forCall = true;
   }
 
+  /// Creates a renderer for a conference [trackId].
   StringeeVideoView.forTrack(
     this.trackId, {
     Key? key,
@@ -61,6 +89,7 @@ class StringeeVideoView extends StatelessWidget {
     forCall = false;
   }
 
+  /// Creates the Android or iOS platform view for this renderer.
   Widget createVideoView(BuildContext context) {
     // This is used in the platform side to register the view.
     const viewType = 'stringeeVideoView';

@@ -21,6 +21,9 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/**
+ * Owns one native video room and forwards its participant, track, and message events to Flutter.
+ */
 public class RoomManager implements StringeeRoomListener {
 
     private final ClientWrapper clientWrapper;
@@ -30,6 +33,7 @@ public class RoomManager implements StringeeRoomListener {
 
     private static final String TAG = "StringeeSDK";
 
+    /** Creates a room bridge for the supplied client and conference manager. */
     public RoomManager(ClientWrapper clientWrapper, VideoConferenceManager videoConferenceManager) {
         this.clientWrapper = clientWrapper;
         this.videoConferenceManager = videoConferenceManager;

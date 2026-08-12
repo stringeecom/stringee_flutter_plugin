@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
 
 class ConversationInfor extends StatefulWidget {
-  late StringeeConversation _conversation;
-  late StringeeClient _client;
-  late StringeeChat _chat;
+  final StringeeConversation _conversation;
+  final StringeeClient _client;
+  final StringeeChat _chat;
 
-  ConversationInfor(
-    StringeeClient client,
-    StringeeChat chat,
-    StringeeConversation conversation,
-  ) {
-    _client = client;
-    _chat = chat;
-    _conversation = conversation;
-  }
+  const ConversationInfor(
+    this._client,
+    this._chat,
+    this._conversation, {
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -24,8 +21,8 @@ class ConversationInfor extends StatefulWidget {
 }
 
 class ConversationInforState extends State<ConversationInfor> {
-  List<String> _log = [];
-  List<StringeeMessage> _messages = [];
+  final List<String> _log = [];
+  final List<StringeeMessage> _messages = [];
   List<StringeeUser> users = [];
   late StringeeMessage msg;
 
@@ -63,7 +60,7 @@ class ConversationInforState extends State<ConversationInfor> {
           setState(() {
             _log.add((message.id != null)
                 ? message.id!
-                : 'null' + ' ' + objectChange.type.toString());
+                : 'null ${objectChange.type}');
           });
         }
       }
@@ -73,17 +70,17 @@ class ConversationInforState extends State<ConversationInfor> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(
-        title: Text("Conversation infor"),
+        title: const Text("Conversation infor"),
         backgroundColor: Colors.indigo[600],
       ),
       body: Column(
         children: [
           Container(
             alignment: Alignment.topLeft,
-            margin: EdgeInsets.only(top: 5.0, left: 5.0),
-            child: Text(
+            margin: const EdgeInsets.only(top: 5.0, left: 5.0),
+            child: const Text(
               'Log',
               style: TextStyle(
                 color: Colors.black,
@@ -92,7 +89,7 @@ class ConversationInforState extends State<ConversationInfor> {
             ),
           ),
           Container(
-            margin: EdgeInsets.all(10.0),
+            margin: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.black,
@@ -105,10 +102,11 @@ class ConversationInforState extends State<ConversationInfor> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return Container(
-                  margin: EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
+                  margin:
+                      const EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
                   child: Text(
                     _log[index],
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 12.0,
                     ),
@@ -119,8 +117,8 @@ class ConversationInforState extends State<ConversationInfor> {
           ),
           Container(
             alignment: Alignment.topLeft,
-            margin: EdgeInsets.only(left: 5.0),
-            child: Text(
+            margin: const EdgeInsets.only(left: 5.0),
+            child: const Text(
               'Message',
               style: TextStyle(
                 color: Colors.black,
@@ -129,7 +127,7 @@ class ConversationInforState extends State<ConversationInfor> {
             ),
           ),
           Container(
-            margin: EdgeInsets.all(10.0),
+            margin: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.black,
@@ -141,7 +139,16 @@ class ConversationInforState extends State<ConversationInfor> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return Container(
-                  padding: EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
+                  padding:
+                      const EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
                   child: Container(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
@@ -152,24 +159,16 @@ class ConversationInforState extends State<ConversationInfor> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'msgId: ' + _messages[index].id!,
+                              'msgId: ${_messages[index].id!}',
                             ),
                             Text(
-                              'msgType: ' + _messages[index].type.toString(),
+                              'msgType: ${_messages[index].type}',
                             ),
                             Text(
-                              'text: ' + _messages[index].text!,
+                              'text: ${_messages[index].text!}',
                             ),
                           ],
                         )),
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.black,
-                        width: 2.0,
-                      ),
-                    ),
                   ),
                 );
               },
@@ -185,10 +184,10 @@ class ConversationInforState extends State<ConversationInfor> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      new Container(
+                      SizedBox(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             widget._conversation.delete().then((value) {
                               print(value.toString());
@@ -198,16 +197,16 @@ class ConversationInforState extends State<ConversationInfor> {
                               });
                             });
                           },
-                          child: Text(
+                          child: const Text(
                             'Delete Conversation',
                             textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                      new Container(
+                      SizedBox(
                         height: 40.0,
                         width: 175.0,
-                        child: new ElevatedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             widget._conversation
                                 .addParticipants(users)
@@ -219,7 +218,7 @@ class ConversationInforState extends State<ConversationInfor> {
                               });
                             });
                           },
-                          child: Text(
+                          child: const Text(
                             'Add participants',
                             textAlign: TextAlign.center,
                           ),
@@ -228,15 +227,15 @@ class ConversationInforState extends State<ConversationInfor> {
                     ],
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .removeParticipants(users)
@@ -248,16 +247,16 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Remove participants',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .sendMessage(msg)
@@ -269,7 +268,7 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Send message',
                               textAlign: TextAlign.center,
                             ),
@@ -279,15 +278,15 @@ class ConversationInforState extends State<ConversationInfor> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation.getMessages([
                                 'msg-vn-1-MWE3BG0IJE-1610578358918',
@@ -304,16 +303,16 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get messages',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getLocalMessages(3)
@@ -329,7 +328,7 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get local Messages',
                               textAlign: TextAlign.center,
                             ),
@@ -339,15 +338,15 @@ class ConversationInforState extends State<ConversationInfor> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getLastMessages(50)
@@ -363,16 +362,16 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get last Messages',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getMessagesAfter(50, 4)
@@ -388,7 +387,7 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get Messages after',
                               textAlign: TextAlign.center,
                             ),
@@ -398,15 +397,15 @@ class ConversationInforState extends State<ConversationInfor> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .getMessagesBefore(50, 4)
@@ -422,19 +421,19 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Get Messages before',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               String newConvName =
-                                  widget._conversation.name! + ' NEW NAME';
+                                  '${widget._conversation.name!} NEW NAME';
                               widget._conversation
                                   .updateConversation(newConvName)
                                   .then((value) {
@@ -445,7 +444,7 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Update Conversation',
                               textAlign: TextAlign.center,
                             ),
@@ -455,15 +454,15 @@ class ConversationInforState extends State<ConversationInfor> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation
                                   .setRole('id1', UserRole.member)
@@ -474,16 +473,16 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Set role',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation.deleteMessages(
                                   ['msgid1', 'msgid2']).then((value) {
@@ -494,7 +493,7 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Delete messages',
                               textAlign: TextAlign.center,
                             ),
@@ -504,15 +503,15 @@ class ConversationInforState extends State<ConversationInfor> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation.revokeMessages(
                                   ['msgid1', 'msgid2'], true).then((value) {
@@ -523,16 +522,16 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Revoke messages',
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                        new Container(
+                        SizedBox(
                           height: 40.0,
                           width: 175.0,
-                          child: new ElevatedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               widget._conversation.markAsRead().then((value) {
                                 print(value.toString());
@@ -542,7 +541,7 @@ class ConversationInforState extends State<ConversationInfor> {
                                 });
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               'Mark conversation as read',
                               textAlign: TextAlign.center,
                             ),
@@ -564,10 +563,10 @@ class ConversationInforState extends State<ConversationInfor> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Message'),
-        content: Text('msgId: ' + message.id!),
+        title: const Text('Message'),
+        content: Text('msgId: ${message.id!}'),
         actions: [
-          new ElevatedButton(
+          ElevatedButton(
             onPressed: () {
               message.edit('ok ok').then((value) {
                 print(value.toString());
@@ -577,12 +576,12 @@ class ConversationInforState extends State<ConversationInfor> {
                 });
               });
             },
-            child: Text(
+            child: const Text(
               'Edit messages',
               textAlign: TextAlign.center,
             ),
           ),
-          new ElevatedButton(
+          ElevatedButton(
             onPressed: () {
               message.pinOrUnPin(false).then((value) {
                 print(value.toString());
@@ -592,7 +591,7 @@ class ConversationInforState extends State<ConversationInfor> {
                 });
               });
             },
-            child: Text(
+            child: const Text(
               'Pin/UnPin messages',
               textAlign: TextAlign.center,
             ),

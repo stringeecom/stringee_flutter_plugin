@@ -4,6 +4,7 @@ import 'dart:convert';
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// A Stringee direct, group, live-chat, or OA conversation.
 class StringeeConversation {
   String? _id;
   String? _name;
@@ -20,30 +21,43 @@ class StringeeConversation {
   String? _customData;
   late StringeeClient _client;
 
+  /// Server-assigned conversation ID.
   String? get id => _id;
 
+  /// Conversation display name.
   String? get name => _name;
 
+  /// Whether this is a group conversation.
   bool? get isGroup => _isGroup;
 
+  /// User ID of the conversation creator.
   String? get creator => _creator;
 
+  /// Number of unread messages for the current user.
   int? get totalUnread => _totalUnread;
 
+  /// Last update time in milliseconds since Unix epoch.
   int? get updatedAt => _updatedAt;
 
+  /// Creation time in milliseconds since Unix epoch.
   int? get createdAt => _createdAt;
 
+  /// Raw content of the last-message summary.
   Map<dynamic, dynamic>? get text => _text;
 
+  /// Most recent message summary.
   StringeeMessage? get lastMsg => _lastMsg;
 
+  /// ID of the pinned message, if any.
   String? get pinnedMsgId => _pinnedMsgId;
 
+  /// Current conversation participants.
   List<StringeeUser>? get participants => _participants;
 
+  /// Official Account ID associated with this conversation.
   String? get oaId => _oaId;
 
+  /// Application-specific conversation data.
   String? get customData => _customData;
 
   @override
@@ -63,6 +77,7 @@ class StringeeConversation {
         'customData: $_customData, }';
   }
 
+  /// Creates a conversation from native [convInfor].
   StringeeConversation.fromJson(
       Map<dynamic, dynamic>? convInfor, StringeeClient client) {
     if (convInfor == null) {

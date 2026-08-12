@@ -4,14 +4,20 @@ import 'dart:convert';
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// Entry point for Stringee chat, live-chat, and conversation APIs.
+///
+/// Listen to [eventStreamController] for [StringeeChatEvents] and call
+/// [destroy] when the chat API is no longer used.
 class StringeeChat {
   late StringeeClient _client;
   late StreamSubscription<dynamic> _subscriber;
   StreamController<dynamic> _eventStreamController =
       StreamController.broadcast();
 
+  /// Broadcasts conversation and message change events.
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
+  /// Creates a chat API bound to [client].
   StringeeChat(StringeeClient client) {
     _client = client;
     _subscriber = client.eventStreamController.stream.listen(this._listener);

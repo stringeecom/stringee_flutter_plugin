@@ -19,8 +19,8 @@ class RoundedButton extends StatelessWidget {
     // TODO: implement build
     return ElevatedButton(
         style: ButtonStyle(
-            padding:
-                WidgetStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.only(
+            padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                const EdgeInsets.only(
               left: 10.0,
               right: 10.0,
               bottom: 5.0,

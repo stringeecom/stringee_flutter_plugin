@@ -5,6 +5,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:stringee_flutter_plugin_example/button/circle_button.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
 
+// The call instances and incoming-call UI flag are intentionally updated by
+// the state while the sample call screen is active.
+// ignore: must_be_immutable
 class Call extends StatefulWidget {
   late StringeeClient _client;
   late StringeeCall? _stringeeCall;
@@ -54,8 +57,8 @@ class _CallState extends State<Call> {
   bool _isMute = false;
   bool _isVideoEnable = false;
 
-  Widget? localScreen = null;
-  Widget? remoteScreen = null;
+  Widget? localScreen;
+  Widget? remoteScreen;
   bool _initializingAudio = true;
   AudioDevice _audioDevice = AudioDevice(audioType: AudioType.earpiece);
   List<AudioDevice> _availableAudioDevices = [];
@@ -82,7 +85,7 @@ class _CallState extends State<Call> {
           int wiredHeadsetIndex = -1;
           int speakerIndex = -1;
           int earpieceIndex = -1;
-          availableAudioDevices.forEach((element) {
+          for (var element in availableAudioDevices) {
             if (element.audioType == AudioType.bluetooth) {
               bluetoothIndex = availableAudioDevices.indexOf(element);
             }
@@ -95,7 +98,7 @@ class _CallState extends State<Call> {
             if (element.audioType == AudioType.earpiece) {
               earpieceIndex = availableAudioDevices.indexOf(element);
             }
-          });
+          }
           if (bluetoothIndex != -1) {
             selectedAudioDevice =
                 availableAudioDevices.elementAt(bluetoothIndex);
@@ -129,29 +132,29 @@ class _CallState extends State<Call> {
 
   @override
   Widget build(BuildContext context) {
-    Widget nameCalling = new Container(
+    Widget nameCalling = Container(
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.only(top: 120.0),
-      child: new Column(
+      padding: const EdgeInsets.only(top: 120.0),
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Container(
+          Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 15.0),
-            child: new Text(
-              "${widget._toUserId}",
-              style: new TextStyle(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Text(
+              widget._toUserId,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 35.0,
               ),
             ),
           ),
-          new Container(
+          Container(
             alignment: Alignment.center,
-            child: new Text(
-              '$status',
-              style: new TextStyle(
+            child: Text(
+              status,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20.0,
               ),
@@ -164,9 +167,9 @@ class _CallState extends State<Call> {
     Widget btnSwitch = Align(
       alignment: Alignment.topLeft,
       child: Padding(
-        padding: EdgeInsets.only(left: 25.0, top: 25.0),
+        padding: const EdgeInsets.only(left: 25.0, top: 25.0),
         child: CircleButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.switch_camera,
               color: Colors.white,
               size: 28,
@@ -201,6 +204,9 @@ class _CallState extends State<Call> {
           color = Colors.black;
           primary = Colors.white;
           break;
+        case AudioType.none:
+        case AudioType.other:
+          break;
       }
       return CircleButton(
           icon: Icon(
@@ -212,19 +218,19 @@ class _CallState extends State<Call> {
           onPressed: toggleSpeaker);
     }
 
-    Container bottomContainer = new Container(
-      padding: EdgeInsets.only(bottom: 30.0),
+    Container bottomContainer = Container(
+      padding: const EdgeInsets.only(bottom: 30.0),
       alignment: Alignment.bottomCenter,
-      child: new Column(
+      child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: widget._showIncomingUi
               ? <Widget>[
-                  new Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       CircleButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.call_end,
                             color: Colors.white,
                             size: 28,
@@ -232,7 +238,7 @@ class _CallState extends State<Call> {
                           primary: Colors.red,
                           onPressed: rejectCallTapped),
                       CircleButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.call,
                             color: Colors.white,
                             size: 28,
@@ -243,18 +249,18 @@ class _CallState extends State<Call> {
                   )
                 ]
               : <Widget>[
-                  new Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       getBtnAudio(),
                       CircleButton(
                           icon: _isMute
-                              ? Icon(
+                              ? const Icon(
                                   Icons.mic,
                                   color: Colors.black,
                                   size: 28,
                                 )
-                              : Icon(
+                              : const Icon(
                                   Icons.mic_off,
                                   color: Colors.white,
                                   size: 28,
@@ -263,12 +269,12 @@ class _CallState extends State<Call> {
                           onPressed: toggleMicro),
                       CircleButton(
                           icon: _isVideoEnable
-                              ? Icon(
+                              ? const Icon(
                                   Icons.videocam_off,
                                   color: Colors.white,
                                   size: 28,
                                 )
-                              : Icon(
+                              : const Icon(
                                   Icons.videocam,
                                   color: Colors.black,
                                   size: 28,
@@ -277,7 +283,7 @@ class _CallState extends State<Call> {
                               _isVideoEnable ? Colors.white54 : Colors.white,
                           onPressed: toggleVideo),
                       CircleButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.call_end,
                             color: Colors.white,
                             size: 28,
@@ -292,16 +298,16 @@ class _CallState extends State<Call> {
     return WillPopScope(
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: new Stack(
+        body: Stack(
           children: <Widget>[
             remoteScreen != null
                 ? remoteScreen!
-                : Placeholder(
+                : const Placeholder(
                     color: Colors.transparent,
                   ),
             localScreen != null
                 ? localScreen!
-                : Placeholder(
+                : const Placeholder(
                     color: Colors.transparent,
                   ),
             nameCalling,
@@ -325,7 +331,7 @@ class _CallState extends State<Call> {
     // Listen events
     widget._stringeeCall!.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      print("Call " + map.toString());
+      print("Call $map");
       switch (map['eventType']) {
         case StringeeCallEvents.didChangeSignalingState:
           handleSignalingStateChangeEvent(map['body']);
@@ -373,6 +379,7 @@ class _CallState extends State<Call> {
         print(
             'MakeCall CallBack --- $status - $code - $message - ${widget._stringeeCall!.id} - ${widget._stringeeCall!.from} - ${widget._stringeeCall!.to}');
         if (!status) {
+          if (!mounted) return;
           Navigator.pop(context);
         }
       });
@@ -440,6 +447,7 @@ class _CallState extends State<Call> {
         print(
             'MakeCall CallBack --- $status - $code - $message - ${widget._stringeeCall2!.id} - ${widget._stringeeCall2!.from} - ${widget._stringeeCall2!.to}');
         if (!status) {
+          if (!mounted) return;
           Navigator.pop(context);
         }
       });
@@ -562,13 +570,13 @@ class _CallState extends State<Call> {
       setState(() {
         localScreen = null;
       });
-      Future.delayed(Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         setState(() {
-          localScreen = new StringeeVideoView(
+          localScreen = StringeeVideoView(
             callId,
             true,
             alignment: Alignment.topRight,
-            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            margin: const EdgeInsets.only(top: 25.0, right: 25.0),
             height: 150.0,
             width: 100.0,
             scalingType: ScalingType.fit,
@@ -577,11 +585,11 @@ class _CallState extends State<Call> {
       });
     } else {
       setState(() {
-        localScreen = new StringeeVideoView(
+        localScreen = StringeeVideoView(
           callId,
           true,
           alignment: Alignment.topRight,
-          margin: EdgeInsets.only(top: 25.0, right: 25.0),
+          margin: const EdgeInsets.only(top: 25.0, right: 25.0),
           height: 150.0,
           width: 100.0,
           scalingType: ScalingType.fit,
@@ -596,9 +604,9 @@ class _CallState extends State<Call> {
       setState(() {
         remoteScreen = null;
       });
-      Future.delayed(Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         setState(() {
-          remoteScreen = new StringeeVideoView(
+          remoteScreen = StringeeVideoView(
             callId,
             false,
             isMirror: false,
@@ -608,7 +616,7 @@ class _CallState extends State<Call> {
       });
     } else {
       setState(() {
-        remoteScreen = new StringeeVideoView(
+        remoteScreen = StringeeVideoView(
           callId,
           false,
           isMirror: false,
@@ -624,11 +632,11 @@ class _CallState extends State<Call> {
       setState(() {
         localScreen = null;
       });
-      Future.delayed(Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         setState(() {
           localScreen = track.attach(
             alignment: Alignment.topRight,
-            margin: EdgeInsets.only(top: 25.0, right: 25.0),
+            margin: const EdgeInsets.only(top: 25.0, right: 25.0),
             height: 150.0,
             width: 100.0,
             scalingType: ScalingType.fit,
@@ -639,7 +647,7 @@ class _CallState extends State<Call> {
       setState(() {
         remoteScreen = null;
       });
-      Future.delayed(Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         setState(() {
           remoteScreen = track.attach(
             isMirror: false,
@@ -714,7 +722,7 @@ class _CallState extends State<Call> {
           return ListView.separated(
             itemCount: _availableAudioDevices.length,
             separatorBuilder: (context, index) {
-              return Divider();
+              return const Divider();
             },
             itemBuilder: (context, index) {
               return ListTile(
@@ -776,7 +784,7 @@ class _CallState extends State<Call> {
   }
 
   void createForegroundServiceNotification() {
-    flutterLocalNotificationsPlugin.initialize(InitializationSettings(
+    flutterLocalNotificationsPlugin.initialize(const InitializationSettings(
       android: AndroidInitializationSettings('ic_launcher'),
     ));
 
@@ -787,7 +795,7 @@ class _CallState extends State<Call> {
           1,
           'Screen capture',
           'Capturing',
-          notificationDetails: AndroidNotificationDetails(
+          notificationDetails: const AndroidNotificationDetails(
             'Test id',
             'Test name',
             channelDescription: 'Test description',

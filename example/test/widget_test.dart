@@ -6,7 +6,7 @@ void main() {
 
   testWidgets('renders the main sample navigation',
       (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(const MyApp());
 
     expect(find.text('Stringee flutter sample'), findsOneWidget);
     expect(find.text('Call'), findsOneWidget);

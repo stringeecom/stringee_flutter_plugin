@@ -36,20 +36,24 @@ import java.util.UUID;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/** Shared conversion, validation, lookup, and main-thread helpers for the Android bridge. */
 @SuppressLint("NewApi")
 public class Utils {
 
     private static final String TAG = "StringeeSDK";
 
+    /** Posts {@code runnable} to the Android main thread. */
     public static void post(Runnable runnable) {
         post(runnable, 0);
     }
 
+    /** Posts {@code runnable} to the Android main thread after {@code delayMillis}. */
     public static void post(Runnable runnable, long delayMillis) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(runnable, delayMillis);
     }
 
+    /** Returns whether {@code object} is null or an empty supported collection or string. */
     public static boolean isEmpty(@Nullable Object object) {
         if (object != null) {
             if (object instanceof JSONArray) {
@@ -72,10 +76,12 @@ public class Utils {
         }
     }
 
+    /** Logs an exception together with the bridge class that raised it. */
     public static <T> void reportException(@NonNull Class<T> clazz, Exception exception) {
         Log.e("Stringee exception", clazz.getName(), exception);
     }
 
+    /** Validates and resolves a first-generation call, reporting failures to Flutter. */
     public static boolean isCallWrapperAvailable(String methodName, String callId, Result result) {
         if (isEmpty(callId)) {
             Log.d(TAG, methodName + ": false - -2 - callId is invalid");
@@ -101,6 +107,7 @@ public class Utils {
         return true;
     }
 
+    /** Validates and resolves a Call2 instance, reporting failures to Flutter. */
     public static boolean isCall2WrapperAvailable(String methodName, String callId, Result result) {
         if (isEmpty(callId)) {
             Log.d(TAG, methodName + ": false - -2 - callId is invalid");
@@ -126,6 +133,7 @@ public class Utils {
         return true;
     }
 
+    /** Recursively converts a JSON object to a platform-channel-compatible map. */
     public static Map<String, Object> convertJsonToMap(JSONObject object) throws JSONException {
         if (object != null) {
             Map<String, Object> map = new HashMap<>();
@@ -146,6 +154,7 @@ public class Utils {
         }
     }
 
+    /** Converts a platform-channel map to JSON for native Stringee APIs. */
     public static JSONObject convertMapToJson(Map<String, Object> map) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -156,6 +165,7 @@ public class Utils {
         return jsonObject;
     }
 
+    /** Recursively converts a JSON array to a platform-channel-compatible list. */
     public static List<Object> toList(JSONArray array) throws JSONException {
         List<Object> list = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
@@ -170,6 +180,7 @@ public class Utils {
         return list;
     }
 
+    /** Parses a JSON participant list into native Stringee users. */
     public static List<User> getListUser(String userList) throws JSONException {
         JSONArray array = new JSONArray(userList);
         List<User> list = new ArrayList<>();
@@ -191,6 +202,7 @@ public class Utils {
         return list;
     }
 
+    /** Converts a native chat request to a Dart payload. */
     public static Map<String, Object> convertChatRequestToMap(@NonNull ChatRequest chatRequest) {
         Map<String, Object> chatRequestMap = new HashMap<>();
         chatRequestMap.put("convId", chatRequest.getConvId());
@@ -201,6 +213,7 @@ public class Utils {
         return chatRequestMap;
     }
 
+    /** Converts a native conversation to a Dart payload. */
     public static Map<String, Object> convertConversationToMap(@NonNull Conversation conversation) {
         Map<String, Object> conversationMap = new HashMap<>();
         try {
@@ -253,6 +266,7 @@ public class Utils {
         return conversationMap;
     }
 
+    /** Converts a conversation's last-message summary to a Dart payload. */
     public static Map<String, Object> convertLastMessageToMap(
             @NonNull JSONObject msgObj, Type type) {
         Map<String, Object> msgMap = new HashMap<>();
@@ -358,6 +372,7 @@ public class Utils {
         return msgMap;
     }
 
+    /** Converts a native message to a Dart payload. */
     public static Map<String, Object> convertMessageToMap(@NonNull Message message) {
         Map<String, Object> msgMap = new HashMap<>();
         try {
@@ -454,6 +469,7 @@ public class Utils {
         return msgMap;
     }
 
+    /** Converts a native conversation user to a Dart payload. */
     public static Map<String, Object> convertUserToMap(@NonNull User user) {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("user", user.getUserId());
@@ -463,6 +479,7 @@ public class Utils {
         return userMap;
     }
 
+    /** Converts notification-message JSON content to a Dart payload. */
     public static Map<String, Object> convertNotifyContentToMap(@NonNull JSONObject notifyObject) {
         Map<String, Object> contentMap = new HashMap<>();
         try {
@@ -509,6 +526,7 @@ public class Utils {
         return contentMap;
     }
 
+    /** Converts a native live-chat profile to a Dart payload. */
     public static Map<String, Object> convertChatProfileToMap(@NonNull ChatProfile chatProfile) {
         Map<String, Object> chatProfileMap = new HashMap<>();
         chatProfileMap.put("id", chatProfile.getId());
@@ -532,6 +550,7 @@ public class Utils {
         return chatProfileMap;
     }
 
+    /** Converts a native live-chat queue to a Dart payload. */
     public static Map<String, Object> convertQueueToMap(@NonNull Queue queue) {
         Map<String, Object> queueMap = new HashMap<>();
         queueMap.put("id", queue.getId());
@@ -539,6 +558,7 @@ public class Utils {
         return queueMap;
     }
 
+    /** Converts a native video room to a Dart payload. */
     public static Map<String, Object> convertRoomToMap(@NonNull StringeeRoom room) {
         Map<String, Object> roomMap = new HashMap<>();
         roomMap.put("id", room.getId());
@@ -546,12 +566,14 @@ public class Utils {
         return roomMap;
     }
 
+    /** Converts a native room participant to a Dart payload. */
     public static Map<String, Object> convertRoomUserToMap(@NonNull RemoteParticipant participant) {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("id", participant.getId());
         return userMap;
     }
 
+    /** Converts a local native video track to a Dart payload. */
     public static Map<String, Object> convertLocalVideoTrackToMap(
             @NonNull VideoTrackManager trackManager, String clientId) {
         StringeeVideoTrack videoTrack = trackManager.getVideoTrack();
@@ -568,6 +590,7 @@ public class Utils {
         return trackMap;
     }
 
+    /** Converts a managed video track to a Dart payload. */
     public static Map<String, Object> convertVideoTrackToMap(
             @NonNull VideoTrackManager trackManager
     ) {
@@ -585,6 +608,7 @@ public class Utils {
         return trackMap;
     }
 
+    /** Converts video-track metadata to a Dart payload. */
     public static Map<String, Object> convertVideoTrackInfoToMap(
             @NonNull VideoTrackManager trackManager
     ) {
@@ -601,10 +625,12 @@ public class Utils {
         return trackMap;
     }
 
+    /** Creates a unique local track identifier. */
     public static String createLocalId() {
         return "android-" + UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
     }
 
+    /** Extracts participant payloads from a notification message. */
     public static List<Map<String, Object>> getParticipantsFromNotify(
             @NonNull JSONArray participantsArray
     ) {
@@ -626,6 +652,7 @@ public class Utils {
         return resultArray;
     }
 
+    /** Resolves a conversation from local cache and then from the server if necessary. */
     public static void getConversation(
             @NonNull StringeeClient client, @NonNull String convId,
             @NonNull final CallbackListener<Conversation> callbackListener
@@ -646,6 +673,7 @@ public class Utils {
         );
     }
 
+    /** Resolves one of the requested messages and returns it through {@code callbackListener}. */
     public static void getMessage(
             @NonNull final StringeeClient client, @NonNull String convId,
             @NonNull final String[] msgId, @NonNull final CallbackListener<Message> callbackListener
@@ -686,6 +714,7 @@ public class Utils {
         );
     }
 
+    /** Resolves a pending chat request for a conversation. */
     public static void getChatRequest(
             @NonNull final StringeeClient client,
             @NonNull final String convId,

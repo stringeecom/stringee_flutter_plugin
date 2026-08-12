@@ -5,6 +5,11 @@ import 'dart:io';
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// A first-generation Stringee voice or video call.
+///
+/// Create an instance for an outgoing call, or use [StringeeCall.fromCallInfo]
+/// with data received from [StringeeClient]. Call [destroy] when the object is
+/// no longer needed to release its event subscription.
 class StringeeCall {
   String? _id;
   int? _serial;
@@ -19,31 +24,43 @@ class StringeeCall {
   late StreamSubscription<dynamic> _subscriber;
   late StringeeClient _client;
 
+  /// The server-assigned call ID.
   String? get id => _id;
 
+  /// The call serial number supplied by the native SDK.
   int? get serial => _serial;
 
+  /// The caller identifier.
   String? get from => _from;
 
+  /// The callee identifier.
   String? get to => _to;
 
+  /// The display alias of the caller.
   String? get fromAlias => _fromAlias;
 
+  /// The display alias of the callee.
   String? get toAlias => _toAlias;
 
+  /// Whether this call negotiates video.
   bool get isVideoCall => _isVideoCall;
 
+  /// The direction and endpoint type of the call.
   StringeeCallType? get callType => _callType;
 
+  /// Custom call data returned by the application server.
   String? get customDataFromYourServer => _customDataFromYourServer;
 
+  /// Emits [StringeeCallEvents] for this call.
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
+  /// Creates an empty outgoing call associated with [client].
   StringeeCall(StringeeClient client) {
     _client = client;
     _subscriber = client.eventStreamController.stream.listen(this._listener);
   }
 
+  /// Creates a call from native [info], typically for an incoming call.
   StringeeCall.fromCallInfo(
       Map<dynamic, dynamic>? info, StringeeClient client) {
     this.initCallInfo(info);
@@ -51,6 +68,7 @@ class StringeeCall {
     _subscriber = client.eventStreamController.stream.listen(this._listener);
   }
 
+  /// Updates this object's metadata from a native call-info payload.
   void initCallInfo(Map<dynamic, dynamic>? callInfo) {
     if (callInfo == null) {
       return;
@@ -102,6 +120,7 @@ class StringeeCall {
     }
   }
 
+  /// Converts a native signaling-state payload into a Dart call event.
   void handleDidChangeSignalingState(Map<dynamic, dynamic> map) {
     String? callId = StringeeValueParser.toStringValue(map['callId']);
     if (callId != this._id) return;
@@ -117,6 +136,7 @@ class StringeeCall {
     });
   }
 
+  /// Converts a native media-state payload into a Dart call event.
   void handleDidChangeMediaState(Map<dynamic, dynamic> map) {
     String? callId = StringeeValueParser.toStringValue(map['callId']);
     if (callId != this._id) return;
@@ -132,6 +152,7 @@ class StringeeCall {
     });
   }
 
+  /// Forwards a native custom call-info payload to listeners.
   void handleDidReceiveCallInfo(Map<dynamic, dynamic> map) {
     String? callId = StringeeValueParser.toStringValue(map['callId']);
     if (callId != this._id) return;
@@ -141,6 +162,7 @@ class StringeeCall {
         {"eventType": StringeeCallEvents.didReceiveCallInfo, "body": data});
   }
 
+  /// Reports that this call was handled by another signed-in device.
   void handleDidHandleOnAnotherDevice(Map<dynamic, dynamic> map) {
     StringeeSignalingState signalingState = StringeeValueParser.enumValue(
       StringeeSignalingState.values,
@@ -153,6 +175,7 @@ class StringeeCall {
     });
   }
 
+  /// Reports that the local video stream is ready to render.
   void handleDidReceiveLocalStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didReceiveLocalStream,
@@ -160,6 +183,7 @@ class StringeeCall {
     });
   }
 
+  /// Reports that the remote video stream is ready to render.
   void handleDidReceiveRemoteStream(Map<dynamic, dynamic> map) {
     _eventStreamController.add({
       "eventType": StringeeCallEvents.didReceiveRemoteStream,

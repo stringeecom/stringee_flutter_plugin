@@ -7,6 +7,7 @@ import com.stringee.video.StringeeScreenCapture;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
+/** Coordinates Android screen-capture permission results with Stringee screen capture. */
 @SuppressLint("NewApi")
 public class ScreenCaptureManager {
 
@@ -25,6 +26,7 @@ public class ScreenCaptureManager {
         screenCapture = new StringeeScreenCapture(binding.getActivity());
     }
 
+    /** Returns the singleton associated with the current Flutter activity binding. */
     public static ScreenCaptureManager getInstance(ActivityPluginBinding binding) {
         if (instance == null) {
             instance = new ScreenCaptureManager(binding);
@@ -32,10 +34,12 @@ public class ScreenCaptureManager {
         return instance;
     }
 
+    /** Sets the listener that receives the next screen-capture permission result. */
     public void getActivityResult(ActivityResultListener listener) {
         this.listener = listener;
     }
 
+    /** Returns the native Stringee screen-capture source. */
     public StringeeScreenCapture getScreenCapture() {
         return screenCapture;
     }

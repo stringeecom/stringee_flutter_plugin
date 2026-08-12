@@ -11,20 +11,24 @@ import 'package:stringee_flutter_plugin_example/tab/conference_tab.dart';
 import 'tab/live_chat_tab.dart';
 
 void main() {
-  runApp(new MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return const MaterialApp(
         debugShowCheckedModeBanner: false,
         title: "Stringee flutter sample",
-        home: new MyHomePage());
+        home: MyHomePage());
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _MyHomePageState();
@@ -33,11 +37,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  List<Widget> _children = [
-    CallTab(),
-    ChatTab(),
-    LiveChatTab(),
-    ConferenceTab(),
+  final List<Widget> _children = [
+    const CallTab(),
+    const ChatTab(),
+    const LiveChatTab(),
+    const ConferenceTab(),
   ];
 
   @override
@@ -74,8 +78,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text("Stringee flutter sample"),
+      appBar: AppBar(
+        title: const Text("Stringee flutter sample"),
         backgroundColor: Colors.indigo[600],
       ),
       body: IndexedStack(
@@ -90,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _currentIndex = index;
             });
           },
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.call),
               label: 'Call',

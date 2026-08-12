@@ -6,8 +6,6 @@
 - Upgrade Stringee Android SDK to 2.1.12
 - Upgrade Android WebRTC SDK to 144.7559.09
 - Compile the Android plugin with Android API 36
-- Update the example app and its widget test
-- Refresh the pub.dev package metadata
 
 ## 1.3.1
 
@@ -58,8 +56,25 @@
   - Upgrade android native sdk and ios native sdk
 - Bugfix:
   - Return null value when calling disconnect function
-  - Connectivity doesn't establish with DualSIM iPhones.
-  - Crash on checking exist call progress
+
+## 1.2.11
+
+- Add iOS Call2 video-track events and rendering support
+- Fix conversation user parsing on Android
+- Upgrade the Android SDK to 2.1.1 and the iOS SDK to 1.9.20
+
+## 1.2.10
+
+- Fix conversation user role serialization
+- Disable unsupported screen-capture track creation
+
+## 1.2.9
+
+- Fix connectivity on Dual-SIM iPhones
+
+## 1.2.8
+
+- Fix a crash when checking whether a call exists
 
 ## 1.2.7
 

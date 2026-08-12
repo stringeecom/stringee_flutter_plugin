@@ -13,11 +13,13 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/** Handles Flutter requests that accept or reject native live-chat requests. */
 public class ChatRequestManager {
 
     private final ClientWrapper clientWrapper;
     private static final String TAG = "StringeeSDK";
 
+    /** Creates a manager bound to {@code clientWrapper}. */
     public ChatRequestManager(ClientWrapper clientWrapper) {
         this.clientWrapper = clientWrapper;
     }

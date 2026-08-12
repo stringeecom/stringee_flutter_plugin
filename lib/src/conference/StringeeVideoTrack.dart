@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// A local or remote media track in a [StringeeVideoRoom].
 class StringeeVideoTrack {
   late String _id;
   late String _localId;
@@ -13,18 +14,25 @@ class StringeeVideoTrack {
   late bool _isLocal;
   late final StringeeClient _client;
 
+  /// Server-assigned track ID.
   String get id => _id;
 
+  /// Local track ID used before or while publishing.
   String get localId => _localId;
 
+  /// User who publishes this track.
   StringeeRoomUser get publisher => _publisher;
 
+  /// Whether audio is enabled for the track.
   bool get audioEnable => _audioEnable;
 
+  /// Whether video is enabled for the track.
   bool get videoEnable => _videoEnable;
 
+  /// Whether this track captures a screen instead of a camera.
   bool get isScreenCapture => _isScreenCapture;
 
+  /// Whether this track originates on the current device.
   bool get isLocal => _isLocal;
 
   @override
@@ -32,6 +40,7 @@ class StringeeVideoTrack {
     return '{id: $_id, publisher: $_publisher, audioEnable: $_audioEnable, videoEnable: $_videoEnable, isScreenCapture: $_isScreenCapture, isLocal: $_isLocal}';
   }
 
+  /// Creates a track from native [info].
   StringeeVideoTrack(
     StringeeClient client,
     Map<dynamic, dynamic> info,
@@ -48,6 +57,7 @@ class StringeeVideoTrack {
     );
   }
 
+  /// Returns immutable metadata suitable for subscribe/unsubscribe APIs.
   StringeeVideoTrackInfo getInfo() {
     StringeeVideoTrackInfo info = StringeeVideoTrackInfo.fromTrack(this);
     return info;
