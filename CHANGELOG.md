@@ -1,15 +1,13 @@
 
 # Changelog
 
-## 1.3.2
-
-- Upgrade Stringee Android SDK to 2.1.12
-- Upgrade Android WebRTC SDK to 144.7559.09
-- Compile the Android plugin with Android API 36
-
 ## 1.3.1
 
-- Use the release build of Stringee Android SDK 2.1.11
+- Upgrade Stringee Android SDK to 2.1.13
+- Upgrade Android WebRTC SDK to 144.7559.09
+- Compile the Android plugin with Android API 36
+- Add support for checking whether a call exists
+- Improve Flutter payload parsing for native SDK responses
 
 ## 1.3.0
 

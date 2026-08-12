@@ -50,8 +50,8 @@ tasks.withType(JavaCompile).configureEach {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
     implementation 'androidx.annotation:annotation:1.9.1'
-    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.12'
-//    implementation 'com.stringee.sdk.android:stringee-android-sdk-dev:2.1.12'
+    implementation 'com.stringee.sdk.android:stringee-android-sdk:2.1.13'
+//    implementation 'com.stringee.sdk.android:stringee-android-sdk-dev:2.1.13'
     implementation 'io.github.webrtc-sdk:android:144.7559.09'
     implementation 'com.android.volley:volley:1.2.1'
 }
