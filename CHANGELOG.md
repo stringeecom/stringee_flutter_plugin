@@ -1,7 +1,7 @@
 
 # Changelog
 
-## 1.3.2 (unreleased)
+## 1.3.2
 
 - Prevent Android video views from crashing when a call renderer is temporarily unavailable
 - Preserve pending video render options so Call and Call2 streams can attach after track changes
