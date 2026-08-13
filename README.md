@@ -93,6 +93,51 @@ final result = await call.makeCallFromParams(
 );
 ```
 
+### Video rendering
+
+Use `StringeeVideoView` for Call or Call2 video. The first argument is the call ID; set `isLocal`
+to `true` for the local camera and `false` for the remote stream:
+
+```dart
+Stack(
+  children: [
+    StringeeVideoView(
+      call.id!,
+      false,
+      scalingType: ScalingType.fill,
+    ),
+    Positioned(
+      right: 16,
+      top: 16,
+      width: 120,
+      height: 160,
+      child: StringeeVideoView(
+        call.id!,
+        true,
+        isMirror: true,
+        scalingType: ScalingType.fit,
+      ),
+    ),
+  ],
+)
+```
+
+On Android, the widget may be created before the native local or remote renderer is ready. The
+plugin keeps the requested mirror and scaling options, then attaches the renderer when the stream
+becomes available. A native renderer can belong to only one Android view, so rebuilding it at a new
+location moves it from the previous container. Removing the Flutter widget clears its pending
+attachment safely.
+
+For video conference tracks, use `track.attach(...)`, which returns a `StringeeVideoView` bound to
+that track:
+
+```dart
+final remoteView = track.attach(
+  scalingType: ScalingType.fit,
+  isMirror: false,
+);
+```
+
 Release object-level subscriptions when they are no longer needed:
 
 ```dart

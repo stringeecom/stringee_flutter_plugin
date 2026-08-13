@@ -760,16 +760,14 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                         ScalingType scalingType = (ScalingType) localViewOptions.get("scalingType");
                         if (localView != null) {
                             localView.removeAllViews();
-                            if (getLocalView().getParent() != null) {
-                                ((FrameLayout) getLocalView().getParent()).removeView(
-                                        getLocalView());
-                            }
                             LayoutParams layoutParams = new LayoutParams(
                                     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                             layoutParams.gravity = Gravity.CENTER;
-                            localView.addView(getLocalView(), layoutParams);
-                            renderLocalView(scalingType);
-                            getLocalView().setMirror(isMirror);
+                            TextureViewRenderer renderer = getLocalView();
+                            if (Utils.attachVideoRenderer(localView, renderer, layoutParams)) {
+                                renderLocalView(scalingType);
+                                renderer.setMirror(isMirror);
+                            }
                         }
                     }
 
@@ -807,15 +805,14 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
                     ScalingType scalingType = (ScalingType) remoteViewOptions.get("scalingType");
                     if (remoteView != null) {
                         remoteView.removeAllViews();
-                        if (getRemoteView().getParent() != null) {
-                            ((FrameLayout) getRemoteView().getParent()).removeView(getRemoteView());
-                        }
                         LayoutParams layoutParams = new LayoutParams(
                                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
                         layoutParams.gravity = Gravity.CENTER;
-                        remoteView.addView(getRemoteView(), layoutParams);
-                        renderRemoteView(scalingType);
-                        getRemoteView().setMirror(isMirror);
+                        TextureViewRenderer renderer = getRemoteView();
+                        if (Utils.attachVideoRenderer(remoteView, renderer, layoutParams)) {
+                            renderRemoteView(scalingType);
+                            renderer.setMirror(isMirror);
+                        }
                     }
                 }
             }

@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +25,7 @@ import com.stringee.messaging.listeners.CallbackListener;
 import com.stringee.video.RemoteParticipant;
 import com.stringee.video.StringeeRoom;
 import com.stringee.video.StringeeVideoTrack;
+import com.stringee.video.TextureViewRenderer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +55,41 @@ public class Utils {
     public static void post(Runnable runnable, long delayMillis) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(runnable, delayMillis);
+    }
+
+    /**
+     * Moves a native video renderer into {@code layout} when the SDK has made it available.
+     *
+     * <p>The Stringee SDK may return {@code null} while a remote track is being replaced. That
+     * state is expected and must not crash the Flutter platform view. A renderer already attached
+     * to another Android {@link ViewGroup} is detached before it is added to the destination, since
+     * an Android view can have only one parent.</p>
+     *
+     * @param layout destination Flutter platform-view container
+     * @param renderer native Stringee renderer, or {@code null} while media is unavailable
+     * @param layoutParams layout parameters used when attaching the renderer
+     * @return {@code true} when the renderer was attached; {@code false} when it was unavailable or
+     * could not be safely detached from its existing parent
+     */
+    public static boolean attachVideoRenderer(
+            @NonNull FrameLayout layout,
+            @Nullable TextureViewRenderer renderer,
+            @NonNull FrameLayout.LayoutParams layoutParams
+    ) {
+        if (renderer == null) {
+            return false;
+        }
+
+        ViewParent parent = renderer.getParent();
+        if (parent instanceof ViewGroup) {
+            ((ViewGroup) parent).removeView(renderer);
+        } else if (parent != null) {
+            Log.w(TAG, "Unable to detach video renderer from its current parent");
+            return false;
+        }
+
+        layout.addView(renderer, layoutParams);
+        return true;
     }
 
     /** Returns whether {@code object} is null or an empty supported collection or string. */
