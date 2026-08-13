@@ -15,6 +15,13 @@ example/android/app/release/
 .idea/
 .vscode/
 
+# Ignore local Android configuration and signing credentials
+**/local.properties
+**/key.properties
+**/*.jks
+**/*.keystore
+**/MyKeyStore
+
 # Ignore macOS specific files
 .DS_Store
 
@@ -25,4 +32,4 @@ Flutter.podspec
 Podfile
 
 # Ignore module files
-stringee_flutter_plugin.iml
+*.iml
