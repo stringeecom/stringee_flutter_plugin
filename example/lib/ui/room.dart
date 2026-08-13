@@ -6,13 +6,12 @@ import 'package:stringee_flutter_plugin_example/button/rounded_button.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
 
 class Room extends StatefulWidget {
-  late StringeeVideo _video;
-  late String _roomToken;
+  final StringeeVideo _video;
+  final String _roomToken;
 
-  Room(StringeeClient client, String roomToken) {
-    _video = StringeeVideo(client);
-    this._roomToken = roomToken;
-  }
+  Room(StringeeClient client, this._roomToken, {Key? key})
+      : _video = StringeeVideo(client),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -25,8 +24,8 @@ class RoomState extends State<Room> {
   late StringeeVideoRoom? _room;
   late StringeeVideoTrack _localTrack;
   late StringeeVideoView _localTrackView;
-  List<StringeeVideoView> _remoteTrackViews = [];
-  Map<String, StringeeVideoTrack> _remoteTracks = {};
+  final List<StringeeVideoView> _remoteTrackViews = [];
+  final Map<String, StringeeVideoTrack> _remoteTracks = {};
 
   bool _hasLocalView = false;
   bool _isMute = false;
@@ -53,21 +52,21 @@ class RoomState extends State<Room> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _localView = (_hasLocalView)
+    Widget localView = (_hasLocalView)
         ? _localTrackView
-        : Placeholder(
+        : const Placeholder(
             color: Colors.transparent,
           );
 
-    Container _bottomContainer = new Container(
-      padding: EdgeInsets.only(bottom: 30.0),
+    Container bottomContainer = Container(
+      padding: const EdgeInsets.only(bottom: 30.0),
       alignment: Alignment.bottomCenter,
-      child: new Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           CircleButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.switch_camera,
                 color: Colors.white,
                 size: 28,
@@ -76,12 +75,12 @@ class RoomState extends State<Room> {
               onPressed: toggleSwitchCamera),
           CircleButton(
               icon: _isMute
-                  ? Icon(
+                  ? const Icon(
                       Icons.mic,
                       color: Colors.black,
                       size: 28,
                     )
-                  : Icon(
+                  : const Icon(
                       Icons.mic_off,
                       color: Colors.white,
                       size: 28,
@@ -90,12 +89,12 @@ class RoomState extends State<Room> {
               onPressed: toggleMicro),
           CircleButton(
               icon: _isVideoEnable
-                  ? Icon(
+                  ? const Icon(
                       Icons.videocam_off,
                       color: Colors.white,
                       size: 28,
                     )
-                  : Icon(
+                  : const Icon(
                       Icons.videocam,
                       color: Colors.black,
                       size: 28,
@@ -106,15 +105,15 @@ class RoomState extends State<Room> {
       ),
     );
 
-    Widget _btnLeaveRoom = Align(
+    Widget btnLeaveRoom = Align(
       alignment: Alignment.topRight,
       child: Container(
-        margin: EdgeInsets.only(
+        margin: const EdgeInsets.only(
           top: 40.0,
           right: 20.0,
         ),
         child: RoundedButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.call_end,
               color: Colors.white,
               size: 28,
@@ -125,11 +124,11 @@ class RoomState extends State<Room> {
       ),
     );
 
-    Widget _participantView = Align(
+    Widget participantView = Align(
       alignment: Alignment.bottomCenter,
       child: Container(
         height: 200.0,
-        margin: EdgeInsets.only(bottom: 100.0),
+        margin: const EdgeInsets.only(bottom: 100.0),
         child: FlatList(
           data: _remoteTrackViews,
           horizontal: true,
@@ -140,27 +139,28 @@ class RoomState extends State<Room> {
       ),
     );
     return WillPopScope(
-        child: Scaffold(
-          body: Stack(
-            children: [
-              _localView,
-              _participantView,
-              _btnLeaveRoom,
-              _bottomContainer,
-            ],
-          ),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            localView,
+            participantView,
+            btnLeaveRoom,
+            bottomContainer,
+          ],
         ),
-        onWillPop: () {
-          leaveRoomTapped();
-          return Future.value(false);
-        });
+      ),
+      onWillPop: () {
+        leaveRoomTapped();
+        return Future.value(false);
+      },
+    );
   }
 
   void initRoom(List<StringeeVideoTrackInfo> videoTrackInfos,
       List<StringeeRoomUser> userList) {
     _room!.eventStreamController.stream.listen((event) {
       Map<dynamic, dynamic> map = event;
-      print("Room " + map.toString());
+      print("Room $map");
       switch (map['eventType']) {
         case StringeeRoomEvents.didJoinRoom:
           handleJoinRoomEvent(map['body']);
@@ -202,8 +202,8 @@ class RoomState extends State<Room> {
       }
     });
 
-    if (videoTrackInfos.length > 0) {
-      videoTrackInfos.forEach((trackInfo) {
+    if (videoTrackInfos.isNotEmpty) {
+      for (var trackInfo in videoTrackInfos) {
         StringeeVideoTrackOption options = StringeeVideoTrackOption(
           audio: trackInfo.audioEnable,
           video: trackInfo.videoEnable,
@@ -217,7 +217,7 @@ class RoomState extends State<Room> {
             });
           }
         });
-      });
+      }
     }
   }
 
@@ -249,7 +249,7 @@ class RoomState extends State<Room> {
       _remoteTracks.remove(trackInfo.id);
     });
     for (int i = 0; i < _remoteTrackViews.length; i++) {
-      if (_remoteTrackViews[i].trackId! == trackInfo.id) print("remove - ${i}");
+      if (_remoteTrackViews[i].trackId! == trackInfo.id) print("remove - $i");
       setState(() {
         _remoteTrackViews.removeAt(i);
       });
@@ -297,7 +297,7 @@ class RoomState extends State<Room> {
   }
 
   void createForegroundServiceNotification() {
-    flutterLocalNotificationsPlugin.initialize(InitializationSettings(
+    flutterLocalNotificationsPlugin.initialize(const InitializationSettings(
       android: AndroidInitializationSettings('ic_launcher'),
     ));
 
@@ -308,7 +308,7 @@ class RoomState extends State<Room> {
           1,
           'Screen capture',
           'Capturing',
-          notificationDetails: AndroidNotificationDetails(
+          notificationDetails: const AndroidNotificationDetails(
             'Test id',
             'Test name',
             channelDescription: 'Test description',

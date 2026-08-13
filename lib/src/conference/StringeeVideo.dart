@@ -1,9 +1,11 @@
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// Entry point for Stringee video-conference operations.
 class StringeeVideo {
   late StringeeClient _client;
 
+  /// Creates a conferencing API bound to [client].
   StringeeVideo(StringeeClient client) {
     _client = client;
   }

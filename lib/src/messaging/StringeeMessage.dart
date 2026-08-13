@@ -1,6 +1,10 @@
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// A Stringee chat message.
+///
+/// Use one of the `type...` constructors to create an outgoing message. Message
+/// fields that do not apply to its [type] are `null`.
 class StringeeMessage {
   // Base fields.
   String? _id;
@@ -51,6 +55,7 @@ class StringeeMessage {
         ' stickerName: $stickerName, customData: $customData, notiContent: $notiContent}';
   }
 
+  /// Creates a text message.
   StringeeMessage.typeText(
     StringeeClient client,
     String text, {
@@ -64,6 +69,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates a photo message from a local [filePath].
   StringeeMessage.typePhoto(
     StringeeClient client,
     String filePath, {
@@ -86,6 +92,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates a video message from a local [filePath] and [duration].
   StringeeMessage.typeVideo(
     StringeeClient client,
     String filePath,
@@ -111,6 +118,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates an audio message from a local [filePath] and [duration].
   StringeeMessage.typeAudio(
     StringeeClient client,
     String filePath,
@@ -128,6 +136,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates a file attachment message from a local [filePath].
   StringeeMessage.typeFile(
     StringeeClient client,
     String filePath, {
@@ -151,6 +160,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates a link message containing [text].
   StringeeMessage.typeLink(
     StringeeClient client,
     String text, {
@@ -165,6 +175,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates a geographic location message.
   StringeeMessage.typeLocation(
     StringeeClient client,
     double latitude,
@@ -182,6 +193,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates a contact message containing a [vcard].
   StringeeMessage.typeContact(
     StringeeClient client,
     String vcard, {
@@ -196,6 +208,7 @@ class StringeeMessage {
     }
   }
 
+  /// Creates a sticker message.
   StringeeMessage.typeSticker(
     StringeeClient client,
     String stickerCategory,
@@ -213,52 +226,76 @@ class StringeeMessage {
     }
   }
 
+  /// Application-specific metadata attached to the message.
   Map<dynamic, dynamic>? get customData => _customData;
 
+  /// Parsed content for notification messages.
   Map<dynamic, dynamic>? get notiContent => _notiContent;
 
+  /// Sticker name for [MsgType.sticker].
   String? get stickerName => _stickerName;
 
+  /// Sticker category for [MsgType.sticker].
   String? get stickerCategory => _stickerCategory;
 
+  /// Media aspect ratio.
   double? get ratio => _ratio;
 
+  /// Audio or video duration in seconds.
   double? get duration => _duration;
 
+  /// File size in bytes.
   int? get fileLength => _fileLength;
 
+  /// Original attachment filename.
   String? get fileName => _fileName;
 
+  /// Remote URL of an uploaded attachment.
   String? get fileUrl => _fileUrl;
 
+  /// Local attachment path used for upload.
   String? get filePath => _filePath;
 
+  /// Longitude for [MsgType.location].
   double? get longitude => _longitude;
 
+  /// Latitude for [MsgType.location].
   double? get latitude => _latitude;
 
+  /// Thumbnail data or URL for photo and video messages.
   String? get thumbnail => _thumbnail;
 
+  /// Text content for text and link messages.
   String? get text => _text;
 
+  /// Message content type.
   MsgType? get type => _type;
 
+  /// Current delivery state.
   MsgState? get state => _state;
 
+  /// Server ordering sequence within the conversation.
   int? get sequence => _sequence;
 
+  /// Creation time in milliseconds since Unix epoch.
   int? get createdAt => _createdAt;
 
+  /// ID of the user who sent the message.
   String? get senderId => _senderId;
 
+  /// ID of the containing conversation.
   String? get convId => _convId;
 
+  /// Server-assigned message ID.
   String? get id => _id;
 
+  /// Client-generated message ID.
   String? get localId => _localId;
 
+  /// Contact card for [MsgType.contact].
   String? get vcard => _vcard;
 
+  /// Assigns this message to a conversation before sending.
   set convId(String? value) {
     _convId = value;
   }
@@ -291,6 +328,7 @@ class StringeeMessage {
     return StringeeUser(userId: userId);
   }
 
+  /// Creates a message from a native [msgInfor] payload.
   StringeeMessage.fromJson(
       Map<dynamic, dynamic> msgInfor, StringeeClient client) {
     _client = client;
@@ -433,6 +471,7 @@ class StringeeMessage {
     this._text = text;
   }
 
+  /// Creates the compact last-message representation stored on a conversation.
   StringeeMessage.lstMsg(
       String? msgId,
       String? convId,
@@ -584,6 +623,7 @@ class StringeeMessage {
     this._text = text;
   }
 
+  /// Converts this outgoing message to a platform-channel payload.
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
     params['convId'] = _convId!.trim();

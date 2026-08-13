@@ -10,6 +10,9 @@ import com.stringee.video.StringeeVideoTrack.MediaState;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Tracks native media availability and converts a {@link StringeeVideoTrack} to Flutter events.
+ */
 public class VideoTrackManager implements Listener {
 
     private final ClientWrapper clientWrapper;
@@ -20,6 +23,7 @@ public class VideoTrackManager implements Listener {
     private Listener listener;
     private static final String TAG = "StringeeSDK";
 
+    /** Creates a manager for {@code videoTrack}. */
     public VideoTrackManager(
             ClientWrapper clientWrapper, StringeeVideoTrack videoTrack, String localId,
             boolean forCall
@@ -34,6 +38,7 @@ public class VideoTrackManager implements Listener {
         }
     }
 
+    /** Sets a renderer listener and immediately reports already-available media. */
     public void setListener(Listener listener) {
         this.listener = listener;
         if (mediaAvailable) {
@@ -43,14 +48,17 @@ public class VideoTrackManager implements Listener {
         }
     }
 
+    /** Returns the managed native track. */
     public StringeeVideoTrack getVideoTrack() {
         return videoTrack;
     }
 
+    /** Returns the local identifier assigned before publishing the track. */
     public String getLocalId() {
         return localId;
     }
 
+    /** Returns this manager for use inside callback closures. */
     public VideoTrackManager getThis() {
         return this;
     }

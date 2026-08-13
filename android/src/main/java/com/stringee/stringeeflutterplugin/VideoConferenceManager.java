@@ -18,6 +18,7 @@ import java.util.Random;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/** Coordinates native Stringee video rooms and local or remote track operations for one client. */
 public class VideoConferenceManager {
 
     private final ClientWrapper clientWrapper;
@@ -25,10 +26,12 @@ public class VideoConferenceManager {
 
     private static final String TAG = "StringeeSDK";
 
+    /** Creates a conference manager bound to {@code clientWrapper}. */
     public VideoConferenceManager(ClientWrapper clientWrapper) {
         this.clientWrapper = clientWrapper;
     }
 
+    /** Returns active room bridges keyed by native room ID. */
     public Map<String, RoomManager> getRoomsMap() {
         return roomsMap;
     }

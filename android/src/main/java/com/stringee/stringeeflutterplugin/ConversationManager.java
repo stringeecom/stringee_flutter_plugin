@@ -18,12 +18,16 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/**
+ * Bridges conversation, participant, history, typing, and live-chat operations to Flutter.
+ */
 public class ConversationManager {
 
     private final ClientWrapper clientWrapper;
 
     private static final String TAG = "StringeeSDK";
 
+    /** Creates a manager bound to {@code clientWrapper}. */
     public ConversationManager(ClientWrapper clientWrapper) {
         this.clientWrapper = clientWrapper;
     }

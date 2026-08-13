@@ -23,6 +23,12 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/**
+ * Bridges a native {@link StringeeCall} to Flutter method results and event-channel payloads.
+ *
+ * <p>The wrapper owns call listener registration, renderer attachment, and conversion of native
+ * call state into the maps consumed by the Dart {@code StringeeCall} API.</p>
+ */
 public class CallWrapper implements StringeeCall.StringeeCallListener {
 
     private final ClientWrapper clientWrapper;
@@ -36,12 +42,14 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
 
     private static final String TAG = "StringeeSDK";
 
+    /** Creates a wrapper for an incoming {@code call}. */
     public CallWrapper(ClientWrapper clientWrapper, StringeeCall call) {
         this.clientWrapper = clientWrapper;
         this.call = call;
         this.isIncomingCall = true;
     }
 
+    /** Creates a wrapper for an outgoing {@code call} and its pending Flutter {@code result}. */
     public CallWrapper(ClientWrapper client, StringeeCall call, Result result) {
         this.clientWrapper = client;
         this.call = call;
@@ -49,6 +57,7 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         this.isIncomingCall = false;
     }
 
+    /** Resets transient media state and registers the native call listener. */
     public void prepareCall() {
         mediaState = null;
         hasRemoteStream = false;
@@ -569,18 +578,22 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
         result.success(map);
     }
 
+    /** Returns the local native video renderer, or {@code null} until media is available. */
     public TextureViewRenderer getLocalView() {
         return call.getLocalView2();
     }
 
+    /** Returns the remote native video renderer, or {@code null} until media is available. */
     public TextureViewRenderer getRemoteView() {
         return call.getRemoteView2();
     }
 
+    /** Attaches the local renderer using {@code scalingType}. */
     public void renderLocalView(ScalingType scalingType) {
         call.renderLocalView2(scalingType);
     }
 
+    /** Attaches the remote renderer using {@code scalingType}. */
     public void renderRemoteView(ScalingType scalingType) {
         call.renderRemoteView2(scalingType);
     }

@@ -21,6 +21,9 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/**
+ * Flutter channel adapter for {@link StringeeAudioManager} audio-route operations and events.
+ */
 public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChannel.StreamHandler, StringeeAudioManager.AudioManagerEvents {
 
     private static volatile StringeeAudioManagerPlugin instance;
@@ -32,6 +35,7 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
     private StringeeAudioManager audioManager;
     private static final String TAG = "StringeeSDK";
 
+    /** Creates the singleton audio bridge. Use {@link #getInstance()} for normal access. */
     public StringeeAudioManagerPlugin() {
     }
 
@@ -39,6 +43,7 @@ public class StringeeAudioManagerPlugin implements MethodCallHandler, EventChann
         getInstance().setContext(context.getApplicationContext());
     }
 
+    /** Returns the initialized audio bridge singleton. */
     public static StringeeAudioManagerPlugin getInstance() {
         if (instance == null) {
             synchronized (StringeeAudioManagerPlugin.class) {

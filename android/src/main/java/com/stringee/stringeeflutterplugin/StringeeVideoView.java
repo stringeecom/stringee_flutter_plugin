@@ -21,6 +21,7 @@ import java.util.Map;
 
 import io.flutter.plugin.platform.PlatformView;
 
+/** Android platform view that attaches a native Stringee call or conference video renderer. */
 public class StringeeVideoView implements PlatformView {
 
     private FrameLayout frameLayout;

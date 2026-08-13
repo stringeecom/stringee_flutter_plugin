@@ -12,12 +12,14 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/** Bridges message edit and pin operations from Flutter to the native Stringee SDK. */
 public class MessageManager {
 
     private final ClientWrapper clientWrapper;
 
     private static final String TAG = "StringeeSDK";
 
+    /** Creates a manager bound to {@code clientWrapper}. */
     public MessageManager(ClientWrapper clientWrapper) {
         this.clientWrapper = clientWrapper;
     }

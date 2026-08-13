@@ -10,8 +10,10 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
+/** Creates {@link StringeeVideoView} instances from Flutter creation parameters. */
 public class StringeeVideoViewFactory extends PlatformViewFactory {
 
+    /** Creates a factory that decodes creation arguments with {@link StandardMessageCodec}. */
     public StringeeVideoViewFactory() {
         super(StandardMessageCodec.INSTANCE);
     }

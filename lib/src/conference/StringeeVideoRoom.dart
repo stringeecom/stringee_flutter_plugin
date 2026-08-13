@@ -3,6 +3,10 @@ import 'dart:async';
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// An active Stringee video-conference room.
+///
+/// Listen to [eventStreamController] for [StringeeRoomEvents] and call
+/// [destroy] after leaving the room.
 class StringeeVideoRoom {
   late String _id;
   late bool _recorded;
@@ -10,12 +14,16 @@ class StringeeVideoRoom {
   StreamController<dynamic> _eventStreamController = StreamController();
   late StreamSubscription<dynamic> _subscriber;
 
+  /// The server-assigned room ID.
   String get id => _id;
 
+  /// Whether the room is configured for recording.
   bool get recorded => _recorded;
 
+  /// Emits events for participants, tracks, and room messages.
   StreamController<dynamic> get eventStreamController => _eventStreamController;
 
+  /// Creates a room from native [info] and subscribes to [client] events.
   StringeeVideoRoom(StringeeClient client, Map<dynamic, dynamic> info) {
     this._client = client;
     this._id = StringeeValueParser.toStringValue(info['id']) ?? '';
@@ -54,6 +62,7 @@ class StringeeVideoRoom {
     }
   }
 
+  /// Converts a native participant-joined payload into a room event.
   void handleDidJoinRoom(Map<dynamic, dynamic> map) {
     String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
@@ -64,6 +73,7 @@ class StringeeVideoRoom {
     });
   }
 
+  /// Converts a native participant-left payload into a room event.
   void handleDidLeaveRoom(Map<dynamic, dynamic> map) {
     String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
@@ -74,6 +84,7 @@ class StringeeVideoRoom {
     });
   }
 
+  /// Converts a native track-added payload into a room event.
   void handleDidAddVideoTrack(Map<dynamic, dynamic> map) {
     String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
@@ -86,6 +97,7 @@ class StringeeVideoRoom {
     });
   }
 
+  /// Converts a native track-removed payload into a room event.
   void handleDidRemoveVideoTrack(Map<dynamic, dynamic> map) {
     String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
@@ -98,6 +110,7 @@ class StringeeVideoRoom {
     });
   }
 
+  /// Converts a native data-message payload into a room event.
   void handleDidReceiveRoomMessage(Map<dynamic, dynamic> map) {
     String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != this._id) return;
@@ -111,6 +124,7 @@ class StringeeVideoRoom {
     });
   }
 
+  /// Reports that a subscribed track is ready to render.
   void handleTrackReadyToPlay(Map<dynamic, dynamic> map) {
     String? roomId = StringeeValueParser.toStringValue(map['roomId']);
     if (roomId != null && roomId != this._id) return;

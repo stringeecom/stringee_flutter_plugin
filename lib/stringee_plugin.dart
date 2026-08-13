@@ -1,3 +1,6 @@
+/// Flutter bindings for Stringee voice, video, chat, and conferencing APIs.
+library stringee_plugin;
+
 export 'src/StringeeClient.dart';
 export 'src/StringeeVideoView.dart';
 

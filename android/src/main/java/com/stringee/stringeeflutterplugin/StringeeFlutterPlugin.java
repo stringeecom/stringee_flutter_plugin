@@ -34,12 +34,21 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/**
+ * Android entry point for the Stringee Flutter plugin.
+ *
+ * <p>Registers method channels, event channels, the audio bridge, and the native video platform
+ * view. Method calls are routed to the client-scoped wrapper selected by the Dart UUID.</p>
+ */
 @SuppressLint("NewApi")
 @SuppressWarnings("unchecked")
 public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.StreamHandler, FlutterPlugin, ActivityAware {
 
+    /** Event sink shared by native wrappers while a Dart listener is attached. */
     public static EventSink eventSink;
     private static final String TAG = "StringeeSDK";
+
+    /** Application context supplied by the Flutter engine. */
     public Context context;
 
     @Override

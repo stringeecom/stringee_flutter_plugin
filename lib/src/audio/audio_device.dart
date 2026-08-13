@@ -1,11 +1,13 @@
 import '../../stringee_plugin.dart';
 import '../helper/value_parser.dart';
 
+/// An audio route reported by the native Stringee audio manager.
 class AudioDevice {
   late String? _uuid;
   late String? _name;
   late AudioType _audioType;
 
+  /// Creates an audio route with its [audioType], display [name], and [uuid].
   AudioDevice({
     required AudioType? audioType,
     String? uuid,
@@ -16,12 +18,16 @@ class AudioDevice {
     this._name = name;
   }
 
+  /// The route category.
   AudioType get audioType => _audioType;
 
+  /// Human-readable route name when supplied by the platform.
   String? get name => _name;
 
+  /// Native identifier used when selecting this route.
   String? get uuid => _uuid;
 
+  /// Converts this route to a platform-channel payload.
   Map<String, dynamic> toJson() {
     return {
       'type': _audioType.index,
@@ -30,6 +36,7 @@ class AudioDevice {
     };
   }
 
+  /// Parses an audio route from a native [json] payload.
   static fromJson(dynamic json) {
     final map = StringeeValueParser.toMap(json) ?? {};
     AudioType audioType = AudioTypeX.fromValue(

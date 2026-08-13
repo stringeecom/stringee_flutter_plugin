@@ -18,9 +18,9 @@ class CircleButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(15.0),
         backgroundColor: primary,
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
       ),
       child: icon,
     );

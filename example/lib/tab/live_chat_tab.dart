@@ -3,6 +3,8 @@ import 'package:stringee_flutter_plugin_example/ui/agent.dart';
 import 'package:stringee_flutter_plugin_example/ui/visitor.dart';
 
 class LiveChatTab extends StatefulWidget {
+  const LiveChatTab({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -14,7 +16,7 @@ class LiveChatTabState extends State<LiveChatTab> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: DefaultTabController(
         length: 2,

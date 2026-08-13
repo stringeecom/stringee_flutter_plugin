@@ -38,6 +38,12 @@ import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel.Result;
 
+/**
+ * Owns one native {@link StringeeClient} and exposes its operations to the Flutter plugin.
+ *
+ * <p>Each wrapper is identified by a UUID so events from multiple Dart clients can share one
+ * Flutter event channel without being mixed.</p>
+ */
 public class ClientWrapper implements StringeeConnectionListener, ChangeEventListener, LiveChatEventListener, UserTypingEventListener {
 
     private final StringeeClient client;
@@ -49,6 +55,13 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
 
     private static final String TAG = "StringeeSDK";
 
+    /**
+     * Creates a native client wrapper.
+     *
+     * @param context application context used by the Stringee SDK
+     * @param uuid identifier supplied by the Dart client
+     * @param baseAPIUrl optional private API endpoint; may be {@code null}
+     */
     public ClientWrapper(final Context context, final String uuid, final String baseAPIUrl) {
         this.uuid = uuid;
         conversationManager = new ConversationManager(this);
@@ -69,14 +82,17 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         client.addUserTypingEventListener(this);
     }
 
+    /** Returns the owned native Stringee client. */
     public StringeeClient getClient() {
         return client;
     }
 
+    /** Returns the UUID used to route Flutter events to this client. */
     public String getId() {
         return uuid;
     }
 
+    /** Returns the first-generation call wrapper for {@code callId}, or {@code null}. */
     public CallWrapper callWrapper(final String callId) {
         return StringeeManager.getInstance().getCallsMap().get(callId);
     }
@@ -120,6 +136,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         return callWrapper;
     }
 
+    /** Returns the Call2 wrapper for {@code callId}, or {@code null}. */
     public Call2Wrapper call2Wrapper(final String callId) {
         return StringeeManager.getInstance().getCall2sMap().get(callId);
     }
@@ -153,18 +170,22 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         return call2Wrapper;
     }
 
+    /** Returns this client's conversation bridge. */
     public ConversationManager conversation() {
         return conversationManager;
     }
 
+    /** Returns this client's message bridge. */
     public MessageManager message() {
         return messageManager;
     }
 
+    /** Returns this client's live-chat request bridge. */
     public ChatRequestManager chatRequest() {
         return chatRequestManager;
     }
 
+    /** Returns this client's video-conference bridge. */
     public VideoConferenceManager videoConference() {
         return videoConferenceManager;
     }
@@ -536,6 +557,7 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         result.success(map);
     }
 
+    /** Returns whether the native client is currently connected. */
     public boolean isConnected() {
         return client.isConnected();
     }
@@ -1614,6 +1636,12 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
         );
     }
 
+    /**
+     * Joins an Official Account conversation.
+     *
+     * @param convId conversation to join
+     * @param result Flutter method result
+     */
     public void joinOaConversation(final String convId, final Result result) {
         if (!isConnected()) {
             Log.d(TAG, "joinOaConversation: false - -1 - StringeeClient is disconnected");

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
 
-StringeeClient client = new StringeeClient();
-StringeeChat chat = new StringeeChat(client);
+StringeeClient client = StringeeClient();
+StringeeChat chat = StringeeChat(client);
 
 class VisitorPage extends StatefulWidget {
+  const VisitorPage({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -28,7 +30,7 @@ class _VisitorPageState extends State<VisitorPage>
   bool connected = false;
   bool inConv = false;
 
-  List<String> _log = [];
+  final List<String> _log = [];
 
   @override
   void initState() {
@@ -76,7 +78,7 @@ class _VisitorPageState extends State<VisitorPage>
         if (objectChange.objectType == ObjectType.conversation) {
           StringeeConversation conversation = objectChange.objects!.first;
           setState(() {
-            _log.add(conversation.id! + ' ' + objectChange.type.toString());
+            _log.add('${conversation.id!} ${objectChange.type}');
           });
         }
         if (objectChange.objectType == ObjectType.message) {
@@ -84,7 +86,7 @@ class _VisitorPageState extends State<VisitorPage>
           setState(() {
             _log.add((message.id != null)
                 ? message.id!
-                : 'null' + ' ' + objectChange.type.toString());
+                : 'null ${objectChange.type}');
           });
         }
       }
@@ -93,19 +95,20 @@ class _VisitorPageState extends State<VisitorPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Widget connectWidget = SingleChildScrollView(
-      child: new Container(
-        padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-        child: new Column(
+      child: Container(
+        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+        child: Column(
           children: <Widget>[
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Name: ',
-                    style: new TextStyle(
+                    style: TextStyle(
                       color: Colors.black,
                       fontSize: 18.0,
                     ),
@@ -117,18 +120,18 @@ class _VisitorPageState extends State<VisitorPage>
                           visitorName = value;
                         });
                       },
-                      style: new TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 18.0,
                       ),
-                      decoration:
-                          InputDecoration.collapsed(hintText: 'Enter name'),
+                      decoration: const InputDecoration.collapsed(
+                          hintText: 'Enter name'),
                     ),
                   )
                 ],
               ),
             ),
-            Divider(
+            const Divider(
               color: Colors.black,
             ),
             Container(
@@ -136,9 +139,9 @@ class _VisitorPageState extends State<VisitorPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Email: ',
-                    style: new TextStyle(
+                    style: TextStyle(
                       color: Colors.black,
                       fontSize: 18.0,
                     ),
@@ -150,29 +153,29 @@ class _VisitorPageState extends State<VisitorPage>
                           visitorEmail = value;
                         });
                       },
-                      style: new TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 18.0,
                       ),
-                      decoration:
-                          InputDecoration.collapsed(hintText: 'Enter email'),
+                      decoration: const InputDecoration.collapsed(
+                          hintText: 'Enter email'),
                     ),
                   )
                 ],
               ),
             ),
-            Divider(
+            const Divider(
               color: Colors.black,
             ),
             Container(
               height: 40.0,
               width: 175.0,
-              margin: EdgeInsets.only(top: 20.0),
-              child: new ElevatedButton(
+              margin: const EdgeInsets.only(top: 20.0),
+              child: ElevatedButton(
                 onPressed: () {
                   connect();
                 },
-                child: Text('Connect'),
+                child: const Text('Connect'),
               ),
             ),
           ],
@@ -182,10 +185,10 @@ class _VisitorPageState extends State<VisitorPage>
 
     Widget liveChatAction = Row(
       children: [
-        new Expanded(
+        Expanded(
           child: Container(
-            margin: EdgeInsets.only(right: 10.0),
-            child: new ElevatedButton(
+            margin: const EdgeInsets.only(right: 10.0),
+            child: ElevatedButton(
               onPressed: () {
                 StringeeMessage msg = StringeeMessage.typeText(
                   client,
@@ -197,17 +200,17 @@ class _VisitorPageState extends State<VisitorPage>
                   });
                 });
               },
-              child: Text(
+              child: const Text(
                 'Send message',
                 textAlign: TextAlign.center,
               ),
             ),
           ),
         ),
-        new Expanded(
+        Expanded(
           child: Container(
-            margin: EdgeInsets.only(left: 10.0),
-            child: new ElevatedButton(
+            margin: const EdgeInsets.only(left: 10.0),
+            child: ElevatedButton(
               onPressed: () {
                 _conversation.endChat().then((value) {
                   setState(() {
@@ -218,7 +221,7 @@ class _VisitorPageState extends State<VisitorPage>
                   });
                 });
               },
-              child: Text(
+              child: const Text(
                 'End chat',
                 textAlign: TextAlign.center,
               ),
@@ -229,25 +232,25 @@ class _VisitorPageState extends State<VisitorPage>
     );
 
     Widget chatWidget = SingleChildScrollView(
-      child: new Container(
-        padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+      child: Container(
+        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              child: new Text(
+              child: Text(
                 'Connected as: $userId',
-                style: new TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 20.0),
+              padding: const EdgeInsets.only(top: 20.0),
               alignment: Alignment.topLeft,
-              child: Text(
+              child: const Text(
                 'Log',
                 style: TextStyle(
                   color: Colors.black,
@@ -256,7 +259,7 @@ class _VisitorPageState extends State<VisitorPage>
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 20.0),
+              margin: const EdgeInsets.only(top: 20.0),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.black,
@@ -269,10 +272,11 @@ class _VisitorPageState extends State<VisitorPage>
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return Container(
-                    margin: EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+                    margin: const EdgeInsets.only(
+                        top: 10.0, right: 10.0, left: 10.0),
                     child: Text(
                       _log[index],
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 12.0,
                       ),
@@ -281,14 +285,14 @@ class _VisitorPageState extends State<VisitorPage>
                 },
               ),
             ),
-            Divider(
+            const Divider(
               color: Colors.black,
             ),
             inConv
                 ? liveChatAction
                 : Center(
                     child: Container(
-                      child: new ElevatedButton(
+                      child: ElevatedButton(
                         onPressed: () {
                           chat
                               .createLiveChatConversation(queueId)
@@ -303,7 +307,7 @@ class _VisitorPageState extends State<VisitorPage>
                             }
                           });
                         },
-                        child: Text(
+                        child: const Text(
                           'Create Live Chat Conversation',
                           textAlign: TextAlign.center,
                         ),
@@ -314,9 +318,9 @@ class _VisitorPageState extends State<VisitorPage>
         ),
       ),
     );
-    return new Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: new Form(
+      body: Form(
         child: connected
             ? chatWidget
             : Center(
@@ -341,7 +345,7 @@ class _VisitorPageState extends State<VisitorPage>
             phone: "146845641565")
         .then((value) {
       bool status = value['status'];
-      print("updateUserInfo: " + status.toString());
+      print("updateUserInfo: $status");
       if (status) {}
     });
   }
@@ -354,13 +358,13 @@ class _VisitorPageState extends State<VisitorPage>
   }
 
   void handleDidFailWithErrorEvent(int code, String message) {
-    print('code: ' + code.toString() + '\nmessage: ' + message);
+    print('code: $code\nmessage: $message');
   }
 
   void connect() {
     /// Get chat profile
     chat.getChatProfile(key).then((value) {
-      print("getChatProfile 12345: " + value.toString());
+      print("getChatProfile 12345: $value");
       bool status = value['status'];
       if (status) {
         List queueList = value['body']['queues'];
@@ -369,7 +373,7 @@ class _VisitorPageState extends State<VisitorPage>
         });
 
         chat.getLiveChatToken(key, visitorName, visitorEmail).then((value) {
-          print("getLiveChatToken: " + value.toString());
+          print("getLiveChatToken: $value");
 
           bool status = value['status'];
           if (status) {

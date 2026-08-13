@@ -3,17 +3,26 @@ import 'package:flutter/services.dart';
 
 import '../../stringee_plugin.dart';
 
+/// Controls audio routing for active Stringee calls.
+///
+/// Call [start] before selecting devices and [stop] when call audio no longer
+/// needs to be managed.
 class StringeeAudioManager {
   static final StringeeAudioManager _instance =
       StringeeAudioManager._internal();
 
+  /// Returns the shared audio manager instance.
   factory StringeeAudioManager() => _instance;
 
-  // Native channels.
+  /// Native method channel for audio-route operations.
   static const MethodChannel methodChannel =
       MethodChannel('com.stringee.flutter.audio.method_channel');
+
+  /// Native event channel for audio-route changes.
   static const EventChannel eventChannel =
       EventChannel('com.stringee.flutter.audio.event_channel');
+
+  /// Broadcast stream of raw native audio-route events.
   static Stream broadcastStream = eventChannel.receiveBroadcastStream();
 
   AudioDevice _selectedAudioDevice = AudioDevice(audioType: AudioType.none);
@@ -24,8 +33,10 @@ class StringeeAudioManager {
     broadcastStream.listen(this._listener);
   }
 
+  /// The route currently selected by the native audio manager.
   AudioDevice get selectedAudioDevice => _selectedAudioDevice;
 
+  /// Audio routes currently available on the device.
   List<AudioDevice> get availableAudioDevices => _availableAudioDevices;
 
   void _listener(dynamic event) {

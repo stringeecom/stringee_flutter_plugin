@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin_example/ui/room.dart';
 import 'package:stringee_plugin/stringee_plugin.dart';
 
-StringeeClient client = new StringeeClient();
+StringeeClient client = StringeeClient();
 
 class ConferenceTab extends StatefulWidget {
+  const ConferenceTab({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -59,25 +61,25 @@ class ConferenceTabState extends State<ConferenceTab> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: new Stack(
+        body: Stack(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(left: 10.0, top: 10.0),
-              child: new Text(
+              padding: const EdgeInsets.only(left: 10.0, top: 10.0),
+              child: Text(
                 'Connected as: $myUserId',
-                style: new TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
                 ),
               ),
             ),
             Center(
-              child: new Container(
+              child: SizedBox(
                 height: 40.0,
                 width: 175.0,
-                child: new ElevatedButton(
+                child: ElevatedButton(
                   onPressed: () {
-                    if (client.hasConnected)
+                    if (client.hasConnected) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -87,8 +89,9 @@ class ConferenceTabState extends State<ConferenceTab> {
                           ),
                         ),
                       );
+                    }
                   },
-                  child: Text('Join Room'),
+                  child: const Text('Join Room'),
                 ),
               ),
             ),
@@ -112,7 +115,7 @@ class ConferenceTabState extends State<ConferenceTab> {
   }
 
   void handleDidFailWithErrorEvent(int code, String message) {
-    print('code: ' + code.toString() + '\nmessage: ' + message);
+    print('code: $code\nmessage: $message');
   }
 
   void handleRequestAccessTokenEvent() {
@@ -122,8 +125,4 @@ class ConferenceTabState extends State<ConferenceTab> {
   void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
     print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message']);
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }
