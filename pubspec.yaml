@@ -1,6 +1,6 @@
 name: stringee_plugin
 description: A Flutter plugin for Stringee voice and video calls, chat, live chat, and video conferencing on Android and iOS.
-version: 1.3.1
+version: 1.3.2
 homepage: https://stringee.com
 repository: https://github.com/stringeecom/stringee_flutter_plugin
 issue_tracker: https://github.com/stringeecom/stringee_flutter_plugin/issues

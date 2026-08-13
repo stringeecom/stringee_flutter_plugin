@@ -61,7 +61,15 @@ public class Utils {
      * Moves a native video renderer into {@code layout} when the SDK has made it available.
      *
      * <p>The Stringee SDK may return {@code null} while a remote track is being replaced. That
-     * state is expected and must not crash the Flutter platform view.</p>
+     * state is expected and must not crash the Flutter platform view. A renderer already attached
+     * to another Android {@link ViewGroup} is detached before it is added to the destination, since
+     * an Android view can have only one parent.</p>
+     *
+     * @param layout destination Flutter platform-view container
+     * @param renderer native Stringee renderer, or {@code null} while media is unavailable
+     * @param layoutParams layout parameters used when attaching the renderer
+     * @return {@code true} when the renderer was attached; {@code false} when it was unavailable or
+     * could not be safely detached from its existing parent
      */
     public static boolean attachVideoRenderer(
             @NonNull FrameLayout layout,

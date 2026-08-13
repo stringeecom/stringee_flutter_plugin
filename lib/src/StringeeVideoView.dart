@@ -9,6 +9,12 @@ import 'package:flutter/services.dart';
 import '../stringee_plugin.dart';
 
 /// Renders a native Stringee call or conference video track in Flutter.
+///
+/// For call video on Android, this widget can be added before the native local
+/// or remote renderer becomes available. The plugin retains the view options
+/// and attaches the renderer when the corresponding stream is ready. If the
+/// same native renderer is attached to another [StringeeVideoView], it is moved
+/// to the newest view because an Android view can have only one parent.
 class StringeeVideoView extends StatelessWidget {
   /// Call ID rendered by this view, when created with [StringeeVideoView.new].
   late final String? callId;
@@ -50,6 +56,12 @@ class StringeeVideoView extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   /// Creates a renderer for the local or remote side of [callId].
+  ///
+  /// Set [isLocal] to `true` for the local camera stream and `false` for the
+  /// remote stream. On Android, it is safe to build this widget before
+  /// [StringeeCallEvents.didReceiveLocalStream] or
+  /// [StringeeCallEvents.didReceiveRemoteStream]; attachment completes after
+  /// the native renderer becomes available.
   StringeeVideoView(
     this.callId,
     this.isLocal, {
@@ -70,6 +82,9 @@ class StringeeVideoView extends StatelessWidget {
   }
 
   /// Creates a renderer for a conference [trackId].
+  ///
+  /// The native conference renderer is attached when that track reports media
+  /// as available. Removing this widget before then safely cancels attachment.
   StringeeVideoView.forTrack(
     this.trackId, {
     Key? key,
@@ -90,6 +105,9 @@ class StringeeVideoView extends StatelessWidget {
   }
 
   /// Creates the Android or iOS platform view for this renderer.
+  ///
+  /// Applications normally use [build] by placing this widget in the widget
+  /// tree; this method is public primarily for custom composition and testing.
   Widget createVideoView(BuildContext context) {
     // This is used in the platform side to register the view.
     const viewType = 'stringeeVideoView';

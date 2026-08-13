@@ -22,7 +22,14 @@ import java.util.Map;
 
 import io.flutter.plugin.platform.PlatformView;
 
-/** Android platform view that attaches a native Stringee call or conference video renderer. */
+/**
+ * Android platform view that attaches a native Stringee call or conference video renderer.
+ *
+ * <p>Call view options are stored even when the SDK renderer is temporarily unavailable. The
+ * corresponding call wrapper uses those pending options when a local or remote stream later
+ * becomes ready. Disposing the platform view removes only the options owned by its container so a
+ * replacement Flutter view remains active.</p>
+ */
 public class StringeeVideoView implements PlatformView {
 
     private FrameLayout frameLayout;
@@ -66,6 +73,7 @@ public class StringeeVideoView implements PlatformView {
         frameLayout.removeAllViews();
     }
 
+    /** Removes pending call-render options owned by this platform view. */
     private void removeCallViewOptions() {
         if (Utils.isEmpty(callId)) {
             return;
@@ -80,6 +88,12 @@ public class StringeeVideoView implements PlatformView {
         }
     }
 
+    /**
+     * Records call-view options and attaches the renderer immediately when it is already ready.
+     *
+     * <p>If attachment is deferred, {@link CallWrapper} or {@link Call2Wrapper} completes it when
+     * the relevant native stream callback arrives.</p>
+     */
     private void renderView(
             final FrameLayout layout, final String callId,
             @NonNull final Map<String, Object> creationParams
@@ -165,6 +179,7 @@ public class StringeeVideoView implements PlatformView {
         );
     }
 
+    /** Attaches a conference track after its native media becomes available. */
     private void renderView(
             final Context context, final FrameLayout layout, final String trackId,
             final Map<String, Object> creationParams

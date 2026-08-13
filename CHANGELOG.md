@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.3.2 (unreleased)
+
+- Prevent Android video views from crashing when a call renderer is temporarily unavailable
+- Preserve pending video render options so Call and Call2 streams can attach after track changes
+
 ## 1.3.1
 
 - Upgrade Stringee Android SDK to 2.1.13
