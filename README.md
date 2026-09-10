@@ -21,7 +21,7 @@ To use this package, add the dependency to your pubspec.yaml file.
 dependencies:
   flutter:
     sdk: flutter
-  stringee_plugin: ^1.3.2
+  stringee_plugin: ^1.3.3
 ```
 
 See the available versions and release notes in the
@@ -40,6 +40,9 @@ android {
     compileSdk = 36
 }
 ```
+
+Required Android R8 rules are included; the app does not need package-wide
+Stringee or WebRTC keep rules.
 
 ## Basic usage
 

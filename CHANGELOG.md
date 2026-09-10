@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.3
+
+- Upgrade Stringee Android SDK to 2.1.15, WebRTC to 150.7871.01, and consumer rules
+
 ## 1.3.2
 
 - Prevent Android video views from crashing when a call renderer is temporarily unavailable
