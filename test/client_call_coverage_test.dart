@@ -75,6 +75,8 @@ void main() {
       await client.sendCustomMessage(' user ', {'hello': 'world'}),
       containsPair('status', true),
     );
+    expect(
+        await client.updateToken(' new-token '), containsPair('status', true));
     final exists = await client.existCall(' call-id ');
     expect(exists.status, isTrue);
     expect(exists.data, {'exists': true});
@@ -89,6 +91,7 @@ void main() {
     expect((await client.unregisterPush(''))['code'], -2);
     expect((await client.sendCustomMessage('', const {}))['code'], -2);
     expect((await client.existCall('')).code, -2);
+    expect((await client.updateToken(' '))['code'], -2);
 
     final trustResult = await client.setTrustAllSsl(true);
     expect(trustResult['status'], isFalse);
@@ -104,10 +107,15 @@ void main() {
         'unregisterPush',
         'sendCustomMessage',
         'existCall',
+        'updateToken',
       ]),
     );
     final register = calls.singleWhere((call) => call.method == 'registerPush');
     expect(register.arguments['deviceToken'], 'token');
+    final updateToken =
+        calls.singleWhere((call) => call.method == 'updateToken');
+    expect(updateToken.arguments['token'], 'new-token');
+    expect(updateToken.arguments['uuid'], client.uuid);
   });
 
   test('client converts every native client event', () async {
@@ -143,6 +151,11 @@ void main() {
       'message': 'failed',
     });
     emit('requestAccessToken', {'userId': 'user'});
+    emit('tokenWillExpire', {
+      'userId': 'user',
+      'exp': 1767225600,
+      'expireInSeconds': '60',
+    });
     emit('didReceiveCustomMessage', {'hello': 'world'});
     emit('incomingCall', {'callId': 'incoming-1'});
     emit('incomingCall2', {'callId': 'incoming-2'});
@@ -167,10 +180,16 @@ void main() {
     expect(client.projectId, 'project');
     expect(client.hasConnected, isFalse);
     expect(client.isReconnecting, isFalse);
-    expect(received, hasLength(14));
+    expect(received, hasLength(15));
     expect(
       received.map((event) => event['eventType']),
       containsAll(StringeeClientEvents.values),
+    );
+    expect(
+      received.singleWhere(
+        (event) => event['eventType'] == StringeeClientEvents.tokenWillExpire,
+      )['body'],
+      {'exp': 1767225600, 'expireInSeconds': 60},
     );
     (received.singleWhere(
       (event) => event['eventType'] == StringeeClientEvents.incomingCall,

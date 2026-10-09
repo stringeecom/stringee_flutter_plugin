@@ -247,6 +247,21 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     }];
 }
 
+- (void)updateToken:(id)arguments result:(FlutterResult)result {
+    NSDictionary *data = (NSDictionary *)arguments;
+    id token = [data isKindOfClass:[NSDictionary class]] ? data[@"token"] : nil;
+    if (![token isKindOfClass:[NSString class]]) {
+        token = @"";
+    }
+
+    // Error codes are passed through from the SDK unchanged.
+    [_client updateToken:token completionHandler:^(BOOL status, int code, NSString *message) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage: message ?: @""});
+        });
+    }];
+}
+
 #pragma mark - Client Delegate
 
 - (void)didConnect:(StringeeClient *)stringeeClient isReconnecting:(BOOL)isReconnecting {
@@ -278,6 +293,14 @@ static NSMutableDictionary<NSString *, StringeeClientWrapper *> *clients;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self->_eventSink) {
             self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STERequestAccessToken, STEBody : @{ @"userId" : stringeeClient.userId }});
+        }
+    });
+}
+
+- (void)tokenWillExpire:(StringeeClient *)stringeeClient exp:(long long)exp expireInSeconds:(int)expireInSeconds {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_eventSink) {
+            self->_eventSink(@{STEUuid : self->_identifier, STEEventType : @(StringeeNativeEventTypeClient), STEEvent : STETokenWillExpire, STEBody : @{ @"userId" : stringeeClient.userId ?: [NSNull null], @"exp" : @(exp), @"expireInSeconds" : @(expireInSeconds) }});
         }
     });
 }

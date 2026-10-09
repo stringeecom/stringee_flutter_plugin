@@ -327,6 +327,24 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
     }
 
     @Override
+    public void onTokenWillExpire(
+            final StringeeClient stringeeClient, final long exp, final int expireInSeconds) {
+        Utils.post(() -> {
+            Log.d(TAG, "onTokenWillExpire: exp=" + exp + " - expireInSeconds=" + expireInSeconds);
+            Map<String, Object> map = new HashMap<>();
+            map.put("nativeEventType", StringeeEventType.CLIENT_EVENT.getValue());
+            map.put("event", "tokenWillExpire");
+            map.put("uuid", uuid);
+            Map<String, Object> bodyMap = new HashMap<>();
+            bodyMap.put("userId", stringeeClient.getUserId());
+            bodyMap.put("exp", exp);
+            bodyMap.put("expireInSeconds", expireInSeconds);
+            map.put("body", bodyMap);
+            StringeeFlutterPlugin.eventSink.success(map);
+        });
+    }
+
+    @Override
     public void onCustomMessage(final String from, final JSONObject jsonObject) {
         Utils.post(() -> {
             Log.d(TAG, "onCustomMessage: " + from + " - " + jsonObject.toString());
@@ -793,6 +811,50 @@ public class ClientWrapper implements StringeeConnectionListener, ChangeEventLis
                         Utils.post(() -> {
                             Log.d(
                                     TAG, "sendCustomMessage: false - " + error.getCode() + " - " +
+                                            error.getMessage()
+                            );
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", false);
+                            map.put("code", error.getCode());
+                            map.put("message", error.getMessage());
+                            result.success(map);
+                        });
+                    }
+                }
+        );
+    }
+
+    /**
+     * Renews the access token of the open connection without reconnecting.
+     *
+     * <p>Error codes come from the native SDK unchanged and match iOS: server result codes are
+     * greater than {@code 0}; {@code -1} not connected, {@code -2} empty token, {@code -4} no server
+     * reply within 10 seconds, {@code -5} the server has not requested renewal on this
+     * connection.</p>
+     *
+     * @param token new access token for the same user and project
+     * @param result Flutter method result
+     */
+    public void updateToken(final String token, final Result result) {
+        client.updateToken(
+                token, new StatusListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.post(() -> {
+                            Log.d(TAG, "updateToken: success");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("status", true);
+                            map.put("code", 0);
+                            map.put("message", "Success");
+                            result.success(map);
+                        });
+                    }
+
+                    @Override
+                    public void onError(final StringeeError error) {
+                        Utils.post(() -> {
+                            Log.d(
+                                    TAG, "updateToken: false - " + error.getCode() + " - " +
                                             error.getMessage()
                             );
                             Map<String, Object> map = new HashMap<>();

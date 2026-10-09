@@ -91,6 +91,9 @@ class StringeeClient {
         case 'requestAccessToken':
           _handleRequestAccessTokenEvent(map['body']);
           break;
+        case 'tokenWillExpire':
+          _handleTokenWillExpireEvent(map['body']);
+          break;
         case 'didReceiveCustomMessage':
           _handleDidReceiveCustomMessageEvent(map['body']);
           break;
@@ -143,6 +146,27 @@ class StringeeClient {
       'message': 'Success',
     };
     return rData;
+  }
+
+  /// Renews the access token of the current connection without reconnecting.
+  ///
+  /// Call it after [StringeeClientEvents.tokenWillExpire] with a new [token]
+  /// for the same user and project. On success the native SDK keeps the new
+  /// token for automatic reconnects. Returns a map with `status`, `code` and
+  /// `message`. The codes are the same on Android and iOS:
+  ///
+  /// * `0`: success.
+  /// * Greater than `0`: server error, for example `6` expired token, `10`
+  ///   invalid signature, `17` user or project mismatch.
+  /// * `-1`: not connected.
+  /// * `-2`: empty token (checked in Dart before calling the native SDK).
+  /// * `-4`: no server reply within 10 seconds.
+  /// * `-5`: the server has not requested renewal on this connection; call it
+  ///   only after [StringeeClientEvents.tokenWillExpire].
+  Future<Map<dynamic, dynamic>> updateToken(String token) async {
+    if (token.trim().isEmpty) return await reportInvalidValue('token');
+    final params = {'token': token.trim(), 'uuid': _uuid};
+    return await methodChannel.invokeMethod('updateToken', params);
   }
 
   /// Disconnects this client from Stringee.
@@ -291,6 +315,18 @@ class StringeeClient {
     _userId = StringeeValueParser.toStringValue(map['userId']);
     _eventStreamController.add(
         {"eventType": StringeeClientEvents.requestAccessToken, "body": null});
+  }
+
+  void _handleTokenWillExpireEvent(Map<dynamic, dynamic> map) {
+    _userId = StringeeValueParser.toStringValue(map['userId']) ?? _userId;
+    Map<dynamic, dynamic> bodyMap = {
+      'exp': StringeeValueParser.toInt(map['exp']),
+      'expireInSeconds': StringeeValueParser.toInt(map['expireInSeconds']),
+    };
+    _eventStreamController.add({
+      "eventType": StringeeClientEvents.tokenWillExpire,
+      "body": bodyMap,
+    });
   }
 
   void _handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic>? map) {

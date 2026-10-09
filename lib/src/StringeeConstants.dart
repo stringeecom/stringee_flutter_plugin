@@ -44,7 +44,16 @@ enum StringeeClientEvents {
   userBeginTyping,
 
   /// A remote user stopped typing.
-  userEndTyping
+  userEndTyping,
+
+  /// The access token expires soon (about 60 seconds before expiry).
+  ///
+  /// The body is a map with `exp` (token expiry time, epoch seconds) and
+  /// `expireInSeconds` (seconds left). Fetch a new token from your server and
+  /// pass it to [StringeeClient.updateToken] to keep the connection open.
+  /// Without renewal the server closes the connection when the token expires,
+  /// then [requestAccessToken] is emitted.
+  tokenWillExpire
 }
 
 /// Events emitted by [StringeeCall].

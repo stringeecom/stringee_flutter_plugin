@@ -33,3 +33,6 @@ Podfile
 
 # Ignore module files
 *.iml
+
+# Serena MCP (local config + memories)
+.serena/

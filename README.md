@@ -21,7 +21,7 @@ To use this package, add the dependency to your pubspec.yaml file.
 dependencies:
   flutter:
     sdk: flutter
-  stringee_plugin: ^1.3.3
+  stringee_plugin: ^1.3.4
 ```
 
 See the available versions and release notes in the
@@ -43,6 +43,27 @@ android {
 
 Required Android R8 rules are included; the app does not need package-wide
 Stringee or WebRTC keep rules.
+
+### iOS requirements
+
+- iOS 15.0 or later
+- Stringee iOS SDK `2.2.0`, which is not published to the CocoaPods trunk. Add it to
+  `ios/Podfile` before `flutter_install_all_ios_pods`:
+
+```ruby
+platform :ios, '15.0'
+
+target 'Runner' do
+  use_frameworks!
+
+  pod 'Stringee', :podspec => 'https://raw.githubusercontent.com/stringeecom/Stringee-iOS-SDK/2.2.0/Stringee.podspec'
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+```
+
+Then run `pod install` (or `pod update Stringee` when upgrading from an older plugin version). The
+Stringee pod brings its own WebRTC build; do not add another WebRTC pod to the app.
 
 ## Basic usage
 
@@ -73,6 +94,39 @@ final clientSubscription = client.eventStreamController.stream.listen((event) {
 
 await client.connect(accessToken);
 ```
+
+### Access token renewal
+
+About 60 seconds before the access token expires the client emits
+`StringeeClientEvents.tokenWillExpire`. Fetch a new token for the same user from your server and
+renew it on the open connection:
+
+```dart
+case StringeeClientEvents.tokenWillExpire:
+  final body = event['body'] as Map;
+  print('Token expires in ${body['expireInSeconds']}s (exp: ${body['exp']})');
+  final newToken = await fetchTokenFromYourServer();
+  final result = await client.updateToken(newToken);
+  if (result['status'] != true) {
+    print('updateToken failed: ${result['code']} ${result['message']}');
+  }
+  break;
+```
+
+`updateToken` returns `{status, code, message}`. The codes are the same on Android and iOS:
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Success |
+| `> 0` | Server error: `6` expired token, `10` invalid signature, `17` user or project mismatch |
+| `-1` | Not connected |
+| `-2` | Empty token |
+| `-4` | No server reply within 10 seconds |
+| `-5` | The server has not requested renewal on this connection (call it only after `tokenWillExpire`) |
+
+If the token is not renewed, the server closes the connection when it expires and the client emits
+`requestAccessToken` (on Android it is preceded by `didFailWithError` with code `6`); the SDK does
+not reconnect by itself. Call `client.connect(newToken)` on the same client to resume the session.
 
 Create and observe an outgoing call:
 

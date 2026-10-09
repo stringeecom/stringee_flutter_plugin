@@ -29,6 +29,7 @@ static NSString *STEDidConnect                  = @"didConnect";
 static NSString *STEDidDisConnect               = @"didDisconnect";
 static NSString *STEDidFailWithError            = @"didFailWithError";
 static NSString *STERequestAccessToken          = @"requestAccessToken";
+static NSString *STETokenWillExpire             = @"tokenWillExpire";
 static NSString *STEIncomingCall                = @"incomingCall";
 static NSString *STEIncomingCall2               = @"incomingCall2";
 static NSString *STEDidReceiveCustomMessage     = @"didReceiveCustomMessage";
