@@ -1,6 +1,31 @@
 
 # Changelog
 
+This file lists SDK API changes and observable feature behavior. Documentation,
+tests, build tooling, and internal-only refactors are omitted.
+
+## 1.3.4
+
+### Added
+
+- Notification shortly before the access token expires.
+- Access token renewal on the open connection, without reconnecting.
+
+### Changed
+
+- Updated Stringee Android SDK to 2.1.18.
+- Updated Stringee iOS SDK to 2.2.0; iOS 15 or later is required.
+- iOS apps must add the Stringee 2.2.0 podspec to their Podfile.
+- The connection closes when the access token expires without renewal.
+
+### Fixed
+
+- Incoming calls missed or shown twice on poor networks.
+- Native crash on Android when a video call ended before connecting.
+- Memory leak on Android from listeners of completed requests.
+- Calls with a bandwidth limit not connecting on Android.
+- Hold and unhold ignored with a bandwidth limit on Android.
+
 ## 1.3.3
 
 - Upgrade Stringee Android SDK to 2.1.15, WebRTC to 150.7871.01, and consumer rules

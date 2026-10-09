@@ -41,6 +41,9 @@ class CallTabState extends State<CallTab> {
         case StringeeClientEvents.requestAccessToken:
           handleRequestAccessTokenEvent();
           break;
+        case StringeeClientEvents.tokenWillExpire:
+          handleTokenWillExpireEvent(map['body']);
+          break;
         case StringeeClientEvents.didReceiveCustomMessage:
           handleDidReceiveCustomMessageEvent(map['body']);
           break;
@@ -205,6 +208,13 @@ class CallTabState extends State<CallTab> {
 
   void handleRequestAccessTokenEvent() {
     print('Request new access token');
+  }
+
+  void handleTokenWillExpireEvent(Map<dynamic, dynamic> map) {
+    print(
+        'Token will expire in ${map['expireInSeconds']}s (exp: ${map['exp']})');
+    // Fetch a new token from your server, then renew it on the open connection:
+    // final result = await client.updateToken(newToken);
   }
 
   void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {

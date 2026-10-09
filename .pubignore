@@ -47,3 +47,6 @@ example/android/app/MyKeyStore
 
 # Ignore module files
 stringee_flutter_plugin.iml
+
+coverage/
+doc/

@@ -54,6 +54,9 @@
 // Check stringee call exist by callId
 - (void)existCall:(id)arguments result:(FlutterResult)result;
 
+// Renew the access token of the open connection without reconnecting
+- (void)updateToken:(id)arguments result:(FlutterResult)result;
+
 @end
 
 

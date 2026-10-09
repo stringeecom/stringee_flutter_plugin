@@ -1,4 +1,4 @@
-# Stringee Android SDK 2.1.15 supplies targeted Stringee, WebRTC, and JNI
+# Stringee Android SDK 2.1.18 supplies targeted Stringee, WebRTC, and JNI
 # consumer rules. Keep this file for application-specific rules only.
 
 -dontwarn com.android.volley.NetworkResponse

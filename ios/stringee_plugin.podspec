@@ -16,9 +16,9 @@ Stringee plugin for flutter.
   s.public_header_files = 'Classes/**/*.h'
 
   s.dependency 'Flutter'
-  s.dependency 'Stringee', '~> 2.0.2'
+  s.dependency 'Stringee', '2.2.0'
   s.static_framework = true
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '15.0'
 end
 
