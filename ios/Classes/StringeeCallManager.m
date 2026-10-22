@@ -345,6 +345,35 @@
     result(@{STEStatus : @(YES), STECode : @(0), STEMessage: @"Success."});
 }
 
+- (void)hold:(id)arguments result:(FlutterResult)result {
+    if (!_client || !_client.hasConnected) {
+        result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});
+        return;
+    }
+
+    NSDictionary *data = (NSDictionary *)arguments;
+    NSString *callId = [data objectForKey:@"callId"];
+    BOOL hold = [[data objectForKey:@"hold"] boolValue];
+
+    if (!callId || [callId isKindOfClass:[NSNull class]] || !callId.length) {
+        result(@{STEStatus : @(NO), STECode : @(-2), STEMessage: @"The callId is invalid."});
+        return;
+    }
+
+    StringeeCall *call = [[StringeeManager instance].calls objectForKey:callId];
+
+    if (!call) {
+        result(@{STEStatus : @(NO), STECode : @(-3), STEMessage: @"The call is not found."});
+        return;
+    }
+
+    [call hold:hold completionHandler:^(BOOL status, int code, NSString *message) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            result(@{STEStatus : @(status), STECode : @(code), STEMessage : message ?: @""});
+        });
+    }];
+}
+
 - (void)setSpeakerphoneOn:(id)arguments result:(FlutterResult)result {
     if (!_client || !_client.hasConnected) {
         result(@{STEStatus : @(NO), STECode : @(-1), STEMessage: @"StringeeClient is not initialzied or connected."});

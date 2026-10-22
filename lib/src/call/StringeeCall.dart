@@ -336,6 +336,18 @@ class StringeeCall {
     return await StringeeClient.methodChannel.invokeMethod('mute', params);
   }
 
+  /// Holds ([hold] = true) or resumes ([hold] = false) the call.
+  ///
+  /// Only voice calls that are already answered can be held.
+  Future<Map<dynamic, dynamic>> hold(bool hold) async {
+    final params = {
+      'callId': this._id,
+      'hold': hold,
+      'uuid': _client.uuid,
+    };
+    return await StringeeClient.methodChannel.invokeMethod('hold', params);
+  }
+
   /// Enables or disables the local video stream.
   Future<Map<dynamic, dynamic>> enableVideo(bool enableVideo) async {
     final params = {

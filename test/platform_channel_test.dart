@@ -125,6 +125,14 @@ void main() {
       'uuid': client.uuid,
     });
 
+    await call.hold(true);
+    final hold = calls.singleWhere((item) => item.method == 'hold');
+    expect(hold.arguments, {
+      'callId': 'call-id',
+      'hold': true,
+      'uuid': client.uuid,
+    });
+
     call.destroy();
   });
 }

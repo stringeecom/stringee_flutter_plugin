@@ -362,6 +362,57 @@ public class CallWrapper implements StringeeCall.StringeeCallListener {
     }
 
     /**
+     * Holds or resumes the current call.
+     *
+     * @param hold
+     *         True to hold; false to resume.
+     * @param result
+     *         Flutter method result.
+     */
+    public void hold(final boolean hold, final Result result) {
+        if (!clientWrapper.isConnected()) {
+            Log.d(TAG, "hold: false - -1 - StringeeClient is disconnected");
+            Map<String, Object> map = new HashMap<>();
+            map.put("status", false);
+            map.put("code", -1);
+            map.put("message", "StringeeClient is disconnected");
+            result.success(map);
+            return;
+        }
+
+        StatusListener listener = new StatusListener() {
+            @Override
+            public void onSuccess() {
+                Utils.post(() -> {
+                    Log.d(TAG, "hold: success");
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("status", true);
+                    map.put("code", 0);
+                    map.put("message", "Success");
+                    result.success(map);
+                });
+            }
+
+            @Override
+            public void onError(final StringeeError error) {
+                Utils.post(() -> {
+                    Log.d(TAG, "hold: false - " + error.getCode() + " - " + error.getMessage());
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("status", false);
+                    map.put("code", error.getCode());
+                    map.put("message", error.getMessage());
+                    result.success(map);
+                });
+            }
+        };
+        if (hold) {
+            call.hold(listener);
+        } else {
+            call.unHold(listener);
+        }
+    }
+
+    /**
      * Enables or disables the local video stream.
      *
      * @param enable
