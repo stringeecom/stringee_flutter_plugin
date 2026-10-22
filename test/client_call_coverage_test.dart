@@ -262,6 +262,7 @@ void main() {
     await call.sendCallInfo({'key': 'value'});
     await call.getCallStats();
     await call.mute(false);
+    await call.hold(true);
     await call.enableVideo(true);
     await call.switchCamera();
     await call.switchCamera(cameraId: 'front');
@@ -279,6 +280,7 @@ void main() {
         'sendCallInfo',
         'getCallStats',
         'mute',
+        'hold',
         'enableVideo',
         'switchCamera',
         'resumeVideo',

@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)mute:(id)arguments result:(FlutterResult)result;
 
+- (void)hold:(id)arguments result:(FlutterResult)result;
+
 - (void)setSpeakerphoneOn:(id)arguments result:(FlutterResult)result;
 
 - (void)switchCamera:(id)arguments result:(FlutterResult)result;

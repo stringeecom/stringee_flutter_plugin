@@ -136,6 +136,9 @@
     else if ([call.method isEqualToString:@"mute"]) {
         [wrapper.callManager mute:call.arguments result:result];
     }
+    else if ([call.method isEqualToString:@"hold"]) {
+        [wrapper.callManager hold:call.arguments result:result];
+    }
     else if ([call.method isEqualToString:@"setSpeakerphoneOn"]) {
         [wrapper.callManager setSpeakerphoneOn:call.arguments result:result];
     }

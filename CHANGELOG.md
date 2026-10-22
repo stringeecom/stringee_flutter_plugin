@@ -4,6 +4,13 @@
 This file lists SDK API changes and observable feature behavior. Documentation,
 tests, build tooling, and internal-only refactors are omitted.
 
+## Unreleased
+
+### Added
+
+- `StringeeCall.hold(bool)` holds or resumes an answered voice call on Android
+  (`hold`/`unHold`) and iOS (`hold:completionHandler:`).
+
 ## 1.3.4
 
 ### Added

@@ -231,6 +231,12 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
                             Boolean.TRUE.equals(call.argument("mute")), result);
                 }
                 break;
+            case "hold":
+                if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
+                    clientWrapper.callWrapper(callId).hold(
+                            Boolean.TRUE.equals(call.argument("hold")), result);
+                }
+                break;
             case "enableVideo":
                 if (Utils.isCallWrapperAvailable(call.method, callId, result)) {
                     clientWrapper.callWrapper(callId).enableVideo(
