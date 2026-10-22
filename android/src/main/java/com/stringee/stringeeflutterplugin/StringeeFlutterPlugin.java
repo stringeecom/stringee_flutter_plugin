@@ -166,9 +166,6 @@ public class StringeeFlutterPlugin implements MethodCallHandler, EventChannel.St
             case "existCall":
                 clientWrapper.existCall(callId, result);
                 break;
-            case "updateToken":
-                clientWrapper.updateToken(call.argument("token"), result);
-                break;
 
             // CallWrapper methods
             case "makeCall":

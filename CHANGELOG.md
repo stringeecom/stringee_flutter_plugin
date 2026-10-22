@@ -11,6 +11,19 @@ tests, build tooling, and internal-only refactors are omitted.
 - `StringeeCall.hold(bool)` holds or resumes an answered voice call on Android
   (`hold`/`unHold`) and iOS (`hold:completionHandler:`).
 
+## 1.3.5
+
+### Changed
+
+- Reverted Stringee iOS SDK to 2.0.2 (resolved from the CocoaPods trunk); the
+  iOS deployment target is 13.0 again and no extra Podfile entry is needed.
+- Stringee Android SDK stays at 2.1.18.
+
+### Removed
+
+- `StringeeClientEvents.tokenWillExpire` and `StringeeClient.updateToken`
+  added in 1.3.4. The connection keeps the 1.3.3 behavior around token expiry.
+
 ## 1.3.4
 
 ### Added
